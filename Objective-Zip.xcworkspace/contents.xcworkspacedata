@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Objective-Zip/Objective-Zip.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:TestApp/Objective-Zip Test App.xcodeproj">
    </FileRef>
 </Workspace>

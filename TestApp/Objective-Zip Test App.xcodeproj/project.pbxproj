@@ -17,16 +17,8 @@
 		28D7ACF80DDB3853001CB0EB /* Objective_ZipViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* Objective_ZipViewController.m */; };
 		8C8F2D3A10EBC94B00F75833 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C8F2D3910EBC94B00F75833 /* Default.png */; };
 		8C8F2D9310EBCE0300F75833 /* ObjectiveZipIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C8F2D9210EBCE0300F75833 /* ObjectiveZipIcon.png */; };
+		967E06A51A38B55B00D48632 /* ObjectiveZip_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 967E06A41A38B55B00D48632 /* ObjectiveZip_iOS.framework */; };
 		B319802F135D159B00741E77 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B319802E135D159B00741E77 /* libz.dylib */; };
-		B319805A135D179500741E77 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = B3198047135D179500741E77 /* ioapi.c */; };
-		B319805B135D179500741E77 /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = B3198049135D179500741E77 /* mztools.c */; };
-		B319805C135D179500741E77 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B319804B135D179500741E77 /* unzip.c */; };
-		B319805D135D179500741E77 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = B319804D135D179500741E77 /* zip.c */; };
-		B319805E135D179500741E77 /* FileInZipInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = B3198051135D179500741E77 /* FileInZipInfo.m */; };
-		B319805F135D179500741E77 /* ZipException.m in Sources */ = {isa = PBXBuildFile; fileRef = B3198053135D179500741E77 /* ZipException.m */; };
-		B3198060135D179500741E77 /* ZipFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B3198055135D179500741E77 /* ZipFile.m */; };
-		B3198061135D179500741E77 /* ZipReadStream.m in Sources */ = {isa = PBXBuildFile; fileRef = B3198057135D179500741E77 /* ZipReadStream.m */; };
-		B3198062135D179500741E77 /* ZipWriteStream.m in Sources */ = {isa = PBXBuildFile; fileRef = B3198059135D179500741E77 /* ZipWriteStream.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,25 +37,8 @@
 		8C8F2D3910EBC94B00F75833 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		8C8F2D9210EBCE0300F75833 /* ObjectiveZipIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ObjectiveZipIcon.png; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Objective_Zip_Test_App-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Objective_Zip_Test_App-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+		967E06A41A38B55B00D48632 /* ObjectiveZip_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjectiveZip_iOS.framework; path = "../Objective-Zip/build/Debug-iphoneos/ObjectiveZip_iOS.framework"; sourceTree = "<group>"; };
 		B319802E135D159B00741E77 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = /usr/lib/libz.dylib; sourceTree = "<absolute>"; };
-		B3198047135D179500741E77 /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ioapi.c; sourceTree = "<group>"; };
-		B3198048135D179500741E77 /* ioapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioapi.h; sourceTree = "<group>"; };
-		B3198049135D179500741E77 /* mztools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mztools.c; sourceTree = "<group>"; };
-		B319804A135D179500741E77 /* mztools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mztools.h; sourceTree = "<group>"; };
-		B319804B135D179500741E77 /* unzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unzip.c; sourceTree = "<group>"; };
-		B319804C135D179500741E77 /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unzip.h; sourceTree = "<group>"; };
-		B319804D135D179500741E77 /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zip.c; sourceTree = "<group>"; };
-		B319804E135D179500741E77 /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
-		B3198050135D179500741E77 /* FileInZipInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileInZipInfo.h; sourceTree = "<group>"; };
-		B3198051135D179500741E77 /* FileInZipInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileInZipInfo.m; sourceTree = "<group>"; };
-		B3198052135D179500741E77 /* ZipException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipException.h; sourceTree = "<group>"; };
-		B3198053135D179500741E77 /* ZipException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZipException.m; sourceTree = "<group>"; };
-		B3198054135D179500741E77 /* ZipFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipFile.h; sourceTree = "<group>"; };
-		B3198055135D179500741E77 /* ZipFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZipFile.m; sourceTree = "<group>"; };
-		B3198056135D179500741E77 /* ZipReadStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipReadStream.h; sourceTree = "<group>"; };
-		B3198057135D179500741E77 /* ZipReadStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZipReadStream.m; sourceTree = "<group>"; };
-		B3198058135D179500741E77 /* ZipWriteStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipWriteStream.h; sourceTree = "<group>"; };
-		B3198059135D179500741E77 /* ZipWriteStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZipWriteStream.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				967E06A51A38B55B00D48632 /* ObjectiveZip_iOS.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -103,8 +79,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				B3198045135D179500741E77 /* MiniZip */,
-				B319804F135D179500741E77 /* Objective-Zip */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -138,6 +112,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				967E06A41A38B55B00D48632 /* ObjectiveZip_iOS.framework */,
 				B319802E135D159B00741E77 /* libz.dylib */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
@@ -145,40 +120,6 @@
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
-		};
-		B3198045135D179500741E77 /* MiniZip */ = {
-			isa = PBXGroup;
-			children = (
-				B3198047135D179500741E77 /* ioapi.c */,
-				B3198048135D179500741E77 /* ioapi.h */,
-				B3198049135D179500741E77 /* mztools.c */,
-				B319804A135D179500741E77 /* mztools.h */,
-				B319804B135D179500741E77 /* unzip.c */,
-				B319804C135D179500741E77 /* unzip.h */,
-				B319804D135D179500741E77 /* zip.c */,
-				B319804E135D179500741E77 /* zip.h */,
-			);
-			name = MiniZip;
-			path = ../MiniZip;
-			sourceTree = SOURCE_ROOT;
-		};
-		B319804F135D179500741E77 /* Objective-Zip */ = {
-			isa = PBXGroup;
-			children = (
-				B3198050135D179500741E77 /* FileInZipInfo.h */,
-				B3198051135D179500741E77 /* FileInZipInfo.m */,
-				B3198052135D179500741E77 /* ZipException.h */,
-				B3198053135D179500741E77 /* ZipException.m */,
-				B3198054135D179500741E77 /* ZipFile.h */,
-				B3198055135D179500741E77 /* ZipFile.m */,
-				B3198056135D179500741E77 /* ZipReadStream.h */,
-				B3198057135D179500741E77 /* ZipReadStream.m */,
-				B3198058135D179500741E77 /* ZipWriteStream.h */,
-				B3198059135D179500741E77 /* ZipWriteStream.m */,
-			);
-			name = "Objective-Zip";
-			path = "../Objective-Zip";
-			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
@@ -249,15 +190,6 @@
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* Objective_ZipAppDelegate.m in Sources */,
 				28D7ACF80DDB3853001CB0EB /* Objective_ZipViewController.m in Sources */,
-				B319805A135D179500741E77 /* ioapi.c in Sources */,
-				B319805B135D179500741E77 /* mztools.c in Sources */,
-				B319805C135D179500741E77 /* unzip.c in Sources */,
-				B319805D135D179500741E77 /* zip.c in Sources */,
-				B319805E135D179500741E77 /* FileInZipInfo.m in Sources */,
-				B319805F135D179500741E77 /* ZipException.m in Sources */,
-				B3198060135D179500741E77 /* ZipFile.m in Sources */,
-				B3198061135D179500741E77 /* ZipReadStream.m in Sources */,
-				B3198062135D179500741E77 /* ZipWriteStream.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +201,12 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Objective-Zip-dknuojoucwgjwddcdbhkclqleaas/Build/Products/Debug",
+					/Users/Dov/Source,
+					"Code/objective-zip/Objective-Zip/build/Debug-iphoneos",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -283,6 +221,12 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Objective-Zip-dknuojoucwgjwddcdbhkclqleaas/Build/Products/Debug",
+					/Users/Dov/Source,
+					"Code/objective-zip/Objective-Zip/build/Debug-iphoneos",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Objective_Zip_Test_App_Prefix.pch;
 				INFOPLIST_FILE = "Objective_Zip_Test_App-Info.plist";
@@ -310,7 +254,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
@@ -337,7 +281,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
 			};
