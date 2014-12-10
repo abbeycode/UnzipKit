@@ -4,5 +4,5 @@ build
 *.perspective*
 .DS_Store
 *.swp
-**/**/xcuserdata
-**/**/project.xcworkspace
+**/*.xccheckout
+**/xcuserdata/*
