@@ -411,6 +411,11 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
             errorName = NSLocalizedString(@"Can't open archive", @"UZKErrorCodeArchiveNotFound");
             break;
             
+        case UZKErrorCodeFileNavigationError:
+            errorName = NSLocalizedString(@"Error navigating through the archive",
+                                          @"UZKErrorCodeFileNavigationError");
+            break;
+            
         default:
             errorName = [NSString stringWithFormat:@"Unknown error code: %ld", errorCode];
             break;
