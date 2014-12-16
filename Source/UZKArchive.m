@@ -217,7 +217,9 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
         action(error);
     }
     @finally {
-        [self closeFile:error];
+        if (![self closeFile:error]) {
+            return NO;
+        }
     }
     
     return !error || !*error;
@@ -288,7 +290,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
     return YES;
 }
 
-- (void)closeFile:(NSError **)error
+- (BOOL)closeFile:(NSError **)error
 {
     int err;
     
@@ -297,7 +299,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
             err = unzClose(_unzFile);
             if (err != UNZ_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError];
-                return;
+                return NO;
             }
             break;
 
@@ -305,7 +307,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
             err = zipClose(_zipFile, NULL);
             if (err != ZIP_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError];
-                return;
+                return NO;
             }
             break;
 
@@ -313,7 +315,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
             err= zipClose(_zipFile, NULL);
             if (err != ZIP_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError];
-                return;
+                return NO;
             }
             break;
 
@@ -323,6 +325,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
     }
     
     self.mode = -1;
+    return YES;
 }
 
 - (FileInZipInfo *)currentFileInZipInfo:(NSError **)error {
@@ -381,7 +384,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
     return info;
 }
 
-- (NSString *)errorNameForErrorCode:(UZKErrorCode)errorCode
++ (NSString *)errorNameForErrorCode:(UZKErrorCode)errorCode
 {
     NSString *errorName;
     
@@ -427,7 +430,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
 - (BOOL)assignError:(NSError **)error code:(NSInteger)errorCode
 {
     if (error) {
-        NSString *errorName = [self errorNameForErrorCode:errorCode];
+        NSString *errorName = [UZKArchive errorNameForErrorCode:errorCode];
         
         *error = [NSError errorWithDomain:UZKErrorDomain
                                      code:errorCode
@@ -435,17 +438,6 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
     }
     
     return NO;
-}
-
-- (void)handleZipException:(ZipException *)exception error:(NSError **)error
-{
-    if (error) {
-        NSString *errorName = [self errorNameForErrorCode:exception.error];
-
-        *error = [NSError errorWithDomain:kMiniZipErrorDomain
-                                     code:exception.error
-                                 userInfo:@{NSLocalizedFailureReasonErrorKey: errorName}];
-    }
 }
 
 
