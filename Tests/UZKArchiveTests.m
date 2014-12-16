@@ -7,7 +7,7 @@
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
 
-#import "UZKArchive.h"
+@import UnzipKit;
 
 
 @interface UZKArchiveTests : XCTestCase
@@ -159,6 +159,44 @@
                       @"Resolved filename doesn't match original");
     }
 }
+
+
+#pragma mark List Filenames
+
+
+- (void)testListFilenames
+{
+    NSArray *testArchives = @[@"Test Archive.zip",
+                              @"Test Archive (Password).zip"];
+    
+    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+        return ![key hasSuffix:@"zip"];
+    }];
+    
+    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    
+    for (NSString *testArchiveName in testArchives) {
+        NSURL *testArchiveURL = self.testFileURLs[testArchiveName];
+        
+        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+        
+        NSError *error = nil;
+        NSArray *filesInArchive = [archive listFilenames:&error];
+        
+        XCTAssertNil(error, @"Error returned by unzipListFiles");
+        XCTAssertNotNil(filesInArchive, @"No list of files returned");
+        XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
+                       @"Incorrect number of files listed in archive");
+        
+        for (NSInteger i = 0; i < filesInArchive.count; i++) {
+            NSString *archiveFilename = filesInArchive[i];
+            NSString *expectedFilename = expectedFiles[i];
+            
+            XCTAssertEqualObjects(archiveFilename, expectedFilename, @"Incorrect filename listed");
+        }
+    }
+}
+
 
 
 #pragma mark - Helper Methods
