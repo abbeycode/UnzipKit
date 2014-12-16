@@ -74,7 +74,8 @@
 				96EA65A31A40AEAE00685B6D /* UnzipKit.h */,
 				96EA65A11A40AEAE00685B6D /* Supporting Files */,
 			);
-			path = UnzipKit;
+			name = UnzipKit;
+			path = Source;
 			sourceTree = "<group>";
 		};
 		96EA65A11A40AEAE00685B6D /* Supporting Files */ = {
@@ -91,7 +92,8 @@
 				96EA65B01A40AEAE00685B6D /* UnzipKitTests.m */,
 				96EA65AE1A40AEAE00685B6D /* Supporting Files */,
 			);
-			path = UnzipKitTests;
+			name = UnzipKitTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		96EA65AE1A40AEAE00685B6D /* Supporting Files */ = {
@@ -320,7 +322,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = UnzipKit/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -337,7 +339,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = UnzipKit/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -357,7 +359,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = UnzipKitTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -371,7 +373,7 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = UnzipKitTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -396,6 +398,7 @@
 				96EA65B61A40AEAE00685B6D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		96EA65B71A40AEAE00685B6D /* Build configuration list for PBXNativeTarget "UnzipKitTests" */ = {
 			isa = XCConfigurationList;
@@ -404,6 +407,7 @@
 				96EA65B91A40AEAE00685B6D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
