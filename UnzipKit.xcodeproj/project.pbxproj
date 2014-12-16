@@ -9,10 +9,11 @@
 /* Begin PBXBuildFile section */
 		96EA65A41A40AEAE00685B6D /* UnzipKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65A31A40AEAE00685B6D /* UnzipKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96EA65AA1A40AEAE00685B6D /* UnzipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96EA659E1A40AEAE00685B6D /* UnzipKit.framework */; };
-		96EA65B11A40AEAE00685B6D /* UnzipKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65B01A40AEAE00685B6D /* UnzipKitTests.m */; };
+		96EA65B11A40AEAE00685B6D /* UZKArchiveTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65B01A40AEAE00685B6D /* UZKArchiveTests.m */; };
 		96EA65BC1A40B2EC00685B6D /* UZKArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65BA1A40B2EC00685B6D /* UZKArchive.h */; };
 		96EA65BD1A40B2EC00685B6D /* UZKArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65BB1A40B2EC00685B6D /* UZKArchive.m */; };
 		96EA65BE1A40B2EC00685B6D /* UZKArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65BB1A40B2EC00685B6D /* UZKArchive.m */; };
+		96EA65C01A40BF1A00685B6D /* Test Data in Resources */ = {isa = PBXBuildFile; fileRef = 96EA65BF1A40BF1A00685B6D /* Test Data */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,9 +32,10 @@
 		96EA65A31A40AEAE00685B6D /* UnzipKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnzipKit.h; sourceTree = "<group>"; };
 		96EA65A91A40AEAE00685B6D /* UnzipKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnzipKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		96EA65AF1A40AEAE00685B6D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		96EA65B01A40AEAE00685B6D /* UnzipKitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UnzipKitTests.m; sourceTree = "<group>"; };
+		96EA65B01A40AEAE00685B6D /* UZKArchiveTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UZKArchiveTests.m; sourceTree = "<group>"; };
 		96EA65BA1A40B2EC00685B6D /* UZKArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UZKArchive.h; sourceTree = "<group>"; };
 		96EA65BB1A40B2EC00685B6D /* UZKArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UZKArchive.m; sourceTree = "<group>"; };
+		96EA65BF1A40BF1A00685B6D /* Test Data */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Test Data"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,7 +98,8 @@
 		96EA65AD1A40AEAE00685B6D /* UnzipKitTests */ = {
 			isa = PBXGroup;
 			children = (
-				96EA65B01A40AEAE00685B6D /* UnzipKitTests.m */,
+				96EA65BF1A40BF1A00685B6D /* Test Data */,
+				96EA65B01A40AEAE00685B6D /* UZKArchiveTests.m */,
 				96EA65AE1A40AEAE00685B6D /* Supporting Files */,
 			);
 			name = UnzipKitTests;
@@ -209,6 +212,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96EA65C01A40BF1A00685B6D /* Test Data in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,7 +231,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				96EA65B11A40AEAE00685B6D /* UnzipKitTests.m in Sources */,
+				96EA65B11A40AEAE00685B6D /* UZKArchiveTests.m in Sources */,
 				96EA65BE1A40B2EC00685B6D /* UZKArchive.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -309,6 +313,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
