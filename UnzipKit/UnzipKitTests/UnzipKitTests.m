@@ -1,19 +1,19 @@
 //
-//  Objective_ZipTests.m
-//  Objective-ZipTests
+//  UnzipKitTests.m
+//  UnzipKitTests
 //
-//  Created by Dov Frankel on 12/10/14.
-//  Copyright (c) 2014 GitHub. All rights reserved.
+//  Created by Dov Frankel on 12/16/14.
+//  Copyright (c) 2014 Abbey Code. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
 
-@interface Objective_ZipTests : XCTestCase
+@interface UnzipKitTests : XCTestCase
 
 @end
 
-@implementation Objective_ZipTests
+@implementation UnzipKitTests
 
 - (void)setUp {
     [super setUp];

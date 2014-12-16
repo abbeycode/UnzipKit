@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:Objective-Zip.xcodeproj">
+      location = "group:UnzipKit/UnzipKit.xcodeproj">
    </FileRef>
 </Workspace>
