@@ -8,7 +8,7 @@
 
 #import "zip.h"
 
-#import "FileInZipInfo.h"
+#import "UZKFileInfo.h"
 #import "ZipException.h"
 #import "ZipFile.h"
 
@@ -167,7 +167,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
         }
 
         for (NSInteger i = 0; i < fileCount; i++) {
-            FileInZipInfo *info = [self currentFileInZipInfo:error];
+            UZKFileInfo *info = [self currentFileInZipInfo:error];
             
             if (info) {
                 [zipInfos addObject:info];
@@ -190,7 +190,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
         return nil;
     }
     
-    return [zipInfos valueForKeyPath:@"name"];
+    return [zipInfos valueForKeyPath:@"filename"];
 }
 
 
@@ -247,7 +247,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
             NSMutableDictionary *dic = [NSMutableDictionary dictionary];
             
             do {
-                FileInZipInfo *info = [self currentFileInZipInfo:error];
+                UZKFileInfo *info = [self currentFileInZipInfo:error];
                 
                 if (!info) {
                     return NO;
@@ -255,11 +255,11 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
                 
                 unz_file_pos pos;
                 int err = unzGetFilePos(_unzFile, &pos);
-                if (err == UNZ_OK && info.name) {
+                if (err == UNZ_OK && info.filename) {
                     [dic setObject:[NSArray arrayWithObjects:
                                     [NSNumber numberWithLong:pos.pos_in_zip_directory],
                                     [NSNumber numberWithLong:pos.num_of_file],
-                                    nil] forKey:info.name];
+                                    nil] forKey:info.filename];
                 }
             } while (unzGoToNextFile (_unzFile) != UNZ_END_OF_LIST_OF_FILE);
             
@@ -328,7 +328,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
     return YES;
 }
 
-- (FileInZipInfo *)currentFileInZipInfo:(NSError **)error {
+- (UZKFileInfo *)currentFileInZipInfo:(NSError **)error {
     if (self.mode != ZipFileModeUnzip) {
         [NSException raise:@"Invalid mode"
                     format:@"Must be in mode ZipFileModeUnzip, is in %d", self.mode];
@@ -345,43 +345,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
     
     NSString *name = [[NSString stringWithUTF8String:filename_inzip] decomposedStringWithCanonicalMapping];
     
-    ZipCompressionLevel level = ZipCompressionLevelNone;
-    if (file_info.compression_method != 0) {
-        switch ((file_info.flag & 0x6) / 2) {
-            case 0:
-                level = ZipCompressionLevelDefault;
-                break;
-                
-            case 1:
-                level = ZipCompressionLevelBest;
-                break;
-                
-            default:
-                level = ZipCompressionLevelFastest;
-                break;
-        }
-    }
-    
-    BOOL encrypted = ((file_info.flag & 1) != 0);
-    
-    NSDateComponents *components = [[NSDateComponents alloc] init];
-    components.day    = file_info.tmu_date.tm_mday;
-    components.month  = file_info.tmu_date.tm_mon + 1;
-    components.year   = file_info.tmu_date.tm_year;
-    components.hour   = file_info.tmu_date.tm_hour;
-    components.minute = file_info.tmu_date.tm_min;
-    components.second = file_info.tmu_date.tm_sec;
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSDate *date = [calendar dateFromComponents:components];
-    
-    FileInZipInfo *info = [[FileInZipInfo alloc] initWithName:name
-                                                       length:file_info.uncompressed_size
-                                                        level:level
-                                                      crypted:encrypted
-                                                         size:file_info.compressed_size
-                                                         date:date
-                                                        crc32:file_info.crc];
-    return info;
+    return [UZKFileInfo fileInfo:&file_info filename:name];
 }
 
 + (NSString *)errorNameForErrorCode:(UZKErrorCode)errorCode

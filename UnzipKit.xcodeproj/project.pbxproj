@@ -33,6 +33,8 @@
 		96EA65F41A40C44300685B6D /* ZipWriteStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65D71A40C44300685B6D /* ZipWriteStream.m */; };
 		96EA65F81A40C88800685B6D /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 96EA65F71A40C88800685B6D /* libz.dylib */; };
 		96EA65FA1A40C8D000685B6D /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 96EA65F71A40C88800685B6D /* libz.dylib */; };
+		96EA66011A40E31900685B6D /* UZKFileInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65FF1A40E31900685B6D /* UZKFileInfo.h */; };
+		96EA66021A40E31900685B6D /* UZKFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA66001A40E31900685B6D /* UZKFileInfo.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +76,8 @@
 		96EA65D61A40C44300685B6D /* ZipWriteStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipWriteStream.h; sourceTree = "<group>"; };
 		96EA65D71A40C44300685B6D /* ZipWriteStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZipWriteStream.m; sourceTree = "<group>"; };
 		96EA65F71A40C88800685B6D /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		96EA65FF1A40E31900685B6D /* UZKFileInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UZKFileInfo.h; sourceTree = "<group>"; };
+		96EA66001A40E31900685B6D /* UZKFileInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UZKFileInfo.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +127,8 @@
 				96EA65A31A40AEAE00685B6D /* UnzipKit.h */,
 				96EA65BA1A40B2EC00685B6D /* UZKArchive.h */,
 				96EA65BB1A40B2EC00685B6D /* UZKArchive.m */,
+				96EA65FF1A40E31900685B6D /* UZKFileInfo.h */,
+				96EA66001A40E31900685B6D /* UZKFileInfo.m */,
 				96EA65A11A40AEAE00685B6D /* Supporting Files */,
 			);
 			name = UnzipKit;
@@ -221,6 +227,7 @@
 				96EA65E01A40C44300685B6D /* unzip.h in Headers */,
 				96EA65F31A40C44300685B6D /* ZipWriteStream.h in Headers */,
 				96EA65BC1A40B2EC00685B6D /* UZKArchive.h in Headers */,
+				96EA66011A40E31900685B6D /* UZKFileInfo.h in Headers */,
 				96EA65A41A40AEAE00685B6D /* UnzipKit.h in Headers */,
 				96EA65DD1A40C44300685B6D /* mztools.h in Headers */,
 			);
@@ -325,6 +332,7 @@
 			files = (
 				96EA65BD1A40B2EC00685B6D /* UZKArchive.m in Sources */,
 				96EA65E51A40C44300685B6D /* FileInZipInfo.m in Sources */,
+				96EA66021A40E31900685B6D /* UZKFileInfo.m in Sources */,
 				96EA65F41A40C44300685B6D /* ZipWriteStream.m in Sources */,
 				96EA65F11A40C44300685B6D /* ZipReadStream.m in Sources */,
 				96EA65D81A40C44300685B6D /* ioapi.c in Sources */,
