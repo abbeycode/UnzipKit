@@ -26,7 +26,7 @@
 		96EA65EA1A40C44300685B6D /* ZipException.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65D01A40C44300685B6D /* ZipException.h */; };
 		96EA65EB1A40C44300685B6D /* ZipException.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65D11A40C44300685B6D /* ZipException.m */; };
 		96EA65ED1A40C44300685B6D /* ZipFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65D21A40C44300685B6D /* ZipFile.h */; };
-		96EA65EE1A40C44300685B6D /* ZipFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65D31A40C44300685B6D /* ZipFile.m */; };
+		96EA65EE1A40C44300685B6D /* ZipFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65D31A40C44300685B6D /* ZipFile.m */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		96EA65F01A40C44300685B6D /* ZipReadStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65D41A40C44300685B6D /* ZipReadStream.h */; };
 		96EA65F11A40C44300685B6D /* ZipReadStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65D51A40C44300685B6D /* ZipReadStream.m */; };
 		96EA65F31A40C44300685B6D /* ZipWriteStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65D61A40C44300685B6D /* ZipWriteStream.h */; };
@@ -441,6 +441,7 @@
 				SDKROOT = macosx;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = "-Wno-error=unused-command-line-argument";
 			};
 			name = Release;
 		};
