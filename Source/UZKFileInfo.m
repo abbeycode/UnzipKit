@@ -24,11 +24,17 @@
         _filename = filename;
         _uncompressedSize = fileInfo->uncompressed_size;
         _compressedSize = fileInfo->compressed_size;
-        _compressionMethod = [self readCompressionMethod:fileInfo->compression_method
-                                                    flag:fileInfo->flag];
         _timestamp = [self readDate:&fileInfo->tmu_date];
         _CRC = fileInfo->crc;
         _isEncryptedWithPassword = (fileInfo->flag & 1) != 0;
+        _isDirectory = [filename hasSuffix:@"/"];
+        
+        if (_isDirectory) {
+            _filename = [_filename substringToIndex:_filename.length - 1];
+        }
+        
+        _compressionMethod = [self readCompressionMethod:fileInfo->compression_method
+                                                    flag:fileInfo->flag];
     }
     return self;
 }

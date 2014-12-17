@@ -225,30 +225,6 @@
     }
 }
 
-- (void)testListFilenames_WinZip
-{
-    NSURL *testArchiveURL = self.testFileURLs[@"L'incertain.zip"];
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
-    NSArray *expectedFiles = @[@"Acribor‚a - T01 - L'incertain/Test File A.txt",
-                               @"Acribor‚a - T01 - L'incertain/Test File B.jpg",
-                               @"Acribor‚a - T01 - L'incertain/Test File C.m4a",
-                               @"Acribor‚a - T01 - L'incertain/"];
-
-    NSError *error = nil;
-    NSArray *filesInArchive = [archive listFilenames:&error];
-    
-    XCTAssertNil(error, @"Error returned by listFilenames");
-    XCTAssertNotNil(filesInArchive, @"No list of files returned");
-    XCTAssertEqual(filesInArchive.count, expectedFiles.count, @"Incorrect number of files listed in archive");
-    
-    for (NSInteger i = 0; i < filesInArchive.count; i++) {
-        NSString *archiveFilename = filesInArchive[i];
-        NSString *expectedFilename = expectedFiles[i];
-        
-        XCTAssertEqualObjects(archiveFilename, expectedFilename, @"Incorrect filename listed");
-    }
-}
-
 - (void)testListFilenames_Password
 {
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
@@ -403,6 +379,36 @@
         UZKFileInfo *fileInfo = filesInArchive[i];
         
         XCTAssertEqualObjects(fileInfo.filename, expectedFiles[i], @"Incorrect filename listed");
+    }
+}
+
+- (void)testListFileInfo_WinZip
+{
+    NSURL *testArchiveURL = self.testFileURLs[@"L'incertain.zip"];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    NSArray *expectedFiles = @[@"Acribor‚a - T01 - L'incertain/Test File A.txt",
+                               @"Acribor‚a - T01 - L'incertain/Test File B.jpg",
+                               @"Acribor‚a - T01 - L'incertain/Test File C.m4a",
+                               @"Acribor‚a - T01 - L'incertain"];
+    NSArray *isDirectoryValues = @[@NO,
+                                   @NO,
+                                   @NO,
+                                   @YES];
+    
+    NSError *error = nil;
+    NSArray *filesInArchive = [archive listFileInfo:&error];
+    
+    XCTAssertNil(error, @"Error returned by listFilenames");
+    XCTAssertNotNil(filesInArchive, @"No list of files returned");
+    XCTAssertEqual(filesInArchive.count, expectedFiles.count, @"Incorrect number of files listed in archive");
+    
+    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+        UZKFileInfo *fileInfo = (UZKFileInfo *)filesInArchive[i];
+        
+        XCTAssertEqualObjects(fileInfo.filename, expectedFiles[i], @"Incorrect filename listed");
+        
+        BOOL expectedIsDirectory = ((NSNumber *)isDirectoryValues[i]).boolValue;
+        XCTAssertEqual(fileInfo.isDirectory, expectedIsDirectory, @"Incorrect isDirectory value listed");
     }
 }
 
