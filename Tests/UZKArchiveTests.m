@@ -225,23 +225,21 @@
     }
 }
 
-- (void)testListFilenames_French
+- (void)testListFilenames_WinZip
 {
     NSURL *testArchiveURL = self.testFileURLs[@"L'incertain.zip"];
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
-    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *expectedFiles = @[@"Acribor‚a - T01 - L'incertain/Test File A.txt",
+                               @"Acribor‚a - T01 - L'incertain/Test File B.jpg",
+                               @"Acribor‚a - T01 - L'incertain/Test File C.m4a",
+                               @"Acribor‚a - T01 - L'incertain/"];
 
     NSError *error = nil;
     NSArray *filesInArchive = [archive listFilenames:&error];
     
     XCTAssertNil(error, @"Error returned by listFilenames");
     XCTAssertNotNil(filesInArchive, @"No list of files returned");
-    XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
-                   @"Incorrect number of files listed in archive");
+    XCTAssertEqual(filesInArchive.count, expectedFiles.count, @"Incorrect number of files listed in archive");
     
     for (NSInteger i = 0; i < filesInArchive.count; i++) {
         NSString *archiveFilename = filesInArchive[i];

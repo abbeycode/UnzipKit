@@ -371,9 +371,36 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
         return nil;
     }
     
-    NSString *name = [[NSString stringWithUTF8String:filename_inzip] decomposedStringWithCanonicalMapping];
+    NSString *filename = [UZKArchive figureOutFilename:filename_inzip];
+    return [UZKFileInfo fileInfo:&file_info filename:filename];
+}
+
++ (NSString *)figureOutFilename:(const char *)filenameBytes
+{
+    NSString *name;
+    BOOL usedLossyConversion = NO;
+    [NSString stringEncodingForData:[NSData dataWithBytes:filenameBytes
+                                                   length:sizeof(char)*FILE_IN_ZIP_MAX_NAME_LENGTH]
+                    encodingOptions:@{NSStringEncodingDetectionFromWindowsKey: @YES,
+                                      NSStringEncodingDetectionLossySubstitutionKey: @"_"}
+                    convertedString:&name
+                usedLossyConversion:&usedLossyConversion];
     
-    return [UZKFileInfo fileInfo:&file_info filename:name];
+    if (!name) {
+        name = [NSString stringWithUTF8String:filenameBytes];
+    }
+    
+    if (!name) {
+        name = [NSString stringWithCString:filenameBytes
+                                  encoding:NSWindowsCP1252StringEncoding];
+    }
+    
+    if (!name) {
+        name = [NSString stringWithCString:filenameBytes
+                                  encoding:[NSString defaultCStringEncoding]];
+    }
+    
+    return [name decomposedStringWithCanonicalMapping];
 }
 
 + (NSString *)errorNameForErrorCode:(UZKErrorCode)errorCode
