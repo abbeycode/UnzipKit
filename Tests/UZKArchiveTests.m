@@ -17,6 +17,7 @@
 @property NSURL *tempDirectory;
 @property NSMutableDictionary *testFileURLs;
 @property NSMutableDictionary *unicodeFileURLs;
+@property NSMutableDictionary *asianFileURLs;
 @property NSURL *corruptArchive;
 
 @end
@@ -46,11 +47,15 @@
                               @"Test File Ⓑ.jpg",
                               @"Test File Ⓒ.m4a"];
     
+    NSArray *asianFiles = @[@"AsianChars.zip",
+                            @"統一碼/碼一統.txt"];
+    
     NSString *tempDirSubtree = [@"UnzipKitTest" stringByAppendingPathComponent:uniqueName];
     
     self.testFailed = NO;
     self.testFileURLs = [[NSMutableDictionary alloc] init];
     self.unicodeFileURLs = [[NSMutableDictionary alloc] init];
+    self.asianFileURLs = [[NSMutableDictionary alloc] init];
     self.tempDirectory = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:tempDirSubtree]
                                     isDirectory:YES];
     
@@ -65,6 +70,7 @@
     
     NSMutableArray *filesToCopy = [NSMutableArray arrayWithArray:testFiles];
     [filesToCopy addObjectsFromArray:unicodeFiles];
+    [filesToCopy addObjectsFromArray:asianFiles];
     
     for (NSString *file in filesToCopy) {
         NSURL *testFileURL = [self urlOfTestFile:file];
@@ -94,6 +100,9 @@
         }
         else if ([unicodeFiles containsObject:file]) {
             self.unicodeFileURLs[file] = destinationURL;
+        }
+        else if ([asianFiles containsObject:file]) {
+            self.asianFileURLs[file] = destinationURL;
         }
     }
     
@@ -197,20 +206,74 @@
     }
 }
 
+- (void)testListFilenames_Unicode
+{
+    NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
+    NSSet *expectedFileSet = [self.unicodeFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+        return ![key hasSuffix:@"zip"];
+    }];
+    
+    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    
+    NSError *error = nil;
+    NSArray *filesInArchive = [archive listFilenames:&error];
+    
+    XCTAssertNil(error, @"Error returned by unzipListFiles");
+    XCTAssertNotNil(filesInArchive, @"No list of files returned");
+    XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
+                   @"Incorrect number of files listed in archive");
+    
+    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+        NSString *archiveFilename = filesInArchive[i];
+        NSString *expectedFilename = expectedFiles[i];
+        
+        XCTAssertEqualObjects(archiveFilename, expectedFilename, @"Incorrect filename listed");
+    }
+}
+
+- (void)testListFilenames_Asian
+{
+    NSURL *testArchiveURL = self.asianFileURLs[@"AsianChars.zip"];
+    NSSet *expectedFileSet = [self.asianFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+        return ![key hasSuffix:@"zip"];
+    }];
+    
+    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    
+    NSError *error = nil;
+    NSArray *filesInArchive = [archive listFilenames:&error];
+    
+    XCTAssertNil(error, @"Error returned by unzipListFiles");
+    XCTAssertNotNil(filesInArchive, @"No list of files returned");
+    XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
+                   @"Incorrect number of files listed in archive");
+    
+    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+        NSString *archiveFilename = filesInArchive[i];
+        NSString *expectedFilename = expectedFiles[i];
+        
+        XCTAssertEqualObjects(archiveFilename, expectedFilename, @"Incorrect filename listed");
+    }
+}
+
 
 
 #pragma mark - Helper Methods
 
 
-- (NSURL *)urlOfTestFile:(NSString *)fileName
+- (NSURL *)urlOfTestFile:(NSString *)filename
 {
-    NSString *name = [fileName stringByDeletingPathExtension];
-    NSString *extension = [fileName pathExtension];
+    NSString *baseDirectory = @"Test Data";
+    NSString *subPath = filename.stringByDeletingLastPathComponent;
+    NSString *bundleSubdir = [baseDirectory stringByAppendingPathComponent:subPath];
     
-    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:name
-                                                                      ofType:extension
-                                                                 inDirectory:@"Test Data"];
-    return [NSURL fileURLWithPath:path];
+    return [[NSBundle bundleForClass:[self class]] URLForResource:filename.lastPathComponent
+                                                    withExtension:nil
+                                                     subdirectory:bundleSubdir];
 }
 
 - (NSString *)randomDirectoryName
