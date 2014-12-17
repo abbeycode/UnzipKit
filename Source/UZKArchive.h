@@ -109,5 +109,14 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  */
 - (NSArray *)listFilenames:(NSError **)error;
 
+/**
+ *  Lists the various attributes of each file in the archive
+ *
+ *  @param error Contains an NSError object when there was an error reading the archive
+ *
+ *  @return Returns a list of UZKFileInfo objects, which contain metadata about the archive's files, or nil if an error was encountered
+ */
+- (NSArray *)listFileInfo:(NSError **)error;
+
 
 @end

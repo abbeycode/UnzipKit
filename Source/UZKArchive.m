@@ -143,6 +143,21 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
 
 - (NSArray *)listFilenames:(NSError **)error
 {
+    NSArray *zipInfos = [self listFileInfo:error];
+    
+    if (!zipInfos) {
+        return nil;
+    }
+    
+    return [zipInfos valueForKeyPath:@"filename"];
+}
+
+- (NSArray *)listFileInfo:(NSError **)error
+{
+    if (error) {
+        *error = nil;
+    }
+    
     NSError *unzipError;
     
     NSMutableArray *zipInfos = [NSMutableArray array];
@@ -187,10 +202,14 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
     } inMode:ZipFileModeUnzip error:&unzipError];
     
     if (!success) {
+        if (error) {
+            *error = unzipError;
+        }
+        
         return nil;
     }
     
-    return [zipInfos valueForKeyPath:@"filename"];
+    return [NSArray arrayWithArray:zipInfos];
 }
 
 
@@ -236,13 +255,22 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
     
     switch (mode) {
         case ZipFileModeUnzip: {
-            self.unzFile = unzOpen([self.filename cStringUsingEncoding:NSUTF8StringEncoding]);
-            if (self.unzFile == NULL) {
+            if (![[NSFileManager defaultManager] fileExistsAtPath:zipFile]) {
                 [self assignError:error code:UZKErrorCodeArchiveNotFound];
                 return NO;
             }
             
-            unzGoToFirstFile(_unzFile);
+            self.unzFile = unzOpen([self.filename cStringUsingEncoding:NSUTF8StringEncoding]);
+            if (self.unzFile == NULL) {
+                [self assignError:error code:UZKErrorCodeBadZipFile];
+                return NO;
+            }
+            
+            int err = unzGoToFirstFile(_unzFile);
+            if (err != UNZ_OK) {
+                [self assignError:error code:UZKErrorCodeFileNavigationError];
+                return NO;
+            }
             
             NSMutableDictionary *dic = [NSMutableDictionary dictionary];
             
