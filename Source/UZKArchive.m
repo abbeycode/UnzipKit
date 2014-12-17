@@ -377,18 +377,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
 
 + (NSString *)figureOutFilename:(const char *)filenameBytes
 {
-    NSString *name;
-    BOOL usedLossyConversion = NO;
-    [NSString stringEncodingForData:[NSData dataWithBytes:filenameBytes
-                                                   length:sizeof(char)*FILE_IN_ZIP_MAX_NAME_LENGTH]
-                    encodingOptions:@{NSStringEncodingDetectionFromWindowsKey: @YES,
-                                      NSStringEncodingDetectionLossySubstitutionKey: @"_"}
-                    convertedString:&name
-                usedLossyConversion:&usedLossyConversion];
-    
-    if (!name) {
-        name = [NSString stringWithUTF8String:filenameBytes];
-    }
+    NSString *name = [NSString stringWithUTF8String:filenameBytes];
     
     if (!name) {
         name = [NSString stringWithCString:filenameBytes
