@@ -192,7 +192,7 @@
         NSError *error = nil;
         NSArray *filesInArchive = [archive listFilenames:&error];
         
-        XCTAssertNil(error, @"Error returned by unzipListFiles");
+        XCTAssertNil(error, @"Error returned by listFilenames");
         XCTAssertNotNil(filesInArchive, @"No list of files returned");
         XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                        @"Incorrect number of files listed in archive");
@@ -220,7 +220,7 @@
     NSError *error = nil;
     NSArray *filesInArchive = [archive listFilenames:&error];
     
-    XCTAssertNil(error, @"Error returned by unzipListFiles");
+    XCTAssertNil(error, @"Error returned by listFilenames");
     XCTAssertNotNil(filesInArchive, @"No list of files returned");
     XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
@@ -247,7 +247,7 @@
     NSError *error = nil;
     NSArray *filesInArchive = [archive listFilenames:&error];
     
-    XCTAssertNil(error, @"Error returned by unzipListFiles");
+    XCTAssertNil(error, @"Error returned by listFilenames");
     XCTAssertNotNil(filesInArchive, @"No list of files returned");
     XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
@@ -274,7 +274,7 @@
     NSError *error = nil;
     filesInArchive = [archive listFilenames:&error];
     
-    XCTAssertNil(error, @"Error returned by unzipListFiles");
+    XCTAssertNil(error, @"Error returned by listFilenames");
     XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
     
@@ -300,7 +300,7 @@
     NSError *error = nil;
     filesInArchive = [archive listFilenames:&error];
     
-    XCTAssertNil(error, @"Error returned by unzipListFiles");
+    XCTAssertNil(error, @"Error returned by listFilenames");
     XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
     
@@ -318,6 +318,162 @@
     
     NSError *error = nil;
     NSArray *files = [archive listFilenames:&error];
+    
+    XCTAssertNotNil(error, @"List files of invalid archive succeeded");
+    XCTAssertNil(files, @"List returned for invalid archive");
+    XCTAssertEqual(error.code, UZKErrorCodeBadZipFile, @"Unexpected error code returned");
+}
+
+
+#pragma mark List File Info
+
+
+- (void)testListFileInfo {
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Test Archive.zip"]];
+    
+    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+        return ![key hasSuffix:@"zip"];
+    }];
+    
+    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    
+    static NSDateFormatter *testFileInfoDateFormatter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        testFileInfoDateFormatter = [[NSDateFormatter alloc] init];
+        testFileInfoDateFormatter.dateFormat = @"M/dd/yyyy h:mm a";
+        testFileInfoDateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
+    });
+    
+    NSDate *expectedDate = [testFileInfoDateFormatter dateFromString:@"3/22/2014 11:17 PM"];
+    NSDictionary *expectedCompressionMethods = @{@"Test File A.txt": @(UZKCompressionMethodNone),
+                                                 @"Test File B.jpg": @(UZKCompressionMethodDefault),
+                                                 @"Test File C.m4a": @(UZKCompressionMethodDefault),};
+
+    NSError *error = nil;
+    NSArray *filesInArchive = [archive listFileInfo:&error];
+    
+    XCTAssertNil(error, @"Error returned by listFileInfo");
+    XCTAssertNotNil(filesInArchive, @"No list of files returned");
+    XCTAssertEqual(filesInArchive.count, expectedFileSet.count, @"Incorrect number of files listed in archive");
+    
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+        UZKFileInfo *fileInfo = filesInArchive[i];
+        
+        // Test Filename
+        NSString *expectedFilename = expectedFiles[i];
+        XCTAssertEqualObjects(fileInfo.filename, expectedFilename, @"Incorrect filename");
+        
+        // Test CRC
+        NSUInteger expectedFileCRC = [self crcOfTestFile:expectedFilename];
+        XCTAssertEqual(fileInfo.CRC, expectedFileCRC, @"Incorrect CRC checksum");
+        
+        // Test Last Modify Date
+        NSTimeInterval archiveFileTimeInterval = [fileInfo.timestamp timeIntervalSinceReferenceDate];
+        NSTimeInterval expectedFileTimeInterval = [expectedDate timeIntervalSinceReferenceDate];
+        XCTAssertEqualWithAccuracy(archiveFileTimeInterval, expectedFileTimeInterval, 60, @"Incorrect file timestamp (more than 60 seconds off)");
+        
+        // Test Uncompressed Size
+        NSError *attributesError = nil;
+        NSString *expectedFilePath = [[self urlOfTestFile:expectedFilename] path];
+        NSDictionary *expectedFileAttributes = [fm attributesOfItemAtPath:expectedFilePath
+                                                                    error:&attributesError];
+        XCTAssertNil(attributesError, @"Error getting file attributes of %@", expectedFilename);
+        
+        long long expectedFileSize = expectedFileAttributes.fileSize;
+        XCTAssertEqual(fileInfo.uncompressedSize, expectedFileSize, @"Incorrect uncompressed file size");
+        
+        // Test Compression method
+        UZKCompressionMethod expectedCompressionMethod = ((NSNumber *)expectedCompressionMethods[fileInfo.filename]).integerValue;
+        XCTAssertEqual(fileInfo.compressionMethod, expectedCompressionMethod, @"Incorrect compression method");
+    }
+}
+
+- (void)testListFileInfo_Unicode
+{
+    NSSet *expectedFileSet = [self.unicodeFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+        return ![key hasSuffix:@"zip"];
+    }];
+    
+    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    
+    NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    
+    NSError *error = nil;
+    NSArray *filesInArchive = [archive listFileInfo:&error];
+    
+    XCTAssertNil(error, @"Error returned by unrarListFiles");
+    XCTAssertNotNil(filesInArchive, @"No list of files returned");
+    XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
+                   @"Incorrect number of files listed in archive");
+    
+    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+        UZKFileInfo *fileInfo = filesInArchive[i];
+        
+        XCTAssertEqualObjects(fileInfo.filename, expectedFiles[i], @"Incorrect filename listed");
+    }
+}
+
+- (void)testListFileInfo_Password
+{
+    NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:@"password"];
+    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+        return ![key hasSuffix:@"zip"];
+    }];
+    
+    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    
+    NSArray *filesInArchive = nil;
+    NSError *error = nil;
+    filesInArchive = [archive listFileInfo:&error];
+    
+    XCTAssertNil(error, @"Error returned by listFilenames");
+    XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
+                   @"Incorrect number of files listed in archive");
+    
+    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+        UZKFileInfo *fileInfo = filesInArchive[i];
+        NSString *expectedFilename = expectedFiles[i];
+        
+        XCTAssertEqualObjects(fileInfo.filename, expectedFilename, @"Incorrect filename listed");
+    }
+}
+
+- (void)testListFileInfo_NoPasswordGiven {
+    NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+        return ![key hasSuffix:@"zip"];
+    }];
+    
+    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    
+    NSArray *filesInArchive = nil;
+    NSError *error = nil;
+    filesInArchive = [archive listFileInfo:&error];
+    
+    XCTAssertNil(error, @"Error returned by listFilenames");
+    XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
+                   @"Incorrect number of files listed in archive");
+    
+    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+        UZKFileInfo *fileInfo = filesInArchive[i];
+        NSString *expectedFilename = expectedFiles[i];
+        
+        XCTAssertEqualObjects(fileInfo.filename, expectedFilename, @"Incorrect filename listed");
+    }
+}
+
+- (void)testListFileInfo_InvalidArchive
+{
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Test File A.txt"]];
+    
+    NSError *error = nil;
+    NSArray *files = [archive listFileInfo:&error];
     
     XCTAssertNotNil(error, @"List files of invalid archive succeeded");
     XCTAssertNil(files, @"List returned for invalid archive");
@@ -350,4 +506,12 @@
 {
     return [NSString stringWithFormat:@"%@ %@", prefix, [self randomDirectoryName]];
 }
+
+- (NSUInteger)crcOfTestFile:(NSString *)filename {
+    NSURL *fileURL = [self urlOfTestFile:filename];
+    NSData *fileContents = [[NSFileManager defaultManager] contentsAtPath:fileURL.path];
+    return crc32(0, fileContents.bytes, (uInt)fileContents.length);
+}
+
+
 @end
