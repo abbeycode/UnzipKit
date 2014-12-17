@@ -17,7 +17,6 @@
 @property NSURL *tempDirectory;
 @property NSMutableDictionary *testFileURLs;
 @property NSMutableDictionary *unicodeFileURLs;
-@property NSMutableDictionary *asianFileURLs;
 @property NSURL *corruptArchive;
 
 @end
@@ -38,6 +37,7 @@
     
     NSArray *testFiles = @[@"Test Archive.zip",
                            @"Test Archive (Password).zip",
+                           @"L'incertain.zip",
                            @"Test File A.txt",
                            @"Test File B.jpg",
                            @"Test File C.m4a"];
@@ -47,15 +47,11 @@
                               @"Test File Ⓑ.jpg",
                               @"Test File Ⓒ.m4a"];
     
-    NSArray *asianFiles = @[@"AsianChars.zip",
-                            @"統一碼/碼一統.txt"];
-    
     NSString *tempDirSubtree = [@"UnzipKitTest" stringByAppendingPathComponent:uniqueName];
     
     self.testFailed = NO;
     self.testFileURLs = [[NSMutableDictionary alloc] init];
     self.unicodeFileURLs = [[NSMutableDictionary alloc] init];
-    self.asianFileURLs = [[NSMutableDictionary alloc] init];
     self.tempDirectory = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:tempDirSubtree]
                                     isDirectory:YES];
     
@@ -70,7 +66,6 @@
     
     NSMutableArray *filesToCopy = [NSMutableArray arrayWithArray:testFiles];
     [filesToCopy addObjectsFromArray:unicodeFiles];
-    [filesToCopy addObjectsFromArray:asianFiles];
     
     for (NSString *file in filesToCopy) {
         NSURL *testFileURL = [self urlOfTestFile:file];
@@ -100,9 +95,6 @@
         }
         else if ([unicodeFiles containsObject:file]) {
             self.unicodeFileURLs[file] = destinationURL;
-        }
-        else if ([asianFiles containsObject:file]) {
-            self.asianFileURLs[file] = destinationURL;
         }
     }
     
@@ -233,17 +225,16 @@
     }
 }
 
-- (void)testListFilenames_Asian
+- (void)testListFilenames_French
 {
-    NSURL *testArchiveURL = self.asianFileURLs[@"AsianChars.zip"];
-    NSSet *expectedFileSet = [self.asianFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+    NSURL *testArchiveURL = self.testFileURLs[@"L'incertain.zip"];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
         return ![key hasSuffix:@"zip"];
     }];
     
     NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
-    
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
-    
+
     NSError *error = nil;
     NSArray *filesInArchive = [archive listFilenames:&error];
     
