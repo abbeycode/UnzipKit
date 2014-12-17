@@ -24,8 +24,8 @@
         _filename = filename;
         _uncompressedSize = fileInfo->uncompressed_size;
         _compressedSize = fileInfo->compressed_size;
-        _compressionLevel = [self readCompressionLevel:fileInfo->compression_method
-                                                  flag:fileInfo->flag];
+        _compressionMethod = [self readCompressionMethod:fileInfo->compression_method
+                                                    flag:fileInfo->flag];
         _timestamp = [self readDate:&fileInfo->tmu_date];
         _CRC = fileInfo->crc;
         _isEncryptedWithPassword = (fileInfo->flag & 1) != 0;
@@ -38,22 +38,22 @@
 #pragma mark - Private Methods
 
 
-- (UZKCompressionLevel)readCompressionLevel:(uLong)compressionMethod
-                                       flag:(uLong)flag
+- (UZKCompressionMethod)readCompressionMethod:(uLong)compressionMethod
+                                         flag:(uLong)flag
 {
-    UZKCompressionLevel level = UZKCompressionLevelNone;
+    UZKCompressionMethod level = UZKCompressionMethodNone;
     if (compressionMethod != 0) {
         switch ((flag & 0x6) / 2) {
             case 0:
-                level = UZKCompressionLevelDefault;
+                level = UZKCompressionMethodDefault;
                 break;
                 
             case 1:
-                level = UZKCompressionLevelBest;
+                level = UZKCompressionMethodBest;
                 break;
                 
             default:
-                level = UZKCompressionLevelFastest;
+                level = UZKCompressionMethodFastest;
                 break;
         }
     }

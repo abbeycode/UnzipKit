@@ -13,35 +13,30 @@
 /**
  *   Defines the various compression levels that can be applied to a file
  */
-typedef NS_ENUM(NSInteger, UZKCompressionLevel) {
+typedef NS_ENUM(NSInteger, UZKCompressionMethod) {
     /**
      *  Default level
      */
-    UZKCompressionLevelDefault= -1,
+    UZKCompressionMethodDefault= -1,
     
     /**
      *  No compression
      */
-    UZKCompressionLevelNone= 0,
+    UZKCompressionMethodNone= 0,
     
     /**
      *  Fastest compression
      */
-    UZKCompressionLevelFastest= 1,
+    UZKCompressionMethodFastest= 1,
     
     /**
      *  Best (slowest) compression
      */
-    UZKCompressionLevelBest= 9
+    UZKCompressionMethodBest= 9
 };
 
 
 @interface UZKFileInfo : NSObject
-
-/**
- *  The name of the file's archive
- */
-@property (readonly, strong) NSString *archiveName;
 
 /**
  *  The name of the file
@@ -76,7 +71,7 @@ typedef NS_ENUM(NSInteger, UZKCompressionLevel) {
 /**
  *  The type of compression
  */
-@property (readonly) UZKCompressionLevel compressionLevel;
+@property (readonly) UZKCompressionMethod compressionMethod;
 
 
 /**
