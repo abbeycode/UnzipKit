@@ -164,5 +164,37 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
               progress:(void (^)(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed))progress
                  error:(NSError **)error;
 
+/**
+ *  Unarchive a single file from the archive into memory
+ *
+ *  @param fileInfo The info of the file within the archive to be expanded. Only the filename property is used
+ *  @param progress Called every so often to report the progress of the extraction
+ *
+ *       - *percentDecompressed* The percentage of the archive that has been decompressed
+ *
+ *  @param error    Contains an NSError object when there was an error reading the archive
+ *
+ *  @return An NSData object containing the bytes of the file, or nil if an error was encountered
+ */
+- (NSData *)extractData:(UZKFileInfo *)fileInfo
+               progress:(void (^)(CGFloat percentDecompressed))progress
+                  error:(NSError **)error;
+
+/**
+ *  Unarchive a single file from the archive into memory
+ *
+ *  @param filePath The path of the file within the archive to be expanded
+ *  @param progress Called every so often to report the progress of the extraction
+ *
+ *       - *percentDecompressed* The percentage of the file that has been decompressed
+ *
+ *  @param error    Contains an NSError object when there was an error reading the archive
+ *
+ *  @return An NSData object containing the bytes of the file, or nil if an error was encountered
+ */
+- (NSData *)extractDataFromFile:(NSString *)filePath
+                       progress:(void (^)(CGFloat percentDecompressed))progress
+                          error:(NSError **)error;
+
 
 @end
