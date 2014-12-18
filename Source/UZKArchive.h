@@ -196,5 +196,20 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
                        progress:(void (^)(CGFloat percentDecompressed))progress
                           error:(NSError **)error;
 
+/**
+ *  Loops through each file in the archive into memory, allowing you to perform an action using its info
+ *
+ *  @param action The action to perform using the data
+ *
+ *       - *fileInfo* The metadata of the file within the archive
+ *       - *stop*     Set to YES to stop reading the archive
+ *
+ *  @param error  Contains an error if any was returned
+ *
+ *  @return YES if no errors were encountered, NO otherwise
+ */
+- (BOOL)performOnFilesInArchive:(void(^)(UZKFileInfo *fileInfo, BOOL *stop))action
+                          error:(NSError **)error;
+
 
 @end

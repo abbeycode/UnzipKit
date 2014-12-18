@@ -388,6 +388,35 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     return [NSData dataWithData:result];
 }
 
+- (BOOL)performOnFilesInArchive:(void (^)(UZKFileInfo *, BOOL *))action
+                          error:(NSError **)error
+{
+    NSError *listError = nil;
+    NSArray *fileInfo = [self listFileInfo:&listError];
+    
+    if (listError || !fileInfo) {
+        NSLog(@"Failed to list the files in the archive");
+        
+        if (error) {
+            *error = listError;
+        }
+        
+        return NO;
+    }
+    
+    BOOL stop = NO;
+    
+    for (UZKFileInfo *info in fileInfo) {
+        action(info, &stop);
+        
+        if (stop) {
+            break;
+        }
+    }
+    
+    return YES;
+}
+
 
 
 #pragma mark - Private Methods
