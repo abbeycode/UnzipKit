@@ -35,6 +35,7 @@
 		96EA65FA1A40C8D000685B6D /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 96EA65F71A40C88800685B6D /* libz.dylib */; };
 		96EA66011A40E31900685B6D /* UZKFileInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65FF1A40E31900685B6D /* UZKFileInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96EA66021A40E31900685B6D /* UZKFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA66001A40E31900685B6D /* UZKFileInfo.m */; };
+		96EA66041A435D8200685B6D /* crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA66031A435D8200685B6D /* crypt.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +79,7 @@
 		96EA65F71A40C88800685B6D /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		96EA65FF1A40E31900685B6D /* UZKFileInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UZKFileInfo.h; sourceTree = "<group>"; };
 		96EA66001A40E31900685B6D /* UZKFileInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UZKFileInfo.m; sourceTree = "<group>"; };
+		96EA66031A435D8200685B6D /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,6 +176,7 @@
 		96EA65C21A40C44300685B6D /* MiniZip */ = {
 			isa = PBXGroup;
 			children = (
+				96EA66031A435D8200685B6D /* crypt.h */,
 				96EA65C31A40C44300685B6D /* ioapi.c */,
 				96EA65C41A40C44300685B6D /* ioapi.h */,
 				96EA65C51A40C44300685B6D /* mztools.c */,
@@ -219,6 +222,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				96EA65E31A40C44300685B6D /* zip.h in Headers */,
+				96EA66041A435D8200685B6D /* crypt.h in Headers */,
 				96EA65E41A40C44300685B6D /* FileInZipInfo.h in Headers */,
 				96EA65DA1A40C44300685B6D /* ioapi.h in Headers */,
 				96EA65F01A40C44300685B6D /* ZipReadStream.h in Headers */,

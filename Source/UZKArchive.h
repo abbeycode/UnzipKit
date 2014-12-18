@@ -6,6 +6,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class UZKFileInfo;
+
 
 @interface UZKArchive : NSObject
 
@@ -51,6 +53,31 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
      *  Error reading or advancing through the archive
      */
     UZKErrorCodeFileNavigationError = 102,
+    
+    /**
+     *  Error finding a file in the archive
+     */
+    UZKErrorCodeFileNotFoundInArchive = 103,
+    
+    /**
+     *  Error writing an extracted file to disk
+     */
+    UZKErrorCodeOutputError = 104,
+    
+    /**
+     *  The destination directory is a file
+     */
+    UZKErrorCodeOutputErrorPathIsAFile = 105,
+    
+    /**
+     *  The destination directory is a file
+     */
+    UZKErrorCodeInvalidPassword = 106,
+    
+    /**
+     *  Error reading a file in the archive
+     */
+    UZKErrorCodeFileRead = 107,
 };
 
 /**
@@ -117,6 +144,25 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *  @return Returns a list of UZKFileInfo objects, which contain metadata about the archive's files, or nil if an error was encountered
  */
 - (NSArray *)listFileInfo:(NSError **)error;
+
+/**
+ *  Writes all files in the archive to the given path
+ *
+ *  @param destinationDirectory  The destination path of the unarchived files
+ *  @param overwrite             YES to overwrite files in the destination directory, NO otherwise
+ *  @param progress              Called every so often to report the progress of the extraction
+ *
+ *       - *currentFile*                The info about the file that's being extracted
+ *       - *percentArchiveDecompressed* The percentage of the archive that has been decompressed
+ *
+ *  @param error     Contains an NSError object when there was an error reading the archive
+ *
+ *  @return YES on successful extraction, NO if an error was encountered
+ */
+- (BOOL)extractFilesTo:(NSString *)destinationDirectory
+             overwrite:(BOOL)overwrite
+              progress:(void (^)(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed))progress
+                 error:(NSError **)error;
 
 
 @end

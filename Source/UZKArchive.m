@@ -9,8 +9,6 @@
 #import "zip.h"
 
 #import "UZKFileInfo.h"
-#import "ZipException.h"
-#import "ZipFile.h"
 
 
 NSString *UZKErrorDomain = @"UZKErrorDomain";
@@ -19,11 +17,19 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
 #define FILE_IN_ZIP_MAX_NAME_LENGTH (512)
 
 
+typedef NS_ENUM(NSUInteger, UZKFileMode) {
+    UZKFileModeUnzip,
+    UZKFileModeCreate,
+    UZKFileModeAppend
+};
+
+
+
 @interface UZKArchive ()
 
 @property (strong) NSData *fileBookmark;
 
-@property (assign) ZipFileMode mode;
+@property (assign) UZKFileMode mode;
 @property (assign) zipFile zipFile;
 @property (assign) unzFile unzFile;
 @property (strong) NSDictionary *archiveContents;
@@ -199,7 +205,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
                 return;
             }
         }
-    } inMode:ZipFileModeUnzip error:&unzipError];
+    } inMode:UZKFileModeUnzip error:&unzipError];
     
     if (!success) {
         if (error) {
@@ -212,13 +218,105 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
     return [NSArray arrayWithArray:zipInfos];
 }
 
+- (BOOL)extractFilesTo:(NSString *)destinationDirectory
+             overwrite:(BOOL)overwrite
+              progress:(void (^)(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed))progress
+                 error:(NSError **)error
+{
+    NSError *listError = nil;
+    NSArray *fileInfo = [self listFileInfo:&listError];
+    
+    if (!fileInfo || listError) {
+        NSLog(@"Error listing contents of archive: %@", listError);
+        
+        if (error) {
+            *error = listError;
+        }
+        
+        return NO;
+    }
+    
+    NSFileManager *fm = [NSFileManager defaultManager];
+
+    NSNumber *totalSize = [fileInfo valueForKeyPath:@"@sum.uncompressedSize"];
+    __block long long bytesDecompressed = 0;
+
+    NSError *extractError = nil;
+    
+    BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
+        for (UZKFileInfo *info in fileInfo) {
+            if (progress) {
+                progress(info, bytesDecompressed / totalSize.floatValue);
+            }
+            
+            if (![self locateFileInZip:info.filename error:innerError]) {
+                [self assignError:error code:UZKErrorCodeFileNotFoundInArchive];
+                return;
+            }
+            
+            NSString *extractPath = [destinationDirectory stringByAppendingPathComponent:info.filename];
+            if ([fm fileExistsAtPath:extractPath] && !overwrite) {
+                return;
+            }
+
+            NSData *data = [self readFile:info.filename
+                                   length:info.uncompressedSize
+                                    error:innerError];
+            
+            int err = unzCloseCurrentFile(self.unzFile);
+            if (err != UNZ_OK) {
+                if (err == UZKErrorCodeCRCError) {
+                    err = UZKErrorCodeInvalidPassword;
+                }
+                
+                [self assignError:innerError code:err];
+                return;
+            }
+
+            BOOL isDirectory = YES;
+            NSString *extractDir = extractPath.stringByDeletingLastPathComponent;
+            if (![fm fileExistsAtPath:extractDir]) {
+                BOOL directoriesCreated = [fm createDirectoryAtPath:destinationDirectory
+                                        withIntermediateDirectories:YES
+                                                         attributes:nil
+                                                              error:error];
+                if (!directoriesCreated) {
+                    NSLog(@"Failed to create destination directory: %@", destinationDirectory);
+                    [self assignError:innerError code:UZKErrorCodeOutputError];
+                    return;
+                }
+            } else if (!isDirectory) {
+                [self assignError:error code:UZKErrorCodeOutputErrorPathIsAFile];
+                return;
+            }
+            
+            BOOL writeSuccess = [data writeToFile:extractPath
+                                          options:NSDataWritingAtomic
+                                            error:innerError];
+            if (!writeSuccess) {
+                NSLog(@"Failed to extract file to path: %@", extractPath);
+                [self assignError:innerError code:UZKErrorCodeOutputError];
+                return;
+            }
+
+            bytesDecompressed += data.length;
+        }
+    } inMode:UZKFileModeUnzip error:&extractError];
+    
+    if (error) {
+        *error = extractError ? extractError : nil;
+    }
+
+    return success;
+}
+
 
 
 #pragma mark - Private Methods
 
 
 - (BOOL)performActionWithArchiveOpen:(void(^)(NSError **innerError))action
-                              inMode:(ZipFileMode)mode
+                              inMode:(UZKFileMode)mode
                                error:(NSError **)error
 {
     if (error) {
@@ -232,20 +330,31 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
         return NO;
     }
     
+    NSError *actionError = nil;
+    
     @try {
-        action(error);
+        action(&actionError);
     }
     @finally {
-        if (![self closeFile:error]) {
+        NSError *closeError = nil;
+        if (![self closeFile:&closeError]) {
+            if (error && !actionError) {
+                *error = closeError;
+            }
+            
             return NO;
         }
     }
     
-    return !error || !*error;
+    if (error && actionError) {
+        *error = actionError;
+    }
+
+    return !actionError;
 }
 
 - (BOOL)openFile:(NSString *)zipFile
-          inMode:(ZipFileMode)mode
+          inMode:(UZKFileMode)mode
     withPassword:(NSString *)aPassword
            error:(NSError **)error
 {
@@ -253,8 +362,10 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
         *error = nil;
     }
     
+    self.mode = mode;
+    
     switch (mode) {
-        case ZipFileModeUnzip: {
+        case UZKFileModeUnzip: {
             if (![[NSFileManager defaultManager] fileExistsAtPath:zipFile]) {
                 [self assignError:error code:UZKErrorCodeArchiveNotFound];
                 return NO;
@@ -284,17 +395,15 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
                 unz_file_pos pos;
                 int err = unzGetFilePos(_unzFile, &pos);
                 if (err == UNZ_OK && info.filename) {
-                    [dic setObject:[NSArray arrayWithObjects:
-                                    [NSNumber numberWithLong:pos.pos_in_zip_directory],
-                                    [NSNumber numberWithLong:pos.num_of_file],
-                                    nil] forKey:info.filename];
+                    dic[info.filename.decomposedStringWithCanonicalMapping] = @[@(pos.pos_in_zip_directory),
+                                                                                @(pos.num_of_file)];
                 }
             } while (unzGoToNextFile (_unzFile) != UNZ_END_OF_LIST_OF_FILE);
             
             self.archiveContents = [NSDictionary dictionaryWithDictionary:dic];
             break;
         }
-        case ZipFileModeCreate:
+        case UZKFileModeCreate:
             self.zipFile = zipOpen([self.filename cStringUsingEncoding:NSUTF8StringEncoding], APPEND_STATUS_CREATE);
             if (self.zipFile == NULL) {
                 [self assignError:error code:UZKErrorCodeArchiveNotFound];
@@ -302,7 +411,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
             }
             break;
 
-        case ZipFileModeAppend:
+        case UZKFileModeAppend:
             self.zipFile = zipOpen([self.filename cStringUsingEncoding:NSUTF8StringEncoding], APPEND_STATUS_ADDINZIP);
             if (self.zipFile == NULL) {
                 [self assignError:error code:UZKErrorCodeArchiveNotFound];
@@ -312,7 +421,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
 
         default:
             [NSException raise:@"Invalid UZKArchive openFile mode"
-                        format:@"Unknown mode: %d for file: %@", mode, self.filename];
+                        format:@"Unknown mode: %lu for file: %@", mode, self.filename];
     }
     
     return YES;
@@ -323,7 +432,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
     int err;
     
     switch (self.mode) {
-        case ZipFileModeUnzip:
+        case UZKFileModeUnzip:
             err = unzClose(_unzFile);
             if (err != UNZ_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError];
@@ -331,7 +440,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
             }
             break;
 
-        case ZipFileModeCreate:
+        case UZKFileModeCreate:
             err = zipClose(_zipFile, NULL);
             if (err != ZIP_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError];
@@ -339,7 +448,7 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
             }
             break;
 
-        case ZipFileModeAppend:
+        case UZKFileModeAppend:
             err= zipClose(_zipFile, NULL);
             if (err != ZIP_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError];
@@ -349,19 +458,19 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
 
         default:
             [NSException raise:@"Invalid UZKArchive closeFile mode"
-                        format:@"Unknown mode: %d for file: %@", self.mode, self.filename];
+                        format:@"Unknown mode: %lu for file: %@", self.mode, self.filename];
     }
     
     self.mode = -1;
     return YES;
 }
 
+
+
+#pragma mark - Zip File Navigation
+
+
 - (UZKFileInfo *)currentFileInZipInfo:(NSError **)error {
-    if (self.mode != ZipFileModeUnzip) {
-        [NSException raise:@"Invalid mode"
-                    format:@"Must be in mode ZipFileModeUnzip, is in %d", self.mode];
-    }
-    
     char filename_inzip[FILE_IN_ZIP_MAX_NAME_LENGTH];
     unz_file_info file_info;
     
@@ -374,6 +483,74 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
     NSString *filename = [UZKArchive figureOutFilename:filename_inzip];
     return [UZKFileInfo fileInfo:&file_info filename:filename];
 }
+
+- (BOOL)locateFileInZip:(NSString *)fileNameInZip error:(NSError **)error {
+    NSArray* info = self.archiveContents[fileNameInZip.decomposedStringWithCanonicalMapping];
+    
+    if (!info) {
+        return [self assignError:error code:UZKErrorCodeFileNotFoundInArchive];
+    }
+    
+    unz_file_pos pos;
+    pos.pos_in_zip_directory = ((NSNumber *)info[0]).longValue;
+    pos.num_of_file = ((NSNumber *)info[1]).longValue;
+    
+    int err = unzGoToFilePos(_unzFile, &pos);
+    
+    if (err == UNZ_END_OF_LIST_OF_FILE) {
+        return [self assignError:error code:UZKErrorCodeFileNotFoundInArchive];
+    }
+
+    if (err != UNZ_OK) {
+        return [self assignError:error code:err];
+    }
+    
+    return YES;
+}
+
+
+
+#pragma mark - Zip File Operations
+
+
+- (NSData *)readFile:(NSString *)filename length:(NSUInteger)length error:(NSError **)error {
+    char filename_inzip[FILE_IN_ZIP_MAX_NAME_LENGTH];
+    unz_file_info file_info;
+    
+    int err = unzGetCurrentFileInfo(self.unzFile, &file_info, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
+    if (err != UNZ_OK) {
+        [self assignError:error code:UZKErrorCodeInternalError];
+        return nil;
+    }
+    
+    const char *passwordStr = NULL;
+    
+    if (self.password) {
+        passwordStr = self.password.UTF8String;
+    }
+    
+    err = unzOpenCurrentFilePassword(self.unzFile, passwordStr);
+    if (err != UNZ_OK) {
+        [self assignError:error code:UZKErrorCodeFileRead];
+        return nil;
+    }
+
+    
+    NSMutableData *data = [NSMutableData dataWithLength:length];
+    int bytes = unzReadCurrentFile(self.unzFile, data.mutableBytes, (unsigned)length);
+    
+    if (bytes < 0) {
+        [self assignError:error code:bytes];
+        return nil;
+    }
+    
+    data.length = bytes;
+    return data;
+}
+
+
+
+#pragma mark - Misc. Private Methods
 
 + (NSString *)figureOutFilename:(const char *)filenameBytes
 {
@@ -427,14 +604,43 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
                                           @"UZKErrorCodeFileNavigationError");
             break;
             
+        case UZKErrorCodeFileNotFoundInArchive:
+            errorName = NSLocalizedString(@"Can't find a file in the archive",
+                                          @"UZKErrorCodeFileNotFoundInArchive");
+            break;
+            
+        case UZKErrorCodeOutputError:
+            errorName = NSLocalizedString(@"Error extracting files from the archive",
+                                          @"UZKErrorCodeOutputError");
+            break;
+            
+        case UZKErrorCodeOutputErrorPathIsAFile:
+            errorName = NSLocalizedString(@"Attempted to extract the archive to a path that is a file, not a directory",
+                                          @"UZKErrorCodeOutputErrorPathIsAFile");
+            break;
+            
+        case UZKErrorCodeInvalidPassword:
+            errorName = NSLocalizedString(@"Incorrect password provided",
+                                          @"UZKErrorCodeInvalidPassword");
+            break;
+            
+        case UZKErrorCodeFileRead:
+            errorName = NSLocalizedString(@"Error reading a file in the archive",
+                                          @"UZKErrorCodeFileRead");
+            break;
+            
         default:
-            errorName = [NSString stringWithFormat:@"Unknown error code: %ld", errorCode];
+            errorName = [NSString localizedStringWithFormat:
+                         NSLocalizedString(@"Unknown error code: %ld", @"UnknownErrorCode"), errorCode];
             break;
     }
     
     return errorName;
 }
 
+/**
+ *  @return Always returns NO
+ */
 - (BOOL)assignError:(NSError **)error code:(NSInteger)errorCode
 {
     if (error) {
