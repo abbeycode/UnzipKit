@@ -1125,6 +1125,37 @@
 }
 
 
+#pragma mark Validate Password
+
+
+- (void)testValidatePassword_PasswordRequired
+{
+    NSURL *archiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:archiveURL];
+    
+    XCTAssertFalse(archive.validatePassword, @"validatePassword = YES when no password supplied");
+    
+    archive.password = @"wrong";
+    XCTAssertFalse(archive.validatePassword, @"validatePassword = YES when wrong password supplied");
+    
+    archive.password = @"password";
+    XCTAssertTrue(archive.validatePassword, @"validatePassword = NO when correct password supplied");
+}
+
+- (void)testValidatePassword_PasswordNotRequired
+{
+    NSURL *archiveURL = self.testFileURLs[@"Test Archive.zip"];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:archiveURL];
+    
+    XCTAssertTrue(archive.validatePassword, @"validatePassword = NO when no password supplied");
+    
+    archive.password = @"password";
+    XCTAssertTrue(archive.validatePassword, @"validatePassword = NO when password supplied");
+}
+
+
 #pragma mark - Helper Methods
 
 

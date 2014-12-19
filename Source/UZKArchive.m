@@ -180,7 +180,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
         
         NSUInteger fileCount = gi.number_entry;
 
-        err = unzGoToFirstFile(_unzFile);
+        err = unzGoToFirstFile(self.unzFile);
         
         if (err != UNZ_OK) {
             [self assignError:innerError code:UZKErrorCodeFileNavigationError];
@@ -493,14 +493,14 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 - (BOOL)isPasswordProtected
 {
     NSError *error = nil;
-    NSArray *fileInfo = [self listFileInfo:&error];
+    NSArray *fileInfos = [self listFileInfo:&error];
     
     if (error) {
         NSLog(@"Error checking whether file is password protected: %@", error);
         return NO;
     }
     
-    UZKFileInfo *firstFile = fileInfo.firstObject;
+    UZKFileInfo *firstFile = fileInfos.firstObject;
     
     if (!firstFile) {
         return NO;
@@ -509,6 +509,39 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     return firstFile.isEncryptedWithPassword;
 }
 
+- (BOOL)validatePassword
+{
+    if (!self.isPasswordProtected) {
+        return YES;
+    }
+    
+    NSError *error = nil;
+    NSArray *fileInfos = [self listFileInfo:&error];
+    
+    if (error) {
+        NSLog(@"Error checking whether file is password protected: %@", error);
+        return NO;
+    }
+    
+    UZKFileInfo *smallest = [fileInfos sortedArrayUsingComparator:^NSComparisonResult(UZKFileInfo *file1, UZKFileInfo *file2) {
+        if (file1.uncompressedSize < file2.uncompressedSize)
+            return NSOrderedAscending;
+        if (file1.uncompressedSize > file2.uncompressedSize)
+            return NSOrderedDescending;
+        return NSOrderedSame;
+    }].firstObject;
+
+    NSData *smallestData = [self extractData:smallest
+                                    progress:nil
+                                       error:&error];
+    
+    if (error || !smallestData) {
+        NSLog(@"Error while checking password: %@", error);
+        return NO;
+    }
+    
+    return YES;
+}
 
 
 #pragma mark - Private Methods
@@ -576,7 +609,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
                 return NO;
             }
             
-            int err = unzGoToFirstFile(_unzFile);
+            int err = unzGoToFirstFile(self.unzFile);
             if (err != UNZ_OK) {
                 [self assignError:error code:UZKErrorCodeFileNavigationError];
                 return NO;
@@ -592,13 +625,13 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
                 }
                 
                 unz_file_pos pos;
-                int err = unzGetFilePos(_unzFile, &pos);
+                int err = unzGetFilePos(self.unzFile, &pos);
                 if (err == UNZ_OK && info.filename) {
                     NSValue *dictValue = [NSValue valueWithBytes:&pos
                                                         objCType:@encode(unz_file_pos)];
                     dic[info.filename.decomposedStringWithCanonicalMapping] = dictValue;
                 }
-            } while (unzGoToNextFile (_unzFile) != UNZ_END_OF_LIST_OF_FILE);
+            } while (unzGoToNextFile (self.unzFile) != UNZ_END_OF_LIST_OF_FILE);
             
             self.archiveContents = [NSDictionary dictionaryWithDictionary:dic];
             break;
@@ -633,7 +666,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     
     switch (self.mode) {
         case UZKFileModeUnzip:
-            err = unzClose(_unzFile);
+            err = unzClose(self.unzFile);
             if (err != UNZ_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError];
                 return NO;
@@ -641,7 +674,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
             break;
 
         case UZKFileModeCreate:
-            err = zipClose(_zipFile, NULL);
+            err = zipClose(self.zipFile, NULL);
             if (err != ZIP_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError];
                 return NO;
@@ -649,7 +682,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
             break;
 
         case UZKFileModeAppend:
-            err= zipClose(_zipFile, NULL);
+            err= zipClose(self.zipFile, NULL);
             if (err != ZIP_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError];
                 return NO;
@@ -674,7 +707,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     char filename_inzip[FILE_IN_ZIP_MAX_NAME_LENGTH];
     unz_file_info file_info;
     
-    int err = unzGetCurrentFileInfo(_unzFile, &file_info, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
+    int err = unzGetCurrentFileInfo(self.unzFile, &file_info, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
     if (err != UNZ_OK) {
         [self assignError:error code:UZKErrorCodeArchiveNotFound];
         return nil;
@@ -694,7 +727,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     unz_file_pos pos;
     [filePosValue getValue:&pos];
     
-    int err = unzGoToFilePos(_unzFile, &pos);
+    int err = unzGoToFilePos(self.unzFile, &pos);
     
     if (err == UNZ_END_OF_LIST_OF_FILE) {
         return [self assignError:error code:UZKErrorCodeFileNotFoundInArchive];

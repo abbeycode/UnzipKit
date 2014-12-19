@@ -248,5 +248,12 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  */
 - (BOOL)isPasswordProtected;
 
+/**
+ *  Tests whether the provided password unlocks the archive
+ *
+ *  @return YES if correct password or archive is not password protected, NO if password is wrong
+ */
+- (BOOL)validatePassword;
+
 
 @end
