@@ -27,6 +27,8 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 
 @interface UZKArchive ()
 
+- (instancetype)initWithFile:(NSURL *)fileURL password:(NSString*)password NS_DESIGNATED_INITIALIZER;
+
 @property (strong) NSData *fileBookmark;
 
 @property (assign) UZKFileMode mode;
@@ -70,7 +72,12 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 #pragma mark - Initializers
 
 
-- (id)initWithFile:(NSURL *)fileURL
+- (instancetype)initWithFile:(NSURL *)fileURL
+{
+    return [self initWithFile:fileURL password:nil];
+}
+
+- (instancetype)initWithFile:(NSURL *)fileURL password:(NSString*)password
 {
     if ((self = [super init])) {
         NSError *error = nil;
@@ -78,19 +85,11 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
                               includingResourceValuesForKeys:@[]
                                                relativeToURL:nil
                                                        error:&error];
-        
+        self.password = password;
+
         if (error) {
             NSLog(@"Error creating bookmark to ZIP archive: %@", error);
         }
-    }
-    
-    return self;
-}
-
-- (id)initWithFile:(NSURL *)fileURL password:(NSString*)password
-{
-    if ((self = [self initWithFile:fileURL])) {
-        self.password = password;
     }
     
     return self;
