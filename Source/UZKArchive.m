@@ -325,61 +325,19 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 {
     NSMutableData *result = [NSMutableData data];
     
-    NSUInteger bufferSize = 4096; //Arbitrary
+    BOOL success = [self extractBufferedDataFromFile:filePath
+                                               error:error
+                                              action:^(NSData *dataChunk, CGFloat percentDecompressed) {
+                                                  if (progress) {
+                                                      progress(percentDecompressed);
+                                                  }
+                                                  
+                                                  [result appendData:dataChunk];
+                                              }];
     
-    BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
-        if (![self locateFileInZip:filePath error:innerError]) {
-            [self assignError:error code:UZKErrorCodeFileNotFoundInArchive];
-            return;
-        }
-        
-        UZKFileInfo *info = [self currentFileInZipInfo:innerError];
-        
-        if (!info) {
-            NSLog(@"Failed to locate file %@ in zip", filePath);
-            return;
-        }
-        
-        if (![self openFile:info.filename error:error]) {
-            return;
-        }
-        
-        for (;;)
-        {
-            if (progress) {
-                progress(result.length / (CGFloat)info.uncompressedSize);
-            }
-            
-            NSMutableData *data = [NSMutableData dataWithLength:bufferSize];
-            int bytesRead = unzReadCurrentFile(self.unzFile, data.mutableBytes, (unsigned)bufferSize);
-            
-            if (bytesRead < 0) {
-                NSLog(@"Failed to read file %@ in zip", info.filename);
-                [self assignError:error code:bytesRead];
-                return;
-            }
-            else if (bytesRead == 00) {
-                break;
-            }
-            
-            data.length = bytesRead;
-            [result appendData:data];
-        }
-        
-        if (progress) {
-            progress(1.0);
-        }
-        
-        int err = unzCloseCurrentFile(self.unzFile);
-        if (err != UNZ_OK) {
-            if (err == UZKErrorCodeCRCError) {
-                err = UZKErrorCodeInvalidPassword;
-            }
-            
-            [self assignError:innerError code:err];
-            return;
-        }
-    } inMode:UZKFileModeUnzip error:error];
+    if (progress) {
+        progress(1.0);
+    }
     
     if (!success) {
         return nil;
@@ -467,6 +425,69 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     } inMode:UZKFileModeUnzip error:error];
     
     return success && result;
+}
+
+- (BOOL)extractBufferedDataFromFile:(NSString *)filePath
+                              error:(NSError **)error
+                             action:(void (^)(NSData *, CGFloat))action
+{
+    NSUInteger bufferSize = 4096; //Arbitrary
+    
+    BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
+        if (![self locateFileInZip:filePath error:innerError]) {
+            [self assignError:error code:UZKErrorCodeFileNotFoundInArchive];
+            return;
+        }
+        
+        UZKFileInfo *info = [self currentFileInZipInfo:innerError];
+        
+        if (!info) {
+            NSLog(@"Failed to locate file %@ in zip", filePath);
+            return;
+        }
+        
+        if (![self openFile:info.filename error:error]) {
+            return;
+        }
+        
+        long long bytesDecompressed = 0;
+        
+        for (;;)
+        {
+            @autoreleasepool {
+                NSMutableData *data = [NSMutableData dataWithLength:bufferSize];
+                int bytesRead = unzReadCurrentFile(self.unzFile, data.mutableBytes, (unsigned)bufferSize);
+                
+                if (bytesRead < 0) {
+                    NSLog(@"Failed to read file %@ in zip", info.filename);
+                    [self assignError:error code:bytesRead];
+                    return;
+                }
+                else if (bytesRead == 0) {
+                    break;
+                }
+                
+                data.length = bytesRead;
+                bytesDecompressed += bytesRead;
+                
+                if (action) {
+                    action([data copy], bytesDecompressed / (CGFloat)info.uncompressedSize);
+                }
+            }
+        }
+        
+        int err = unzCloseCurrentFile(self.unzFile);
+        if (err != UNZ_OK) {
+            if (err == UZKErrorCodeCRCError) {
+                err = UZKErrorCodeInvalidPassword;
+            }
+            
+            [self assignError:innerError code:err];
+            return;
+        }
+    } inMode:UZKFileModeUnzip error:error];
+    
+    return success;
 }
 
 

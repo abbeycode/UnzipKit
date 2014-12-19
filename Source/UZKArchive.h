@@ -227,5 +227,21 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
 - (BOOL)performOnDataInArchive:(void(^)(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop))action
                          error:(NSError **)error;
 
+/**
+ *  Unarchive a single file from the archive into memory
+ *
+ *  @param filePath   The path of the file within the archive to be expanded
+ *  @param error      Contains an NSError object when there was an error reading the archive
+ *  @param action     The block to run for each chunk of data, each of size <= bufferSize
+ *
+ *       - *dataChunk*           The data read from the archived file. Read bytes and length to write the data
+ *       - *percentDecompressed* The percentage of the file that has been decompressed
+ *
+ *  @return YES if all data was read successfully, NO if an error was encountered
+ */
+- (BOOL)extractBufferedDataFromFile:(NSString *)filePath
+                              error:(NSError **)error
+                             action:(void(^)(NSData *dataChunk, CGFloat percentDecompressed))action;
+
 
 @end

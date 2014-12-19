@@ -6,6 +6,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
+#import <DTPerformanceSession/DTSignalFlag.h>
 
 @import UnzipKit;
 
@@ -104,15 +105,6 @@
     [fm copyItemAtURL:m4aFileURL
                 toURL:self.corruptArchive
                 error:&error];
-    
-    // Make a large zip file, to test time-sensitive operations
-    NSMutableArray *emptyFiles = [NSMutableArray array];
-    for (NSInteger i = 0; i < 5; i++) {
-        [emptyFiles addObject:[self emptyTextFileOfLength:20000000]];
-    }
-    NSURL *largeArchiveURL = [self archiveWithFiles:emptyFiles
-                                               name:@"Large Archive"];
-    self.testFileURLs[@"Large Archive.zip"] = largeArchiveURL;
 }
 
 - (void)tearDown {
@@ -377,7 +369,7 @@
     NSError *error = nil;
     NSArray *filesInArchive = [archive listFileInfo:&error];
     
-    XCTAssertNil(error, @"Error returned by unrarListFiles");
+    XCTAssertNil(error, @"Error returned by listFileInfo");
     XCTAssertNotNil(filesInArchive, @"No list of files returned");
     XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
@@ -521,7 +513,7 @@
                                          error:&error];
         
         XCTAssertNil(error, @"Error returned by extractFilesTo:overWrite:error:");
-        XCTAssertTrue(success, @"Unrar failed to extract %@ to %@", testArchiveName, extractURL);
+        XCTAssertTrue(success, @"Failed to extract %@ to %@", testArchiveName, extractURL);
         
         error = nil;
         NSArray *extractedFiles = [fm contentsOfDirectoryAtPath:extractURL.path
@@ -579,7 +571,7 @@
                                      error:&error];
     
     XCTAssertNil(error, @"Error returned by extractFilesTo:overWrite:error:");
-    XCTAssertTrue(success, @"Unrar failed to extract %@ to %@", testArchiveName, extractURL);
+    XCTAssertTrue(success, @"Failed to extract %@ to %@", testArchiveName, extractURL);
     
     error = nil;
     NSArray *extractedFiles = [fm contentsOfDirectoryAtPath:extractURL.path
@@ -937,7 +929,7 @@
 
 - (void)testPerformOnData_FileMoved
 {
-    NSURL *largeArchiveURL = self.testFileURLs[@"Large Archive.zip"];
+    NSURL *largeArchiveURL = [self largeArchive];
     
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:largeArchiveURL];
     
@@ -971,7 +963,7 @@
 
 - (void)testPerformOnData_FileDeleted
 {
-    NSURL *largeArchiveURL = self.testFileURLs[@"Large Archive.zip"];
+    NSURL *largeArchiveURL = [self largeArchive];
     
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:largeArchiveURL];
     
@@ -1003,7 +995,7 @@
 
 - (void)testPerformOnData_FileMovedBeforeBegin
 {
-    NSURL *largeArchiveURL = self.testFileURLs[@"Large Archive.zip"];
+    NSURL *largeArchiveURL = [self largeArchive];
     
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:largeArchiveURL];
     
@@ -1029,6 +1021,85 @@
     XCTAssertEqual(fileCount, 5, @"Not all files read");
     XCTAssertTrue(success, @"Failed to read files");
     XCTAssertNil(error, @"Error reading files: %@", error);
+}
+
+
+#pragma mark Extract Buffered Data
+
+
+- (void)testExtractBufferedData
+{
+    NSURL *archiveURL = self.testFileURLs[@"Test Archive.zip"];
+    NSString *extractedFile = @"Test File B.jpg";
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:archiveURL];
+    
+    NSError *error = nil;
+    NSMutableData *reconstructedFile = [NSMutableData data];
+    BOOL success = [archive extractBufferedDataFromFile:extractedFile
+                                                  error:&error
+                                                 action:
+                    ^(NSData *dataChunk, CGFloat percentDecompressed) {
+                        NSLog(@"Decompressed: %f%%", percentDecompressed);
+                        [reconstructedFile appendBytes:dataChunk.bytes
+                                                length:dataChunk.length];
+                    }];
+    
+    XCTAssertTrue(success, @"Failed to read buffered data");
+    XCTAssertNil(error, @"Error reading buffered data");
+    XCTAssertGreaterThan(reconstructedFile.length, 0, @"No data returned");
+    
+    NSData *originalFile = [NSData dataWithContentsOfURL:self.testFileURLs[extractedFile]];
+    XCTAssertTrue([originalFile isEqualToData:reconstructedFile],
+                  @"File extracted in buffer not returned correctly");
+}
+
+- (void)testExtractBufferedData_VeryLarge
+{
+    DTSendSignalFlag("Begin creating text file", DT_START_SIGNAL, TRUE);
+    NSURL *largeTextFile = [self emptyTextFileOfLength:100000000]; // Increase for a more dramatic test
+    XCTAssertNotNil(largeTextFile, @"No large text file URL returned");
+    DTSendSignalFlag("End creating text file", DT_END_SIGNAL, TRUE);
+    
+    DTSendSignalFlag("Begin archiving data", DT_START_SIGNAL, TRUE);
+    NSURL *archiveURL = [self archiveWithFiles:@[largeTextFile]];
+    XCTAssertNotNil(archiveURL, @"No archived large text file URL returned");
+    DTSendSignalFlag("Begin archiving data", DT_END_SIGNAL, TRUE);
+    
+    NSURL *deflatedFileURL = [self.tempDirectory URLByAppendingPathComponent:@"DeflatedTextFile.txt"];
+    BOOL createSuccess = [[NSFileManager defaultManager] createFileAtPath:deflatedFileURL.path
+                                                                 contents:nil
+                                                               attributes:nil];
+    XCTAssertTrue(createSuccess, @"Failed to create empty deflate file");
+    
+    NSError *handleError = nil;
+    NSFileHandle *deflated = [NSFileHandle fileHandleForWritingToURL:deflatedFileURL
+                                                               error:&handleError];
+    XCTAssertNil(handleError, @"Error creating a file handle");
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:archiveURL];
+    
+    DTSendSignalFlag("Begin extracting buffered data", DT_START_SIGNAL, TRUE);
+    
+    NSError *error = nil;
+    BOOL success = [archive extractBufferedDataFromFile:largeTextFile.lastPathComponent
+                                                  error:&error
+                                                 action:
+                    ^(NSData *dataChunk, CGFloat percentDecompressed) {
+                        NSLog(@"Decompressed: %f%%", percentDecompressed);
+                        [deflated writeData:dataChunk];
+                    }];
+    
+    DTSendSignalFlag("End extracting buffered data", DT_END_SIGNAL, TRUE);
+    
+    XCTAssertTrue(success, @"Failed to read buffered data");
+    XCTAssertNil(error, @"Error reading buffered data");
+    
+    [deflated closeFile];
+    
+    NSData *deflatedData = [NSData dataWithContentsOfURL:deflatedFileURL];
+    NSData *fileData = [NSData dataWithContentsOfURL:largeTextFile];
+    
+    XCTAssertTrue([fileData isEqualToData:deflatedData], @"Data didn't restore correctly");
 }
 
 
@@ -1058,7 +1129,8 @@
     return [NSString stringWithFormat:@"%@ %@", prefix, [self randomDirectoryName]];
 }
 
-- (NSURL *)emptyTextFileOfLength:(NSUInteger)fileSize {
+- (NSURL *)emptyTextFileOfLength:(NSUInteger)fileSize
+{
     NSURL *resultURL = [self.tempDirectory URLByAppendingPathComponent:
                         [NSString stringWithFormat:@"%@.txt", [[NSProcessInfo processInfo] globallyUniqueString]]];
     
@@ -1078,7 +1150,14 @@
     return resultURL;
 }
 
-- (NSURL *)archiveWithFiles:(NSArray *)fileURLs name:(NSString *)name {
+- (NSURL *)archiveWithFiles:(NSArray *)fileURLs
+{
+    NSString *uniqueString = [[NSProcessInfo processInfo] globallyUniqueString];
+    return [self archiveWithFiles:fileURLs name:uniqueString];
+}
+
+- (NSURL *)archiveWithFiles:(NSArray *)fileURLs name:(NSString *)name
+{
     NSURL *archiveURL = [[self.tempDirectory URLByAppendingPathComponent:name]
                          URLByAppendingPathExtension:@"zip"];
     
@@ -1097,7 +1176,19 @@
     return archiveURL;
 }
 
-- (NSUInteger)crcOfTestFile:(NSString *)filename {
+- (NSURL *)largeArchive
+{
+    NSMutableArray *emptyFiles = [NSMutableArray array];
+    for (NSInteger i = 0; i < 5; i++) {
+        [emptyFiles addObject:[self emptyTextFileOfLength:20000000]];
+    }
+    NSURL *largeArchiveURL = [self archiveWithFiles:emptyFiles
+                                               name:@"Large Archive"];
+    return largeArchiveURL;
+}
+
+- (NSUInteger)crcOfTestFile:(NSString *)filename
+{
     NSURL *fileURL = [self urlOfTestFile:filename];
     NSData *fileContents = [[NSFileManager defaultManager] contentsAtPath:fileURL.path];
     return crc32(0, fileContents.bytes, (uInt)fileContents.length);
