@@ -404,17 +404,69 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
         return NO;
     }
     
-    BOOL stop = NO;
-    
-    for (UZKFileInfo *info in fileInfo) {
-        action(info, &stop);
-        
-        if (stop) {
-            break;
+    BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
+        BOOL stop = NO;
+
+        for (UZKFileInfo *info in fileInfo) {
+            action(info, &stop);
+            
+            if (stop) {
+                break;
+            }
         }
+    } inMode:UZKFileModeUnzip error:error];
+    
+    return success;
+}
+
+- (BOOL)performOnDataInArchive:(void (^)(UZKFileInfo *, NSData *, BOOL *))action
+                         error:(NSError **)error
+{
+    NSError *listError = nil;
+    NSArray *fileInfo = [self listFileInfo:&listError];
+    
+    if (listError || !fileInfo) {
+        NSLog(@"Failed to list the files in the archive");
+        
+        if (error) {
+            *error = listError;
+        }
+        
+        return NO;
     }
     
-    return YES;
+    __block BOOL result = YES;
+    
+    BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
+        BOOL stop = NO;
+        
+        for (UZKFileInfo *info in fileInfo) {
+            if (![self locateFileInZip:info.filename error:innerError]) {
+                [self assignError:error code:UZKErrorCodeFileNotFoundInArchive];
+                result = NO;
+                return;
+            }
+
+            NSData *fileData = [self readFile:info.filename
+                                       length:info.uncompressedSize
+                                        error:error];
+            
+            if (!fileData) {
+                NSLog(@"Error reading file %@ in archive", info.filename);
+                [self assignError:error code:UZKErrorCodeFileNotFoundInArchive];
+                result = NO;
+                return;
+            }
+            
+            action(info, fileData, &stop);
+            
+            if (stop) {
+                break;
+            }
+        }
+    } inMode:UZKFileModeUnzip error:error];
+    
+    return success && result;
 }
 
 

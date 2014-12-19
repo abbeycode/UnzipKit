@@ -98,14 +98,21 @@
         }
     }
     
-    // Make a "corrupt" rar file
+    // Make a "corrupt" zip file
     NSURL *m4aFileURL = [self urlOfTestFile:@"Test File C.m4a"];
     self.corruptArchive = [self.tempDirectory URLByAppendingPathComponent:@"corrupt.zip"];
     [fm copyItemAtURL:m4aFileURL
                 toURL:self.corruptArchive
                 error:&error];
     
-    XCTAssertNil(error, @"Failed to create corrupt archive (copy from %@ to %@)", m4aFileURL, self.corruptArchive);
+    // Make a large zip file, to test time-sensitive operations
+    NSMutableArray *emptyFiles = [NSMutableArray array];
+    for (NSInteger i = 0; i < 5; i++) {
+        [emptyFiles addObject:[self emptyTextFileOfLength:20000000]];
+    }
+    NSURL *largeArchiveURL = [self archiveWithFiles:emptyFiles
+                                               name:@"Large Archive"];
+    self.testFileURLs[@"Large Archive.zip"] = largeArchiveURL;
 }
 
 - (void)tearDown {
@@ -859,6 +866,172 @@
 }
 
 
+#pragma mark Perform on Data
+
+
+- (void)testPerformOnData
+{
+    NSArray *testArchives = @[@"Test Archive.zip",
+                              @"Test Archive (Password).zip"];
+    
+    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+        return ![key hasSuffix:@"zip"];
+    }];
+    
+    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    
+    for (NSString *testArchiveName in testArchives) {
+        NSURL *testArchiveURL = self.testFileURLs[testArchiveName];
+        NSString *password = ([testArchiveName rangeOfString:@"Password"].location != NSNotFound
+                              ? @"password"
+                              : nil);
+        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password];
+        
+        __block NSUInteger fileIndex = 0;
+        NSError *error = nil;
+        
+        [archive performOnDataInArchive:
+         ^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
+             NSString *expectedFilename = expectedFiles[fileIndex++];
+             XCTAssertEqualObjects(fileInfo.filename, expectedFilename, @"Unexpected filename encountered");
+             
+             NSData *expectedFileData = [NSData dataWithContentsOfURL:self.testFileURLs[expectedFilename]];
+             
+             XCTAssertNotNil(fileData, @"No data extracted");
+             XCTAssertTrue([expectedFileData isEqualToData:fileData], @"File data doesn't match original file");
+         } error:&error];
+        
+        XCTAssertNil(error, @"Error iterating through files");
+        XCTAssertEqual(fileIndex, expectedFiles.count, @"Incorrect number of files encountered");
+    }
+}
+
+- (void)testPerformOnData_Unicode
+{
+    NSSet *expectedFileSet = [self.unicodeFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+        return ![key hasSuffix:@"zip"];
+    }];
+    
+    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    
+    NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    
+    __block NSUInteger fileIndex = 0;
+    NSError *error = nil;
+    
+    [archive performOnDataInArchive:
+     ^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
+         NSString *expectedFilename = expectedFiles[fileIndex++];
+         XCTAssertEqualObjects(fileInfo.filename, expectedFilename, @"Unexpected filename encountered");
+         
+         NSData *expectedFileData = [NSData dataWithContentsOfURL:self.unicodeFileURLs[expectedFilename]];
+         
+         XCTAssertNotNil(fileData, @"No data extracted");
+         XCTAssertTrue([expectedFileData isEqualToData:fileData], @"File data doesn't match original file");
+     } error:&error];
+    
+    XCTAssertNil(error, @"Error iterating through files");
+    XCTAssertEqual(fileIndex, expectedFiles.count, @"Incorrect number of files encountered");
+}
+
+- (void)testPerformOnData_FileMoved
+{
+    NSURL *largeArchiveURL = self.testFileURLs[@"Large Archive.zip"];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:largeArchiveURL];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [NSThread sleepForTimeInterval:1];
+        
+        NSURL *movedURL = [largeArchiveURL URLByAppendingPathExtension:@"unittest"];
+        
+        NSError *renameError = nil;
+        NSFileManager *fm = [NSFileManager defaultManager];
+        [fm moveItemAtURL:largeArchiveURL toURL:movedURL error:&renameError];
+        XCTAssertNil(renameError, @"Error renaming file: %@", renameError);
+    });
+    
+    __block NSUInteger fileCount = 0;
+    
+    NSError *error = nil;
+    BOOL success = [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
+        XCTAssertNotNil(fileData, @"Extracted file is nil: %@", fileInfo.filename);
+        
+        if (!fileInfo.isDirectory) {
+            fileCount++;
+            XCTAssertGreaterThan(fileData.length, 0, @"Extracted file is empty: %@", fileInfo.filename);
+        }
+    } error:&error];
+    
+    XCTAssertEqual(fileCount, 5, @"Not all files read");
+    XCTAssertTrue(success, @"Failed to read files");
+    XCTAssertNil(error, @"Error reading files: %@", error);
+}
+
+- (void)testPerformOnData_FileDeleted
+{
+    NSURL *largeArchiveURL = self.testFileURLs[@"Large Archive.zip"];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:largeArchiveURL];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [NSThread sleepForTimeInterval:1];
+        
+        NSError *removeError = nil;
+        NSFileManager *fm = [NSFileManager defaultManager];
+        [fm removeItemAtURL:largeArchiveURL error:&removeError];
+        XCTAssertNil(removeError, @"Error removing file: %@", removeError);
+    });
+    
+    __block NSUInteger fileCount = 0;
+    
+    NSError *error = nil;
+    BOOL success = [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
+        XCTAssertNotNil(fileData, @"Extracted file is nil: %@", fileInfo.filename);
+        
+        if (!fileInfo.isDirectory) {
+            fileCount++;
+            XCTAssertGreaterThan(fileData.length, 0, @"Extracted file is empty: %@", fileInfo.filename);
+        }
+    } error:&error];
+    
+    XCTAssertEqual(fileCount, 5, @"Not all files read");
+    XCTAssertTrue(success, @"Failed to read files");
+    XCTAssertNil(error, @"Error reading files: %@", error);
+}
+
+- (void)testPerformOnData_FileMovedBeforeBegin
+{
+    NSURL *largeArchiveURL = self.testFileURLs[@"Large Archive.zip"];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:largeArchiveURL];
+    
+    NSURL *movedURL = [largeArchiveURL URLByAppendingPathExtension:@"unittest"];
+    
+    NSError *renameError = nil;
+    NSFileManager *fm = [NSFileManager defaultManager];
+    [fm moveItemAtURL:largeArchiveURL toURL:movedURL error:&renameError];
+    XCTAssertNil(renameError, @"Error renaming file: %@", renameError);
+    
+    __block NSUInteger fileCount = 0;
+    
+    NSError *error = nil;
+    BOOL success = [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
+        XCTAssertNotNil(fileData, @"Extracted file is nil: %@", fileInfo.filename);
+        
+        if (!fileInfo.isDirectory) {
+            fileCount++;
+            XCTAssertGreaterThan(fileData.length, 0, @"Extracted file is empty: %@", fileInfo.filename);
+        }
+    } error:&error];
+    
+    XCTAssertEqual(fileCount, 5, @"Not all files read");
+    XCTAssertTrue(success, @"Failed to read files");
+    XCTAssertNil(error, @"Error reading files: %@", error);
+}
+
+
 #pragma mark - Helper Methods
 
 
@@ -883,6 +1056,45 @@
 - (NSString *)randomDirectoryWithPrefix:(NSString *)prefix
 {
     return [NSString stringWithFormat:@"%@ %@", prefix, [self randomDirectoryName]];
+}
+
+- (NSURL *)emptyTextFileOfLength:(NSUInteger)fileSize {
+    NSURL *resultURL = [self.tempDirectory URLByAppendingPathComponent:
+                        [NSString stringWithFormat:@"%@.txt", [[NSProcessInfo processInfo] globallyUniqueString]]];
+    
+    [[NSFileManager defaultManager] createFileAtPath:resultURL.path
+                                            contents:nil
+                                          attributes:nil];
+    
+    NSError *error = nil;
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingToURL:resultURL
+                                                                 error:&error];
+    XCTAssertNil(error, @"Error creating file handle for URL: %@", resultURL);
+    
+    [fileHandle seekToFileOffset:fileSize];
+    [fileHandle writeData:[@"\x00" dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileHandle closeFile];
+    
+    return resultURL;
+}
+
+- (NSURL *)archiveWithFiles:(NSArray *)fileURLs name:(NSString *)name {
+    NSURL *archiveURL = [[self.tempDirectory URLByAppendingPathComponent:name]
+                         URLByAppendingPathExtension:@"zip"];
+    
+    NSTask *task = [[NSTask alloc] init];
+    task.launchPath = @"/usr/bin/zip";
+    task.arguments = [@[@"-j", archiveURL.path] arrayByAddingObjectsFromArray:[fileURLs valueForKeyPath:@"path"]];
+    
+    [task launch];
+    [task waitUntilExit];
+    
+    if (task.terminationStatus != 0) {
+        NSLog(@"Failed to create zip archive");
+        return nil;
+    }
+    
+    return archiveURL;
 }
 
 - (NSUInteger)crcOfTestFile:(NSString *)filename {

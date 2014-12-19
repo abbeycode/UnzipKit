@@ -211,5 +211,21 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
 - (BOOL)performOnFilesInArchive:(void(^)(UZKFileInfo *fileInfo, BOOL *stop))action
                           error:(NSError **)error;
 
+/**
+ *  Extracts each file in the archive into memory, allowing you to perform an action on it
+ *
+ *  @param action The action to perform using the data
+ *
+ *       - *fileInfo* The metadata of the file within the archive
+ *       - *fileData* The full data of the file in the archive
+ *       - *stop*     Set to YES to stop reading the archive
+ *
+ *  @param error  Contains an error if any was returned
+ *
+ *  @return YES if no errors were encountered, NO otherwise
+ */
+- (BOOL)performOnDataInArchive:(void(^)(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop))action
+                         error:(NSError **)error;
+
 
 @end
