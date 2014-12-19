@@ -174,7 +174,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
         unz_global_info gi;
         int err = unzGetGlobalInfo(self.unzFile, &gi);
         if (err != UNZ_OK) {
-            [self assignError:error code:UZKErrorCodeArchiveNotFound];
+            [self assignError:innerError code:UZKErrorCodeArchiveNotFound];
             return;
         }
         
@@ -183,7 +183,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
         err = unzGoToFirstFile(_unzFile);
         
         if (err != UNZ_OK) {
-            [self assignError:error code:UZKErrorCodeFileNavigationError];
+            [self assignError:innerError code:UZKErrorCodeFileNavigationError];
             return;
         }
 
@@ -201,7 +201,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
                 return;
             
             if (err != UNZ_OK) {
-                [self assignError:error code:UZKErrorCodeFileNavigationError];
+                [self assignError:innerError code:UZKErrorCodeFileNavigationError];
                 return;
             }
         }
@@ -250,7 +250,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
             }
             
             if (![self locateFileInZip:info.filename error:innerError]) {
-                [self assignError:error code:UZKErrorCodeFileNotFoundInArchive];
+                [self assignError:innerError code:UZKErrorCodeFileNotFoundInArchive];
                 return;
             }
             
@@ -286,7 +286,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
                     return;
                 }
             } else if (!isDirectory) {
-                [self assignError:error code:UZKErrorCodeOutputErrorPathIsAFile];
+                [self assignError:innerError code:UZKErrorCodeOutputErrorPathIsAFile];
                 return;
             }
             
@@ -400,7 +400,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
         
         for (UZKFileInfo *info in fileInfo) {
             if (![self locateFileInZip:info.filename error:innerError]) {
-                [self assignError:error code:UZKErrorCodeFileNotFoundInArchive];
+                [self assignError:innerError code:UZKErrorCodeFileNotFoundInArchive];
                 result = NO;
                 return;
             }
@@ -411,7 +411,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
             
             if (!fileData) {
                 NSLog(@"Error reading file %@ in archive", info.filename);
-                [self assignError:error code:UZKErrorCodeFileNotFoundInArchive];
+                [self assignError:innerError code:UZKErrorCodeFileNotFoundInArchive];
                 result = NO;
                 return;
             }
@@ -435,7 +435,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     
     BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
         if (![self locateFileInZip:filePath error:innerError]) {
-            [self assignError:error code:UZKErrorCodeFileNotFoundInArchive];
+            [self assignError:innerError code:UZKErrorCodeFileNotFoundInArchive];
             return;
         }
         
@@ -460,7 +460,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
                 
                 if (bytesRead < 0) {
                     NSLog(@"Failed to read file %@ in zip", info.filename);
-                    [self assignError:error code:bytesRead];
+                    [self assignError:innerError code:bytesRead];
                     return;
                 }
                 else if (bytesRead == 0) {
