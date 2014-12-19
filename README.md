@@ -4,6 +4,34 @@
 
 UnzipKit is an Objective-C `zlib` wrapper for compressing and decompressing ZIP files on OS X and iOS. It's based on the [AgileBits fork](https://github.com/AgileBits/objective-zip) of [Objective-Zip](http://code.google.com/p/objective-zip/), developed by [Flying Dolphin Studio](http://www.flyingdolphinstudio.com).
 
+It provides the following over Objective-Zip:
+
+* A simpler API, with only a handful of methods, and no incantations to remember
+* Full documentation for all methods
+* Pervasive use of `NSError`, instead of throwing exceptions
+
+# Example Usage
+
+```Objective-C
+UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip"];
+
+NSError *error = nil;
+
+NSArray *filesInArchive = [archive listFilenames:&error];
+BOOL extractFilesSuccessful = [archive extractFilesTo:@"some/directory"
+                                            overWrite:NO
+                                             progress:
+    ^(URKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
+        NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed);
+    }
+                                                error:&error];
+NSData *extractedData = [archive extractDataFromFile:@"a file in the archive.jpg"
+                                            progress:^(CGFloat percentDecompressed) {
+                                                         NSLog(@"Extracting, %f%% complete", percentDecompressed);
+                                            }
+                                               error:&error];
+```
+
 # License
 
 * Objective-Zip: [New BSD License](http://www.opensource.org/licenses/bsd-license.php)
