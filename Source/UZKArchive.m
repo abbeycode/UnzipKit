@@ -490,6 +490,25 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     return success;
 }
 
+- (BOOL)isPasswordProtected
+{
+    NSError *error = nil;
+    NSArray *fileInfo = [self listFileInfo:&error];
+    
+    if (error) {
+        NSLog(@"Error checking whether file is password protected: %@", error);
+        return NO;
+    }
+    
+    UZKFileInfo *firstFile = fileInfo.firstObject;
+    
+    if (!firstFile) {
+        return NO;
+    }
+    
+    return firstFile.isEncryptedWithPassword;
+}
+
 
 
 #pragma mark - Private Methods

@@ -1103,6 +1103,28 @@
 }
 
 
+#pragma mark Is Password Protected
+
+
+- (void)testIsPasswordProtected_PasswordRequired
+{
+    NSURL *archiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:archiveURL];
+    
+    XCTAssertTrue(archive.isPasswordProtected, @"isPasswordProtected = NO for password-protected archive");
+}
+
+- (void)testIsPasswordProtected_PasswordNotRequired
+{
+    NSURL *archiveURL = self.testFileURLs[@"Test Archive.zip"];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:archiveURL];
+    
+    XCTAssertFalse(archive.isPasswordProtected, @"isPasswordProtected = YES for password-protected archive");
+}
+
+
 #pragma mark - Helper Methods
 
 

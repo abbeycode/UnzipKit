@@ -243,5 +243,10 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
                               error:(NSError **)error
                              action:(void(^)(NSData *dataChunk, CGFloat percentDecompressed))action;
 
+/**
+ *  YES if archive protected with a password, NO otherwise
+ */
+- (BOOL)isPasswordProtected;
+
 
 @end
