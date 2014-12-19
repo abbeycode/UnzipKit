@@ -188,7 +188,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
         }
 
         for (NSInteger i = 0; i < fileCount; i++) {
-            UZKFileInfo *info = [self currentFileInZipInfo:error];
+            UZKFileInfo *info = [self currentFileInZipInfo:innerError];
             
             if (info) {
                 [zipInfos addObject:info];
