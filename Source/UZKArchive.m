@@ -361,10 +361,12 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
         return NO;
     }
     
+    NSArray *sortedFileInfo = [fileInfo sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"filename" ascending:YES]]];
+    
     BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
         BOOL stop = NO;
 
-        for (UZKFileInfo *info in fileInfo) {
+        for (UZKFileInfo *info in sortedFileInfo) {
             action(info, &stop);
             
             if (stop) {
@@ -379,51 +381,23 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 - (BOOL)performOnDataInArchive:(void (^)(UZKFileInfo *, NSData *, BOOL *))action
                          error:(NSError **)error
 {
-    NSError *listError = nil;
-    NSArray *fileInfo = [self listFileInfo:&listError];
-    
-    if (listError || !fileInfo) {
-        NSLog(@"Failed to list the files in the archive");
-        
-        if (error) {
-            *error = listError;
+    return [self performOnFilesInArchive:^(UZKFileInfo *fileInfo, BOOL *stop) {
+        if (![self locateFileInZip:fileInfo.filename error:error]) {
+            [self assignError:error code:UZKErrorCodeFileNotFoundInArchive];
+            return;
         }
         
-        return NO;
-    }
-    
-    __block BOOL result = YES;
-    
-    BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
-        BOOL stop = NO;
+        NSData *fileData = [self readFile:fileInfo.filename
+                                   length:fileInfo.uncompressedSize
+                                    error:error];
         
-        for (UZKFileInfo *info in fileInfo) {
-            if (![self locateFileInZip:info.filename error:innerError]) {
-                [self assignError:innerError code:UZKErrorCodeFileNotFoundInArchive];
-                result = NO;
-                return;
-            }
-
-            NSData *fileData = [self readFile:info.filename
-                                       length:info.uncompressedSize
-                                        error:error];
-            
-            if (!fileData) {
-                NSLog(@"Error reading file %@ in archive", info.filename);
-                [self assignError:innerError code:UZKErrorCodeFileNotFoundInArchive];
-                result = NO;
-                return;
-            }
-            
-            action(info, fileData, &stop);
-            
-            if (stop) {
-                break;
-            }
+        if (!fileData) {
+            NSLog(@"Error reading file %@ in archive", fileInfo.filename);
+            return;
         }
-    } inMode:UZKFileModeUnzip error:error];
-    
-    return success && result;
+        
+        action(fileInfo, fileData, stop);
+    } error:error];
 }
 
 - (BOOL)extractBufferedDataFromFile:(NSString *)filePath
