@@ -1186,8 +1186,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
         BOOL result = [archive writeData:fileData
                                 filePath:testFile
                                 fileDate:testDates[idx]
-                                password:nil
                        compressionMethod:UZKCompressionMethodDefault
+                                password:nil
                                    error:&writeError];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1235,8 +1235,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
         BOOL result = [archive writeData:fileData
                                 filePath:testFile
                                 fileDate:testDates[idx]
-                                password:nil
                        compressionMethod:UZKCompressionMethodDefault
+                                password:nil
                                    error:&writeError];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1284,8 +1284,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
         BOOL result = [archive writeData:fileData
                                 filePath:testFile
                                 fileDate:testDates[idx]
-                                password:nil
                        compressionMethod:UZKCompressionMethodDefault
+                                password:nil
                                    error:&writeError];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1318,8 +1318,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
         BOOL result = [archive writeData:testFileData[x]
                                 filePath:testFiles[i]
                                 fileDate:testDates[x]
-                                password:nil
                        compressionMethod:UZKCompressionMethodDefault
+                                password:nil
                                    error:&reverseWriteError];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1373,8 +1373,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
         BOOL result = [archive writeData:fileData
                                 filePath:testFile
                                 fileDate:testDates[idx]
-                                password:nil
                        compressionMethod:UZKCompressionMethodDefault
+                                password:nil
                                    error:&writeError];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1407,8 +1407,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
         BOOL result = [archive writeData:testFileData[x]
                                 filePath:testFiles[i]
                                 fileDate:testDates[x]
-                                password:nil
                        compressionMethod:UZKCompressionMethodDefault
+                                password:nil
                                    error:&reverseWriteError];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1457,8 +1457,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
         BOOL result = [archive writeData:testFileData
                                 filePath:testFilename
                                 fileDate:nil
-                                password:nil
                        compressionMethod:UZKCompressionMethodDefault
+                                password:nil
                                    error:&writeError];
         
         XCTAssertTrue(result, @"Error writing archive data");

@@ -549,9 +549,34 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
+            error:(NSError **)error
+{
+    return [self writeData:data
+                  filePath:filePath
+                  fileDate:nil
+         compressionMethod:UZKCompressionMethodDefault
+                  password:nil
+                     error:error];
+}
+
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
          fileDate:(NSDate *)fileDate
-         password:(NSString *)password
+            error:(NSError **)error
+{
+    return [self writeData:data
+                  filePath:filePath
+                  fileDate:fileDate
+         compressionMethod:UZKCompressionMethodDefault
+                  password:nil
+                     error:error];
+}
+
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(NSDate *)fileDate
 compressionMethod:(UZKCompressionMethod)method
+         password:(NSString *)password
             error:(NSError **)error
 {
     if (![self deleteFile:filePath error:error]) {
@@ -559,13 +584,17 @@ compressionMethod:(UZKCompressionMethod)method
         return NO;
     }
 
+    if (!password) {
+        password = self.password;
+    }
+    
     BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
         zip_fileinfo zi = [UZKArchive zipFileInfoForDate:fileDate];
         
         const char *passwordStr = NULL;
         
         if (self.password) {
-            passwordStr = self.password.UTF8String;
+            passwordStr = password.UTF8String;
         }
         
         int err = zipOpenNewFileInZip3(self.zipFile,

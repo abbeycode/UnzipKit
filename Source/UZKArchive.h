@@ -289,9 +289,20 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *
  *  @param data              Data to write into the archive
  *  @param filePath          The full path to the target file in the archive
+ *  @param error             Contains an NSError object when there was an error writing to the archive
+ *
+ *  @return YES if successful, NO on error
+ */
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+            error:(NSError **)error;
+
+/**
+ *  Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
+ *
+ *  @param data              Data to write into the archive
+ *  @param filePath          The full path to the target file in the archive
  *  @param fileDate          The timestamp of the file in the archive
- *  @param password          The password used to encrypt the file in the archive
- *  @param compressionMethod The full path to the target file in the archive
  *  @param error             Contains an NSError object when there was an error writing to the archive
  *
  *  @return YES if successful, NO on error
@@ -299,8 +310,25 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
          fileDate:(NSDate *)fileDate
-         password:(NSString *)password
+            error:(NSError **)error;
+
+/**
+ *  Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
+ *
+ *  @param data              Data to write into the archive
+ *  @param filePath          The full path to the target file in the archive
+ *  @param fileDate          The timestamp of the file in the archive
+ *  @param compressionMethod The full path to the target file in the archive
+ *  @param password          Override the password associated with the archive (not recommended)
+ *  @param error             Contains an NSError object when there was an error writing to the archive
+ *
+ *  @return YES if successful, NO on error
+ */
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(NSDate *)fileDate
 compressionMethod:(UZKCompressionMethod)method
+         password:(NSString *)password
             error:(NSError **)error;
 
 /**
