@@ -17,7 +17,7 @@
 		96EA65DA1A40C44300685B6D /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C41A40C44300685B6D /* ioapi.h */; };
 		96EA65DB1A40C44300685B6D /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C51A40C44300685B6D /* mztools.c */; };
 		96EA65DD1A40C44300685B6D /* mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C61A40C44300685B6D /* mztools.h */; };
-		96EA65DE1A40C44300685B6D /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C71A40C44300685B6D /* unzip.c */; };
+		96EA65DE1A40C44300685B6D /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C71A40C44300685B6D /* unzip.c */; settings = {COMPILER_FLAGS = "-Xanalyzer -analyzer-disable-all-checks"; }; };
 		96EA65E01A40C44300685B6D /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C81A40C44300685B6D /* unzip.h */; };
 		96EA65E11A40C44300685B6D /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C91A40C44300685B6D /* zip.c */; settings = {COMPILER_FLAGS = "-Xanalyzer -analyzer-disable-all-checks"; }; };
 		96EA65E31A40C44300685B6D /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65CA1A40C44300685B6D /* zip.h */; };

@@ -30,6 +30,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 - (instancetype)initWithFile:(NSURL *)fileURL password:(NSString*)password NS_DESIGNATED_INITIALIZER;
 
 @property (strong) NSData *fileBookmark;
+@property (strong) NSURL *fallbackURL;
 
 @property (assign) UZKFileMode mode;
 @property (assign) zipFile zipFile;
@@ -81,15 +82,12 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 {
     if ((self = [super init])) {
         NSError *error = nil;
-        self.fileBookmark = [fileURL bookmarkDataWithOptions:0
-                              includingResourceValuesForKeys:@[]
-                                               relativeToURL:nil
-                                                       error:&error];
-        self.password = password;
-
-        if (error) {
+        if (![self storeFileBookmark:fileURL error:&error]) {
             NSLog(@"Error creating bookmark to ZIP archive: %@", error);
         }
+
+        self.fallbackURL = fileURL;
+        self.password = password;
     }
     
     return self;
@@ -102,6 +100,10 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 
 - (NSURL *)fileURL
 {
+    if (!self.fileBookmark) {
+        return self.fallbackURL;
+    }
+    
     BOOL bookmarkIsStale = NO;
     NSError *error = nil;
     
@@ -117,12 +119,10 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     }
     
     if (bookmarkIsStale) {
-        self.fileBookmark = [result bookmarkDataWithOptions:0
-                             includingResourceValuesForKeys:@[]
-                                              relativeToURL:nil
-                                                      error:&error];
+        self.fallbackURL = result;
         
-        if (error) {
+        if (![self storeFileBookmark:result
+                               error:&error]) {
             NSLog(@"Error creating fresh bookmark to ZIP archive: %@", error);
         }
     }
@@ -143,7 +143,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 
 
 
-#pragma mark - Public Methods
+#pragma mark - Read Methods
 
 
 - (NSArray *)listFilenames:(NSError **)error
@@ -445,7 +445,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
             return;
         }
         
-        if (![self openFile:info.filename error:error]) {
+        if (![self openFile:error]) {
             return;
         }
         
@@ -543,6 +543,69 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 }
 
 
+
+#pragma mark - Write Methods
+
+
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(NSDate *)fileDate
+         password:(NSString *)password
+compressionMethod:(UZKCompressionMethod)method
+            error:(NSError **)error
+{
+    if (![self deleteFile:filePath error:error]) {
+        NSLog(@"Failed to delete %@ before writing new data for it", filePath);
+        return NO;
+    }
+
+    BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
+        zip_fileinfo zi = [UZKArchive zipFileInfoForDate:fileDate];
+        
+        const char *passwordStr = NULL;
+        
+        if (self.password) {
+            passwordStr = self.password.UTF8String;
+        }
+        
+        int err = zipOpenNewFileInZip3(self.zipFile,
+                                       filePath.UTF8String,
+                                       &zi,
+                                       NULL, 0, NULL, 0, NULL,
+                                       (method != UZKCompressionMethodNone) ? Z_DEFLATED : 0,
+                                       method,
+                                       0,
+                                       -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
+                                       passwordStr,
+                                       (uInt)crc32(0, data.bytes, (uInt)data.length));
+        
+        if (err != ZIP_OK) {
+            NSLog(@"Error opening file for write: %@, %d", filePath, err);
+            [self assignError:innerError code:UZKErrorCodeFileOpenForWrite];
+            return;
+        }
+        
+        err = zipWriteInFileInZip(self.zipFile, data.bytes, (uInt)data.length);
+        if (err < 0) {
+            NSLog(@"Error writing file: %@, %d", filePath, err);
+            [self assignError:innerError code:UZKErrorCodeFileWrite];
+            return;
+        }
+        
+        err = zipCloseFileInZip(self.zipFile);
+        if (err != ZIP_OK) {
+            NSLog(@"Error closing file for write: %@, %d", filePath, err);
+            [self assignError:innerError code:UZKErrorCodeFileWrite];
+            return;
+        }
+        
+    } inMode:UZKFileModeAppend error:error];
+    
+    return success;
+}
+
+
+
 #pragma mark - Private Methods
 
 
@@ -595,14 +658,16 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     
     self.mode = mode;
     
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
     switch (mode) {
         case UZKFileModeUnzip: {
-            if (![[NSFileManager defaultManager] fileExistsAtPath:zipFile]) {
+            if (![fm fileExistsAtPath:zipFile]) {
                 [self assignError:error code:UZKErrorCodeArchiveNotFound];
                 return NO;
             }
             
-            self.unzFile = unzOpen([self.filename cStringUsingEncoding:NSUTF8StringEncoding]);
+            self.unzFile = unzOpen(self.filename.UTF8String);
             if (self.unzFile == NULL) {
                 [self assignError:error code:UZKErrorCodeBadZipFile];
                 return NO;
@@ -636,15 +701,26 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
             break;
         }
         case UZKFileModeCreate:
-            self.zipFile = zipOpen([self.filename cStringUsingEncoding:NSUTF8StringEncoding], APPEND_STATUS_CREATE);
-            if (self.zipFile == NULL) {
-                [self assignError:error code:UZKErrorCodeArchiveNotFound];
-                return NO;
-            }
-            break;
-
         case UZKFileModeAppend:
-            self.zipFile = zipOpen([self.filename cStringUsingEncoding:NSUTF8StringEncoding], APPEND_STATUS_ADDINZIP);
+            if (![fm fileExistsAtPath:zipFile]) {
+                [fm createFileAtPath:zipFile contents:nil attributes:nil];
+                
+                NSError *bookmarkError = nil;
+                if (![self storeFileBookmark:[NSURL fileURLWithPath:zipFile]
+                                       error:&bookmarkError]) {
+                    NSLog(@"Error creating new file for archive %@, %@", zipFile, bookmarkError);
+                    
+                    if (error) {
+                        *error = bookmarkError;
+                    }
+                    
+                    return NO;
+                }
+            }
+            
+            int appendStatus = mode == UZKFileModeCreate ? APPEND_STATUS_CREATE : APPEND_STATUS_ADDINZIP;
+            
+            self.zipFile = zipOpen(self.filename.UTF8String, appendStatus);
             if (self.zipFile == NULL) {
                 [self assignError:error code:UZKErrorCodeArchiveNotFound];
                 return NO;
@@ -744,7 +820,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 #pragma mark - Zip File Operations
 
 
-- (BOOL)openFile:(NSString *)filename error:(NSError **)error
+- (BOOL)openFile:(NSError **)error
 {
     char filename_inzip[FILE_IN_ZIP_MAX_NAME_LENGTH];
     unz_file_info file_info;
@@ -769,8 +845,8 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 }
 
 
-- (NSData *)readFile:(NSString *)filename length:(NSUInteger)length error:(NSError **)error {
-    if (![self openFile:filename error:error]) {
+- (NSData *)readFile:(NSString *)filePath length:(NSUInteger)length error:(NSError **)error {
+    if (![self openFile:error]) {
         return nil;
     }
     
@@ -786,9 +862,302 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     return data;
 }
 
+- (BOOL)deleteFile:(NSString *)filePath error:(NSError **)error
+{
+    // Thanks to Ivan A. Krestinin for much of the code below: http://www.winimage.com/zLibDll/del.cpp
+    
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    if (![fm fileExistsAtPath:self.filename]) {
+        NSLog(@"No archive exists at path %@, when trying to delete %@", self.filename, filePath);
+        return YES;
+    }
+    
+    NSString *randomString = [NSString stringWithFormat:@"%@.zip", [[NSProcessInfo processInfo] globallyUniqueString]];
+    NSURL *temporaryURL = [[NSURL fileURLWithPath:NSTemporaryDirectory()] URLByAppendingPathComponent:randomString];
+    
+    const char *originalFilename = self.filename.UTF8String;
+    const char *del_file = filePath.UTF8String;
+    const char *tempFilename = temporaryURL.path.UTF8String;
+    
+    // Open source and destination files
+    
+    zipFile sourceZip = unzOpen(originalFilename);
+    if (sourceZip == NULL) {
+        NSLog(@"Error opening the source file while deleting %@", filePath);
+        return [self assignError:error code:UZKErrorCodeDeleteFile];
+    }
+    
+    zipFile destZip = zipOpen(tempFilename, APPEND_STATUS_CREATE);
+    if (destZip == NULL) {
+        unzClose(sourceZip);
+        NSLog(@"Error opening the destination file while deleting %@", filePath);
+        return [self assignError:error code:UZKErrorCodeDeleteFile];
+    }
+    
+    // Get global commentary
+    
+    unz_global_info globalInfo;
+    int err = unzGetGlobalInfo(sourceZip, &globalInfo);
+    if (err != UNZ_OK) {
+        zipClose(destZip, NULL);
+        unzClose(sourceZip);
+        NSLog(@"Error getting the global info of the source file while deleting %@", filePath);
+        return [self assignError:error code:UZKErrorCodeDeleteFile];
+    }
+    
+    char *globalComment = NULL;
+    
+    if (globalInfo.size_comment > 0)
+    {
+        globalComment = (char*)malloc(globalInfo.size_comment+1);
+        if ((globalComment == NULL) && (globalInfo.size_comment != 0)) {
+            zipClose(destZip, NULL);
+            unzClose(sourceZip);
+            NSLog(@"Error reading the global comment of the source file while deleting %@", filePath);
+            return [self assignError:error code:UZKErrorCodeDeleteFile];
+        }
+        
+        if ((unsigned int)unzGetGlobalComment(sourceZip, globalComment, globalInfo.size_comment + 1) != globalInfo.size_comment) {
+            zipClose(destZip, NULL);
+            unzClose(sourceZip);
+            free(globalComment);
+            NSLog(@"Error reading the global comment of the source file while deleting %@ (wrong size)", filePath);
+            return [self assignError:error code:UZKErrorCodeDeleteFile];
+        }
+    }
+    
+    BOOL noFilesDeleted = YES;
+    int filesCopied = 0;
+    
+    NSString *filenameToDelete = [UZKArchive figureOutFilename:del_file];
+    
+    int nextFileReturnValue = unzGoToFirstFile(sourceZip);
+    
+    while (nextFileReturnValue == UNZ_OK)
+    {
+        // Get zipped file info
+        char filename_inzip[FILE_IN_ZIP_MAX_NAME_LENGTH];
+        unz_file_info unzipInfo;
+        
+        err = unzGetCurrentFileInfo(sourceZip, &unzipInfo, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
+        if (err != UNZ_OK) {
+            NSLog(@"Error getting file info of file while deleting %@", filePath);
+            return [self assignError:error code:UZKErrorCodeDeleteFile];
+        }
+
+        NSString *currentFileName = [UZKArchive figureOutFilename:filename_inzip];
+
+        // if not need delete this file
+        if ([filenameToDelete isEqualToString:currentFileName.decomposedStringWithCanonicalMapping])
+            noFilesDeleted = NO;
+        else
+        {
+            char *extrafield = (char*)malloc(unzipInfo.size_file_extra);
+            if ((extrafield == NULL) && (unzipInfo.size_file_extra != 0)) {
+                NSLog(@"Error allocating extrafield info of %@ while deleting %@", currentFileName, filePath);
+                return [self assignError:error code:UZKErrorCodeDeleteFile];
+            }
+            
+            char *commentary = (char*)malloc(unzipInfo.size_file_comment);
+            if ((commentary == NULL) && (unzipInfo.size_file_comment != 0)) {
+                free(extrafield);
+                NSLog(@"Error allocating commentary info of %@ while deleting %@", currentFileName, filePath);
+                return [self assignError:error code:UZKErrorCodeDeleteFile];
+            }
+            
+            err = unzGetCurrentFileInfo(sourceZip, &unzipInfo, filename_inzip, FILE_IN_ZIP_MAX_NAME_LENGTH, extrafield, unzipInfo.size_file_extra, commentary, unzipInfo.size_file_comment);
+            if (err != UNZ_OK) {
+                free(extrafield);
+                free(commentary);
+                NSLog(@"Error reading extrafield and commentary info of %@ while deleting %@", currentFileName, filePath);
+                return [self assignError:error code:UZKErrorCodeDeleteFile];
+            }
+            
+            // Open source archive for raw reading
+            
+            int method;
+            int level;
+            err = unzOpenCurrentFile2(sourceZip, &method, &level, 1);
+            if (err != UNZ_OK) {
+                free(extrafield);
+                free(commentary);
+                NSLog(@"Error opening %@ for raw reading while deleting %@", currentFileName, filePath);
+                return [self assignError:error code:UZKErrorCodeDeleteFile];
+            }
+            
+            int size_local_extra = unzGetLocalExtrafield(sourceZip, NULL, 0);
+            if (size_local_extra < 0) {
+                free(extrafield);
+                free(commentary);
+                NSLog(@"Error getting size_local_extra for file %@ while deleting %@", currentFileName, filePath);
+                return [self assignError:error code:UZKErrorCodeDeleteFile];
+            }
+            
+            void *local_extra = malloc(size_local_extra);
+            if ((local_extra == NULL) && (size_local_extra != 0)) {
+                free(extrafield);
+                free(commentary);
+                NSLog(@"Error allocating local_extra for file %@ while deleting %@", currentFileName, filePath);
+                return [self assignError:error code:UZKErrorCodeDeleteFile];
+            }
+            
+            if (unzGetLocalExtrafield(sourceZip, local_extra, size_local_extra) < 0) {
+                free(extrafield);
+                free(commentary);
+                free(local_extra);
+                NSLog(@"Error getting local_extra for file %@ while deleting %@", currentFileName, filePath);
+                return [self assignError:error code:UZKErrorCodeDeleteFile];
+            }
+            
+            // This malloc may fail if file very large
+            void *buf = malloc(unzipInfo.compressed_size);
+            if ((buf == NULL) && (unzipInfo.compressed_size != 0)) {
+                free(extrafield);
+                free(commentary);
+                free(local_extra);
+                NSLog(@"Error allocating buffer for file %@ while deleting %@", currentFileName, filePath);
+                return [self assignError:error code:UZKErrorCodeDeleteFile];
+            }
+            
+            // Read file
+            int size = unzReadCurrentFile(sourceZip, buf, (uInt)unzipInfo.compressed_size);
+            if ((unsigned int)size != unzipInfo.compressed_size) {
+                free(extrafield);
+                free(commentary);
+                free(local_extra);
+                free(buf);
+                NSLog(@"Error reading %@ into buffer while deleting %@", currentFileName, filePath);
+                return [self assignError:error code:UZKErrorCodeDeleteFile];
+            }
+            
+            // Open destination archive
+            
+            zip_fileinfo zipInfo;
+            memcpy (&zipInfo.tmz_date, &unzipInfo.tmu_date, sizeof(tm_unz));
+            zipInfo.dosDate = unzipInfo.dosDate;
+            zipInfo.internal_fa = unzipInfo.internal_fa;
+            zipInfo.external_fa = unzipInfo.external_fa;
+            
+            err = zipOpenNewFileInZip2(destZip, filename_inzip, &zipInfo,
+                                       local_extra, size_local_extra, extrafield, (uInt)unzipInfo.size_file_extra, commentary,
+                                       method, level, 1);
+            if (err != UNZ_OK) {
+                free(extrafield);
+                free(commentary);
+                free(local_extra);
+                free(buf);
+                NSLog(@"Error opening %@ in destination zip while deleting %@", currentFileName, filePath);
+                return [self assignError:error code:UZKErrorCodeDeleteFile];
+            }
+            
+            // Write file
+            err = zipWriteInFileInZip(destZip, buf, (uInt)unzipInfo.compressed_size);
+            if (err != UNZ_OK) {
+                free(extrafield);
+                free(commentary);
+                free(local_extra);
+                free(buf);
+                NSLog(@"Error writing %@ to destination zip while deleting %@", currentFileName, filePath);
+                return [self assignError:error code:UZKErrorCodeDeleteFile];
+            }
+            
+            // Close destination archive
+            err = zipCloseFileInZipRaw(destZip, unzipInfo.uncompressed_size, unzipInfo.crc);
+            if (err != UNZ_OK) {
+                free(extrafield);
+                free(commentary);
+                free(local_extra);
+                free(buf);
+                NSLog(@"Error closing %@ in destination zip while deleting %@", currentFileName, filePath);
+                return [self assignError:error code:UZKErrorCodeDeleteFile];
+            }
+            
+            // Close source archive
+            err = unzCloseCurrentFile(sourceZip);
+            if (err != UNZ_OK) {
+                free(extrafield);
+                free(commentary);
+                free(local_extra);
+                free(buf);
+                NSLog(@"Error closing %@ in source zip while deleting %@", currentFileName, filePath);
+                return [self assignError:error code:UZKErrorCodeDeleteFile];
+            }
+
+            free(commentary);
+            free(buf);
+            free(extrafield);
+            free(local_extra);
+            
+            ++filesCopied;
+        }
+        
+        nextFileReturnValue = unzGoToNextFile(sourceZip);
+    }
+    
+    zipClose(destZip, globalComment);
+    unzClose(sourceZip);
+    
+    // Don't change the files around
+    if (noFilesDeleted) {
+        return YES;
+    }
+    
+    // Failure
+    if (nextFileReturnValue != UNZ_END_OF_LIST_OF_FILE)
+    {
+        NSLog(@"Failed to seek to the next file, while deleting %@ from the archive", filenameToDelete);
+        remove(tempFilename);
+        return [self assignError:error code:UZKErrorCodeDeleteFile];
+    }
+    
+    // Replace old file with the new (trimmed) one
+    NSError *replaceError = nil;
+    NSURL *newURL;
+    
+    BOOL result = [fm replaceItemAtURL:self.fileURL
+                         withItemAtURL:temporaryURL
+                        backupItemName:nil
+                               options:NSFileManagerItemReplacementWithoutDeletingBackupItem
+                      resultingItemURL:&newURL
+                                 error:&replaceError];
+    
+    if (!result)
+    {
+        NSLog(@"Failed to replace the old archive with the new one, after deleting %@ from it", filenameToDelete);
+        return [self assignError:error code:UZKErrorCodeDeleteFile];
+    }
+    
+    NSError *bookmarkError = nil;
+    if (![self storeFileBookmark:newURL
+                           error:&bookmarkError])
+    {
+        NSLog(@"Failed to store the new file bookmark to the archive after deleting %@ from it", filenameToDelete);
+        return [self assignError:error code:UZKErrorCodeDeleteFile];
+    }
+    
+    return YES;
+}
+
 
 
 #pragma mark - Misc. Private Methods
+
+
+- (BOOL)storeFileBookmark:(NSURL *)fileURL error:(NSError **)error
+{
+    NSError *bookmarkError = nil;
+    self.fileBookmark = [fileURL bookmarkDataWithOptions:0
+                          includingResourceValuesForKeys:@[]
+                                           relativeToURL:nil
+                                                   error:&bookmarkError];
+    
+    if (error) {
+        *error = bookmarkError ? bookmarkError : nil;
+    }
+    
+    return bookmarkError == nil;
+}
 
 + (NSString *)figureOutFilename:(const char *)filenameBytes
 {
@@ -867,6 +1236,26 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
                                           @"UZKErrorCodeFileRead");
             break;
             
+        case UZKErrorCodeFileOpenForWrite:
+            errorName = NSLocalizedString(@"Error opening a file in the archive to write it",
+                                          @"UZKErrorCodeFileOpenForWrite");
+            break;
+            
+        case UZKErrorCodeFileWrite:
+            errorName = NSLocalizedString(@"Error writing a file in the archive",
+                                          @"UZKErrorCodeFileWrite");
+            break;
+            
+        case UZKErrorCodeFileCloseWriting:
+            errorName = NSLocalizedString(@"Error clonsing a file in the archive after writing it",
+                                          @"UZKErrorCodeFileCloseWriting");
+            break;
+            
+        case UZKErrorCodeDeleteFile:
+            errorName = NSLocalizedString(@"Error deleting a file in the archive",
+                                          @"UZKErrorCodeDeleteFile");
+            break;
+            
         default:
             errorName = [NSString localizedStringWithFormat:
                          NSLocalizedString(@"Unknown error code: %ld", @"UnknownErrorCode"), errorCode];
@@ -874,6 +1263,36 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     }
     
     return errorName;
+}
+
++ (zip_fileinfo)zipFileInfoForDate:(NSDate *)fileDate
+{
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    
+    // Use "now" if no date given
+    if (!fileDate) {
+        fileDate = [NSDate date];
+    }
+    
+    NSDateComponents *date = [calendar components:(NSCalendarUnitSecond |
+                                                   NSCalendarUnitMinute |
+                                                   NSCalendarUnitHour |
+                                                   NSCalendarUnitDay |
+                                                   NSCalendarUnitMonth |
+                                                   NSCalendarUnitYear)
+                                         fromDate:fileDate];
+    zip_fileinfo zi;
+    zi.tmz_date.tm_sec = (uInt)date.second;
+    zi.tmz_date.tm_min = (uInt)date.minute;
+    zi.tmz_date.tm_hour = (uInt)date.hour;
+    zi.tmz_date.tm_mday = (uInt)date.day;
+    zi.tmz_date.tm_mon = (uInt)date.month - 1;
+    zi.tmz_date.tm_year = (uInt)date.year;
+    zi.internal_fa = 0;
+    zi.external_fa = 0;
+    zi.dosDate = 0;
+    
+    return zi;
 }
 
 /**

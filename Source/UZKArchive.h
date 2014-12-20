@@ -6,7 +6,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class UZKFileInfo;
+#import "UZKFileInfo.h"
 
 
 @interface UZKArchive : NSObject
@@ -78,6 +78,26 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
      *  Error reading a file in the archive
      */
     UZKErrorCodeFileRead = 107,
+    
+    /**
+     *  Error opening a file in the archive for writing
+     */
+    UZKErrorCodeFileOpenForWrite = 108,
+    
+    /**
+     *  Error writing a file in the archive
+     */
+    UZKErrorCodeFileWrite = 109,
+    
+    /**
+     *  Error closing the file in the archive
+     */
+    UZKErrorCodeFileCloseWriting = 110,
+    
+    /**
+     *  Error deleting a file in the archive
+     */
+    UZKErrorCodeDeleteFile = 111,
 };
 
 /**
@@ -125,6 +145,10 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *  @param password The passowrd of the given archive
  */
 + (instancetype)zipArchiveAtURL:(NSURL *)fileURL password:(NSString *)password;
+
+
+
+#pragma mark - Read Methods
 
 
 /**
@@ -254,6 +278,40 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *  @return YES if correct password or archive is not password protected, NO if password is wrong
  */
 - (BOOL)validatePassword;
+
+
+
+#pragma mark - Write Methods
+
+
+/**
+ *  Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
+ *
+ *  @param data              Data to write into the archive
+ *  @param filePath          The full path to the target file in the archive
+ *  @param fileDate          The timestamp of the file in the archive
+ *  @param password          The password used to encrypt the file in the archive
+ *  @param compressionMethod The full path to the target file in the archive
+ *  @param error             Contains an NSError object when there was an error writing to the archive
+ *
+ *  @return YES if successful, NO on error
+ */
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(NSDate *)fileDate
+         password:(NSString *)password
+compressionMethod:(UZKCompressionMethod)method
+            error:(NSError **)error;
+
+/**
+ *  Removes the given file from the archive
+ *
+ *  @param filePath The file in the archive you wish to delete
+ *  @param error    Contains an NSError object when there was an error writing to the archive
+ *
+ *  @return YES if the file was successfully deleted, NO otherwise
+ */
+- (BOOL)deleteFile:(NSString *)filePath error:(NSError **)error;
 
 
 @end
