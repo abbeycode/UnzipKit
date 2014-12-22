@@ -1437,6 +1437,85 @@ static NSDateFormatter *testFileInfoDateFormatter;
     XCTAssertNil(reverseReadError, @"Error reading a re-written archive");
 }
 
+- (void)testWriteData_NoOverwrite
+{
+    NSSet *testFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+        return ![key hasSuffix:@"zip"];
+    }];
+    
+    NSArray *testFiles = [testFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *testDates = @[[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"],
+                           [testFileInfoDateFormatter dateFromString:@"12/21/2014 10:00 AM"],
+                           [testFileInfoDateFormatter dateFromString:@"12/22/2014 11:54 PM"]];
+    NSMutableArray *testFileData = [NSMutableArray arrayWithCapacity:testFiles.count];
+    
+    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"RewriteDataTest.zip"];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    
+    __block NSError *writeError = nil;
+    
+    [testFiles enumerateObjectsUsingBlock:^(NSString *testFile, NSUInteger idx, BOOL *stop) {
+        NSData *fileData = [NSData dataWithContentsOfURL:self.testFileURLs[testFile]];
+        [testFileData addObject:fileData];
+        
+        BOOL result = [archive writeData:fileData
+                                filePath:testFile
+                                fileDate:testDates[idx]
+                       compressionMethod:UZKCompressionMethodDefault
+                                password:nil
+                               overwrite:NO
+                                   error:&writeError];
+        
+        XCTAssertTrue(result, @"Error writing archive data");
+        XCTAssertNil(writeError, @"Error writing to file %@: %@", testFile, writeError);
+    }];
+    
+    __block NSError *readError = nil;
+    __block NSUInteger idx = 0;
+    
+    [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
+        NSData *expectedData = testFileData[idx];
+        uLong expectedCRC = crc32(0, expectedData.bytes, (uInt)expectedData.length);
+        
+        XCTAssertEqualObjects(fileInfo.filename, testFiles[idx], @"Incorrect filename in archive");
+        XCTAssertEqualObjects(fileInfo.timestamp, testDates[idx], @"Incorrect timestamp in archive");
+        XCTAssertEqual(fileInfo.CRC, expectedCRC, @"CRC of extracted data doesn't match what was written");
+        XCTAssertEqualObjects(fileData, expectedData, @"Data extracted doesn't match what was written");
+        
+        idx++;
+    } error:&readError];
+    
+    // Now write the files' contents to the zip in reverse. No writes should occur, with overwrite:NO
+    
+    __block NSError *reverseWriteError = nil;
+    NSUInteger originalFileCount = testFiles.count;
+    
+    for (NSUInteger i = 0; i < originalFileCount; i++) {
+        NSUInteger x = testFiles.count - 1 - i;
+        
+        BOOL result = [archive writeData:testFileData[x]
+                                filePath:testFiles[i]
+                                fileDate:testDates[x]
+                       compressionMethod:UZKCompressionMethodDefault
+                                password:nil
+                               overwrite:NO
+                                   error:&reverseWriteError];
+        
+        XCTAssertTrue(result, @"Error writing archive data");
+        XCTAssertNil(reverseWriteError, @"Error writing to file %@ with data of file %@: %@",
+                     testFiles[x], testFiles[i], reverseWriteError);
+    }
+    
+    __block NSError *listError = nil;
+    
+    NSArray *newFileList = [archive listFileInfo:&listError];
+    XCTAssertNil(listError, @"Error reading a re-written archive");
+    
+    // This is the most we can guarantee, the number of files in the directory
+    XCTAssertEqual(newFileList.count, testFiles.count * 2, @"Files not appended correctly");
+}
+
 - (void)testWriteData_MultipleWrites
 {
     NSSet *testFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {

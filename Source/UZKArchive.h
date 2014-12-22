@@ -332,6 +332,32 @@ compressionMethod:(UZKCompressionMethod)method
             error:(NSError **)error;
 
 /**
+ *  Writes the data to the zip file, overwriting only if specified with the overwrite flag. Overwriting
+ *  presents a tradeoff: the whole archive needs to be copied (minus the file to be overwritten) before
+ *  the write begins. For a large archive, this can be slow. On the other hand, when not overwriting,
+ *  the size of the archive will grow each time the file is written.
+ *
+ *  @param data              Data to write into the archive
+ *  @param filePath          The full path to the target file in the archive
+ *  @param fileDate          The timestamp of the file in the archive
+ *  @param compressionMethod The full path to the target file in the archive
+ *  @param password          Override the password associated with the archive (not recommended)
+ *  @param overwrite         If YES, and the file exists, delete it before writing. If NO, append
+ *                           the data into the archive without removing it first (legacy Objective-Zip
+ *                           behavior)
+ *  @param error             Contains an NSError object when there was an error writing to the archive
+ *
+ *  @return YES if successful, NO on error
+ */
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(NSDate *)fileDate
+compressionMethod:(UZKCompressionMethod)method
+         password:(NSString *)password
+        overwrite:(BOOL)overwrite
+            error:(NSError **)error;
+
+/**
  *  Removes the given file from the archive
  *
  *  @param filePath The file in the archive you wish to delete

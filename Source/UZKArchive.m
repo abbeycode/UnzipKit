@@ -530,6 +530,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
                   fileDate:nil
          compressionMethod:UZKCompressionMethodDefault
                   password:nil
+                 overwrite:YES
                      error:error];
 }
 
@@ -543,6 +544,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
                   fileDate:fileDate
          compressionMethod:UZKCompressionMethodDefault
                   password:nil
+                 overwrite:YES
                      error:error];
 }
 
@@ -553,9 +555,43 @@ compressionMethod:(UZKCompressionMethod)method
          password:(NSString *)password
             error:(NSError **)error
 {
-    if (![self deleteFile:filePath error:error]) {
-        NSLog(@"Failed to delete %@ before writing new data for it", filePath);
-        return NO;
+    return [self writeData:data
+                  filePath:filePath
+                  fileDate:fileDate
+         compressionMethod:UZKCompressionMethodDefault
+                  password:nil
+                 overwrite:YES
+                     error:error];
+}
+
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(NSDate *)fileDate
+compressionMethod:(UZKCompressionMethod)method
+         password:(NSString *)password
+        overwrite:(BOOL)overwrite
+            error:(NSError **)error
+{
+    if (overwrite) {
+        NSError *listFilesError = nil;
+        NSArray *existingFiles = [self listFileInfo:&listFilesError];
+        
+        if (existingFiles) {
+            NSIndexSet *matchingFiles = [existingFiles indexesOfObjectsPassingTest:
+                                         ^BOOL(UZKFileInfo *info, NSUInteger idx, BOOL *stop) {
+                                             if ([info.filename isEqualToString:filePath]) {
+                                                 *stop = YES;
+                                                 return YES;
+                                             }
+                                             
+                                             return NO;
+                                         }];
+            
+            if (matchingFiles.count > 0 && ![self deleteFile:filePath error:error]) {
+                NSLog(@"Failed to delete %@ before writing new data for it", filePath);
+                return NO;
+            }
+        }
     }
 
     if (!password) {
