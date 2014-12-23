@@ -572,73 +572,16 @@ compressionMethod:(UZKCompressionMethod)method
         overwrite:(BOOL)overwrite
             error:(NSError **)error
 {
-    if (overwrite) {
-        NSError *listFilesError = nil;
-        NSArray *existingFiles = [self listFileInfo:&listFilesError];
-        
-        if (existingFiles) {
-            NSIndexSet *matchingFiles = [existingFiles indexesOfObjectsPassingTest:
-                                         ^BOOL(UZKFileInfo *info, NSUInteger idx, BOOL *stop) {
-                                             if ([info.filename isEqualToString:filePath]) {
-                                                 *stop = YES;
-                                                 return YES;
-                                             }
-                                             
-                                             return NO;
-                                         }];
-            
-            if (matchingFiles.count > 0 && ![self deleteFile:filePath error:error]) {
-                NSLog(@"Failed to delete %@ before writing new data for it", filePath);
-                return NO;
-            }
-        }
+    BOOL success = [self performWriteAction:^int(NSError **innerError) {
+        return zipWriteInFileInZip(self.zipFile, data.bytes, (uInt)data.length);
     }
-
-    if (!password) {
-        password = self.password;
-    }
-    
-    BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
-        zip_fileinfo zi = [UZKArchive zipFileInfoForDate:fileDate];
-        
-        const char *passwordStr = NULL;
-        
-        if (self.password) {
-            passwordStr = password.UTF8String;
-        }
-        
-        int err = zipOpenNewFileInZip3(self.zipFile,
-                                       filePath.UTF8String,
-                                       &zi,
-                                       NULL, 0, NULL, 0, NULL,
-                                       (method != UZKCompressionMethodNone) ? Z_DEFLATED : 0,
-                                       method,
-                                       0,
-                                       -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
-                                       passwordStr,
-                                       (uInt)crc32(0, data.bytes, (uInt)data.length));
-        
-        if (err != ZIP_OK) {
-            NSLog(@"Error opening file for write: %@, %d", filePath, err);
-            [self assignError:innerError code:UZKErrorCodeFileOpenForWrite];
-            return;
-        }
-        
-        err = zipWriteInFileInZip(self.zipFile, data.bytes, (uInt)data.length);
-        if (err < 0) {
-            NSLog(@"Error writing file: %@, %d", filePath, err);
-            [self assignError:innerError code:UZKErrorCodeFileWrite];
-            return;
-        }
-        
-        err = zipCloseFileInZip(self.zipFile);
-        if (err != ZIP_OK) {
-            NSLog(@"Error closing file for write: %@, %d", filePath, err);
-            [self assignError:innerError code:UZKErrorCodeFileWrite];
-            return;
-        }
-        
-    } inMode:UZKFileModeAppend error:error];
+                                   filePath:filePath
+                                   fileDate:fileDate
+                          compressionMethod:method
+                                   password:password
+                                  overwrite:overwrite
+                                        CRC:(uInt)crc32(0, data.bytes, (uInt)data.length)
+                                      error:error];
     
     return success;
 }
@@ -961,6 +904,86 @@ compressionMethod:(UZKCompressionMethod)method
     }
 
     return !actionError;
+}
+
+- (BOOL)performWriteAction:(int(^)(NSError **innerError))write
+                  filePath:(NSString *)filePath
+                  fileDate:(NSDate *)fileDate
+         compressionMethod:(UZKCompressionMethod)method
+                  password:(NSString *)password
+                 overwrite:(BOOL)overwrite
+                       CRC:(uInt)crc
+                     error:(NSError **)error
+{
+    if (overwrite) {
+        NSError *listFilesError = nil;
+        NSArray *existingFiles = [self listFileInfo:&listFilesError];
+        
+        if (existingFiles) {
+            NSIndexSet *matchingFiles = [existingFiles indexesOfObjectsPassingTest:
+                                         ^BOOL(UZKFileInfo *info, NSUInteger idx, BOOL *stop) {
+                                             if ([info.filename isEqualToString:filePath]) {
+                                                 *stop = YES;
+                                                 return YES;
+                                             }
+                                             
+                                             return NO;
+                                         }];
+            
+            if (matchingFiles.count > 0 && ![self deleteFile:filePath error:error]) {
+                NSLog(@"Failed to delete %@ before writing new data for it", filePath);
+                return NO;
+            }
+        }
+    }
+    
+    if (!password) {
+        password = self.password;
+    }
+    
+    BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
+        zip_fileinfo zi = [UZKArchive zipFileInfoForDate:fileDate];
+        
+        const char *passwordStr = NULL;
+        
+        if (self.password) {
+            passwordStr = password.UTF8String;
+        }
+        
+        int err = zipOpenNewFileInZip3(self.zipFile,
+                                       filePath.UTF8String,
+                                       &zi,
+                                       NULL, 0, NULL, 0, NULL,
+                                       (method != UZKCompressionMethodNone) ? Z_DEFLATED : 0,
+                                       method,
+                                       0,
+                                       -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
+                                       passwordStr,
+                                       crc);
+        
+        if (err != ZIP_OK) {
+            NSLog(@"Error opening file for write: %@, %d", filePath, err);
+            [self assignError:innerError code:UZKErrorCodeFileOpenForWrite];
+            return;
+        }
+        
+        err = write(innerError);
+        if (err < 0) {
+            NSLog(@"Error writing file: %@, %d", filePath, err);
+            [self assignError:innerError code:UZKErrorCodeFileWrite];
+            return;
+        }
+        
+        err = zipCloseFileInZip(self.zipFile);
+        if (err != ZIP_OK) {
+            NSLog(@"Error closing file for write: %@, %d", filePath, err);
+            [self assignError:innerError code:UZKErrorCodeFileWrite];
+            return;
+        }
+        
+    } inMode:UZKFileModeAppend error:error];
+    
+    return success;
 }
 
 - (BOOL)openFile:(NSString *)zipFile
