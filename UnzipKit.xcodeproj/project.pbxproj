@@ -21,16 +21,6 @@
 		96EA65E01A40C44300685B6D /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C81A40C44300685B6D /* unzip.h */; };
 		96EA65E11A40C44300685B6D /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C91A40C44300685B6D /* zip.c */; settings = {COMPILER_FLAGS = "-Xanalyzer -analyzer-disable-all-checks"; }; };
 		96EA65E31A40C44300685B6D /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65CA1A40C44300685B6D /* zip.h */; };
-		96EA65E41A40C44300685B6D /* FileInZipInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65CC1A40C44300685B6D /* FileInZipInfo.h */; };
-		96EA65E51A40C44300685B6D /* FileInZipInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65CD1A40C44300685B6D /* FileInZipInfo.m */; };
-		96EA65EA1A40C44300685B6D /* ZipException.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65D01A40C44300685B6D /* ZipException.h */; };
-		96EA65EB1A40C44300685B6D /* ZipException.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65D11A40C44300685B6D /* ZipException.m */; };
-		96EA65ED1A40C44300685B6D /* ZipFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65D21A40C44300685B6D /* ZipFile.h */; };
-		96EA65EE1A40C44300685B6D /* ZipFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65D31A40C44300685B6D /* ZipFile.m */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
-		96EA65F01A40C44300685B6D /* ZipReadStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65D41A40C44300685B6D /* ZipReadStream.h */; };
-		96EA65F11A40C44300685B6D /* ZipReadStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65D51A40C44300685B6D /* ZipReadStream.m */; };
-		96EA65F31A40C44300685B6D /* ZipWriteStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65D61A40C44300685B6D /* ZipWriteStream.h */; };
-		96EA65F41A40C44300685B6D /* ZipWriteStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65D71A40C44300685B6D /* ZipWriteStream.m */; };
 		96EA65F81A40C88800685B6D /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 96EA65F71A40C88800685B6D /* libz.dylib */; };
 		96EA65FA1A40C8D000685B6D /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 96EA65F71A40C88800685B6D /* libz.dylib */; };
 		96EA66011A40E31900685B6D /* UZKFileInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65FF1A40E31900685B6D /* UZKFileInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -66,16 +56,6 @@
 		96EA65C81A40C44300685B6D /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unzip.h; sourceTree = "<group>"; };
 		96EA65C91A40C44300685B6D /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zip.c; sourceTree = "<group>"; };
 		96EA65CA1A40C44300685B6D /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
-		96EA65CC1A40C44300685B6D /* FileInZipInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileInZipInfo.h; sourceTree = "<group>"; };
-		96EA65CD1A40C44300685B6D /* FileInZipInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileInZipInfo.m; sourceTree = "<group>"; };
-		96EA65D01A40C44300685B6D /* ZipException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipException.h; sourceTree = "<group>"; };
-		96EA65D11A40C44300685B6D /* ZipException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZipException.m; sourceTree = "<group>"; };
-		96EA65D21A40C44300685B6D /* ZipFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipFile.h; sourceTree = "<group>"; };
-		96EA65D31A40C44300685B6D /* ZipFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZipFile.m; sourceTree = "<group>"; };
-		96EA65D41A40C44300685B6D /* ZipReadStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipReadStream.h; sourceTree = "<group>"; };
-		96EA65D51A40C44300685B6D /* ZipReadStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZipReadStream.m; sourceTree = "<group>"; };
-		96EA65D61A40C44300685B6D /* ZipWriteStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipWriteStream.h; sourceTree = "<group>"; };
-		96EA65D71A40C44300685B6D /* ZipWriteStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZipWriteStream.m; sourceTree = "<group>"; };
 		96EA65F71A40C88800685B6D /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		96EA65FF1A40E31900685B6D /* UZKFileInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UZKFileInfo.h; sourceTree = "<group>"; };
 		96EA66001A40E31900685B6D /* UZKFileInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UZKFileInfo.m; sourceTree = "<group>"; };
@@ -168,7 +148,6 @@
 			isa = PBXGroup;
 			children = (
 				96EA65C21A40C44300685B6D /* MiniZip */,
-				96EA65CB1A40C44300685B6D /* Objective-Zip */,
 			);
 			path = Lib;
 			sourceTree = "<group>";
@@ -189,23 +168,6 @@
 			path = MiniZip;
 			sourceTree = "<group>";
 		};
-		96EA65CB1A40C44300685B6D /* Objective-Zip */ = {
-			isa = PBXGroup;
-			children = (
-				96EA65CC1A40C44300685B6D /* FileInZipInfo.h */,
-				96EA65CD1A40C44300685B6D /* FileInZipInfo.m */,
-				96EA65D01A40C44300685B6D /* ZipException.h */,
-				96EA65D11A40C44300685B6D /* ZipException.m */,
-				96EA65D21A40C44300685B6D /* ZipFile.h */,
-				96EA65D31A40C44300685B6D /* ZipFile.m */,
-				96EA65D41A40C44300685B6D /* ZipReadStream.h */,
-				96EA65D51A40C44300685B6D /* ZipReadStream.m */,
-				96EA65D61A40C44300685B6D /* ZipWriteStream.h */,
-				96EA65D71A40C44300685B6D /* ZipWriteStream.m */,
-			);
-			path = "Objective-Zip";
-			sourceTree = "<group>";
-		};
 		96EA65F61A40C86200685B6D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -223,13 +185,8 @@
 			files = (
 				96EA65E31A40C44300685B6D /* zip.h in Headers */,
 				96EA66041A435D8200685B6D /* crypt.h in Headers */,
-				96EA65E41A40C44300685B6D /* FileInZipInfo.h in Headers */,
 				96EA65DA1A40C44300685B6D /* ioapi.h in Headers */,
-				96EA65F01A40C44300685B6D /* ZipReadStream.h in Headers */,
-				96EA65ED1A40C44300685B6D /* ZipFile.h in Headers */,
-				96EA65EA1A40C44300685B6D /* ZipException.h in Headers */,
 				96EA65E01A40C44300685B6D /* unzip.h in Headers */,
-				96EA65F31A40C44300685B6D /* ZipWriteStream.h in Headers */,
 				96EA65BC1A40B2EC00685B6D /* UZKArchive.h in Headers */,
 				96EA66011A40E31900685B6D /* UZKFileInfo.h in Headers */,
 				96EA65A41A40AEAE00685B6D /* UnzipKit.h in Headers */,
@@ -335,16 +292,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				96EA65BD1A40B2EC00685B6D /* UZKArchive.m in Sources */,
-				96EA65E51A40C44300685B6D /* FileInZipInfo.m in Sources */,
 				96EA66021A40E31900685B6D /* UZKFileInfo.m in Sources */,
-				96EA65F41A40C44300685B6D /* ZipWriteStream.m in Sources */,
-				96EA65F11A40C44300685B6D /* ZipReadStream.m in Sources */,
 				96EA65D81A40C44300685B6D /* ioapi.c in Sources */,
 				96EA65DE1A40C44300685B6D /* unzip.c in Sources */,
-				96EA65EB1A40C44300685B6D /* ZipException.m in Sources */,
 				96EA65E11A40C44300685B6D /* zip.c in Sources */,
 				96EA65DB1A40C44300685B6D /* mztools.c in Sources */,
-				96EA65EE1A40C44300685B6D /* ZipFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
