@@ -300,9 +300,31 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
 /**
  *  Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
  *
- *  @param data      Data to write into the archive
- *  @param filePath  The full path to the target file in the archive
- *  @param fileDate  The timestamp of the file in the archive. Uses the current time if nil
+ *  @param data     Data to write into the archive
+ *  @param filePath The full path to the target file in the archive
+ *  @param progress Called every so often to report the progress of the compression
+ *
+ *       - *percentCompressed* The percentage of the file that has been compressed
+ *
+ *  @param error    Contains an NSError object when there was an error writing to the archive
+ *
+ *  @return YES if successful, NO on error
+ */
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         progress:(void (^)(CGFloat percentCompressed))progress
+            error:(NSError **)error;
+
+/**
+ *  Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
+ *
+ *  @param data     Data to write into the archive
+ *  @param filePath The full path to the target file in the archive
+ *  @param fileDate The timestamp of the file in the archive. Uses the current time if nil
+ *  @param progress Called every so often to report the progress of the compression
+ *
+ *       - *percentCompressed* The percentage of the file that has been compressed
+ *
  *  @param error     Contains an NSError object when there was an error writing to the archive
  *
  *  @return YES if successful, NO on error
@@ -310,16 +332,21 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
          fileDate:(NSDate *)fileDate
+         progress:(void (^)(CGFloat percentCompressed))progress
             error:(NSError **)error;
 
 /**
  *  Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
  *
- *  @param data      Data to write into the archive
- *  @param filePath  The full path to the target file in the archive
- *  @param fileDate  The timestamp of the file in the archive. Uses the current time if nil
- *  @param method    The full path to the target file in the archive
- *  @param password  Override the password associated with the archive (not recommended)
+ *  @param data     Data to write into the archive
+ *  @param filePath The full path to the target file in the archive
+ *  @param fileDate The timestamp of the file in the archive. Uses the current time if nil
+ *  @param method   The full path to the target file in the archive
+ *  @param password Override the password associated with the archive (not recommended)
+ *  @param progress Called every so often to report the progress of the compression
+ *
+ *       - *percentCompressed* The percentage of the file that has been compressed
+ *
  *  @param error     Contains an NSError object when there was an error writing to the archive
  *
  *  @return YES if successful, NO on error
@@ -329,6 +356,7 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
          fileDate:(NSDate *)fileDate
 compressionMethod:(UZKCompressionMethod)method
          password:(NSString *)password
+         progress:(void (^)(CGFloat percentCompressed))progress
             error:(NSError **)error;
 
 /**
@@ -345,6 +373,10 @@ compressionMethod:(UZKCompressionMethod)method
  *  @param overwrite If YES, and the file exists, delete it before writing. If NO, append
  *                   the data into the archive without removing it first (legacy Objective-Zip
  *                   behavior)
+ *  @param progress  Called every so often to report the progress of the compression
+ *
+ *       - *percentCompressed* The percentage of the file that has been compressed
+ *
  *  @param error     Contains an NSError object when there was an error writing to the archive
  *
  *  @return YES if successful, NO on error
@@ -355,19 +387,20 @@ compressionMethod:(UZKCompressionMethod)method
 compressionMethod:(UZKCompressionMethod)method
          password:(NSString *)password
         overwrite:(BOOL)overwrite
+         progress:(void (^)(CGFloat percentCompressed))progress
             error:(NSError **)error;
 
 /**
  *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
  *  don't need to reside in memory at once. It overwrites an existing file with the same name.
  *
- *  @param filePath  The full path to the target file in the archive
- *  @param crc       The CRC of the full data to be written. You can use zlib's crc32() function to
- *                   calculate this: crc32(0, bytes, length)
- *  @param error     Contains an NSError object when there was an error writing to the archive
- *  @param action    Contains your code to loop through the source bytes and write them to the
- *                   archive. Each time a chunk of data is ready to be written, call writeData,
- *                   passing in a pointer to the bytes and their length
+ *  @param filePath The full path to the target file in the archive
+ *  @param crc      The CRC of the full data to be written. You can use zlib's crc32() function to
+ *                  calculate this: crc32(0, bytes, length)
+ *  @param error    Contains an NSError object when there was an error writing to the archive
+ *  @param action   Contains your code to loop through the source bytes and write them to the
+ *                  archive. Each time a chunk of data is ready to be written, call writeData,
+ *                  passing in a pointer to the bytes and their length
  *
  *       - *writeData* Call this block to write some bytes into the archive. It returns NO if the
  *                     write failed. If this happens, you should return from the action block, and
@@ -384,14 +417,14 @@ compressionMethod:(UZKCompressionMethod)method
  *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
  *  don't need to reside in memory at once. It overwrites an existing file with the same name.
  *
- *  @param filePath  The full path to the target file in the archive
- *  @param crc       The CRC of the full data to be written. You can use zlib's crc32() function to
- *                   calculate this: crc32(0, bytes, length)
- *  @param fileDate  The timestamp of the file in the archive. Uses the current time if nil
- *  @param error     Contains an NSError object when there was an error writing to the archive
- *  @param action    Contains your code to loop through the source bytes and write them to the
- *                   archive. Each time a chunk of data is ready to be written, call writeData,
- *                   passing in a pointer to the bytes and their length
+ *  @param filePath The full path to the target file in the archive
+ *  @param crc      The CRC of the full data to be written. You can use zlib's crc32() function to
+ *                  calculate this: crc32(0, bytes, length)
+ *  @param fileDate The timestamp of the file in the archive. Uses the current time if nil
+ *  @param error    Contains an NSError object when there was an error writing to the archive
+ *  @param action   Contains your code to loop through the source bytes and write them to the
+ *                  archive. Each time a chunk of data is ready to be written, call writeData,
+ *                  passing in a pointer to the bytes and their length
  *
  *       - *writeData* Call this block to write some bytes into the archive. It returns NO if the
  *                     write failed. If this happens, you should return from the action block, and
@@ -409,16 +442,16 @@ compressionMethod:(UZKCompressionMethod)method
  *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
  *  don't need to reside in memory at once. It overwrites an existing file with the same name.
  *
- *  @param filePath  The full path to the target file in the archive
- *  @param crc       The CRC of the full data to be written. You can use zlib's crc32() function to
- *                   calculate this: crc32(0, bytes, length)
- *  @param fileDate  The timestamp of the file in the archive. Uses the current time if nil
- *  @param method    The full path to the target file in the archive
- *  @param password  Override the password associated with the archive (not recommended)
- *  @param error     Contains an NSError object when there was an error writing to the archive
- *  @param action    Contains your code to loop through the source bytes and write them to the
- *                   archive. Each time a chunk of data is ready to be written, call writeData,
- *                   passing in a pointer to the bytes and their length
+ *  @param filePath The full path to the target file in the archive
+ *  @param crc      The CRC of the full data to be written. You can use zlib's crc32() function to
+ *                  calculate this: crc32(0, bytes, length)
+ *  @param fileDate The timestamp of the file in the archive. Uses the current time if nil
+ *  @param method   The full path to the target file in the archive
+ *  @param password Override the password associated with the archive (not recommended)
+ *  @param error    Contains an NSError object when there was an error writing to the archive
+ *  @param action   Contains your code to loop through the source bytes and write them to the
+ *                  archive. Each time a chunk of data is ready to be written, call writeData,
+ *                  passing in a pointer to the bytes and their length
  *
  *       - *writeData* Call this block to write some bytes into the archive. It returns NO if the
  *                     write failed. If this happens, you should return from the action block, and

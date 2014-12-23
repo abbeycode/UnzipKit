@@ -1188,6 +1188,11 @@ static NSDateFormatter *testFileInfoDateFormatter;
                                 fileDate:testDates[idx]
                        compressionMethod:UZKCompressionMethodDefault
                                 password:nil
+                                progress:^(CGFloat percentCompressed) {
+#if DEBUG
+                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
+#endif
+                                }
                                    error:&writeError];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1237,6 +1242,11 @@ static NSDateFormatter *testFileInfoDateFormatter;
                                 fileDate:testDates[idx]
                        compressionMethod:UZKCompressionMethodDefault
                                 password:nil
+                                progress:^(CGFloat percentCompressed) {
+#if DEBUG
+                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
+#endif
+                                }
                                    error:&writeError];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1286,6 +1296,11 @@ static NSDateFormatter *testFileInfoDateFormatter;
                                 fileDate:testDates[idx]
                        compressionMethod:UZKCompressionMethodDefault
                                 password:nil
+                                progress:^(CGFloat percentCompressed) {
+#if DEBUG
+                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
+#endif
+                                }
                                    error:&writeError];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1320,6 +1335,11 @@ static NSDateFormatter *testFileInfoDateFormatter;
                                 fileDate:testDates[x]
                        compressionMethod:UZKCompressionMethodDefault
                                 password:nil
+                                progress:^(CGFloat percentCompressed) {
+#if DEBUG
+                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
+#endif
+                                }
                                    error:&reverseWriteError];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1375,6 +1395,11 @@ static NSDateFormatter *testFileInfoDateFormatter;
                                 fileDate:testDates[idx]
                        compressionMethod:UZKCompressionMethodDefault
                                 password:nil
+                                progress:^(CGFloat percentCompressed) {
+#if DEBUG
+                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
+#endif
+                                }
                                    error:&writeError];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1409,6 +1434,11 @@ static NSDateFormatter *testFileInfoDateFormatter;
                                 fileDate:testDates[x]
                        compressionMethod:UZKCompressionMethodDefault
                                 password:nil
+                                progress:^(CGFloat percentCompressed) {
+#if DEBUG
+                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
+#endif
+                                }
                                    error:&reverseWriteError];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1465,6 +1495,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
                        compressionMethod:UZKCompressionMethodDefault
                                 password:nil
                                overwrite:NO
+                                progress:nil
                                    error:&writeError];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1500,6 +1531,11 @@ static NSDateFormatter *testFileInfoDateFormatter;
                        compressionMethod:UZKCompressionMethodDefault
                                 password:nil
                                overwrite:NO
+                                progress:^(CGFloat percentCompressed) {
+#if DEBUG
+                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
+#endif
+                                }
                                    error:&reverseWriteError];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1538,6 +1574,11 @@ static NSDateFormatter *testFileInfoDateFormatter;
                                 fileDate:nil
                        compressionMethod:UZKCompressionMethodDefault
                                 password:nil
+                                progress:^(CGFloat percentCompressed) {
+#if DEBUG
+                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
+#endif
+                                }
                                    error:&writeError];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1573,6 +1614,11 @@ static NSDateFormatter *testFileInfoDateFormatter;
                             fileDate:nil
                    compressionMethod:UZKCompressionMethodDefault
                             password:nil
+                            progress:^(CGFloat percentCompressed) {
+#if DEBUG
+                                NSLog(@"Compressing data: %f%% complete", percentCompressed);
+#endif
+                            }
                                error:&writeError];
     
     XCTAssertTrue(result, @"Error writing archive data");

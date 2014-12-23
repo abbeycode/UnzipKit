@@ -531,12 +531,29 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
          compressionMethod:UZKCompressionMethodDefault
                   password:nil
                  overwrite:YES
+                  progress:nil
+                     error:error];
+}
+
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         progress:(void (^)(CGFloat percentCompressed))progress
+            error:(NSError **)error
+{
+    return [self writeData:data
+                  filePath:filePath
+                  fileDate:nil
+         compressionMethod:UZKCompressionMethodDefault
+                  password:nil
+                 overwrite:YES
+                  progress:progress
                      error:error];
 }
 
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
          fileDate:(NSDate *)fileDate
+         progress:(void (^)(CGFloat percentCompressed))progress
             error:(NSError **)error
 {
     return [self writeData:data
@@ -545,6 +562,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
          compressionMethod:UZKCompressionMethodDefault
                   password:nil
                  overwrite:YES
+                  progress:progress
                      error:error];
 }
 
@@ -553,6 +571,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
          fileDate:(NSDate *)fileDate
 compressionMethod:(UZKCompressionMethod)method
          password:(NSString *)password
+         progress:(void (^)(CGFloat percentCompressed))progress
             error:(NSError **)error
 {
     return [self writeData:data
@@ -561,6 +580,7 @@ compressionMethod:(UZKCompressionMethod)method
          compressionMethod:UZKCompressionMethodDefault
                   password:nil
                  overwrite:YES
+                  progress:progress
                      error:error];
 }
 
@@ -570,10 +590,31 @@ compressionMethod:(UZKCompressionMethod)method
 compressionMethod:(UZKCompressionMethod)method
          password:(NSString *)password
         overwrite:(BOOL)overwrite
+         progress:(void (^)(CGFloat percentCompressed))progress
             error:(NSError **)error
 {
+    NSUInteger bufferSize = 4096; //Arbitrary
+    const void *bytes = data.bytes;
+    
+    if (progress) {
+        progress(0);
+    }
+
     BOOL success = [self performWriteAction:^int(NSError **innerError) {
-        return zipWriteInFileInZip(self.zipFile, data.bytes, (uInt)data.length);
+        for (NSUInteger i = 0; i <= data.length; i += bufferSize) {
+            unsigned int size = (unsigned int)MIN(data.length - i, bufferSize);
+            int err = zipWriteInFileInZip(self.zipFile, &bytes[i], size);
+            
+            if (err != ZIP_OK) {
+                return err;
+            }
+            
+            if (progress) {
+                progress(i / (CGFloat)data.length);
+            }
+        }
+        
+        return ZIP_OK;
     }
                                    filePath:filePath
                                    fileDate:fileDate
