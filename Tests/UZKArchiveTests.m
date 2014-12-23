@@ -1555,6 +1555,39 @@ static NSDateFormatter *testFileInfoDateFormatter;
     }
 }
 
+- (void)testWriteData_DefaultDate
+{
+    NSSet *testFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+        return ![key hasSuffix:@"zip"];
+    }];
+    
+    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"DefaultDateWriteTest.zip"];
+    NSString *testFilename = testFileSet.anyObject;
+    NSURL *testFileURL = self.testFileURLs[testFilename];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    
+    NSError *writeError = nil;
+    BOOL result = [archive writeData:[NSData dataWithContentsOfURL:testFileURL]
+                            filePath:testFilename
+                            fileDate:nil
+                   compressionMethod:UZKCompressionMethodDefault
+                            password:nil
+                               error:&writeError];
+    
+    XCTAssertTrue(result, @"Error writing archive data");
+    XCTAssertNil(writeError, @"Error writing to file %@: %@", testFileURL, writeError);
+    
+    NSError *listError = nil;
+    NSArray *fileList = [archive listFileInfo:&listError];
+    UZKFileInfo *writtenFileInfo = fileList.firstObject;
+    
+    NSTimeInterval actualDate = writtenFileInfo.timestamp.timeIntervalSinceReferenceDate;
+    NSTimeInterval expectedDate = [NSDate date].timeIntervalSinceReferenceDate;
+    
+    XCTAssertEqualWithAccuracy(actualDate, expectedDate, 30, @"Incorrect default date value written to file");
+}
+
 
 #pragma mark Delete File
 

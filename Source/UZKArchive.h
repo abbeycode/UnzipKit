@@ -302,7 +302,7 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *
  *  @param data              Data to write into the archive
  *  @param filePath          The full path to the target file in the archive
- *  @param fileDate          The timestamp of the file in the archive
+ *  @param fileDate          The timestamp of the file in the archive. Uses the current time if nil
  *  @param error             Contains an NSError object when there was an error writing to the archive
  *
  *  @return YES if successful, NO on error
@@ -317,7 +317,7 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *
  *  @param data              Data to write into the archive
  *  @param filePath          The full path to the target file in the archive
- *  @param fileDate          The timestamp of the file in the archive
+ *  @param fileDate          The timestamp of the file in the archive. Uses the current time if nil
  *  @param compressionMethod The full path to the target file in the archive
  *  @param password          Override the password associated with the archive (not recommended)
  *  @param error             Contains an NSError object when there was an error writing to the archive
@@ -339,7 +339,7 @@ compressionMethod:(UZKCompressionMethod)method
  *
  *  @param data              Data to write into the archive
  *  @param filePath          The full path to the target file in the archive
- *  @param fileDate          The timestamp of the file in the archive
+ *  @param fileDate          The timestamp of the file in the archive. Uses the current time if nil
  *  @param compressionMethod The full path to the target file in the archive
  *  @param password          Override the password associated with the archive (not recommended)
  *  @param overwrite         If YES, and the file exists, delete it before writing. If NO, append
