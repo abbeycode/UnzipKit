@@ -1625,13 +1625,14 @@ static NSDateFormatter *testFileInfoDateFormatter;
                                       password:nil
                                      overwrite:YES
                                          error:&writeError
-                                         block:^(BOOL(^writeData)(const void *bytes, unsigned int length)) {
-                                             for (NSUInteger i = 0; i <= fileData.length; i += bufferSize) {
-                                                 unsigned int size = (unsigned int)MIN(fileData.length - i, bufferSize);
-                                                 BOOL writeSuccess = writeData(&bytes[i], size);
-                                                 XCTAssertTrue(writeSuccess, @"Failed to write buffered data");
-                                             }
-                                         }];
+                                         block:
+                       ^(BOOL(^writeData)(const void *bytes, unsigned int length)) {
+                           for (NSUInteger i = 0; i <= fileData.length; i += bufferSize) {
+                               unsigned int size = (unsigned int)MIN(fileData.length - i, bufferSize);
+                               BOOL writeSuccess = writeData(&bytes[i], size);
+                               XCTAssertTrue(writeSuccess, @"Failed to write buffered data");
+                           }
+                       }];
         
         XCTAssertTrue(result, @"Error writing archive data");
         XCTAssertNil(writeError, @"Error writing to file %@: %@", testFile, writeError);
