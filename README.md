@@ -41,14 +41,18 @@ BOOL writeSuccessful = [archive writeData:someFile
                                  filePath:@"dir/filename.jpg"
                                     error:&error];
 
-BOOL bufferWriteSuccessful = [archive writeIntoBuffer:testFile
+uInt crc = (uInt)crc32(0, fileData.bytes, (uInt)fileData.length);
+BOOL bufferWriteSuccessful = [archive writeIntoBuffer:@"dir/filename.png"
                                            CRC:crc
                                          error:&writeError
                                          block:
                               ^(BOOL(^writeData)(const void *bytes, unsigned int length)) {
                                   for (NSUInteger i = 0; i <= someFile.length; i += bufferSize) {
                                       unsigned int size = (unsigned int)MIN(someFile.length - i, bufferSize);
-                                      BOOL writeSuccess = writeData(&bytes[i], size);
+
+                                      if (!writeData(&bytes[i], size)) {
+                                          return;
+                                      }
                                   }
                               }];
 
