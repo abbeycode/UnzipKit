@@ -17,6 +17,8 @@ UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip"];
 
 NSError *error = nil;
 
+// Read-only methods
+
 NSArray *filesInArchive = [archive listFilenames:&error];
 BOOL extractFilesSuccessful = [archive extractFilesTo:@"some/directory"
                                             overWrite:NO
@@ -30,6 +32,28 @@ NSData *extractedData = [archive extractDataFromFile:@"a file in the archive.jpg
                                                          NSLog(@"Extracting, %f%% complete", percentDecompressed);
                                             }
                                                error:&error];
+
+// Write methods
+
+NSData *someFile = // Some data to write
+
+BOOL writeSuccessful = [archive writeData:someFile
+                                 filePath:@"dir/filename.jpg"
+                                    error:&error];
+
+BOOL bufferWriteSuccessful = [archive writeIntoBuffer:testFile
+                                           CRC:crc
+                                         error:&writeError
+                                         block:
+                              ^(BOOL(^writeData)(const void *bytes, unsigned int length)) {
+                                  for (NSUInteger i = 0; i <= someFile.length; i += bufferSize) {
+                                      unsigned int size = (unsigned int)MIN(someFile.length - i, bufferSize);
+                                      BOOL writeSuccess = writeData(&bytes[i], size);
+                                  }
+                              }];
+
+BOOL deleteSuccessful = [archive deleteFile:@"dir/anotherFilename.jpg"
+                                      error:&error];
 ```
 
 # License

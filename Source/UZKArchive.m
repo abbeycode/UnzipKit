@@ -588,6 +588,55 @@ compressionMethod:(UZKCompressionMethod)method
 
 - (BOOL)writeIntoBuffer:(NSString *)filePath
                     CRC:(uInt)crc
+                  error:(NSError **)error
+                  block:(void (^)(BOOL (^)(const void *, unsigned int)))action
+{
+    return [self writeIntoBuffer:filePath
+                             CRC:crc
+                        fileDate:nil
+               compressionMethod:UZKCompressionMethodDefault
+                        password:nil
+                       overwrite:YES
+                           error:error
+                           block:action];
+}
+
+- (BOOL)writeIntoBuffer:(NSString *)filePath
+                    CRC:(uInt)crc
+               fileDate:(NSDate *)fileDate
+                  error:(NSError **)error
+                  block:(void (^)(BOOL (^)(const void *, unsigned int)))action
+{
+    return [self writeIntoBuffer:filePath
+                             CRC:crc
+                        fileDate:fileDate
+               compressionMethod:UZKCompressionMethodDefault
+                        password:nil
+                       overwrite:YES
+                           error:error
+                           block:action];
+}
+
+- (BOOL)writeIntoBuffer:(NSString *)filePath
+                    CRC:(uInt)crc
+               fileDate:(NSDate *)fileDate
+      compressionMethod:(UZKCompressionMethod)method
+               password:(NSString *)password
+                  error:(NSError **)error
+                  block:(void (^)(BOOL (^)(const void *, unsigned int)))action
+{
+    return [self writeIntoBuffer:filePath
+                             CRC:crc
+                        fileDate:fileDate
+               compressionMethod:method
+                        password:password
+                       overwrite:YES
+                           error:error
+                           block:action];
+}
+
+- (BOOL)writeIntoBuffer:(NSString *)filePath
+                    CRC:(uInt)crc
                fileDate:(NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
                password:(NSString *)password
