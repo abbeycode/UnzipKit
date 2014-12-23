@@ -358,6 +358,43 @@ compressionMethod:(UZKCompressionMethod)method
             error:(NSError **)error;
 
 /**
+ *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
+ *  don't need to reside in memory at once. It overwrites an existing file with the same name, only if
+ *  specified with the overwrite flag. Overwriting presents a tradeoff: the whole archive needs to be
+ *  copied (minus the file to be overwritten) before the write begins. For a large archive, this can
+ *  be slow. On the other hand, when not overwriting, the size of the archive will grow each time
+ *  the file is written.
+ *
+ *  @param filePath  The full path to the target file in the archive
+ *  @param crc       The CRC of the full data to be written. You can use zlib's crc32() function to
+ *                   calculate this: crc32(0, bytes, length)
+ *  @param fileDate  The timestamp of the file in the archive. Uses the current time if nil
+ *  @param method    The full path to the target file in the archive
+ *  @param password  Override the password associated with the archive (not recommended)
+ *  @param overwrite If YES, and the file exists, delete it before writing. If NO, append
+ *                   the data into the archive without removing it first (legacy Objective-Zip
+ *                   behavior)
+ *  @param error     Contains an NSError object when there was an error writing to the archive
+ *  @param action    Contains your code to loop through the source bytes and write them to the
+ *                   archive. Each time a chunk of data is ready to be written, call writeData,
+ *                   passing in a pointer to the bytes and their length
+ *
+ *       - *writeData* Call this block to write some bytes into the archive. It returns NO if the
+ *                     write failed. If this happens, you should return from the action block, and
+ *                     handle the NSError returned into the error reference
+ *
+ *  @return YES if successful, NO on error
+ */
+- (BOOL)writeIntoBuffer:(NSString *)filePath
+                    CRC:(uInt)crc
+               fileDate:(NSDate *)fileDate
+      compressionMethod:(UZKCompressionMethod)method
+               password:(NSString *)password
+              overwrite:(BOOL)overwrite
+                  error:(NSError **)error
+                  block:(void(^)(BOOL(^writeData)(const void *bytes, unsigned int length)))action;
+
+/**
  *  Removes the given file from the archive
  *
  *  @param filePath The file in the archive you wish to delete

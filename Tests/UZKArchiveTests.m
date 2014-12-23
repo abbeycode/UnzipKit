@@ -1589,6 +1589,71 @@ static NSDateFormatter *testFileInfoDateFormatter;
 }
 
 
+#pragma mark Write Into Buffer
+
+
+- (void)testWriteInfoBuffer
+{
+    NSSet *testFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+        return ![key hasSuffix:@"zip"];
+    }];
+    
+    NSArray *testFiles = [testFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *testDates = @[[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"],
+                           [testFileInfoDateFormatter dateFromString:@"12/21/2014 10:00 AM"],
+                           [testFileInfoDateFormatter dateFromString:@"12/22/2014 11:54 PM"]];
+    NSMutableArray *testFileData = [NSMutableArray arrayWithCapacity:testFiles.count];
+    
+    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"WriteIntoBufferTest.zip"];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    
+    unsigned int bufferSize = 1024; //Arbitrary
+    
+    [testFiles enumerateObjectsUsingBlock:^(NSString *testFile, NSUInteger idx, BOOL *stop) {
+        NSData *fileData = [NSData dataWithContentsOfURL:self.testFileURLs[testFile]];
+        [testFileData addObject:fileData];
+        
+        NSError *writeError = nil;
+        uInt crc = (uInt)crc32(0, fileData.bytes, (uInt)fileData.length);
+        const void *bytes = fileData.bytes;
+        
+        BOOL result = [archive writeIntoBuffer:testFile
+                                           CRC:crc
+                                      fileDate:testDates[idx]
+                             compressionMethod:UZKCompressionMethodDefault
+                                      password:nil
+                                     overwrite:YES
+                                         error:&writeError
+                                         block:^(BOOL(^writeData)(const void *bytes, unsigned int length)) {
+                                             for (NSUInteger i = 0; i <= fileData.length; i += bufferSize) {
+                                                 unsigned int size = (unsigned int)MIN(fileData.length - i, bufferSize);
+                                                 BOOL writeSuccess = writeData(&bytes[i], size);
+                                                 XCTAssertTrue(writeSuccess, @"Failed to write buffered data");
+                                             }
+                                         }];
+        
+        XCTAssertTrue(result, @"Error writing archive data");
+        XCTAssertNil(writeError, @"Error writing to file %@: %@", testFile, writeError);
+    }];
+    
+    __block NSError *readError = nil;
+    __block NSUInteger idx = 0;
+    
+    [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
+        NSData *expectedData = testFileData[idx];
+        uLong expectedCRC = crc32(0, expectedData.bytes, (uInt)expectedData.length);
+        
+        XCTAssertEqualObjects(fileInfo.filename, testFiles[idx], @"Incorrect filename in archive");
+        XCTAssertEqualObjects(fileInfo.timestamp, testDates[idx], @"Incorrect timestamp in archive");
+        XCTAssertEqual(fileInfo.CRC, expectedCRC, @"CRC of extracted data doesn't match what was written");
+        XCTAssertEqualObjects(fileData, expectedData, @"Data extracted doesn't match what was written");
+        
+        idx++;
+    } error:&readError];
+}
+
+
 #pragma mark Delete File
 
 

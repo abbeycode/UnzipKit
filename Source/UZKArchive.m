@@ -586,6 +586,35 @@ compressionMethod:(UZKCompressionMethod)method
     return success;
 }
 
+- (BOOL)writeIntoBuffer:(NSString *)filePath
+                    CRC:(uInt)crc
+               fileDate:(NSDate *)fileDate
+      compressionMethod:(UZKCompressionMethod)method
+               password:(NSString *)password
+              overwrite:(BOOL)overwrite
+                  error:(NSError **)error
+                  block:(void(^)(BOOL(^writeData)(const void *, unsigned int)))action;
+{
+    BOOL success = [self performWriteAction:^int(NSError **innerError) {
+        __block int writeErr;
+        action(^BOOL(const void *bytes, unsigned int length){
+            writeErr = zipWriteInFileInZip(self.zipFile, bytes, length);
+            return writeErr == ZIP_OK;
+        });
+        
+        return writeErr;
+    }
+                                   filePath:filePath
+                                   fileDate:fileDate
+                          compressionMethod:method
+                                   password:password
+                                  overwrite:overwrite
+                                        CRC:crc
+                                      error:error];
+    
+    return success;
+}
+
 - (BOOL)deleteFile:(NSString *)filePath error:(NSError **)error
 {
     // Thanks to Ivan A. Krestinin for much of the code below: http://www.winimage.com/zLibDll/del.cpp
