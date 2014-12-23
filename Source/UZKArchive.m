@@ -12,7 +12,6 @@
 
 
 NSString *UZKErrorDomain = @"UZKErrorDomain";
-#define kMiniZipErrorDomain @"MiniZip error"
 
 #define FILE_IN_ZIP_MAX_NAME_LENGTH (512)
 
@@ -86,8 +85,8 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
             NSLog(@"Error creating bookmark to ZIP archive: %@", error);
         }
 
-        self.fallbackURL = fileURL;
-        self.password = password;
+        _fallbackURL = fileURL;
+        _password = password;
     }
     
     return self;
@@ -108,7 +107,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     NSError *error = nil;
     
     NSURL *result = [NSURL URLByResolvingBookmarkData:self.fileBookmark
-                                              options:0
+                                              options:(NSURLBookmarkResolutionOptions)0
                                         relativeToURL:nil
                                   bookmarkDataIsStale:&bookmarkIsStale
                                                 error:&error];
@@ -146,7 +145,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 #pragma mark - Read Methods
 
 
-- (NSArray *)listFilenames:(NSError **)error
+- (NSArray *)listFilenames:(NSError * __autoreleasing*)error
 {
     NSArray *zipInfos = [self listFileInfo:error];
     
@@ -157,7 +156,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     return [zipInfos valueForKeyPath:@"filename"];
 }
 
-- (NSArray *)listFileInfo:(NSError **)error
+- (NSArray *)listFileInfo:(NSError * __autoreleasing*)error
 {
     if (error) {
         *error = nil;
@@ -167,7 +166,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     
     NSMutableArray *zipInfos = [NSMutableArray array];
     
-    BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
+    BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         unzGoToNextFile(self.unzFile);
         
         unz_global_info gi;
@@ -186,7 +185,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
             return;
         }
 
-        for (NSInteger i = 0; i < fileCount; i++) {
+        for (NSUInteger i = 0; i < fileCount; i++) {
             UZKFileInfo *info = [self currentFileInZipInfo:innerError];
             
             if (info) {
@@ -220,7 +219,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 - (BOOL)extractFilesTo:(NSString *)destinationDirectory
              overwrite:(BOOL)overwrite
               progress:(void (^)(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed))progress
-                 error:(NSError **)error
+                 error:(NSError * __autoreleasing*)error
 {
     NSError *listError = nil;
     NSArray *fileInfo = [self listFileInfo:&listError];
@@ -242,7 +241,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 
     NSError *extractError = nil;
     
-    BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
+    BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         for (UZKFileInfo *info in fileInfo) {
             if (progress) {
                 progress(info, bytesDecompressed / totalSize.floatValue);
@@ -311,7 +310,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 
 - (NSData *)extractData:(UZKFileInfo *)fileInfo
                progress:(void (^)(CGFloat))progress
-                  error:(NSError **)error
+                  error:(NSError * __autoreleasing*)error
 {
     return [self extractDataFromFile:fileInfo.filename
                             progress:progress
@@ -320,7 +319,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 
 - (NSData *)extractDataFromFile:(NSString *)filePath
                        progress:(void (^)(CGFloat))progress
-                          error:(NSError **)error
+                          error:(NSError * __autoreleasing*)error
 {
     NSMutableData *result = [NSMutableData data];
     
@@ -346,7 +345,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 }
 
 - (BOOL)performOnFilesInArchive:(void (^)(UZKFileInfo *, BOOL *))action
-                          error:(NSError **)error
+                          error:(NSError * __autoreleasing*)error
 {
     NSError *listError = nil;
     NSArray *fileInfo = [self listFileInfo:&listError];
@@ -363,7 +362,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     
     NSArray *sortedFileInfo = [fileInfo sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"filename" ascending:YES]]];
     
-    BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
+    BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         BOOL stop = NO;
 
         for (UZKFileInfo *info in sortedFileInfo) {
@@ -379,7 +378,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 }
 
 - (BOOL)performOnDataInArchive:(void (^)(UZKFileInfo *, NSData *, BOOL *))action
-                         error:(NSError **)error
+                         error:(NSError * __autoreleasing*)error
 {
     return [self performOnFilesInArchive:^(UZKFileInfo *fileInfo, BOOL *stop) {
         if (![self locateFileInZip:fileInfo.filename error:error]) {
@@ -401,12 +400,12 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 }
 
 - (BOOL)extractBufferedDataFromFile:(NSString *)filePath
-                              error:(NSError **)error
+                              error:(NSError * __autoreleasing*)error
                              action:(void (^)(NSData *, CGFloat))action
 {
     NSUInteger bufferSize = 4096; //Arbitrary
     
-    BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
+    BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         if (![self locateFileInZip:filePath error:innerError]) {
             [self assignError:innerError code:UZKErrorCodeFileNotFoundInArchive];
             return;
@@ -523,7 +522,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
-            error:(NSError **)error
+            error:(NSError * __autoreleasing*)error
 {
     return [self writeData:data
                   filePath:filePath
@@ -538,7 +537,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
          progress:(void (^)(CGFloat percentCompressed))progress
-            error:(NSError **)error
+            error:(NSError * __autoreleasing*)error
 {
     return [self writeData:data
                   filePath:filePath
@@ -554,7 +553,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
          filePath:(NSString *)filePath
          fileDate:(NSDate *)fileDate
          progress:(void (^)(CGFloat percentCompressed))progress
-            error:(NSError **)error
+            error:(NSError * __autoreleasing*)error
 {
     return [self writeData:data
                   filePath:filePath
@@ -572,7 +571,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 compressionMethod:(UZKCompressionMethod)method
          password:(NSString *)password
          progress:(void (^)(CGFloat percentCompressed))progress
-            error:(NSError **)error
+            error:(NSError * __autoreleasing*)error
 {
     return [self writeData:data
                   filePath:filePath
@@ -591,7 +590,7 @@ compressionMethod:(UZKCompressionMethod)method
          password:(NSString *)password
         overwrite:(BOOL)overwrite
          progress:(void (^)(CGFloat percentCompressed))progress
-            error:(NSError **)error
+            error:(NSError * __autoreleasing*)error
 {
     NSUInteger bufferSize = 4096; //Arbitrary
     const void *bytes = data.bytes;
@@ -600,10 +599,11 @@ compressionMethod:(UZKCompressionMethod)method
         progress(0);
     }
 
-    BOOL success = [self performWriteAction:^int(NSError **innerError) {
+    BOOL success = [self performWriteAction:^int(NSError * __autoreleasing*innerError) {
         for (NSUInteger i = 0; i <= data.length; i += bufferSize) {
-            unsigned int size = (unsigned int)MIN(data.length - i, bufferSize);
-            int err = zipWriteInFileInZip(self.zipFile, &bytes[i], size);
+            unsigned int dataRemaining = (unsigned int)(data.length - i);
+            unsigned int size = (unsigned int)(dataRemaining < bufferSize ? dataRemaining : bufferSize);
+            int err = zipWriteInFileInZip(self.zipFile, (char *)bytes + i, size);
             
             if (err != ZIP_OK) {
                 return err;
@@ -629,7 +629,7 @@ compressionMethod:(UZKCompressionMethod)method
 
 - (BOOL)writeIntoBuffer:(NSString *)filePath
                     CRC:(uInt)crc
-                  error:(NSError **)error
+                  error:(NSError * __autoreleasing*)error
                   block:(void (^)(BOOL (^)(const void *, unsigned int)))action
 {
     return [self writeIntoBuffer:filePath
@@ -645,7 +645,7 @@ compressionMethod:(UZKCompressionMethod)method
 - (BOOL)writeIntoBuffer:(NSString *)filePath
                     CRC:(uInt)crc
                fileDate:(NSDate *)fileDate
-                  error:(NSError **)error
+                  error:(NSError * __autoreleasing*)error
                   block:(void (^)(BOOL (^)(const void *, unsigned int)))action
 {
     return [self writeIntoBuffer:filePath
@@ -663,7 +663,7 @@ compressionMethod:(UZKCompressionMethod)method
                fileDate:(NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
                password:(NSString *)password
-                  error:(NSError **)error
+                  error:(NSError * __autoreleasing*)error
                   block:(void (^)(BOOL (^)(const void *, unsigned int)))action
 {
     return [self writeIntoBuffer:filePath
@@ -682,10 +682,10 @@ compressionMethod:(UZKCompressionMethod)method
       compressionMethod:(UZKCompressionMethod)method
                password:(NSString *)password
               overwrite:(BOOL)overwrite
-                  error:(NSError **)error
-                  block:(void(^)(BOOL(^writeData)(const void *, unsigned int)))action;
+                  error:(NSError * __autoreleasing*)error
+                  block:(void(^)(BOOL(^writeData)(const void *, unsigned int)))action
 {
-    BOOL success = [self performWriteAction:^int(NSError **innerError) {
+    BOOL success = [self performWriteAction:^int(NSError * __autoreleasing*innerError) {
         __block int writeErr;
         action(^BOOL(const void *bytes, unsigned int length){
             writeErr = zipWriteInFileInZip(self.zipFile, bytes, length);
@@ -705,7 +705,7 @@ compressionMethod:(UZKCompressionMethod)method
     return success;
 }
 
-- (BOOL)deleteFile:(NSString *)filePath error:(NSError **)error
+- (BOOL)deleteFile:(NSString *)filePath error:(NSError * __autoreleasing*)error
 {
     // Thanks to Ivan A. Krestinin for much of the code below: http://www.winimage.com/zLibDll/del.cpp
     
@@ -987,9 +987,9 @@ compressionMethod:(UZKCompressionMethod)method
 #pragma mark - Private Methods
 
 
-- (BOOL)performActionWithArchiveOpen:(void(^)(NSError **innerError))action
+- (BOOL)performActionWithArchiveOpen:(void(^)(NSError * __autoreleasing*innerError))action
                               inMode:(UZKFileMode)mode
-                               error:(NSError **)error
+                               error:(NSError * __autoreleasing*)error
 {
     if (error) {
         *error = nil;
@@ -1025,14 +1025,14 @@ compressionMethod:(UZKCompressionMethod)method
     return !actionError;
 }
 
-- (BOOL)performWriteAction:(int(^)(NSError **innerError))write
+- (BOOL)performWriteAction:(int(^)(NSError * __autoreleasing*innerError))write
                   filePath:(NSString *)filePath
                   fileDate:(NSDate *)fileDate
          compressionMethod:(UZKCompressionMethod)method
                   password:(NSString *)password
                  overwrite:(BOOL)overwrite
                        CRC:(uInt)crc
-                     error:(NSError **)error
+                     error:(NSError * __autoreleasing*)error
 {
     if (overwrite) {
         NSError *listFilesError = nil;
@@ -1060,7 +1060,7 @@ compressionMethod:(UZKCompressionMethod)method
         password = self.password;
     }
     
-    BOOL success = [self performActionWithArchiveOpen:^(NSError **innerError) {
+    BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         zip_fileinfo zi = [UZKArchive zipFileInfoForDate:fileDate];
         
         const char *passwordStr = NULL;
@@ -1108,7 +1108,7 @@ compressionMethod:(UZKCompressionMethod)method
 - (BOOL)openFile:(NSString *)zipFile
           inMode:(UZKFileMode)mode
     withPassword:(NSString *)aPassword
-           error:(NSError **)error
+           error:(NSError * __autoreleasing*)error
 {
     if (error) {
         *error = nil;
@@ -1184,16 +1184,12 @@ compressionMethod:(UZKCompressionMethod)method
                 return NO;
             }
             break;
-
-        default:
-            [NSException raise:@"Invalid UZKArchive openFile mode"
-                        format:@"Unknown mode: %lu for file: %@", mode, self.filename];
     }
     
     return YES;
 }
 
-- (BOOL)closeFile:(NSError **)error
+- (BOOL)closeFile:(NSError * __autoreleasing*)error
 {
     int err;
     
@@ -1221,10 +1217,6 @@ compressionMethod:(UZKCompressionMethod)method
                 return NO;
             }
             break;
-
-        default:
-            [NSException raise:@"Invalid UZKArchive closeFile mode"
-                        format:@"Unknown mode: %lu for file: %@", self.mode, self.filename];
     }
     
     self.mode = -1;
@@ -1236,7 +1228,7 @@ compressionMethod:(UZKCompressionMethod)method
 #pragma mark - Zip File Navigation
 
 
-- (UZKFileInfo *)currentFileInZipInfo:(NSError **)error {
+- (UZKFileInfo *)currentFileInZipInfo:(NSError * __autoreleasing*)error {
     char filename_inzip[FILE_IN_ZIP_MAX_NAME_LENGTH];
     unz_file_info file_info;
     
@@ -1250,7 +1242,7 @@ compressionMethod:(UZKCompressionMethod)method
     return [UZKFileInfo fileInfo:&file_info filename:filename];
 }
 
-- (BOOL)locateFileInZip:(NSString *)fileNameInZip error:(NSError **)error {
+- (BOOL)locateFileInZip:(NSString *)fileNameInZip error:(NSError * __autoreleasing*)error {
     NSValue *filePosValue = self.archiveContents[fileNameInZip.decomposedStringWithCanonicalMapping];
     
     if (!filePosValue) {
@@ -1278,7 +1270,7 @@ compressionMethod:(UZKCompressionMethod)method
 #pragma mark - Zip File Operations
 
 
-- (BOOL)openFile:(NSError **)error
+- (BOOL)openFile:(NSError * __autoreleasing*)error
 {
     char filename_inzip[FILE_IN_ZIP_MAX_NAME_LENGTH];
     unz_file_info file_info;
@@ -1303,7 +1295,7 @@ compressionMethod:(UZKCompressionMethod)method
 }
 
 
-- (NSData *)readFile:(NSString *)filePath length:(NSUInteger)length error:(NSError **)error {
+- (NSData *)readFile:(NSString *)filePath length:(NSUInteger)length error:(NSError * __autoreleasing*)error {
     if (![self openFile:error]) {
         return nil;
     }
@@ -1325,10 +1317,10 @@ compressionMethod:(UZKCompressionMethod)method
 #pragma mark - Misc. Private Methods
 
 
-- (BOOL)storeFileBookmark:(NSURL *)fileURL error:(NSError **)error
+- (BOOL)storeFileBookmark:(NSURL *)fileURL error:(NSError * __autoreleasing*)error
 {
     NSError *bookmarkError = nil;
-    self.fileBookmark = [fileURL bookmarkDataWithOptions:0
+    self.fileBookmark = [fileURL bookmarkDataWithOptions:(NSURLBookmarkCreationOptions)0
                           includingResourceValuesForKeys:@[]
                                            relativeToURL:nil
                                                    error:&bookmarkError];
@@ -1357,7 +1349,7 @@ compressionMethod:(UZKCompressionMethod)method
     return [name decomposedStringWithCanonicalMapping];
 }
 
-+ (NSString *)errorNameForErrorCode:(UZKErrorCode)errorCode
++ (NSString *)errorNameForErrorCode:(NSInteger)errorCode
 {
     NSString *errorName;
     
@@ -1455,6 +1447,9 @@ compressionMethod:(UZKCompressionMethod)method
         fileDate = [NSDate date];
     }
     
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wassign-enum"
+
     NSDateComponents *date = [calendar components:(NSCalendarUnitSecond |
                                                    NSCalendarUnitMinute |
                                                    NSCalendarUnitHour |
@@ -1462,6 +1457,9 @@ compressionMethod:(UZKCompressionMethod)method
                                                    NSCalendarUnitMonth |
                                                    NSCalendarUnitYear)
                                          fromDate:fileDate];
+
+#pragma clang diagnostic pop
+
     zip_fileinfo zi;
     zi.tmz_date.tm_sec = (uInt)date.second;
     zi.tmz_date.tm_min = (uInt)date.minute;
@@ -1479,7 +1477,7 @@ compressionMethod:(UZKCompressionMethod)method
 /**
  *  @return Always returns NO
  */
-- (BOOL)assignError:(NSError **)error code:(NSInteger)errorCode
+- (BOOL)assignError:(NSError * __autoreleasing*)error code:(NSInteger)errorCode
 {
     if (error) {
         NSString *errorName = [UZKArchive errorNameForErrorCode:errorCode];

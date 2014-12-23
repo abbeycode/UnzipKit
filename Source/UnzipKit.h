@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Abbey Code. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+@import Cocoa;
 
 //! Project version number for UnzipKit.
 FOUNDATION_EXPORT double UnzipKitVersionNumber;

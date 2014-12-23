@@ -4,7 +4,7 @@
 //
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 #import "UZKFileInfo.h"
 
@@ -103,12 +103,12 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
 /**
  *  The URL of the archive
  */
-@property(weak, readonly) NSURL *fileURL;
+@property(weak, nonatomic, readonly) NSURL *fileURL;
 
 /**
  *  The filename of the archive
  */
-@property(weak, readonly) NSString *filename;
+@property(weak, nonatomic, readonly) NSString *filename;
 
 /**
  *  The password of the archive
