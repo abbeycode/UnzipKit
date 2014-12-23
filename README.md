@@ -7,6 +7,7 @@ UnzipKit is an Objective-C `zlib` wrapper for compressing and decompressing ZIP 
 It provides the following over Objective-Zip:
 
 * A simpler API, with only a handful of methods, and no incantations to remember
+* The ability to delete files in an archive, including overwriting an existing file
 * Pervasive use of blocks, making iteration and progress reporting simple to use
 * Full documentation for all methods
 * Pervasive use of `NSError`, instead of throwing exceptions
