@@ -63,5 +63,5 @@ BOOL deleteSuccessful = [archive deleteFile:@"dir/anotherFilename.jpg"
 
 # License
 
-* UnzipKit: [See LICENSE](LICENSE)
+* UnzipKit: [See LICENSE (BSD)](LICENSE)
 * MiniZip: [See MiniZip website](http://www.winimage.com/zLibDll/minizip.html)
