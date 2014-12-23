@@ -287,9 +287,9 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
 /**
  *  Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
  *
- *  @param data              Data to write into the archive
- *  @param filePath          The full path to the target file in the archive
- *  @param error             Contains an NSError object when there was an error writing to the archive
+ *  @param data     Data to write into the archive
+ *  @param filePath The full path to the target file in the archive
+ *  @param error    Contains an NSError object when there was an error writing to the archive
  *
  *  @return YES if successful, NO on error
  */
@@ -300,10 +300,10 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
 /**
  *  Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
  *
- *  @param data              Data to write into the archive
- *  @param filePath          The full path to the target file in the archive
- *  @param fileDate          The timestamp of the file in the archive. Uses the current time if nil
- *  @param error             Contains an NSError object when there was an error writing to the archive
+ *  @param data      Data to write into the archive
+ *  @param filePath  The full path to the target file in the archive
+ *  @param fileDate  The timestamp of the file in the archive. Uses the current time if nil
+ *  @param error     Contains an NSError object when there was an error writing to the archive
  *
  *  @return YES if successful, NO on error
  */
@@ -315,12 +315,12 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
 /**
  *  Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
  *
- *  @param data              Data to write into the archive
- *  @param filePath          The full path to the target file in the archive
- *  @param fileDate          The timestamp of the file in the archive. Uses the current time if nil
- *  @param compressionMethod The full path to the target file in the archive
- *  @param password          Override the password associated with the archive (not recommended)
- *  @param error             Contains an NSError object when there was an error writing to the archive
+ *  @param data      Data to write into the archive
+ *  @param filePath  The full path to the target file in the archive
+ *  @param fileDate  The timestamp of the file in the archive. Uses the current time if nil
+ *  @param method    The full path to the target file in the archive
+ *  @param password  Override the password associated with the archive (not recommended)
+ *  @param error     Contains an NSError object when there was an error writing to the archive
  *
  *  @return YES if successful, NO on error
  */
@@ -337,15 +337,15 @@ compressionMethod:(UZKCompressionMethod)method
  *  the write begins. For a large archive, this can be slow. On the other hand, when not overwriting,
  *  the size of the archive will grow each time the file is written.
  *
- *  @param data              Data to write into the archive
- *  @param filePath          The full path to the target file in the archive
- *  @param fileDate          The timestamp of the file in the archive. Uses the current time if nil
- *  @param compressionMethod The full path to the target file in the archive
- *  @param password          Override the password associated with the archive (not recommended)
- *  @param overwrite         If YES, and the file exists, delete it before writing. If NO, append
- *                           the data into the archive without removing it first (legacy Objective-Zip
- *                           behavior)
- *  @param error             Contains an NSError object when there was an error writing to the archive
+ *  @param data      Data to write into the archive
+ *  @param filePath  The full path to the target file in the archive
+ *  @param fileDate  The timestamp of the file in the archive. Uses the current time if nil
+ *  @param method    The full path to the target file in the archive
+ *  @param password  Override the password associated with the archive (not recommended)
+ *  @param overwrite If YES, and the file exists, delete it before writing. If NO, append
+ *                   the data into the archive without removing it first (legacy Objective-Zip
+ *                   behavior)
+ *  @param error     Contains an NSError object when there was an error writing to the archive
  *
  *  @return YES if successful, NO on error
  */
