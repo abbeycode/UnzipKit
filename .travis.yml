@@ -2,7 +2,7 @@ language: objective-c
 script:
   - xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -configuration Release analyze test
 #  - xctool -workspace UnzipKit.xcworkspace -scheme UnzipExample -sdk iphonesimulator build
-#  - ./Scripts/cocoapod-validate.sh
+  - ./Scripts/cocoapod-validate.sh
 
 # Turn on Docker, container-based infrastructure
 sudo: false
