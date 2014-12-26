@@ -4,7 +4,7 @@
 //
 //
 
-@import Foundation;
+#import <Foundation/Foundation.h>
 
 #import "UZKFileInfo.h"
 
