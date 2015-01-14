@@ -1,6 +1,7 @@
 language: objective-c
 script:
   - xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -configuration Release analyze test
+  - xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx10.9
 #  - xctool -workspace UnzipKit.xcworkspace -scheme UnzipExample -sdk iphonesimulator build
   - ./Scripts/cocoapod-validate.sh
 
