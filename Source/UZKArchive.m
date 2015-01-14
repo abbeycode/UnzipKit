@@ -27,7 +27,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 @interface UZKArchive ()
 
 - (instancetype)initWithFile:(NSURL *)fileURL password:(NSString*)password
-#if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_9
+#if TARGET_OS_IPHONE || MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_9
 NS_DESIGNATED_INITIALIZER
 #endif
 ;
