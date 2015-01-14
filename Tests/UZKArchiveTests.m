@@ -1089,7 +1089,9 @@ static NSDateFormatter *testFileInfoDateFormatter;
                                                   error:&error
                                                  action:
                     ^(NSData *dataChunk, CGFloat percentDecompressed) {
+#if DEBUG
                         NSLog(@"Decompressed: %f%%", percentDecompressed);
+#endif
                         [deflated writeData:dataChunk];
                     }];
     
