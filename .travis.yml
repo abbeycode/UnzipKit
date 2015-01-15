@@ -8,7 +8,7 @@ xcode_sdk:
   - macosx10.9
 
 script:
-  - xctool -configuration Release analyze test
+  - xctool -scheme $XCSCHEME -configuration Release analyze test
 #  - xctool -workspace UnzipKit.xcworkspace -scheme UnzipExample -sdk iphonesimulator build
 
 after_script:
