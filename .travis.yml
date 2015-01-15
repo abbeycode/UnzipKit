@@ -1,8 +1,17 @@
 language: objective-c
+
+xcode_workspace: UnzipKit.xcworkspace
+xcode_scheme: UnzipKit
+
+xcode_sdk:
+  - macosx
+  - macosx10.9
+
 script:
-  - xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -configuration Release analyze test
-  - xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx10.9
+  - xctool -configuration Release analyze test
 #  - xctool -workspace UnzipKit.xcworkspace -scheme UnzipExample -sdk iphonesimulator build
+
+after_script:
   - ./Scripts/cocoapod-validate.sh
 
 # Turn on Docker, container-based infrastructure
