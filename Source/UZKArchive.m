@@ -261,6 +261,10 @@ NS_DESIGNATED_INITIALIZER
                 return;
             }
 
+            if (info.isDirectory) {
+                continue;
+            }
+            
             NSData *data = [self readFile:info.filename
                                    length:info.uncompressedSize
                                     error:innerError];
@@ -278,7 +282,7 @@ NS_DESIGNATED_INITIALIZER
             BOOL isDirectory = YES;
             NSString *extractDir = extractPath.stringByDeletingLastPathComponent;
             if (![fm fileExistsAtPath:extractDir]) {
-                BOOL directoriesCreated = [fm createDirectoryAtPath:destinationDirectory
+                BOOL directoriesCreated = [fm createDirectoryAtPath:extractDir
                                         withIntermediateDirectories:YES
                                                          attributes:nil
                                                               error:error];

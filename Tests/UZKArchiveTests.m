@@ -49,6 +49,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testFiles = @[@"Test Archive.zip",
                            @"Test Archive (Password).zip",
                            @"L'incertain.zip",
+                           @"Aces.zip",
                            @"Test File A.txt",
                            @"Test File B.jpg",
                            @"Test File C.m4a"];
@@ -650,6 +651,58 @@ static NSDateFormatter *testFileInfoDateFormatter;
     XCTAssertFalse(success, @"Extract invalid archive succeeded");
     XCTAssertEqual(error.code, UZKErrorCodeBadZipFile, @"Unexpected error code returned");
     XCTAssertFalse(dirExists, @"Directory successfully created for invalid archive");
+}
+
+- (void)testExtractFiles_Aces
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Aces.zip"]];
+    
+    NSString *extractDirectory = [self randomDirectoryWithPrefix:@"ExtractAcesArchive"];
+    NSURL *extractURL = [self.tempDirectory URLByAppendingPathComponent:extractDirectory];
+    
+    NSError *error = nil;
+    BOOL success = [archive extractFilesTo:extractURL.path
+                                 overwrite:NO
+                                  progress:^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
+#if DEBUG
+                                      NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed);
+#endif
+                                  }
+                                     error:&error];
+    
+    XCTAssertTrue(success, @"Extract Aces archive failed");
+    
+    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager]
+                                         enumeratorAtURL:extractURL
+                                         includingPropertiesForKeys:nil
+                                         options:0
+                                         errorHandler:^(NSURL *url, NSError *error) {
+                                             // Handle the error.
+                                             // Return YES if the enumeration should continue after the error.
+                                             XCTFail(@"Error listing contents of directory %@: %@", url, error);
+                                             return NO;
+                                         }];
+    
+    NSArray *expectedFiles = @[
+                               @"aces-dev-1.0",
+                               @"aces-dev-1.0/CHANGELOG.md",
+                               @"aces-dev-1.0/documents",
+                               @"aces-dev-1.0/documents/README.md",
+                               @"aces-dev-1.0/images",
+                               @"aces-dev-1.0/images/README.md",
+                               @"aces-dev-1.0/LICENSE.md",
+                               @"aces-dev-1.0/README.md",
+                               ];
+    
+    NSUInteger i = 0;
+
+    for (NSURL *extractedURL in enumerator) {
+        NSString *actualPath = extractedURL.path;
+        NSString *expectedPath = expectedFiles[i++];
+        XCTAssertTrue([actualPath hasSuffix:expectedPath], @"Unexpected file extracted: %@", actualPath);
+    }
 }
 
 
