@@ -2,7 +2,7 @@
 
 ## 1.0.2
 
-Fixed bug file extraction to fail when an archive contains directories
+Fixed bug causing file extraction to fail when an archive contains directories (Issue #2)
 
 ## 1.0.1
 
