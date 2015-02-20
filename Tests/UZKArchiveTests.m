@@ -1901,6 +1901,54 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 
 
+#pragma mark - Various
+
+
+- (void)testFileDescriptorUsage
+{
+    NSInteger initialFileCount = [self numberOfOpenFileHandles];
+    
+    NSString *testArchiveName = @"Test Archive.zip";
+    NSURL *testArchiveOriginalURL = self.testFileURLs[testArchiveName];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    for (NSInteger i = 0; i < 1000; i++) {
+        NSString *tempDir = [self randomDirectoryName];
+        NSURL *tempDirURL = [self.tempDirectory URLByAppendingPathComponent:tempDir];
+        NSURL *testArchiveCopyURL = [tempDirURL URLByAppendingPathComponent:testArchiveName];
+        
+        NSError *error = nil;
+        [fm createDirectoryAtURL:tempDirURL
+     withIntermediateDirectories:YES
+                      attributes:nil
+                           error:&error];
+        
+        XCTAssertNil(error, @"Error creating temp directory: %@", tempDirURL);
+        
+        [fm copyItemAtURL:testArchiveOriginalURL toURL:testArchiveCopyURL error:&error];
+        XCTAssertNil(error, @"Error copying test archive \n from: %@ \n\n   to: %@", testArchiveOriginalURL, testArchiveCopyURL);
+        
+        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveCopyURL];
+        
+        NSArray *fileList = [archive listFilenames:&error];
+        XCTAssertNotNil(fileList);
+        
+        for (NSString *fileName in fileList) {
+            NSData *fileData = [archive extractDataFromFile:fileName
+                                                   progress:nil
+                                                      error:&error];
+            XCTAssertNotNil(fileData);
+            XCTAssertNil(error);
+        }
+    }
+    
+    NSInteger finalFileCount = [self numberOfOpenFileHandles];
+    
+    XCTAssertEqualWithAccuracy(initialFileCount, finalFileCount, 5, @"File descriptors were left open");
+}
+
+
+
 #pragma mark - Helper Methods
 
 
@@ -1925,6 +1973,28 @@ static NSDateFormatter *testFileInfoDateFormatter;
 - (NSString *)randomDirectoryWithPrefix:(NSString *)prefix
 {
     return [NSString stringWithFormat:@"%@ %@", prefix, [self randomDirectoryName]];
+}
+
+- (NSInteger)numberOfOpenFileHandles {
+    int pid = [[NSProcessInfo processInfo] processIdentifier];
+    NSPipe *pipe = [NSPipe pipe];
+    NSFileHandle *file = pipe.fileHandleForReading;
+    
+    NSTask *task = [[NSTask alloc] init];
+    task.launchPath = @"/usr/sbin/lsof";
+    task.arguments = @[@"-P", @"-n", @"-p", [NSString stringWithFormat:@"%d", pid]];
+    task.standardOutput = pipe;
+    
+    [task launch];
+    
+    NSData *data = [file readDataToEndOfFile];
+    [file closeFile];
+    
+    NSString *lsofOutput = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+    
+//    NSLog(@"LSOF:\n%@", lsofOutput);
+    
+    return [lsofOutput componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]].count;
 }
 
 - (NSURL *)emptyTextFileOfLength:(NSUInteger)fileSize
@@ -1980,8 +2050,10 @@ static NSDateFormatter *testFileInfoDateFormatter;
     for (NSInteger i = 0; i < 5; i++) {
         [emptyFiles addObject:[self emptyTextFileOfLength:20000000]];
     }
+    
+    static NSInteger archiveNumber = 1;
     NSURL *largeArchiveURL = [self archiveWithFiles:emptyFiles
-                                               name:@"Large Archive"];
+                                               name:[NSString stringWithFormat:@"Large Archive %ld", archiveNumber++]];
     return largeArchiveURL;
 }
 
