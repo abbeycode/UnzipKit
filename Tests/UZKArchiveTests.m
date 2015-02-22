@@ -1968,7 +1968,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     
     NSBlockOperation *enumerateB = [NSBlockOperation blockOperationWithBlock:^{
         NSError *error = nil;
-        [largeArchiveA performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
+        [largeArchiveB performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
@@ -1978,7 +1978,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     
     NSBlockOperation *enumerateC = [NSBlockOperation blockOperationWithBlock:^{
         NSError *error = nil;
-        [largeArchiveA performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
+        [largeArchiveC performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
