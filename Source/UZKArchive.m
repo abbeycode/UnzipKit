@@ -1002,7 +1002,7 @@ compressionMethod:(UZKCompressionMethod)method
                               inMode:(UZKFileMode)mode
                                error:(NSError * __autoreleasing*)error
 {
-    @synchronized(_threadLock) {
+    @synchronized(self.threadLock) {
         if (error) {
             *error = nil;
         }
