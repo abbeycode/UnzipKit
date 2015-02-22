@@ -40,6 +40,8 @@ NS_DESIGNATED_INITIALIZER
 @property (assign) unzFile unzFile;
 @property (strong) NSDictionary *archiveContents;
 
+@property (strong) NSObject *threadLock;
+
 @end
 
 
@@ -91,6 +93,7 @@ NS_DESIGNATED_INITIALIZER
 
         _fallbackURL = fileURL;
         _password = password;
+        _threadLock = [[NSObject alloc] init];
     }
     
     return self;
@@ -999,38 +1002,40 @@ compressionMethod:(UZKCompressionMethod)method
                               inMode:(UZKFileMode)mode
                                error:(NSError * __autoreleasing*)error
 {
-    if (error) {
-        *error = nil;
-    }
-    
-    if (![self openFile:self.filename
-                 inMode:mode
-           withPassword:self.password
-                  error:error]) {
-        return NO;
-    }
-    
-    NSError *actionError = nil;
-    
-    @try {
-        action(&actionError);
-    }
-    @finally {
-        NSError *closeError = nil;
-        if (![self closeFile:&closeError]) {
-            if (error && !actionError) {
-                *error = closeError;
-            }
-            
+    @synchronized(_threadLock) {
+        if (error) {
+            *error = nil;
+        }
+        
+        if (![self openFile:self.filename
+                     inMode:mode
+               withPassword:self.password
+                      error:error]) {
             return NO;
         }
+        
+        NSError *actionError = nil;
+        
+        @try {
+            action(&actionError);
+        }
+        @finally {
+            NSError *closeError = nil;
+            if (![self closeFile:&closeError]) {
+                if (error && !actionError) {
+                    *error = closeError;
+                }
+                
+                return NO;
+            }
+        }
+        
+        if (error && actionError) {
+            *error = actionError;
+        }
+        
+        return !actionError;
     }
-    
-    if (error && actionError) {
-        *error = actionError;
-    }
-
-    return !actionError;
 }
 
 - (BOOL)performWriteAction:(int(^)(NSError * __autoreleasing*innerError))write
