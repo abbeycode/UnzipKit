@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.1
+
+Improved error handling, providing more detail in the NSSError objects returned (Issue #3)
+
 ## 1.0.3
 
 Added synchronization, so accessing the same archive across threads doesn't cause errors (Issue #4)
