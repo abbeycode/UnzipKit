@@ -1917,17 +1917,17 @@ static NSDateFormatter *testFileInfoDateFormatter;
     XCTAssertNotNil(error, @"No error returned when extracting data for nonexistant archived file");
     XCTAssertEqual(error.code, UZKErrorCodeFileNotFoundInArchive, @"Unexpected error code");
 
-    NSString *description = error.localizedDescription;
-    XCTAssertNotEqual([description rangeOfString:@"during buffered read"].location, NSNotFound,
-                      @"Incorrect localized description returned in error: '%@'", description);
+    NSString *recoverySuggestion = error.localizedRecoverySuggestion;
+    XCTAssertNotEqual([recoverySuggestion rangeOfString:@"during buffered read"].location, NSNotFound,
+                      @"Incorrect localized recovery suggestion returned in error: '%@'", recoverySuggestion);
 
     NSError *underlyingError = error.userInfo[NSUnderlyingErrorKey];
     XCTAssertNotNil(underlyingError, @"No inner error returned when file doesn't exist");
     XCTAssertEqual(underlyingError.code, UZKErrorCodeFileNotFoundInArchive, @"Unexpected underlying error code");
     
-    NSString *underlyingDescription = underlyingError.localizedDescription;
-    XCTAssertNotEqual([underlyingDescription rangeOfString:@"No file position found"].location, NSNotFound,
-                      @"Incorrect localized description returned in inner error: '%@'", underlyingDescription);
+    NSString *underlyingRecoverySuggestion = underlyingError.localizedRecoverySuggestion;
+    XCTAssertNotEqual([underlyingRecoverySuggestion rangeOfString:@"No file position found"].location, NSNotFound,
+                      @"Incorrect localized recovery suggestion returned in inner error: '%@'", underlyingRecoverySuggestion);
 }
 
 
