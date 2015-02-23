@@ -1901,6 +1901,37 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 
 
+#pragma mark - Error Handling
+
+
+- (void)testNestedError
+{
+    NSURL *testArchiveURL = self.testFileURLs[@"Test Archive.zip"];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    
+    NSError *error = nil;
+    NSData *extractedData = [archive extractDataFromFile:@"file-doesnt-exist.txt"
+                                                progress:nil
+                                                   error:&error];
+    
+    XCTAssertNotNil(error, @"No error returned when extracting data for nonexistant archived file");
+    XCTAssertEqual(error.code, UZKErrorCodeFileNotFoundInArchive, @"Unexpected error code");
+
+    NSString *description = error.localizedDescription;
+    XCTAssertNotEqual([description rangeOfString:@"during buffered read"].location, NSNotFound,
+                      @"Incorrect localized description returned in error: '%@'", description);
+
+    NSError *underlyingError = error.userInfo[NSUnderlyingErrorKey];
+    XCTAssertNotNil(underlyingError, @"No inner error returned when file doesn't exist");
+    XCTAssertEqual(underlyingError.code, UZKErrorCodeFileNotFoundInArchive, @"Unexpected underlying error code");
+    
+    NSString *underlyingDescription = underlyingError.localizedDescription;
+    XCTAssertNotEqual([underlyingDescription rangeOfString:@"No file position found"].location, NSNotFound,
+                      @"Incorrect localized description returned in inner error: '%@'", underlyingDescription);
+}
+
+
+
 #pragma mark - Various
 
 
