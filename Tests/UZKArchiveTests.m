@@ -1978,6 +1978,47 @@ static NSDateFormatter *testFileInfoDateFormatter;
     XCTAssertEqualWithAccuracy(initialFileCount, finalFileCount, 5, @"File descriptors were left open");
 }
 
+- (void)testFileDescriptorUsage_ExtractInsidePerformOnFiles
+{
+    NSInteger initialFileCount = [self numberOfOpenFileHandles];
+    
+    NSString *testArchiveName = @"Test Archive.zip";
+    NSURL *testArchiveOriginalURL = self.testFileURLs[testArchiveName];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    for (NSInteger i = 0; i < 1000; i++) {
+        NSString *tempDir = [self randomDirectoryName];
+        NSURL *tempDirURL = [self.tempDirectory URLByAppendingPathComponent:tempDir];
+        NSURL *testArchiveCopyURL = [tempDirURL URLByAppendingPathComponent:testArchiveName];
+        
+        NSError *error = nil;
+        [fm createDirectoryAtURL:tempDirURL
+     withIntermediateDirectories:YES
+                      attributes:nil
+                           error:&error];
+        
+        XCTAssertNil(error, @"Error creating temp directory: %@", tempDirURL);
+        
+        [fm copyItemAtURL:testArchiveOriginalURL toURL:testArchiveCopyURL error:&error];
+        XCTAssertNil(error, @"Error copying test archive \n from: %@ \n\n   to: %@", testArchiveOriginalURL, testArchiveCopyURL);
+        
+        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveCopyURL];
+
+        NSError *performOnFilesError = nil;
+        BOOL performOnFilesResult =  [archive performOnFilesInArchive:^(UZKFileInfo *fileInfo, BOOL *stop) {
+            NSError *extractError = nil;
+            NSData *fileData = [archive extractData:fileInfo progress:nil error:&extractError];
+            XCTAssertNotNil(fileData, @"No data extracted");
+            XCTAssertNil(extractError, @"Failed to extract file");
+        } error:&performOnFilesError];
+        XCTAssertTrue(performOnFilesResult, @"Failed to performOnFilesInArchive");
+        XCTAssertNil(performOnFilesError, @"Error during performOnFilesInArchive");
+    }
+    NSInteger finalFileCount = [self numberOfOpenFileHandles];
+    
+    XCTAssertEqualWithAccuracy(initialFileCount, finalFileCount, 5, @"File descriptors were left open");
+}
+
 - (void)testFileDescriptorUsage_WriteIntoArchive
 {
     NSInteger initialFileCount = [self numberOfOpenFileHandles];
