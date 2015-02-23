@@ -1593,7 +1593,8 @@ compressionMethod:(UZKCompressionMethod)method
         
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:
                                          @{NSLocalizedFailureReasonErrorKey: errorName,
-                                           NSLocalizedDescriptionKey: errorDetail}];
+                                           NSLocalizedDescriptionKey: errorName,
+                                           NSLocalizedRecoverySuggestionErrorKey: errorDetail}];
         
         if (self.fileURL) {
             userInfo[NSURLErrorKey] = self.fileURL;
