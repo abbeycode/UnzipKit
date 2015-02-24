@@ -1291,7 +1291,7 @@ compressionMethod:(UZKCompressionMethod)method
             break;
             
         case UZKFileModeUnassigned:
-            NSAssert(NO, @"Cannot call -openFile:inMode:withPassword:error: with a mode of UZKFileModeUnassigned");
+            NSAssert(NO, @"Cannot call -openFile:inMode:withPassword:error: with a mode of UZKFileModeUnassigned (%lu)", mode);
             break;
     }
     
