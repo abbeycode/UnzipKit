@@ -1030,7 +1030,7 @@ compressionMethod:(UZKCompressionMethod)method
     if (!result)
     {
         return [self assignError:error code:UZKErrorCodeDeleteFile
-                          detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Failed to replace the old archive with the new one, after deleting %@ from it", @"Detailed error string"),
+                          detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Failed to replace the old archive with the new one, after deleting '%@' from it", @"Detailed error string"),
                                   filenameToDelete]];
     }
     
@@ -1039,8 +1039,8 @@ compressionMethod:(UZKCompressionMethod)method
                            error:&bookmarkError])
     {
         return [self assignError:error code:UZKErrorCodeDeleteFile
-                          detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Failed to store the new file bookmark to the archive after deleting %@ from it", @"Detailed error string"),
-                                  filenameToDelete]
+                          detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Failed to store the new file bookmark to the archive after deleting '%@' from it: %@", @"Detailed error string"),
+                                  filenameToDelete, bookmarkError.localizedDescription]
                        underlyer:bookmarkError];
     }
     
@@ -1264,18 +1264,23 @@ compressionMethod:(UZKCompressionMethod)method
         case UZKFileModeCreate:
         case UZKFileModeAppend:
             if (![fm fileExistsAtPath:zipFile]) {
-                [fm createFileAtPath:zipFile contents:nil attributes:nil];
+                NSError *createFileError = nil;
+                
+                if (![[NSData data] writeToFile:zipFile options:NSDataWritingAtomic error:&createFileError]) {
+                    return [self assignError:error code:UZKErrorCodeFileOpenForWrite
+                                      detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Failed to create new file for archive: %@", @"Detailed error string"),
+                                              createFileError.localizedDescription]
+                                   underlyer:createFileError];
+                }
                 
                 NSError *bookmarkError = nil;
                 if (![self storeFileBookmark:[NSURL fileURLWithPath:zipFile]
-                                       error:&bookmarkError]) {
-                    NSLog(@"Error creating new file for archive %@, %@", zipFile, bookmarkError);
-                    
-                    if (error) {
-                        *error = bookmarkError;
-                    }
-                    
-                    return NO;
+                                       error:&bookmarkError])
+                {
+                    return [self assignError:error code:UZKErrorCodeFileOpenForWrite
+                                      detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error creating bookmark to new archive file: %@", @"Detailed error string"),
+                                              bookmarkError.localizedDescription]
+                                   underlyer:bookmarkError];
                 }
             }
             
