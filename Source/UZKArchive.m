@@ -17,7 +17,8 @@ NSString *UZKErrorDomain = @"UZKErrorDomain";
 
 
 typedef NS_ENUM(NSUInteger, UZKFileMode) {
-    UZKFileModeUnzip,
+    UZKFileModeUnassigned = -1,
+    UZKFileModeUnzip = 0,
     UZKFileModeCreate,
     UZKFileModeAppend
 };
@@ -34,6 +35,8 @@ NS_DESIGNATED_INITIALIZER
 
 @property (strong) NSData *fileBookmark;
 @property (strong) NSURL *fallbackURL;
+
+@property (assign) NSInteger openCount;
 
 @property (assign) UZKFileMode mode;
 @property (assign) zipFile zipFile;
@@ -91,6 +94,9 @@ NS_DESIGNATED_INITIALIZER
             NSLog(@"Error creating bookmark to ZIP archive: %@", error);
         }
 
+        _openCount = 0;
+        _mode = UZKFileModeUnassigned;
+        
         _fallbackURL = fileURL;
         _password = password;
         _threadLock = [[NSObject alloc] init];
@@ -718,6 +724,11 @@ compressionMethod:(UZKCompressionMethod)method
 {
     BOOL success = [self performWriteAction:^int(NSError * __autoreleasing*innerError) {
         __block int writeErr;
+        
+        if (!action) {
+            return ZIP_OK;
+        }
+        
         action(^BOOL(const void *bytes, unsigned int length){
             writeErr = zipWriteInFileInZip(self.zipFile, bytes, length);
             return writeErr == ZIP_OK;
@@ -1050,22 +1061,28 @@ compressionMethod:(UZKCompressionMethod)method
             *error = nil;
         }
         
-        if (![self openFile:self.filename
-                     inMode:mode
-               withPassword:self.password
-                      error:error]) {
-            return NO;
-        }
-        
+        NSError *openError = nil;
         NSError *actionError = nil;
         
         @try {
+            if (![self openFile:self.filename
+                         inMode:mode
+                   withPassword:self.password
+                          error:&openError])
+            {
+                if (error) {
+                    *error = openError;
+                }
+                
+                return NO;
+            }
+            
             action(&actionError);
         }
         @finally {
             NSError *closeError = nil;
-            if (![self closeFile:&closeError]) {
-                if (error && !actionError) {
+            if (![self closeFile:&closeError inMode:mode]) {
+                if (error && !actionError && !openError) {
                     *error = closeError;
                 }
                 
@@ -1073,7 +1090,7 @@ compressionMethod:(UZKCompressionMethod)method
             }
         }
         
-        if (error && actionError) {
+        if (error && actionError && !openError) {
             *error = actionError;
         }
         
@@ -1173,6 +1190,27 @@ compressionMethod:(UZKCompressionMethod)method
         *error = nil;
     }
     
+    if (self.mode != UZKFileModeUnassigned && self.mode != mode) {
+        NSString *message;
+        
+        if (self.mode == UZKFileModeUnzip) {
+            message = NSLocalizedString(@"Unable to begin writing to the archive until all read operations have completed", @"Detailed error string");
+        } else {
+            message = NSLocalizedString(@"Unable to begin reading from the archive until all write operations have completed", @"Detailed error string");
+        }
+        
+        return [self assignError:error code:UZKErrorCodeMixedModeAccess detail:message];
+    }
+    
+    if (mode != UZKFileModeUnzip && self.openCount > 0) {
+        return [self assignError:error code:UZKErrorCodeFileWrite
+                          detail:NSLocalizedString(@"Attempted to write to the archive while another write operation is already in progress", @"Detailed error string")];
+    }
+    
+    if (self.openCount++ > 0) {
+        return YES;
+    }
+    
     self.mode = mode;
     
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -1251,14 +1289,29 @@ compressionMethod:(UZKCompressionMethod)method
                 return NO;
             }
             break;
+            
+        case UZKFileModeUnassigned:
+            NSAssert(NO, @"Cannot call -openFile:inMode:withPassword:error: with a mode of UZKFileModeUnassigned");
+            break;
     }
     
     return YES;
 }
 
 - (BOOL)closeFile:(NSError * __autoreleasing*)error
+           inMode:(UZKFileMode)mode
 {
     int err;
+    
+    if (mode != self.mode) {
+        return NO;
+    }
+    
+    if (--self.openCount > 0) {
+        return YES;
+    }
+    
+    BOOL closeSucceeded = YES;
     
     switch (self.mode) {
         case UZKFileModeUnzip:
@@ -1267,7 +1320,7 @@ compressionMethod:(UZKCompressionMethod)method
                 [self assignError:error code:UZKErrorCodeZLibError
                            detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error closing file in archive after read (%d)", @"Detailed error string"),
                                    err]];
-                return NO;
+                closeSucceeded = NO;
             }
             break;
 
@@ -1277,7 +1330,7 @@ compressionMethod:(UZKCompressionMethod)method
                 [self assignError:error code:UZKErrorCodeZLibError
                            detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error closing file in archive after create (%d)", @"Detailed error string"),
                                    err]];
-                return NO;
+                closeSucceeded = NO;
             }
             break;
 
@@ -1287,13 +1340,20 @@ compressionMethod:(UZKCompressionMethod)method
                 [self assignError:error code:UZKErrorCodeZLibError
                            detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error closing file in archive after append (%d)", @"Detailed error string"),
                                    err]];
-                return NO;
+                closeSucceeded = NO;
             }
+            break;
+            
+        case UZKFileModeUnassigned:
+            NSAssert(NO, @"Unbalanced call to -closeFile:, openCount == %ld", self.openCount);
             break;
     }
     
-    self.mode = -1;
-    return YES;
+    if (self.openCount == 0) {
+        self.mode = -1;
+    }
+    
+    return closeSucceeded;
 }
 
 
@@ -1513,6 +1573,11 @@ compressionMethod:(UZKCompressionMethod)method
             
         case UZKErrorCodeDeleteFile:
             errorName = NSLocalizedString(@"Error deleting a file in the archive",
+                                          @"UZKErrorCodeDeleteFile");
+            break;
+            
+        case UZKErrorCodeMixedModeAccess:
+            errorName = NSLocalizedString(@"Attempted to read before all writes have completed, or vise-versa",
                                           @"UZKErrorCodeDeleteFile");
             break;
             

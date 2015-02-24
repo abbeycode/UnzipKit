@@ -98,6 +98,11 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
      *  Error deleting a file in the archive
      */
     UZKErrorCodeDeleteFile = 111,
+    
+    /**
+     *  Tried to read before all writes have completed, or vise-versa
+     */
+    UZKErrorCodeMixedModeAccess = 112,
 };
 
 /**

@@ -172,6 +172,115 @@ static NSDateFormatter *testFileInfoDateFormatter;
 }
 
 
+#pragma mark - Modes
+
+
+- (void)testModes_WriteWhileReading
+{
+    NSURL *testArchiveURL = self.testFileURLs[@"Test Archive.zip"];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    NSError *readError = nil;
+    
+    [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
+        NSError *writeError = nil;
+        [archive writeData:fileData filePath:@"newPath.txt" error:&writeError];
+        XCTAssertNotNil(writeError, @"Write operation during a read succeeded");
+        XCTAssertEqual(writeError.code, UZKErrorCodeMixedModeAccess, @"Wrong error code returned");
+    } error:&readError];
+    
+    XCTAssertNil(readError, @"readError was also non-nil");
+}
+
+- (void)testModes_NestedReads
+{
+    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+        return ![key hasSuffix:@"zip"];
+    }];
+    
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    
+    NSURL *testArchiveURL = self.testFileURLs[@"Test Archive.zip"];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    
+    NSError *performOnFilesError = nil;
+    __block NSInteger i = 0;
+    
+    [archive performOnFilesInArchive:^(UZKFileInfo *fileInfo, BOOL *stop) {
+        NSString *expectedFilename = expectedFiles[i++];
+        
+        NSError *extractError = nil;
+        NSData *extractedData = [archive extractDataFromFile:expectedFilename
+                                                    progress:nil
+                                                       error:&extractError];
+        
+        XCTAssertNil(extractError, @"Error in extractData:error:");
+        
+        NSData *expectedFileData = [NSData dataWithContentsOfURL:self.testFileURLs[expectedFilename]];
+        
+        XCTAssertNotNil(extractedData, @"No data extracted");
+        XCTAssertTrue([expectedFileData isEqualToData:extractedData], @"Extracted data doesn't match original file");
+        
+        extractError = nil;
+        NSData *dataFromFileInfo = [archive extractData:fileInfo
+                                               progress:nil
+                                                  error:&extractError];
+        XCTAssertNil(extractError, @"Error extracting data by file info");
+        XCTAssertTrue([expectedFileData isEqualToData:dataFromFileInfo], @"Extracted data from file info doesn't match original file");
+    } error:&performOnFilesError];
+    
+    XCTAssertNil(performOnFilesError, @"Error iterating through archive");
+}
+
+- (void)testModes_ReadWhileWriting
+{
+    NSURL *testArchiveURL = self.testFileURLs[@"Test Archive.zip"];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    NSError *writeError = nil;
+    
+    NSData *dataToWrite = [NSData dataWithContentsOfFile:testArchiveURL];
+    uInt crc = (uInt)crc32(0, dataToWrite.bytes, (uInt)dataToWrite.length);
+    
+    [archive writeIntoBuffer:@"newFile.zip"
+                         CRC:crc
+                       error:&writeError
+                       block:
+     ^(BOOL(^writeData)(const void *bytes, unsigned int length)) {
+         NSError *readError = nil;
+         [archive listFilenames:&readError];
+         XCTAssertNotNil(readError, @"Read operation during a read succeeded");
+         XCTAssertEqual(readError.code, UZKErrorCodeMixedModeAccess, @"Wrong error code returned");
+    }];
+    
+    XCTAssertNil(writeError, @"writeError was also non-nil");
+}
+
+- (void)testModes_NestedWrites
+{
+    NSURL *testArchiveURL = self.testFileURLs[@"Test Archive.zip"];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    NSError *outerWriteError = nil;
+    
+    NSData *dataToWrite = [NSData dataWithContentsOfFile:testArchiveURL];
+    uInt crc = (uInt)crc32(0, dataToWrite.bytes, (uInt)dataToWrite.length);
+    
+    [archive writeIntoBuffer:@"newFile.zip"
+                         CRC:crc
+                       error:&outerWriteError
+                       block:
+     ^(BOOL(^writeData)(const void *bytes, unsigned int length)) {
+         NSError *innerWriteError = nil;
+         [archive writeIntoBuffer:@"newFile.zip"
+                              CRC:crc
+                            error:&innerWriteError
+                            block:nil];
+         XCTAssertNotNil(innerWriteError, @"Nested write operation succeeded");
+         XCTAssertEqual(innerWriteError.code, UZKErrorCodeFileWrite, @"Wrong error code returned");
+     }];
+    
+    XCTAssertNil(outerWriteError, @"outerWriteError was also non-nil");
+}
+
+
 #pragma mark List Filenames
 
 
