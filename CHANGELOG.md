@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.1.1
+
+Fixed a file handle leak that could lead to random file access errors (Issue #5)
+
 ## 1.1
 
 Improved error handling, providing more detail in the NSSError objects returned (Issue #3)
