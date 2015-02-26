@@ -103,6 +103,11 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
      *  Tried to read before all writes have completed, or vise-versa
      */
     UZKErrorCodeMixedModeAccess = 112,
+    
+    /**
+     *  Error reading the global comment of the archive
+     */
+    UZKErrorCodeReadComment = 113,
 };
 
 /**
@@ -118,7 +123,14 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
 /**
  *  The password of the archive
  */
-@property(strong, strong) NSString *password;
+@property(strong) NSString *password;
+
+/**
+ *  The global comment inside the archive
+ *
+ *  Comments are written in UTF-8, and read in UTF-8 and Windows/CP-1252, falling back to defaultCStringEncoding
+ */
+@property(atomic) NSString *comment;
 
 
 /**

@@ -35,6 +35,7 @@ NS_DESIGNATED_INITIALIZER
 
 @property (strong) NSData *fileBookmark;
 @property (strong) NSURL *fallbackURL;
+@property (strong) NSString *cachedComment;
 
 @property (assign) NSInteger openCount;
 
@@ -151,6 +152,73 @@ NS_DESIGNATED_INITIALIZER
     }
     
     return url.path;
+}
+
+- (NSString *)comment
+{
+    if (self.cachedComment) {
+        return self.cachedComment;
+    }
+    
+    __weak UZKArchive *welf = self;
+    __block NSString *newComment = nil;
+    NSError *error = nil;
+    
+    BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
+        unz_global_info globalInfo;
+        int err = unzGetGlobalInfo(welf.unzFile, &globalInfo);
+        if (err != UNZ_OK) {
+            unzClose(welf.unzFile);
+            
+            NSString *detail = [NSString stringWithFormat:@"Error getting global info of archive: %d", err];
+            [welf assignError:innerError code:UZKErrorCodeReadComment detail:detail];
+            return;
+        }
+        
+        char *globalComment = NULL;
+        
+        if (globalInfo.size_comment > 0)
+        {
+            globalComment = (char*)malloc(globalInfo.size_comment+1);
+            if ((globalComment == NULL) && (globalInfo.size_comment != 0)) {
+                unzClose(welf.unzFile);
+                
+                [welf assignError:innerError code:UZKErrorCodeReadComment detail:@"Error allocating the global comment"];
+                return;
+            }
+            
+            if ((unsigned int)unzGetGlobalComment(welf.unzFile, globalComment, globalInfo.size_comment + 1) != globalInfo.size_comment) {
+                unzClose(welf.unzFile);
+                free(globalComment);
+                
+                [welf assignError:innerError code:UZKErrorCodeReadComment detail:@"Error reading the comment"];
+                return;
+            }
+            
+            newComment = [UZKArchive figureOutCString:globalComment];
+        }
+    } inMode:UZKFileModeUnzip error:&error];
+    
+    if (!success) {
+        return nil;
+    }
+    
+    self.cachedComment = newComment;
+    return self.cachedComment;
+}
+
+- (void)setComment:(NSString *)comment
+{
+    self.cachedComment = comment;
+    
+    NSError *error = nil;
+    BOOL success = [self performActionWithArchiveOpen:nil
+                                               inMode:UZKFileModeAppend
+                                                error:&error];
+
+    if (!success) {
+        NSLog(@"Failed to write comment to archive: %@", error);
+    }
 }
 
 
@@ -820,7 +888,7 @@ compressionMethod:(UZKCompressionMethod)method
     BOOL noFilesDeleted = YES;
     int filesCopied = 0;
     
-    NSString *filenameToDelete = [UZKArchive figureOutFilename:del_file];
+    NSString *filenameToDelete = [UZKArchive figureOutCString:del_file];
     
     int nextFileReturnValue = unzGoToFirstFile(sourceZip);
     
@@ -837,7 +905,7 @@ compressionMethod:(UZKCompressionMethod)method
                                       filePath, err]];
         }
         
-        NSString *currentFileName = [UZKArchive figureOutFilename:filename_inzip];
+        NSString *currentFileName = [UZKArchive figureOutCString:filename_inzip];
         
         // if not need delete this file
         if ([filenameToDelete isEqualToString:currentFileName.decomposedStringWithCanonicalMapping])
@@ -1077,7 +1145,9 @@ compressionMethod:(UZKCompressionMethod)method
                 return NO;
             }
             
-            action(&actionError);
+            if (action) {
+                action(&actionError);
+            }
         }
         @finally {
             NSError *closeError = nil;
@@ -1307,6 +1377,7 @@ compressionMethod:(UZKCompressionMethod)method
            inMode:(UZKFileMode)mode
 {
     int err;
+    const char *cmt;
     
     if (mode != self.mode) {
         return NO;
@@ -1330,7 +1401,8 @@ compressionMethod:(UZKCompressionMethod)method
             break;
 
         case UZKFileModeCreate:
-            err = zipClose(self.zipFile, NULL);
+            cmt = self.comment.UTF8String;
+            err = zipClose(self.zipFile, cmt);
             if (err != ZIP_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError
                            detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error closing file in archive after create (%d)", @"Detailed error string"),
@@ -1340,7 +1412,8 @@ compressionMethod:(UZKCompressionMethod)method
             break;
 
         case UZKFileModeAppend:
-            err= zipClose(self.zipFile, NULL);
+            cmt = self.comment.UTF8String;
+            err= zipClose(self.zipFile, cmt);
             if (err != ZIP_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError
                            detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error closing file in archive after append (%d)", @"Detailed error string"),
@@ -1378,7 +1451,7 @@ compressionMethod:(UZKCompressionMethod)method
         return nil;
     }
     
-    NSString *filename = [UZKArchive figureOutFilename:filename_inzip];
+    NSString *filename = [UZKArchive figureOutCString:filename_inzip];
     return [UZKFileInfo fileInfo:&file_info filename:filename];
 }
 
@@ -1484,21 +1557,21 @@ compressionMethod:(UZKCompressionMethod)method
     return bookmarkError == nil;
 }
 
-+ (NSString *)figureOutFilename:(const char *)filenameBytes
++ (NSString *)figureOutCString:(const char *)filenameBytes
 {
-    NSString *name = [NSString stringWithUTF8String:filenameBytes];
+    NSString *stringValue = [NSString stringWithUTF8String:filenameBytes];
     
-    if (!name) {
-        name = [NSString stringWithCString:filenameBytes
-                                  encoding:NSWindowsCP1252StringEncoding];
+    if (!stringValue) {
+        stringValue = [NSString stringWithCString:filenameBytes
+                                         encoding:NSWindowsCP1252StringEncoding];
     }
     
-    if (!name) {
-        name = [NSString stringWithCString:filenameBytes
-                                  encoding:[NSString defaultCStringEncoding]];
+    if (!stringValue) {
+        stringValue = [NSString stringWithCString:filenameBytes
+                                         encoding:[NSString defaultCStringEncoding]];
     }
     
-    return [name decomposedStringWithCanonicalMapping];
+    return [stringValue decomposedStringWithCanonicalMapping];
 }
 
 + (NSString *)errorNameForErrorCode:(NSInteger)errorCode
