@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.1.2
+
+Exposed a "comment" property on UZKArchive for reading and writing an archive's global comment (Issue #6)
+
 ## 1.1.1
 
 Fixed a file handle leak that could lead to random file access errors (Issue #5)
