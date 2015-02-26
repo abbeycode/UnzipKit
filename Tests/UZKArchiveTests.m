@@ -50,6 +50,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
                            @"Test Archive (Password).zip",
                            @"L'incertain.zip",
                            @"Aces.zip",
+                           @"Comments Archive.zip",
                            @"Test File A.txt",
                            @"Test File B.jpg",
                            @"Test File C.m4a"];
@@ -2040,7 +2041,6 @@ static NSDateFormatter *testFileInfoDateFormatter;
 }
 
 
-
 #pragma mark - File Descriptors
 
 
@@ -2195,6 +2195,40 @@ static NSDateFormatter *testFileInfoDateFormatter;
     XCTAssertEqualWithAccuracy(initialFileCount, finalFileCount, 5, @"File descriptors were left open");
 }
 
+
+#pragma mark - Comments
+
+
+- (void)testGlobalComment_Read
+{
+    UZKArchive *commentArchive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Comments Archive.zip"]];
+    
+    NSString *comment = commentArchive.comment;
+    XCTAssertNotNil(comment, @"No comment returned from archive");
+    XCTAssertGreaterThan(comment.length, 0, @"Comment has no content");
+}
+
+- (void)testGlobalComment_ReadWhenNonePresent
+{
+    UZKArchive *commentFreeArchive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Test Archive.zip"]];
+    
+    NSString *comment = commentFreeArchive.comment;
+    XCTAssertNil(comment, @"Comment returned from archive that should have none");
+}
+
+- (void)testGlobalComment_Write
+{
+    UZKArchive *commentArchive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Test Archive.zip"]];
+    
+    NSString *originalComment = commentArchive.comment;
+    XCTAssertNil(originalComment, @"Comment returned from archive that should have none");
+    
+    NSString *expectedComment = @"Fünky unicode stuff";
+    commentArchive.comment = expectedComment;
+    
+    NSString *updatedComment = commentArchive.comment;
+    XCTAssertEqualObjects(updatedComment, expectedComment, @"Wrong comment read from archive");
+}
 
 
 #pragma mark - Various
