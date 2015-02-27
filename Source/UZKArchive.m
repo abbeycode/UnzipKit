@@ -45,6 +45,8 @@ NS_DESIGNATED_INITIALIZER
 
 @property (strong) NSObject *threadLock;
 
+@property (assign) BOOL commentRetrieved;
+
 @end
 
 
@@ -93,7 +95,6 @@ NS_DESIGNATED_INITIALIZER
         NSError *error = nil;
         if (![self storeFileBookmark:fileURL error:&error]) {
             NSLog(@"Error creating bookmark to ZIP archive: %@", error);
-            _comment = @"";
         }
 
         _openCount = 0;
@@ -102,6 +103,8 @@ NS_DESIGNATED_INITIALIZER
         _fallbackURL = fileURL;
         _password = password;
         _threadLock = [[NSObject alloc] init];
+        
+        _commentRetrieved = NO;
     }
     
     return self;
@@ -157,7 +160,7 @@ NS_DESIGNATED_INITIALIZER
 
 - (NSString *)comment
 {
-    if (_comment) {
+    if (self.commentRetrieved) {
         return _comment;
     }
     
@@ -1238,8 +1241,8 @@ compressionMethod:(UZKCompressionMethod)method
     // Always initialize comment, so it can be read when the file is closed
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdirect-ivar-access"
-    if (!_comment) {
-        _comment = @"";
+    if (!self.commentRetrieved) {
+        self.commentRetrieved = YES;
         _comment = [self readGlobalComment];
     }
 #pragma clang diagnostic pop
@@ -1358,6 +1361,9 @@ compressionMethod:(UZKCompressionMethod)method
     
     switch (self.mode) {
         case UZKFileModeUnzip:
+            if (!self.unzFile) {
+                break;
+            }
             err = unzClose(self.unzFile);
             if (err != UNZ_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError
@@ -1368,6 +1374,9 @@ compressionMethod:(UZKCompressionMethod)method
             break;
 
         case UZKFileModeCreate:
+            if (!self.zipFile) {
+                break;
+            }
             cmt = self.comment.UTF8String;
             err = zipClose(self.zipFile, cmt);
             if (err != ZIP_OK) {
@@ -1379,6 +1388,9 @@ compressionMethod:(UZKCompressionMethod)method
             break;
 
         case UZKFileModeAppend:
+            if (!self.zipFile) {
+                break;
+            }
             cmt = self.comment.UTF8String;
             err= zipClose(self.zipFile, cmt);
             if (err != ZIP_OK) {
@@ -1544,6 +1556,8 @@ compressionMethod:(UZKCompressionMethod)method
         }
     } inMode:UZKFileModeUnzip error:&error];
     
+    self.commentRetrieved = YES;
+
     if (!success) {
         return nil;
     }
