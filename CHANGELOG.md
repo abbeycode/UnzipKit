@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.1.3
+
+Fixed a bug introduced in the last version that would cause errors when writing a file for whom the comment had not first been read or written
+
 ## 1.1.2
 
 Exposed a "comment" property on UZKArchive for reading and writing an archive's global comment (Issue #6)
