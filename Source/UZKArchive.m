@@ -35,7 +35,6 @@ NS_DESIGNATED_INITIALIZER
 
 @property (strong) NSData *fileBookmark;
 @property (strong) NSURL *fallbackURL;
-@property (strong) NSString *cachedComment;
 
 @property (assign) NSInteger openCount;
 
@@ -51,6 +50,7 @@ NS_DESIGNATED_INITIALIZER
 
 @implementation UZKArchive
 
+@synthesize comment = _comment;
 
 
 #pragma mark - Convenience Methods
@@ -93,6 +93,7 @@ NS_DESIGNATED_INITIALIZER
         NSError *error = nil;
         if (![self storeFileBookmark:fileURL error:&error]) {
             NSLog(@"Error creating bookmark to ZIP archive: %@", error);
+            _comment = @"";
         }
 
         _openCount = 0;
@@ -156,60 +157,17 @@ NS_DESIGNATED_INITIALIZER
 
 - (NSString *)comment
 {
-    if (self.cachedComment) {
-        return self.cachedComment;
+    if (_comment) {
+        return _comment;
     }
     
-    __weak UZKArchive *welf = self;
-    __block NSString *newComment = nil;
-    NSError *error = nil;
-    
-    BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
-        unz_global_info globalInfo;
-        int err = unzGetGlobalInfo(welf.unzFile, &globalInfo);
-        if (err != UNZ_OK) {
-            unzClose(welf.unzFile);
-            
-            NSString *detail = [NSString stringWithFormat:@"Error getting global info of archive: %d", err];
-            [welf assignError:innerError code:UZKErrorCodeReadComment detail:detail];
-            return;
-        }
-        
-        char *globalComment = NULL;
-        
-        if (globalInfo.size_comment > 0)
-        {
-            globalComment = (char*)malloc(globalInfo.size_comment+1);
-            if ((globalComment == NULL) && (globalInfo.size_comment != 0)) {
-                unzClose(welf.unzFile);
-                
-                [welf assignError:innerError code:UZKErrorCodeReadComment detail:@"Error allocating the global comment"];
-                return;
-            }
-            
-            if ((unsigned int)unzGetGlobalComment(welf.unzFile, globalComment, globalInfo.size_comment + 1) != globalInfo.size_comment) {
-                unzClose(welf.unzFile);
-                free(globalComment);
-                
-                [welf assignError:innerError code:UZKErrorCodeReadComment detail:@"Error reading the comment"];
-                return;
-            }
-            
-            newComment = [UZKArchive figureOutCString:globalComment];
-        }
-    } inMode:UZKFileModeUnzip error:&error];
-    
-    if (!success) {
-        return nil;
-    }
-    
-    self.cachedComment = newComment;
-    return self.cachedComment;
+    _comment = [self readGlobalComment];
+    return _comment;
 }
 
 - (void)setComment:(NSString *)comment
 {
-    self.cachedComment = comment;
+    _comment = comment;
     
     NSError *error = nil;
     BOOL success = [self performActionWithArchiveOpen:nil
@@ -1277,6 +1235,15 @@ compressionMethod:(UZKCompressionMethod)method
                           detail:NSLocalizedString(@"Attempted to write to the archive while another write operation is already in progress", @"Detailed error string")];
     }
     
+    // Always initialize comment, so it can be read when the file is closed
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdirect-ivar-access"
+    if (!_comment) {
+        _comment = @"";
+        _comment = [self readGlobalComment];
+    }
+#pragma clang diagnostic pop
+
     if (self.openCount++ > 0) {
         return YES;
     }
@@ -1428,7 +1395,7 @@ compressionMethod:(UZKCompressionMethod)method
     }
     
     if (self.openCount == 0) {
-        self.mode = -1;
+        self.mode = UZKFileModeUnassigned;
     }
     
     return closeSucceeded;
@@ -1535,6 +1502,53 @@ compressionMethod:(UZKCompressionMethod)method
     
     data.length = bytes;
     return data;
+}
+
+- (NSString *)readGlobalComment {
+    __weak UZKArchive *welf = self;
+    __block NSString *comment = nil;
+    NSError *error = nil;
+    
+    BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
+        unz_global_info globalInfo;
+        int err = unzGetGlobalInfo(welf.unzFile, &globalInfo);
+        if (err != UNZ_OK) {
+            unzClose(welf.unzFile);
+            
+            NSString *detail = [NSString stringWithFormat:@"Error getting global info of archive during comment read: %d", err];
+            [welf assignError:innerError code:UZKErrorCodeReadComment detail:detail];
+            return;
+        }
+        
+        char *globalComment = NULL;
+        
+        if (globalInfo.size_comment > 0)
+        {
+            globalComment = (char*)malloc(globalInfo.size_comment+1);
+            if ((globalComment == NULL) && (globalInfo.size_comment != 0)) {
+                unzClose(welf.unzFile);
+                
+                [welf assignError:innerError code:UZKErrorCodeReadComment detail:@"Error allocating the global comment during comment read"];
+                return;
+            }
+            
+            if ((unsigned int)unzGetGlobalComment(welf.unzFile, globalComment, globalInfo.size_comment + 1) != globalInfo.size_comment) {
+                unzClose(welf.unzFile);
+                free(globalComment);
+                
+                [welf assignError:innerError code:UZKErrorCodeReadComment detail:@"Error reading the comment (readGlobalComment)"];
+                return;
+            }
+            
+            comment = [UZKArchive figureOutCString:globalComment];
+        }
+    } inMode:UZKFileModeUnzip error:&error];
+    
+    if (!success) {
+        return nil;
+    }
+    
+    return comment;
 }
 
 
