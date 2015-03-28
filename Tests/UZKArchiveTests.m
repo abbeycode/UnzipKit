@@ -18,6 +18,8 @@
 @property NSURL *tempDirectory;
 @property NSMutableDictionary *testFileURLs;
 @property NSMutableDictionary *unicodeFileURLs;
+@property NSSet *nonZipTestFileURLs;
+@property NSSet *nonZipUnicodeFileURLs;
 @property NSURL *corruptArchive;
 
 @end
@@ -113,6 +115,14 @@ static NSDateFormatter *testFileInfoDateFormatter;
         }
     }
     
+    self.nonZipTestFileURLs = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+        return [key rangeOfString:@"zip"].location == NSNotFound;
+    }];
+    
+    self.nonZipUnicodeFileURLs = [self.unicodeFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
+        return [key rangeOfString:@"zip"].location == NSNotFound;
+    }];
+    
     // Make a "corrupt" zip file
     NSURL *m4aFileURL = [self urlOfTestFile:@"Test File C.m4a"];
     self.corruptArchive = [self.tempDirectory URLByAppendingPathComponent:@"corrupt.zip"];
@@ -196,11 +206,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testModes_NestedReads
 {
-    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *expectedFiles = [self.nonZipTestFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive.zip"];
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
@@ -437,11 +443,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
     
-    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     for (NSString *testArchiveName in testArchives) {
         NSURL *testArchiveURL = self.testFileURLs[testArchiveName];
@@ -468,11 +471,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
 - (void)testListFilenames_Unicode
 {
     NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
-    NSSet *expectedFileSet = [self.unicodeFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipUnicodeFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
     
@@ -496,11 +496,9 @@ static NSDateFormatter *testFileInfoDateFormatter;
 {
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:@"password"];
-    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
     
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSArray *filesInArchive = nil;
     NSError *error = nil;
@@ -522,11 +520,9 @@ static NSDateFormatter *testFileInfoDateFormatter;
 {
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
-    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
     
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSArray *filesInArchive = nil;
     NSError *error = nil;
@@ -562,12 +558,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testListFileInfo {
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Test Archive.zip"]];
-    
-    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSDate *expectedDate = [testFileInfoDateFormatter dateFromString:@"3/22/2014 11:17 PM"];
     NSDictionary *expectedCompressionMethods = @{@"Test File A.txt": @(UZKCompressionMethodNone),
@@ -617,11 +609,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testListFileInfo_Unicode
 {
-    NSSet *expectedFileSet = [self.unicodeFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipUnicodeFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
@@ -675,11 +664,9 @@ static NSDateFormatter *testFileInfoDateFormatter;
 {
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:@"password"];
-    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
     
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSArray *filesInArchive = nil;
     NSError *error = nil;
@@ -700,11 +687,9 @@ static NSDateFormatter *testFileInfoDateFormatter;
 - (void)testListFileInfo_NoPasswordGiven {
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
-    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
     
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSArray *filesInArchive = nil;
     NSError *error = nil;
@@ -742,12 +727,9 @@ static NSDateFormatter *testFileInfoDateFormatter;
 {
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
-    
-    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+
+    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSFileManager *fm = [NSFileManager defaultManager];
     
@@ -804,11 +786,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testExtractFiles_Unicode
 {
-    NSSet *expectedFileSet = [self.unicodeFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipUnicodeFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSFileManager *fm = [NSFileManager defaultManager];
     
@@ -971,11 +950,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
     
-    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     for (NSString *testArchiveName in testArchives) {
         
@@ -1024,11 +1000,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testExtractData_Unicode
 {
-    NSSet *expectedFileSet = [self.unicodeFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipUnicodeFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
@@ -1118,11 +1091,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
     
-    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     for (NSString *testArchiveName in testArchives) {
         NSURL *testArchiveURL = self.testFileURLs[testArchiveName];
@@ -1147,11 +1117,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testPerformOnFiles_Unicode
 {
-    NSSet *expectedFileSet = [self.unicodeFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipUnicodeFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
@@ -1178,11 +1145,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
     
-    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     for (NSString *testArchiveName in testArchives) {
         NSURL *testArchiveURL = self.testFileURLs[testArchiveName];
@@ -1212,11 +1176,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testPerformOnData_Unicode
 {
-    NSSet *expectedFileSet = [self.unicodeFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipUnicodeFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
@@ -1477,11 +1438,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testWriteData
 {
-    NSSet *testFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *testFiles = [testFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *testFiles = [self.nonZipTestFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
     NSArray *testDates = @[[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"],
                            [testFileInfoDateFormatter dateFromString:@"12/21/2014 10:00 AM"],
                            [testFileInfoDateFormatter dateFromString:@"12/22/2014 11:54 PM"]];
@@ -1531,11 +1488,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testWriteData_Unicode
 {
-    NSSet *testFileSet = [self.unicodeFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *testFiles = [testFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *testFiles = [self.nonZipUnicodeFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
     NSArray *testDates = @[[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"],
                            [testFileInfoDateFormatter dateFromString:@"12/21/2014 10:00 AM"],
                            [testFileInfoDateFormatter dateFromString:@"12/22/2014 11:54 PM"]];
@@ -1585,11 +1538,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testWriteData_Overwrite
 {
-    NSSet *testFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *testFiles = [testFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *testFiles = [self.nonZipTestFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
     NSArray *testDates = @[[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"],
                            [testFileInfoDateFormatter dateFromString:@"12/21/2014 10:00 AM"],
                            [testFileInfoDateFormatter dateFromString:@"12/22/2014 11:54 PM"]];
@@ -1684,11 +1633,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testWriteData_Overwrite_Unicode
 {
-    NSSet *testFileSet = [self.unicodeFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *testFiles = [testFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *testFiles = [self.nonZipUnicodeFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
     NSArray *testDates = @[[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"],
                            [testFileInfoDateFormatter dateFromString:@"12/21/2014 10:00 AM"],
                            [testFileInfoDateFormatter dateFromString:@"12/22/2014 11:54 PM"]];
@@ -1783,11 +1728,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testWriteData_NoOverwrite
 {
-    NSSet *testFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *testFiles = [testFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *testFiles = [self.nonZipTestFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
     NSArray *testDates = @[[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"],
                            [testFileInfoDateFormatter dateFromString:@"12/21/2014 10:00 AM"],
                            [testFileInfoDateFormatter dateFromString:@"12/22/2014 11:54 PM"]];
@@ -1868,12 +1809,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testWriteData_MultipleWrites
 {
-    NSSet *testFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
     NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"MultipleDataWriteTest.zip"];
-    NSString *testFilename = testFileSet.anyObject;
+    NSString *testFilename = self.nonZipTestFileURLs.anyObject;
     NSURL *testFileURL = self.testFileURLs[testFilename];
     NSData *testFileData = [NSData dataWithContentsOfURL:testFileURL];
     
@@ -1912,12 +1849,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testWriteData_DefaultDate
 {
-    NSSet *testFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
     NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"DefaultDateWriteTest.zip"];
-    NSString *testFilename = testFileSet.anyObject;
+    NSString *testFilename = self.nonZipTestFileURLs.anyObject;
     NSURL *testFileURL = self.testFileURLs[testFilename];
     
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
@@ -1954,11 +1887,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testWriteInfoBuffer
 {
-    NSSet *testFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *testFiles = [testFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *testFiles = [self.nonZipTestFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
     NSArray *testDates = @[[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"],
                            [testFileInfoDateFormatter dateFromString:@"12/21/2014 10:00 AM"],
                            [testFileInfoDateFormatter dateFromString:@"12/22/2014 11:54 PM"]];
@@ -2023,11 +1952,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
     
-    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     NSString *fileToDelete = expectedFiles[0];
     
     NSMutableArray *newFileList = [NSMutableArray arrayWithArray:expectedFiles];
@@ -2069,11 +1995,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
     
-    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     NSString *fileToDelete = expectedFiles[1];
     
     NSMutableArray *newFileList = [NSMutableArray arrayWithArray:expectedFiles];
@@ -2115,11 +2038,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
     
-    NSSet *expectedFileSet = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return ![key hasSuffix:@"zip"];
-    }];
-    
-    NSArray *expectedFiles = [[expectedFileSet allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     NSString *fileToDelete = expectedFiles[2];
     
     NSMutableArray *newFileList = [NSMutableArray arrayWithArray:expectedFiles];
