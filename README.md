@@ -2,7 +2,7 @@
 
 # About
 
-UnzipKit is an Objective-C `zlib` wrapper for compressing and decompressing ZIP files on OS X and iOS. It's based on the [AgileBits fork](https://github.com/AgileBits/objective-zip) of [Objective-Zip](http://code.google.com/p/objective-zip/), developed by [Flying Dolphin Studio](http://www.flyingdolphinstudio.com).
+UnzipKit is an Objective-C `zlib` wrapper for compressing and decompressing Zip files on OS X and iOS. It's based on the [AgileBits fork](https://github.com/AgileBits/objective-zip) of [Objective-Zip](http://code.google.com/p/objective-zip/), developed by [Flying Dolphin Studio](http://www.flyingdolphinstudio.com).
 
 It provides the following over Objective-Zip:
 
@@ -12,20 +12,26 @@ It provides the following over Objective-Zip:
 * Full documentation for all methods
 * Pervasive use of `NSError`, instead of throwing exceptions
 
+# Deleting files
+
+Using the method `-deleteFile:error:` currently creates a new copy of the archive in a temporary location, without the deleted file, then replaces the original archive. By default, all methods to write data perform a delete on the file name they write before archiving the new data. You can turn this off by calling the overload with an `overwrite` argument, setting it to `NO`. This will not remove the original copy of that file, though, causing the archive to grow with each write of the same file name.
+
+If that's not a concern, such as when creating a new archive from scratch, it would improve performance, particularly for archives with a large number of files.
+
 # Example Usage
+
+You can use UnzipKit to read data from Zip archives:
 
 ```Objective-C
 UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip"];
 
 NSError *error = nil;
 
-// Read-only methods
-
 NSArray *filesInArchive = [archive listFilenames:&error];
 BOOL extractFilesSuccessful = [archive extractFilesTo:@"some/directory"
                                             overWrite:NO
                                              progress:
-    ^(URKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
+    ^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
         NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed);
     }
                                                 error:&error];
@@ -34,9 +40,11 @@ NSData *extractedData = [archive extractDataFromFile:@"a file in the archive.jpg
                                                          NSLog(@"Extracting, %f%% complete", percentDecompressed);
                                             }
                                                error:&error];
+```
 
-// Write methods
+You can also write data to Zip archives:
 
+```Objective-C
 NSData *someFile = // Some data to write
 
 BOOL writeSuccessful = [archive writeData:someFile
