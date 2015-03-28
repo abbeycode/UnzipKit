@@ -169,6 +169,25 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
 
 
 /**
+ *  Determines whether a file is a Zip file by reading the header
+ *
+ *  @param filePath Path to the file being checked
+ *
+ *  @return YES if the file exists and contains a signature indicating it is a Zip file
+ */
++ (BOOL)pathIsAZip:(NSString *)filePath;
+
+/**
+ *  Determines whether a file is a Zip file by reading the header
+ *
+ *  @param fileURL URL of the file being checked
+ *
+ *  @return YES if the file exists and contains a signature indicating it is a Zip file
+ */
++ (BOOL)urlIsAZip:(NSURL *)fileURL;
+
+
+/**
  *  Lists the names of the files in the archive
  *
  *  @param error Contains an NSError object when there was an error reading the archive

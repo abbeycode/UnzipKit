@@ -18,6 +18,17 @@ Using the method `-deleteFile:error:` currently creates a new copy of the archiv
 
 If that's not a concern, such as when creating a new archive from scratch, it would improve performance, particularly for archives with a large number of files.
 
+# Detecting Zip files
+
+You can quickly and efficiently check whether a file at a given path or URL is a Zip archive:
+
+```Objective-C
+BOOL fileAtPathIsArchive = [UZKArchive pathIsAZip:@"some/file.zip"];
+
+NSURL *url = [NSURL fileURLWithPath:@"some/file.zip"];
+BOOL fileAtURLIsArchive = [UZKArchive urlIsAZip:url];
+```
+
 # Reading Zip contents
 
 You can use UnzipKit to:

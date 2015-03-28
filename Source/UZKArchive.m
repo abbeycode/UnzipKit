@@ -184,6 +184,67 @@ NS_DESIGNATED_INITIALIZER
 
 
 
+#pragma mark - Zip file detection
+
+
++ (BOOL)pathIsAZip:(NSString *)filePath
+{
+    NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:filePath];
+    
+    if (!handle) {
+        return NO;
+    }
+    
+    @try {
+        NSData *fileData = [handle readDataOfLength:4];
+        
+        if (fileData.length < 4) {
+            return NO;
+        }
+        
+        const unsigned char *dataBytes = fileData.bytes;
+
+        // First two bytes must equal 'PK'
+        if (dataBytes[0] != 0x50 || dataBytes[1] != 0x4b) {
+            return NO;
+        }
+        
+        // Check for standard Zip
+        if (dataBytes[2] == 0x03 &&
+            dataBytes[3] == 0x04) {
+            return YES;
+        }
+        
+        // Check for empty Zip
+        if (dataBytes[2] == 0x05 &&
+            dataBytes[3] == 0x06) {
+            return YES;
+        }
+        
+        // Check for spanning Zip
+        if (dataBytes[2] == 0x07 &&
+            dataBytes[3] == 0x08) {
+            return YES;
+        }
+    }
+    @finally {
+        [handle closeFile];
+    }
+    
+    return NO;
+}
+
++ (BOOL)urlIsAZip:(NSURL *)fileURL
+{
+    if (!fileURL || !fileURL.path) {
+        return NO;
+    }
+    
+    return [UZKArchive pathIsAZip:fileURL.path];
+}
+
+
+
 #pragma mark - Read Methods
 
 

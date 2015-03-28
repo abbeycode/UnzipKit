@@ -51,6 +51,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
                            @"L'incertain.zip",
                            @"Aces.zip",
                            @"Comments Archive.zip",
+                           @"Empty Archive.zip",
+                           @"Spanned Archive.zip.001",
                            @"Test File A.txt",
                            @"Test File B.jpg",
                            @"Test File C.m4a"];
@@ -279,6 +281,151 @@ static NSDateFormatter *testFileInfoDateFormatter;
      }];
     
     XCTAssertNil(outerWriteError, @"outerWriteError was also non-nil");
+}
+
+
+#pragma mark - Zip File Detection
+
+#pragma By Path
+
+- (void)testPathIsAZip
+{
+    NSURL *url = self.testFileURLs[@"Test Archive.zip"];
+    NSString *path = url.path;
+    BOOL pathIsZip = [UZKArchive pathIsAZip:path];
+    XCTAssertTrue(pathIsZip, @"Zip file is not reported as a zip");
+}
+
+- (void)testPathIsAZip_EmptyZip
+{
+    NSURL *url = self.testFileURLs[@"Empty Archive.zip"];
+    NSString *path = url.path;
+    BOOL pathIsZip = [UZKArchive pathIsAZip:path];
+    XCTAssertTrue(pathIsZip, @"Empty Zip file is not reported as a zip");
+}
+
+- (void)testPathIsAZip_SpannedZip
+{
+    NSURL *url = self.testFileURLs[@"Spanned Archive.zip.001"];
+    NSString *path = url.path;
+    BOOL pathIsZip = [UZKArchive pathIsAZip:path];
+    XCTAssertTrue(pathIsZip, @"Spanned Zip file is not reported as a zip");
+}
+
+- (void)testPathIsAZip_NotAZip
+{
+    NSURL *url = self.testFileURLs[@"Test File B.jpg"];
+    NSString *path = url.path;
+    BOOL pathIsZip = [UZKArchive pathIsAZip:path];
+    XCTAssertFalse(pathIsZip, @"JPG file is reported as a zip");
+}
+
+- (void)testPathIsAZip_SmallFile
+{
+    NSURL *url = [self emptyTextFileOfLength:1];
+    NSString *path = url.path;
+    BOOL pathIsZip = [UZKArchive pathIsAZip:path];
+    XCTAssertFalse(pathIsZip, @"Small non-Zip file is reported as a zip");
+}
+
+- (void)testPathIsAZip_MissingFile
+{
+    NSURL *url = [self.testFileURLs[@"Test Archive.zip"] URLByAppendingPathExtension:@"missing"];
+    NSString *path = url.path;
+    BOOL pathIsZip = [UZKArchive pathIsAZip:path];
+    XCTAssertFalse(pathIsZip, @"Missing file is reported as a zip");
+}
+
+- (void)testPathIsAZip_FileHandleLeaks
+{
+    NSURL *smallFileURL = [self emptyTextFileOfLength:1];
+    NSURL *jpgURL = self.testFileURLs[@"Test File B.jpg"];
+    
+    NSInteger initialFileCount = [self numberOfOpenFileHandles];
+    
+    for (NSInteger i = 0; i < 10000; i++) {
+        BOOL smallFileIsZip = [UZKArchive pathIsAZip:smallFileURL.path];
+        XCTAssertFalse(smallFileIsZip, @"Small non-Zip file is reported as a zip");
+        
+        BOOL jpgIsZip = [UZKArchive pathIsAZip:jpgURL.path];
+        XCTAssertFalse(jpgIsZip, @"JPG file is reported as a zip");
+        
+        NSURL *zipURL = self.testFileURLs[@"Test Archive.zip"];
+        BOOL zipFileIsZip = [UZKArchive pathIsAZip:zipURL.path];
+        XCTAssertTrue(zipFileIsZip, @"Zip file is not reported as a zip");
+    }
+    
+    NSInteger finalFileCount = [self numberOfOpenFileHandles];
+    
+    XCTAssertEqualWithAccuracy(initialFileCount, finalFileCount, 5, @"File descriptors were left open");
+}
+
+#pragma By URL
+
+- (void)testURLIsAZip
+{
+    NSURL *url = self.testFileURLs[@"Test Archive.zip"];
+    BOOL urlIsZip = [UZKArchive urlIsAZip:url];
+    XCTAssertTrue(urlIsZip, @"Zip file is not reported as a zip");
+}
+
+- (void)testURLIsAZip_EmptyZip
+{
+    NSURL *url = self.testFileURLs[@"Empty Archive.zip"];
+    BOOL urlIsZip = [UZKArchive urlIsAZip:url];
+    XCTAssertTrue(urlIsZip, @"Empty Zip file is not reported as a zip");
+}
+
+- (void)testSpannedIsAZip_SpannedZip
+{
+    NSURL *url = self.testFileURLs[@"Spanned Archive.zip.001"];
+    BOOL urlIsZip = [UZKArchive urlIsAZip:url];
+    XCTAssertTrue(urlIsZip, @"Spanned Zip file is not reported as a zip");
+}
+
+- (void)testURLIsAZip_NotAZip
+{
+    NSURL *url = self.testFileURLs[@"Test File B.jpg"];
+    BOOL urlIsZip = [UZKArchive urlIsAZip:url];
+    XCTAssertFalse(urlIsZip, @"JPG file is reported as a zip");
+}
+
+- (void)testURLIsAZip_SmallFile
+{
+    NSURL *url = [self emptyTextFileOfLength:1];
+    BOOL urlIsZip = [UZKArchive urlIsAZip:url];
+    XCTAssertFalse(urlIsZip, @"Small non-Zip file is reported as a zip");
+}
+
+- (void)testURLIsAZip_MissingFile
+{
+    NSURL *url = [self.testFileURLs[@"Test Archive.zip"] URLByAppendingPathExtension:@"missing"];
+    BOOL urlIsZip = [UZKArchive urlIsAZip:url];
+    XCTAssertFalse(urlIsZip, @"Missing file is reported as a zip");
+}
+
+- (void)testURLIsAZip_FileHandleLeaks
+{
+    NSURL *smallFileURL = [self emptyTextFileOfLength:1];
+    NSURL *jpgURL = self.testFileURLs[@"Test File B.jpg"];
+    
+    NSInteger initialFileCount = [self numberOfOpenFileHandles];
+    
+    for (NSInteger i = 0; i < 10000; i++) {
+        BOOL smallFileIsZip = [UZKArchive urlIsAZip:smallFileURL];
+        XCTAssertFalse(smallFileIsZip, @"Small non-Zip file is reported as a zip");
+        
+        BOOL jpgIsZip = [UZKArchive urlIsAZip:jpgURL];
+        XCTAssertFalse(jpgIsZip, @"JPG file is reported as a zip");
+        
+        NSURL *zipURL = self.testFileURLs[@"Test Archive.zip"];
+        BOOL zipFileIsZip = [UZKArchive urlIsAZip:zipURL];
+        XCTAssertTrue(zipFileIsZip, @"Zip file is not reported as a zip");
+    }
+    
+    NSInteger finalFileCount = [self numberOfOpenFileHandles];
+    
+    XCTAssertEqualWithAccuracy(initialFileCount, finalFileCount, 5, @"File descriptors were left open");
 }
 
 
