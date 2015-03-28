@@ -18,9 +18,13 @@ Using the method `-deleteFile:error:` currently creates a new copy of the archiv
 
 If that's not a concern, such as when creating a new archive from scratch, it would improve performance, particularly for archives with a large number of files.
 
-# Example Usage
+# Reading Zip contents
 
-You can use UnzipKit to read data from Zip archives:
+You can use UnzipKit to:
+
+* List the contents of the archive
+* Extract all files to disk
+* Extract each archived file into memory
 
 ```Objective-C
 UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip"];
@@ -42,7 +46,13 @@ NSData *extractedData = [archive extractDataFromFile:@"a file in the archive.jpg
                                                error:&error];
 ```
 
+# Writing to archives
+
 You can also write data to Zip archives:
+
+* You can write an `NSData` into the archive
+* Write data as a stream to the archive, using a block
+* Delete files from the archive
 
 ```Objective-C
 NSData *someFile = // Some data to write
