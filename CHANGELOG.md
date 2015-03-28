@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.2
+
+Added methods to easily detect whether a file is a Zip archive or not (Issue #7)
+
 ## 1.1.3
 
 Fixed a bug introduced in the last version that would cause errors when writing a file for whom the comment had not first been read or written
