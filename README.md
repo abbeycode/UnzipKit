@@ -18,6 +18,12 @@ Using the method `-deleteFile:error:` currently creates a new copy of the archiv
 
 If that's not a concern, such as when creating a new archive from scratch, it would improve performance, particularly for archives with a large number of files.
 
+```Objective-C
+UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip"];
+BOOL deleteSuccessful = [archive deleteFile:@"dir/anotherFilename.jpg"
+                                      error:&error];
+```
+
 # Detecting Zip files
 
 You can quickly and efficiently check whether a file at a given path or URL is a Zip archive:
@@ -66,6 +72,7 @@ You can also write data to Zip archives:
 * Delete files from the archive
 
 ```Objective-C
+UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip"];
 NSData *someFile = // Some data to write
 
 BOOL writeSuccessful = [archive writeData:someFile
@@ -86,9 +93,6 @@ BOOL bufferWriteSuccessful = [archive writeIntoBuffer:@"dir/filename.png"
                                       }
                                   }
                               }];
-
-BOOL deleteSuccessful = [archive deleteFile:@"dir/anotherFilename.jpg"
-                                      error:&error];
 ```
 
 # License
