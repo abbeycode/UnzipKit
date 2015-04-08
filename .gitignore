@@ -6,3 +6,5 @@ build
 *.swp
 **/*.xccheckout
 **/xcuserdata/*
+
+UnzipKitDemo/Pods/*

@@ -1,0 +1,14 @@
+PODS:
+  - UnzipKit (1.2)
+
+DEPENDENCIES:
+  - UnzipKit (from `../UnzipKit.podspec`)
+
+EXTERNAL SOURCES:
+  UnzipKit:
+    :path: ../UnzipKit.podspec
+
+SPEC CHECKSUMS:
+  UnzipKit: 62f055ed90c8b375044ec58992343afa2e3a2d07
+
+COCOAPODS: 0.36.3
