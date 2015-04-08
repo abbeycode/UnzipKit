@@ -12,18 +12,7 @@
 		969E2FEA1AD573F100E19F7A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 969E2FE81AD573F100E19F7A /* Main.storyboard */; };
 		969E2FEC1AD573F100E19F7A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 969E2FEB1AD573F100E19F7A /* Images.xcassets */; };
 		969E2FEF1AD573F100E19F7A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 969E2FED1AD573F100E19F7A /* LaunchScreen.xib */; };
-		969E2FFB1AD573F100E19F7A /* UnzipKitDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969E2FFA1AD573F100E19F7A /* UnzipKitDemoTests.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		969E2FF51AD573F100E19F7A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 969E2FD71AD573F100E19F7A /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 969E2FDE1AD573F100E19F7A;
-			remoteInfo = UnzipKitDemo;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		969E2FDF1AD573F100E19F7A /* UnzipKitDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UnzipKitDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -33,20 +22,10 @@
 		969E2FE91AD573F100E19F7A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		969E2FEB1AD573F100E19F7A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		969E2FEE1AD573F100E19F7A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		969E2FF41AD573F100E19F7A /* UnzipKitDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnzipKitDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		969E2FF91AD573F100E19F7A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		969E2FFA1AD573F100E19F7A /* UnzipKitDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnzipKitDemoTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		969E2FDC1AD573F100E19F7A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		969E2FF11AD573F100E19F7A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -60,7 +39,6 @@
 			isa = PBXGroup;
 			children = (
 				969E2FE11AD573F100E19F7A /* UnzipKitDemo */,
-				969E2FF71AD573F100E19F7A /* UnzipKitDemoTests */,
 				969E2FE01AD573F100E19F7A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -69,7 +47,6 @@
 			isa = PBXGroup;
 			children = (
 				969E2FDF1AD573F100E19F7A /* UnzipKitDemo.app */,
-				969E2FF41AD573F100E19F7A /* UnzipKitDemoTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,23 +72,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		969E2FF71AD573F100E19F7A /* UnzipKitDemoTests */ = {
-			isa = PBXGroup;
-			children = (
-				969E2FFA1AD573F100E19F7A /* UnzipKitDemoTests.swift */,
-				969E2FF81AD573F100E19F7A /* Supporting Files */,
-			);
-			path = UnzipKitDemoTests;
-			sourceTree = "<group>";
-		};
-		969E2FF81AD573F100E19F7A /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				969E2FF91AD573F100E19F7A /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -132,24 +92,6 @@
 			productReference = 969E2FDF1AD573F100E19F7A /* UnzipKitDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
-		969E2FF31AD573F100E19F7A /* UnzipKitDemoTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 969E30011AD573F100E19F7A /* Build configuration list for PBXNativeTarget "UnzipKitDemoTests" */;
-			buildPhases = (
-				969E2FF01AD573F100E19F7A /* Sources */,
-				969E2FF11AD573F100E19F7A /* Frameworks */,
-				969E2FF21AD573F100E19F7A /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				969E2FF61AD573F100E19F7A /* PBXTargetDependency */,
-			);
-			name = UnzipKitDemoTests;
-			productName = UnzipKitDemoTests;
-			productReference = 969E2FF41AD573F100E19F7A /* UnzipKitDemoTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -161,10 +103,6 @@
 				TargetAttributes = {
 					969E2FDE1AD573F100E19F7A = {
 						CreatedOnToolsVersion = 6.3;
-					};
-					969E2FF31AD573F100E19F7A = {
-						CreatedOnToolsVersion = 6.3;
-						TestTargetID = 969E2FDE1AD573F100E19F7A;
 					};
 				};
 			};
@@ -182,7 +120,6 @@
 			projectRoot = "";
 			targets = (
 				969E2FDE1AD573F100E19F7A /* UnzipKitDemo */,
-				969E2FF31AD573F100E19F7A /* UnzipKitDemoTests */,
 			);
 		};
 /* End PBXProject section */
@@ -198,13 +135,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		969E2FF21AD573F100E19F7A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -217,23 +147,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		969E2FF01AD573F100E19F7A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				969E2FFB1AD573F100E19F7A /* UnzipKitDemoTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		969E2FF61AD573F100E19F7A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 969E2FDE1AD573F100E19F7A /* UnzipKitDemo */;
-			targetProxy = 969E2FF51AD573F100E19F7A /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		969E2FE81AD573F100E19F7A /* Main.storyboard */ = {
@@ -362,40 +276,6 @@
 			};
 			name = Release;
 		};
-		969E30021AD573F100E19F7A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = UnzipKitDemoTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UnzipKitDemo.app/UnzipKitDemo";
-			};
-			name = Debug;
-		};
-		969E30031AD573F100E19F7A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = UnzipKitDemoTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UnzipKitDemo.app/UnzipKitDemo";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -413,14 +293,6 @@
 			buildConfigurations = (
 				969E2FFF1AD573F100E19F7A /* Debug */,
 				969E30001AD573F100E19F7A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-		};
-		969E30011AD573F100E19F7A /* Build configuration list for PBXNativeTarget "UnzipKitDemoTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				969E30021AD573F100E19F7A /* Debug */,
-				969E30031AD573F100E19F7A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
