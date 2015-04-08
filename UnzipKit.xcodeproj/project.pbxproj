@@ -239,7 +239,7 @@
 		96EA65951A40AEAE00685B6D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = "Abbey Code";
 				TargetAttributes = {
 					96EA659D1A40AEAE00685B6D = {
@@ -356,7 +356,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.9;
+				SDKROOT = macosx;
 				VERSION_INFO_PREFIX = "";
 				WARNING_CFLAGS = (
 					"-Weverything",
@@ -398,7 +398,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = macosx10.9;
+				SDKROOT = macosx;
 				VERSION_INFO_PREFIX = "";
 				WARNING_CFLAGS = (
 					"-Wno-error=unused-command-line-argument",
