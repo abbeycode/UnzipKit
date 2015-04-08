@@ -16,7 +16,6 @@ matrix:
       xcode_sdk: iphonesimulator
 
 before_script:
-  - gem install cocoapods #Update to the latest version, speeding up the pod install below
   - cd UnzipKitDemo
   - pod install
   - cd ..
