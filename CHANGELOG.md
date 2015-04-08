@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.2.1
+
+Added iOS 7 compatibility (Issue #8), and an iOS (Swift!) demo project
+
 ## 1.2
 
 Added methods to easily detect whether a file is a Zip archive or not (Issue #7)
