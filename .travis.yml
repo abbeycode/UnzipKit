@@ -4,7 +4,7 @@ language:
 
 xcode_workspace:
   - UnzipKit.xcworkspace
-  - UnzipKitDemo.xcworkspace
+  - UnzipKitDemo/UnzipKitDemo.xcworkspace
 
 xcode_scheme:
   - UnzipKit
@@ -20,7 +20,6 @@ before_script:
   - pushd UnzipKitDemo; pod update; popd
 
 script:
-  - if [ "$TRAVIS_XCODE_WORKSPACE" == "UnzipKitDemo.xcworkspace" ]; then cd UnzipKitDemo; fi
   - xctool -workspace $TRAVIS_XCODE_WORKSPACE -scheme $TRAVIS_XCODE_SCHEME -sdk $TRAVIS_XCODE_SDK -configuration Release analyze test
 
 after_script:
