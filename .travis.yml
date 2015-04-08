@@ -20,7 +20,9 @@ matrix:
       xcode_sdk: iphonesimulator7.0
 
 before_script:
-  - cd UnzipKitDemo; pod install
+  - pushd UnzipKitDemo
+  - pod install
+  - popd
 
 script:
   - xctool -workspace $TRAVIS_XCODE_WORKSPACE -scheme $TRAVIS_XCODE_SCHEME -sdk $TRAVIS_XCODE_SDK -configuration Release analyze test
