@@ -1,6 +1,5 @@
 language:
   - objective-c
-  - swift
 
 xcode_workspace:
   - UnzipKit.xcworkspace
@@ -20,6 +19,8 @@ before_script:
   - pushd UnzipKitDemo; pod update; popd
 
 script:
+  - xctool --version
+  - env
   - xctool -workspace $TRAVIS_XCODE_WORKSPACE -scheme $TRAVIS_XCODE_SCHEME -sdk $TRAVIS_XCODE_SDK -configuration Release analyze test
 
 after_script:
@@ -29,12 +30,8 @@ matrix:
   exclude:
     - xcode_workspace: UnzipKit.xcworkspace
       xcode_scheme: UnzipKitDemo
-    - xcode_workspace: UnzipKitDemo.xcworkspace
+    - xcode_workspace: UnzipKitDemo/UnzipKitDemo.xcworkspace
       xcode_scheme: UnzipKit
-    - xcode_workspace: UnzipKit.xcworkspace
-      language: swift
-    - xcode_workspace: UnzipKitDemo.xcworkspace
-      language: objective-c
     - xcode_scheme: UnzipKit
       xcode_sdk: iphonesimulator
     - xcode_scheme: UnzipKit
