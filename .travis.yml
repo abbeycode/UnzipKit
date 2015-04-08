@@ -1,4 +1,6 @@
-language: objective-c
+language:
+  - objective-c
+  - swift
 
 xcode_workspace:
   - UnzipKit.xcworkspace
@@ -29,6 +31,14 @@ matrix:
       xcode_scheme: UnzipKitDemo
     - xcode_workspace: UnzipKitDemo/UnzipKitDemo.xcworkspace
       xcode_scheme: UnzipKit
+    - xcode_workspace: UnzipKit.xcworkspace
+      language: swift
+    - xcode_workspace: UnzipKitDemo/UnzipKitDemo.xcworkspace
+      language: objective-c
+    - xcode_scheme: UnzipKit
+      xcode_sdk: iphonesimulator
+    - xcode_scheme: UnzipKit
+      xcode_sdk: iphonesimulator7.1
     - xcode_scheme: UnzipKitDemo
       xcode_sdk: macosx
     - xcode_scheme: UnzipKitDemo
