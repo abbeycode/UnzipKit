@@ -4,7 +4,7 @@ language:
 
 xcode_workspace:
   - UnzipKit.xcworkspace
-  - UnzipKitDemo/UnzipKitDemo.xcworkspace
+  - "UnzipKitDemo/UnzipKitDemo.xcworkspace"
 
 xcode_scheme:
   - UnzipKit
