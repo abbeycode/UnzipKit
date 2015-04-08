@@ -10,9 +10,12 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var textView: UITextView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        textView.text = nil
     }
 
     override func didReceiveMemoryWarning() {
@@ -20,6 +23,19 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    @IBAction func listFiles(sender: AnyObject) {
+        let fileURL = NSBundle.mainBundle().URLForResource("Test Data/Test Archive", withExtension: "zip")
+        let archive = UZKArchive.zipArchiveAtURL(fileURL)
+        
+        var listFilesError: NSError? = nil
+        let filesList = archive.listFilenames(&listFilesError) as? [String]
+        
+        if let list = filesList {
+            self.textView.text = "\n".join(list)
+        } else if let error = listFilesError {
+            self.textView.text = error.localizedDescription
+        }
+    }
 
 }
 
