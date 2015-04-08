@@ -15,11 +15,8 @@ matrix:
       xcode_scheme: UnzipKitDemo
       xcode_sdk: iphonesimulator
 
-    - xcode_workspace: UnzipKitDemo/UnzipKitDemo.xcworkspace
-      xcode_scheme: UnzipKitDemo
-      xcode_sdk: iphonesimulator7.0
-
 before_script:
+  - gem install cocoapods #Update to the latest version, speeding up the pod install below
   - pushd UnzipKitDemo
   - pod install
   - popd
