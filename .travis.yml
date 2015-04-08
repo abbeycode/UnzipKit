@@ -17,9 +17,9 @@ matrix:
 
 before_script:
   - gem install cocoapods #Update to the latest version, speeding up the pod install below
-  - pushd UnzipKitDemo
+  - cd UnzipKitDemo
   - pod install
-  - popd
+  - cd ..
 
 script:
   - xctool -workspace $TRAVIS_XCODE_WORKSPACE -scheme $TRAVIS_XCODE_SCHEME -sdk $TRAVIS_XCODE_SDK -configuration Release analyze test
