@@ -431,8 +431,6 @@ compressionMethod:(UZKCompressionMethod)method
  *  don't need to reside in memory at once. It overwrites an existing file with the same name.
  *
  *  @param filePath The full path to the target file in the archive
- *  @param crc      The CRC of the full data to be written. You can use zlib's crc32() function to
- *                  calculate this: crc32(0, bytes, length)
  *  @param error    Contains an NSError object when there was an error writing to the archive
  *  @param action   Contains your code to loop through the source bytes and write them to the
  *                  archive. Each time a chunk of data is ready to be written, call writeData,
@@ -445,7 +443,6 @@ compressionMethod:(UZKCompressionMethod)method
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-                    CRC:(uInt)crc
                   error:(NSError **)error
                   block:(void(^)(BOOL(^writeData)(const void *bytes, unsigned int length)))action;
 
@@ -454,8 +451,6 @@ compressionMethod:(UZKCompressionMethod)method
  *  don't need to reside in memory at once. It overwrites an existing file with the same name.
  *
  *  @param filePath The full path to the target file in the archive
- *  @param crc      The CRC of the full data to be written. You can use zlib's crc32() function to
- *                  calculate this: crc32(0, bytes, length)
  *  @param fileDate The timestamp of the file in the archive. Uses the current time if nil
  *  @param error    Contains an NSError object when there was an error writing to the archive
  *  @param action   Contains your code to loop through the source bytes and write them to the
@@ -469,7 +464,6 @@ compressionMethod:(UZKCompressionMethod)method
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-                    CRC:(uInt)crc
                fileDate:(NSDate *)fileDate
                   error:(NSError **)error
                   block:(void(^)(BOOL(^writeData)(const void *bytes, unsigned int length)))action;
@@ -479,8 +473,6 @@ compressionMethod:(UZKCompressionMethod)method
  *  don't need to reside in memory at once. It overwrites an existing file with the same name.
  *
  *  @param filePath The full path to the target file in the archive
- *  @param crc      The CRC of the full data to be written. You can use zlib's crc32() function to
- *                  calculate this: crc32(0, bytes, length)
  *  @param fileDate The timestamp of the file in the archive. Uses the current time if nil
  *  @param method   The full path to the target file in the archive
  *  @param password Override the password associated with the archive (not recommended)
@@ -496,7 +488,6 @@ compressionMethod:(UZKCompressionMethod)method
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-                    CRC:(uInt)crc
                fileDate:(NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
                password:(NSString *)password
@@ -512,8 +503,6 @@ compressionMethod:(UZKCompressionMethod)method
  *  the file is written.
  *
  *  @param filePath  The full path to the target file in the archive
- *  @param crc       The CRC of the full data to be written. You can use zlib's crc32() function to
- *                   calculate this: crc32(0, bytes, length)
  *  @param fileDate  The timestamp of the file in the archive. Uses the current time if nil
  *  @param method    The full path to the target file in the archive
  *  @param password  Override the password associated with the archive (not recommended)
@@ -532,7 +521,6 @@ compressionMethod:(UZKCompressionMethod)method
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-                    CRC:(uInt)crc
                fileDate:(NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
                password:(NSString *)password

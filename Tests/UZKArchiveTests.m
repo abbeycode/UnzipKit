@@ -250,7 +250,6 @@ static NSDateFormatter *testFileInfoDateFormatter;
     uInt crc = (uInt)crc32(0, dataToWrite.bytes, (uInt)dataToWrite.length);
     
     [archive writeIntoBuffer:@"newFile.zip"
-                         CRC:crc
                        error:&writeError
                        block:
      ^(BOOL(^writeData)(const void *bytes, unsigned int length)) {
@@ -273,13 +272,11 @@ static NSDateFormatter *testFileInfoDateFormatter;
     uInt crc = (uInt)crc32(0, dataToWrite.bytes, (uInt)dataToWrite.length);
     
     [archive writeIntoBuffer:@"newFile.zip"
-                         CRC:crc
                        error:&outerWriteError
                        block:
      ^(BOOL(^writeData)(const void *bytes, unsigned int length)) {
          NSError *innerWriteError = nil;
          [archive writeIntoBuffer:@"newFile.zip"
-                              CRC:crc
                             error:&innerWriteError
                             block:nil];
          XCTAssertNotNil(innerWriteError, @"Nested write operation succeeded");
@@ -1904,11 +1901,9 @@ static NSDateFormatter *testFileInfoDateFormatter;
         [testFileData addObject:fileData];
         
         NSError *writeError = nil;
-        uInt crc = (uInt)crc32(0, fileData.bytes, (uInt)fileData.length);
         const void *bytes = fileData.bytes;
         
         BOOL result = [archive writeIntoBuffer:testFile
-                                           CRC:crc
                                       fileDate:testDates[idx]
                              compressionMethod:UZKCompressionMethodDefault
                                       password:nil
