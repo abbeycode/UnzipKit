@@ -741,7 +741,7 @@ compressionMethod:(UZKCompressionMethod)method
             }
         }
         
-        NSAssert(crc, @"No CRC reference passed");
+        NSAssert(crc, @"No CRC reference passed", nil);
         *crc = (uInt)crc32(0, data.bytes, (uInt)data.length);
         
         return ZIP_OK;
@@ -820,7 +820,7 @@ compressionMethod:(UZKCompressionMethod)method
                 return NO;
             }
             
-            NSAssert(crc, @"No CRC reference passed");
+            NSAssert(crc, @"No CRC reference passed", nil);
             
             uInt oldCRC = *crc;
             uInt newCRC = (uInt)crc32(0, bytes, (uInt)length);
