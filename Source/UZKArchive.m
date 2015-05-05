@@ -823,13 +823,7 @@ compressionMethod:(UZKCompressionMethod)method
             NSAssert(crc, @"No CRC reference passed", nil);
             
             uInt oldCRC = *crc;
-            uInt newCRC = (uInt)crc32(0, bytes, (uInt)length);
-            
-            if (oldCRC ) {
-                newCRC = (uInt)crc32_combine(oldCRC, newCRC, length);
-            }
-            
-            *crc = newCRC;
+            *crc = (uInt)crc32(oldCRC, bytes, (uInt)length);;
             
             return YES;
         });
