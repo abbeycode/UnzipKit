@@ -1397,7 +1397,7 @@ compressionMethod:(UZKCompressionMethod)method
             break;
             
         case UZKFileModeUnassigned:
-            NSAssert(NO, @"Cannot call -openFile:inMode:withPassword:error: with a mode of UZKFileModeUnassigned (%lu)", mode);
+            NSAssert(NO, @"Cannot call -openFile:inMode:withPassword:error: with a mode of UZKFileModeUnassigned (%lu)", (unsigned long)mode);
             break;
     }
     
@@ -1463,7 +1463,7 @@ compressionMethod:(UZKCompressionMethod)method
             break;
             
         case UZKFileModeUnassigned:
-            NSAssert(NO, @"Unbalanced call to -closeFile:, openCount == %ld", self.openCount);
+            NSAssert(NO, @"Unbalanced call to -closeFile:, openCount == %ld", (long)self.openCount);
             break;
     }
     
