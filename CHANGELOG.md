@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.2.2
+
+Silenced some 32-bit iOS warnings (Thanks, Clint!)
+
 ## 1.2.1
 
 Added iOS 7 compatibility (Issue #8), and an iOS (Swift!) demo project
