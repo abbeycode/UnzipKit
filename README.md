@@ -79,18 +79,23 @@ BOOL writeSuccessful = [archive writeData:someFile
                                  filePath:@"dir/filename.jpg"
                                     error:&error];
 
-uInt crc = (uInt)crc32(0, someFile.bytes, (uInt)someFile.length);
 BOOL bufferWriteSuccessful = [archive writeIntoBuffer:@"dir/filename.png"
-                                           CRC:crc
-                                         error:&writeError
-                                         block:
-                              ^(BOOL(^writeData)(const void *bytes, unsigned int length)) {
+                                                error:&writeError
+                                                block:
+                              ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
                                   for (NSUInteger i = 0; i <= someFile.length; i += bufferSize) {
                                       unsigned int size = (unsigned int)MIN(someFile.length - i, bufferSize);
 
-                                      if (!writeData(&bytes[i], size)) {
-                                          return;
+                                      if (/* Some error occurred */) {
+                                          *actionError = // Any error that was produced
+                                          return NO;
                                       }
+
+                                      if (!writeData(&bytes[i], size)) {
+                                          return NO;
+                                      }
+
+                                      return YES;
                                   }
                               }];
 ```
