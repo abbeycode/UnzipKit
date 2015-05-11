@@ -431,77 +431,74 @@ compressionMethod:(UZKCompressionMethod)method
  *  don't need to reside in memory at once. It overwrites an existing file with the same name.
  *
  *  @param filePath The full path to the target file in the archive
- *  @param crc      The CRC of the full data to be written. You can use zlib's crc32() function to
- *                  calculate this: crc32(0, bytes, length)
  *  @param error    Contains an NSError object when there was an error writing to the archive
  *  @param action   Contains your code to loop through the source bytes and write them to the
  *                  archive. Each time a chunk of data is ready to be written, call writeData,
- *                  passing in a pointer to the bytes and their length
+ *                  passing in a pointer to the bytes and their length. Return YES if successful,
+ *                  or NO on error (in which case, you should assign the actionError parameter
  *
- *       - *writeData* Call this block to write some bytes into the archive. It returns NO if the
- *                     write failed. If this happens, you should return from the action block, and
- *                     handle the NSError returned into the error reference
+ *       - *writeData*   Call this block to write some bytes into the archive. It returns NO if the
+ *                       write failed. If this happens, you should return from the action block, and
+ *                       handle the NSError returned into the error reference
+ *       - *actionError* Assign to an NSError instance before returning NO
  *
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-                    CRC:(uInt)crc
                   error:(NSError **)error
-                  block:(void(^)(BOOL(^writeData)(const void *bytes, unsigned int length)))action;
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
 
 /**
  *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
  *  don't need to reside in memory at once. It overwrites an existing file with the same name.
  *
  *  @param filePath The full path to the target file in the archive
- *  @param crc      The CRC of the full data to be written. You can use zlib's crc32() function to
- *                  calculate this: crc32(0, bytes, length)
  *  @param fileDate The timestamp of the file in the archive. Uses the current time if nil
  *  @param error    Contains an NSError object when there was an error writing to the archive
  *  @param action   Contains your code to loop through the source bytes and write them to the
  *                  archive. Each time a chunk of data is ready to be written, call writeData,
- *                  passing in a pointer to the bytes and their length
+ *                  passing in a pointer to the bytes and their length. Return YES if successful,
+ *                  or NO on error (in which case, you should assign the actionError parameter
  *
- *       - *writeData* Call this block to write some bytes into the archive. It returns NO if the
- *                     write failed. If this happens, you should return from the action block, and
- *                     handle the NSError returned into the error reference
+ *       - *writeData*   Call this block to write some bytes into the archive. It returns NO if the
+ *                       write failed. If this happens, you should return from the action block, and
+ *                       handle the NSError returned into the error reference
+ *       - *actionError* Assign to an NSError instance before returning NO
  *
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-                    CRC:(uInt)crc
                fileDate:(NSDate *)fileDate
                   error:(NSError **)error
-                  block:(void(^)(BOOL(^writeData)(const void *bytes, unsigned int length)))action;
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
 
 /**
  *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
  *  don't need to reside in memory at once. It overwrites an existing file with the same name.
  *
  *  @param filePath The full path to the target file in the archive
- *  @param crc      The CRC of the full data to be written. You can use zlib's crc32() function to
- *                  calculate this: crc32(0, bytes, length)
  *  @param fileDate The timestamp of the file in the archive. Uses the current time if nil
  *  @param method   The full path to the target file in the archive
  *  @param password Override the password associated with the archive (not recommended)
  *  @param error    Contains an NSError object when there was an error writing to the archive
  *  @param action   Contains your code to loop through the source bytes and write them to the
  *                  archive. Each time a chunk of data is ready to be written, call writeData,
- *                  passing in a pointer to the bytes and their length
+ *                  passing in a pointer to the bytes and their length. Return YES if successful,
+ *                  or NO on error (in which case, you should assign the actionError parameter
  *
- *       - *writeData* Call this block to write some bytes into the archive. It returns NO if the
- *                     write failed. If this happens, you should return from the action block, and
- *                     handle the NSError returned into the error reference
+ *       - *writeData*   Call this block to write some bytes into the archive. It returns NO if the
+ *                       write failed. If this happens, you should return from the action block, and
+ *                       handle the NSError returned into the error reference
+ *       - *actionError* Assign to an NSError instance before returning NO
  *
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-                    CRC:(uInt)crc
                fileDate:(NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
                password:(NSString *)password
                   error:(NSError **)error
-                  block:(void(^)(BOOL(^writeData)(const void *bytes, unsigned int length)))action;
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
 
 /**
  *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
@@ -512,8 +509,6 @@ compressionMethod:(UZKCompressionMethod)method
  *  the file is written.
  *
  *  @param filePath  The full path to the target file in the archive
- *  @param crc       The CRC of the full data to be written. You can use zlib's crc32() function to
- *                   calculate this: crc32(0, bytes, length)
  *  @param fileDate  The timestamp of the file in the archive. Uses the current time if nil
  *  @param method    The full path to the target file in the archive
  *  @param password  Override the password associated with the archive (not recommended)
@@ -523,22 +518,23 @@ compressionMethod:(UZKCompressionMethod)method
  *  @param error     Contains an NSError object when there was an error writing to the archive
  *  @param action    Contains your code to loop through the source bytes and write them to the
  *                   archive. Each time a chunk of data is ready to be written, call writeData,
- *                   passing in a pointer to the bytes and their length
+ *                   passing in a pointer to the bytes and their length. Return YES if successful,
+ *                   or NO on error (in which case, you should assign the actionError parameter
  *
- *       - *writeData* Call this block to write some bytes into the archive. It returns NO if the
- *                     write failed. If this happens, you should return from the action block, and
- *                     handle the NSError returned into the error reference
+ *       - *writeData*   Call this block to write some bytes into the archive. It returns NO if the
+ *                       write failed. If this happens, you should return from the action block, and
+ *                       handle the NSError returned into the error reference
+ *       - *actionError* Assign to an NSError instance before returning NO
  *
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-                    CRC:(uInt)crc
                fileDate:(NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
                password:(NSString *)password
               overwrite:(BOOL)overwrite
                   error:(NSError **)error
-                  block:(void(^)(BOOL(^writeData)(const void *bytes, unsigned int length)))action;
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
 
 /**
  *  Removes the given file from the archive

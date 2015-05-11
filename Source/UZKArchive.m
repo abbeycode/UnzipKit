@@ -726,7 +726,7 @@ compressionMethod:(UZKCompressionMethod)method
         progress(0);
     }
 
-    BOOL success = [self performWriteAction:^int(NSError * __autoreleasing*innerError) {
+    BOOL success = [self performWriteAction:^int(uInt *crc, NSError * __autoreleasing*innerError) {
         for (NSUInteger i = 0; i <= data.length; i += bufferSize) {
             unsigned int dataRemaining = (unsigned int)(data.length - i);
             unsigned int size = (unsigned int)(dataRemaining < bufferSize ? dataRemaining : bufferSize);
@@ -741,6 +741,9 @@ compressionMethod:(UZKCompressionMethod)method
             }
         }
         
+        NSAssert(crc, @"No CRC reference passed", nil);
+        *crc = (uInt)crc32(0, data.bytes, (uInt)data.length);
+        
         return ZIP_OK;
     }
                                    filePath:filePath
@@ -748,19 +751,16 @@ compressionMethod:(UZKCompressionMethod)method
                           compressionMethod:method
                                    password:password
                                   overwrite:overwrite
-                                        CRC:(uInt)crc32(0, data.bytes, (uInt)data.length)
                                       error:error];
     
     return success;
 }
 
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-                    CRC:(uInt)crc
                   error:(NSError * __autoreleasing*)error
-                  block:(void (^)(BOOL (^)(const void *, unsigned int)))action
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
     return [self writeIntoBuffer:filePath
-                             CRC:crc
                         fileDate:nil
                compressionMethod:UZKCompressionMethodDefault
                         password:nil
@@ -770,13 +770,11 @@ compressionMethod:(UZKCompressionMethod)method
 }
 
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-                    CRC:(uInt)crc
                fileDate:(NSDate *)fileDate
                   error:(NSError * __autoreleasing*)error
-                  block:(void (^)(BOOL (^)(const void *, unsigned int)))action
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
     return [self writeIntoBuffer:filePath
-                             CRC:crc
                         fileDate:fileDate
                compressionMethod:UZKCompressionMethodDefault
                         password:nil
@@ -786,15 +784,13 @@ compressionMethod:(UZKCompressionMethod)method
 }
 
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-                    CRC:(uInt)crc
                fileDate:(NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
                password:(NSString *)password
                   error:(NSError * __autoreleasing*)error
-                  block:(void (^)(BOOL (^)(const void *, unsigned int)))action
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
     return [self writeIntoBuffer:filePath
-                             CRC:crc
                         fileDate:fileDate
                compressionMethod:method
                         password:password
@@ -804,34 +800,41 @@ compressionMethod:(UZKCompressionMethod)method
 }
 
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-                    CRC:(uInt)crc
                fileDate:(NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
                password:(NSString *)password
               overwrite:(BOOL)overwrite
                   error:(NSError * __autoreleasing*)error
-                  block:(void(^)(BOOL(^writeData)(const void *, unsigned int)))action
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
-    BOOL success = [self performWriteAction:^int(NSError * __autoreleasing*innerError) {
+    BOOL success = [self performWriteAction:^int(uInt *crc, NSError * __autoreleasing*innerError) {
         __block int writeErr;
         
         if (!action) {
             return ZIP_OK;
         }
         
-        action(^BOOL(const void *bytes, unsigned int length){
+        BOOL result = action(^BOOL(const void *bytes, unsigned int length){
             writeErr = zipWriteInFileInZip(self.zipFile, bytes, length);
-            return writeErr == ZIP_OK;
-        });
+            if (writeErr != ZIP_OK) {
+                return NO;
+            }
+            
+            NSAssert(crc, @"No CRC reference passed", nil);
+            
+            uInt oldCRC = *crc;
+            *crc = (uInt)crc32(oldCRC, bytes, (uInt)length);;
+            
+            return YES;
+        }, innerError);
         
-        return writeErr;
+        return result;
     }
                                    filePath:filePath
                                    fileDate:fileDate
                           compressionMethod:method
                                    password:password
                                   overwrite:overwrite
-                                        CRC:crc
                                       error:error];
     
     return success;
@@ -1190,13 +1193,12 @@ compressionMethod:(UZKCompressionMethod)method
     }
 }
 
-- (BOOL)performWriteAction:(int(^)(NSError * __autoreleasing*innerError))write
+- (BOOL)performWriteAction:(int(^)(uInt *crc, NSError * __autoreleasing*innerError))write
                   filePath:(NSString *)filePath
                   fileDate:(NSDate *)fileDate
          compressionMethod:(UZKCompressionMethod)method
                   password:(NSString *)password
                  overwrite:(BOOL)overwrite
-                       CRC:(uInt)crc
                      error:(NSError * __autoreleasing*)error
 {
     if (overwrite) {
@@ -1243,7 +1245,7 @@ compressionMethod:(UZKCompressionMethod)method
                                        0,
                                        -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
                                        passwordStr,
-                                       crc);
+                                       0);
         
         if (err != ZIP_OK) {
             [self assignError:innerError code:UZKErrorCodeFileOpenForWrite
@@ -1252,7 +1254,8 @@ compressionMethod:(UZKCompressionMethod)method
             return;
         }
         
-        err = write(innerError);
+        uInt outCRC = 0;
+        err = write(&outCRC, innerError);
         if (err < 0) {
             [self assignError:innerError code:UZKErrorCodeFileWrite
                        detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error writing to file  '%@' (%d)", @"Detailed error string"),
@@ -1260,7 +1263,7 @@ compressionMethod:(UZKCompressionMethod)method
             return;
         }
         
-        err = zipCloseFileInZip(self.zipFile);
+        err = zipCloseFileInZipRaw(self.zipFile, 0, outCRC);
         if (err != ZIP_OK) {
             [self assignError:innerError code:UZKErrorCodeFileWrite
                        detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error closing file '%@' for write (%d)", @"Detailed error string"),
