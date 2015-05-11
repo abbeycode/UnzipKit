@@ -434,17 +434,19 @@ compressionMethod:(UZKCompressionMethod)method
  *  @param error    Contains an NSError object when there was an error writing to the archive
  *  @param action   Contains your code to loop through the source bytes and write them to the
  *                  archive. Each time a chunk of data is ready to be written, call writeData,
- *                  passing in a pointer to the bytes and their length
+ *                  passing in a pointer to the bytes and their length. Return YES if successful,
+ *                  or NO on error (in which case, you should assign the actionError parameter
  *
- *       - *writeData* Call this block to write some bytes into the archive. It returns NO if the
- *                     write failed. If this happens, you should return from the action block, and
- *                     handle the NSError returned into the error reference
+ *       - *writeData*   Call this block to write some bytes into the archive. It returns NO if the
+ *                       write failed. If this happens, you should return from the action block, and
+ *                       handle the NSError returned into the error reference
+ *       - *actionError* Assign to an NSError instance before returning NO
  *
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
                   error:(NSError **)error
-                  block:(void(^)(BOOL(^writeData)(const void *bytes, unsigned int length)))action;
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
 
 /**
  *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
@@ -455,18 +457,20 @@ compressionMethod:(UZKCompressionMethod)method
  *  @param error    Contains an NSError object when there was an error writing to the archive
  *  @param action   Contains your code to loop through the source bytes and write them to the
  *                  archive. Each time a chunk of data is ready to be written, call writeData,
- *                  passing in a pointer to the bytes and their length
+ *                  passing in a pointer to the bytes and their length. Return YES if successful,
+ *                  or NO on error (in which case, you should assign the actionError parameter
  *
- *       - *writeData* Call this block to write some bytes into the archive. It returns NO if the
- *                     write failed. If this happens, you should return from the action block, and
- *                     handle the NSError returned into the error reference
+ *       - *writeData*   Call this block to write some bytes into the archive. It returns NO if the
+ *                       write failed. If this happens, you should return from the action block, and
+ *                       handle the NSError returned into the error reference
+ *       - *actionError* Assign to an NSError instance before returning NO
  *
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
                fileDate:(NSDate *)fileDate
                   error:(NSError **)error
-                  block:(void(^)(BOOL(^writeData)(const void *bytes, unsigned int length)))action;
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
 
 /**
  *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
@@ -479,11 +483,13 @@ compressionMethod:(UZKCompressionMethod)method
  *  @param error    Contains an NSError object when there was an error writing to the archive
  *  @param action   Contains your code to loop through the source bytes and write them to the
  *                  archive. Each time a chunk of data is ready to be written, call writeData,
- *                  passing in a pointer to the bytes and their length
+ *                  passing in a pointer to the bytes and their length. Return YES if successful,
+ *                  or NO on error (in which case, you should assign the actionError parameter
  *
- *       - *writeData* Call this block to write some bytes into the archive. It returns NO if the
- *                     write failed. If this happens, you should return from the action block, and
- *                     handle the NSError returned into the error reference
+ *       - *writeData*   Call this block to write some bytes into the archive. It returns NO if the
+ *                       write failed. If this happens, you should return from the action block, and
+ *                       handle the NSError returned into the error reference
+ *       - *actionError* Assign to an NSError instance before returning NO
  *
  *  @return YES if successful, NO on error
  */
@@ -492,7 +498,7 @@ compressionMethod:(UZKCompressionMethod)method
       compressionMethod:(UZKCompressionMethod)method
                password:(NSString *)password
                   error:(NSError **)error
-                  block:(void(^)(BOOL(^writeData)(const void *bytes, unsigned int length)))action;
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
 
 /**
  *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
@@ -512,11 +518,13 @@ compressionMethod:(UZKCompressionMethod)method
  *  @param error     Contains an NSError object when there was an error writing to the archive
  *  @param action    Contains your code to loop through the source bytes and write them to the
  *                   archive. Each time a chunk of data is ready to be written, call writeData,
- *                   passing in a pointer to the bytes and their length
+ *                   passing in a pointer to the bytes and their length. Return YES if successful,
+ *                   or NO on error (in which case, you should assign the actionError parameter
  *
- *       - *writeData* Call this block to write some bytes into the archive. It returns NO if the
- *                     write failed. If this happens, you should return from the action block, and
- *                     handle the NSError returned into the error reference
+ *       - *writeData*   Call this block to write some bytes into the archive. It returns NO if the
+ *                       write failed. If this happens, you should return from the action block, and
+ *                       handle the NSError returned into the error reference
+ *       - *actionError* Assign to an NSError instance before returning NO
  *
  *  @return YES if successful, NO on error
  */
@@ -526,7 +534,7 @@ compressionMethod:(UZKCompressionMethod)method
                password:(NSString *)password
               overwrite:(BOOL)overwrite
                   error:(NSError **)error
-                  block:(void(^)(BOOL(^writeData)(const void *bytes, unsigned int length)))action;
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
 
 /**
  *  Removes the given file from the archive

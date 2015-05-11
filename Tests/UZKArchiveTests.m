@@ -252,11 +252,13 @@ static NSDateFormatter *testFileInfoDateFormatter;
     [archive writeIntoBuffer:@"newFile.zip"
                        error:&writeError
                        block:
-     ^(BOOL(^writeData)(const void *bytes, unsigned int length)) {
+     ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
          NSError *readError = nil;
          [archive listFilenames:&readError];
          XCTAssertNotNil(readError, @"Read operation during a read succeeded");
          XCTAssertEqual(readError.code, UZKErrorCodeMixedModeAccess, @"Wrong error code returned");
+         
+         return YES;
     }];
     
     XCTAssertNil(writeError, @"writeError was also non-nil");
@@ -274,13 +276,15 @@ static NSDateFormatter *testFileInfoDateFormatter;
     [archive writeIntoBuffer:@"newFile.zip"
                        error:&outerWriteError
                        block:
-     ^(BOOL(^writeData)(const void *bytes, unsigned int length)) {
+     ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
          NSError *innerWriteError = nil;
          [archive writeIntoBuffer:@"newFile.zip"
                             error:&innerWriteError
                             block:nil];
          XCTAssertNotNil(innerWriteError, @"Nested write operation succeeded");
          XCTAssertEqual(innerWriteError.code, UZKErrorCodeFileWrite, @"Wrong error code returned");
+         
+         return YES;
      }];
     
     XCTAssertNil(outerWriteError, @"outerWriteError was also non-nil");
@@ -1910,12 +1914,14 @@ static NSDateFormatter *testFileInfoDateFormatter;
                                      overwrite:YES
                                          error:&writeError
                                          block:
-                       ^(BOOL(^writeData)(const void *bytes, unsigned int length)) {
+                       ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
                            for (NSUInteger i = 0; i <= fileData.length; i += bufferSize) {
                                unsigned int size = (unsigned int)MIN(fileData.length - i, bufferSize);
                                BOOL writeSuccess = writeData(&bytes[i], size);
                                XCTAssertTrue(writeSuccess, @"Failed to write buffered data");
                            }
+                           
+                           return YES;
                        }];
         
         XCTAssertTrue(result, @"Error writing archive data");
@@ -1936,6 +1942,38 @@ static NSDateFormatter *testFileInfoDateFormatter;
         
         idx++;
     } error:&readError];
+}
+
+
+- (void)testWriteInfoBuffer_Failure
+{
+    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"WriteIntoBufferTest_Failure.zip"];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    
+    NSInteger errorCode = 718;
+    
+    NSError *writeError = nil;
+    
+    BOOL result = [archive writeIntoBuffer:@"Test File A.txt"
+                                  fileDate:[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"]
+                         compressionMethod:UZKCompressionMethodDefault
+                                  password:nil
+                                 overwrite:YES
+                                     error:&writeError
+                                     block:
+                   ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
+                       NSError *bufferError = [NSError errorWithDomain:@"UnzipKitUnitTest"
+                                                                  code:errorCode
+                                                              userInfo:@{}];
+                       *actionError = bufferError;
+                       
+                       return NO;
+                   }];
+    
+    XCTAssertFalse(result, @"Success returned during failure writing archive data");
+    XCTAssertNotNil(writeError, @"No error after failure writing to archive");
+    XCTAssertEqual(writeError.code, errorCode, @"Wrong error code returned");
 }
 
 

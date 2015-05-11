@@ -758,7 +758,7 @@ compressionMethod:(UZKCompressionMethod)method
 
 - (BOOL)writeIntoBuffer:(NSString *)filePath
                   error:(NSError * __autoreleasing*)error
-                  block:(void (^)(BOOL (^)(const void *, unsigned int)))action
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
     return [self writeIntoBuffer:filePath
                         fileDate:nil
@@ -772,7 +772,7 @@ compressionMethod:(UZKCompressionMethod)method
 - (BOOL)writeIntoBuffer:(NSString *)filePath
                fileDate:(NSDate *)fileDate
                   error:(NSError * __autoreleasing*)error
-                  block:(void (^)(BOOL (^)(const void *, unsigned int)))action
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
     return [self writeIntoBuffer:filePath
                         fileDate:fileDate
@@ -788,7 +788,7 @@ compressionMethod:(UZKCompressionMethod)method
       compressionMethod:(UZKCompressionMethod)method
                password:(NSString *)password
                   error:(NSError * __autoreleasing*)error
-                  block:(void (^)(BOOL (^)(const void *, unsigned int)))action
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
     return [self writeIntoBuffer:filePath
                         fileDate:fileDate
@@ -805,7 +805,7 @@ compressionMethod:(UZKCompressionMethod)method
                password:(NSString *)password
               overwrite:(BOOL)overwrite
                   error:(NSError * __autoreleasing*)error
-                  block:(void(^)(BOOL(^writeData)(const void *, unsigned int)))action
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
     BOOL success = [self performWriteAction:^int(uInt *crc, NSError * __autoreleasing*innerError) {
         __block int writeErr;
@@ -814,7 +814,7 @@ compressionMethod:(UZKCompressionMethod)method
             return ZIP_OK;
         }
         
-        action(^BOOL(const void *bytes, unsigned int length){
+        BOOL result = action(^BOOL(const void *bytes, unsigned int length){
             writeErr = zipWriteInFileInZip(self.zipFile, bytes, length);
             if (writeErr != ZIP_OK) {
                 return NO;
@@ -826,9 +826,9 @@ compressionMethod:(UZKCompressionMethod)method
             *crc = (uInt)crc32(oldCRC, bytes, (uInt)length);;
             
             return YES;
-        });
+        }, innerError);
         
-        return writeErr;
+        return result;
     }
                                    filePath:filePath
                                    fileDate:fileDate
