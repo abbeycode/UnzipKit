@@ -48,6 +48,7 @@ UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip"];
 
 NSError *error = nil;
 
+// Write archive's contents out to disk
 NSArray *filesInArchive = [archive listFilenames:&error];
 BOOL extractFilesSuccessful = [archive extractFilesTo:@"some/directory"
                                             overWrite:NO
@@ -56,6 +57,8 @@ BOOL extractFilesSuccessful = [archive extractFilesTo:@"some/directory"
         NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed);
     }
                                                 error:&error];
+
+ // Read an archive's file into an NSData in memory
 NSData *extractedData = [archive extractDataFromFile:@"a file in the archive.jpg"
                                             progress:^(CGFloat percentDecompressed) {
                                                          NSLog(@"Extracting, %f%% complete", percentDecompressed);
@@ -75,29 +78,32 @@ You can also write data to Zip archives:
 UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip"];
 NSData *someFile = // Some data to write
 
-BOOL writeSuccessful = [archive writeData:someFile
-                                 filePath:@"dir/filename.jpg"
-                                    error:&error];
+// Write the data's contents to the archive
+BOOL success = [archive writeData:someFile
+                         filePath:@"dir/filename.jpg"
+                            error:&error];
 
-BOOL bufferWriteSuccessful = [archive writeIntoBuffer:@"dir/filename.png"
-                                                error:&writeError
-                                                block:
-                              ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
-                                  for (NSUInteger i = 0; i <= someFile.length; i += bufferSize) {
-                                      unsigned int size = (unsigned int)MIN(someFile.length - i, bufferSize);
+// Stream contents from disk or over a network into the archive
+BOOL success = [archive writeIntoBuffer:@"dir/filename.png"
+                                  error:&writeError
+                                  block:
+                ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
+                    for (NSUInteger i = 0; i <= someFile.length; i += bufferSize) {
+                        const void *bytes = // some data
+                        unsigned int length = // length of data
 
-                                      if (/* Some error occurred */) {
-                                          *actionError = // Any error that was produced
-                                          return NO;
-                                      }
+                        if (/* Some error occurred reading the data */) {
+                            *actionError = // Any error that was produced, or make your own
+                            return NO;
+                        }
 
-                                      if (!writeData(&bytes[i], size)) {
-                                          return NO;
-                                      }
+                        if (!writeData(&bytes, length)) {
+                            return NO;
+                        }
+                    }
 
-                                      return YES;
-                                  }
-                              }];
+                    return YES;
+                }];
 ```
 
 # License
