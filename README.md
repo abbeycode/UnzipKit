@@ -58,7 +58,7 @@ BOOL extractFilesSuccessful = [archive extractFilesTo:@"some/directory"
     }
                                                 error:&error];
 
- // Read an archive's file into an NSData in memory
+// Read an archive's file into an NSData in memory
 NSData *extractedData = [archive extractDataFromFile:@"a file in the archive.jpg"
                                             progress:^(CGFloat percentDecompressed) {
                                                          NSLog(@"Extracting, %f%% complete", percentDecompressed);
