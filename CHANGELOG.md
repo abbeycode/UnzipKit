@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.3
+
+Improved buffered writing API, no longer requiring a CRC, and allowing for error handling in the action block (Issue #9)
+
 ## 1.2.2
 
 Silenced some 32-bit iOS warnings (Thanks, Clint!)
