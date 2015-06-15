@@ -8,3 +8,5 @@ build
 **/xcuserdata/*
 
 UnzipKitDemo/Pods/*
+UnzipKitDemo/Carthage/*
+UnzipKitDemo/Cartfile.resolved
