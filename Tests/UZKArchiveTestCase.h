@@ -35,6 +35,7 @@
 
 - (NSURL *)emptyTextFileOfLength:(NSUInteger)fileSize;
 - (NSURL *)archiveWithFiles:(NSArray *)fileURLs;
+- (BOOL)extractArchive:(NSURL *)url password:(NSString *)password;
 - (NSURL *)largeArchive;
 
 - (NSUInteger)crcOfTestFile:(NSString *)filename;

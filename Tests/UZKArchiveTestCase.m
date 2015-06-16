@@ -231,6 +231,30 @@ static NSDateFormatter *testFileInfoDateFormatter;
     return archiveURL;
 }
 
+- (BOOL)extractArchive:(NSURL *)url password:(NSString *)password
+{
+    NSMutableArray *args = [NSMutableArray array];
+    if (password) {
+        [args addObjectsFromArray:@[@"-P", password]];
+    }
+    
+    [args addObjectsFromArray:@[url.path, @"-d", url.path.stringByDeletingPathExtension]];
+
+    NSTask *task = [[NSTask alloc] init];
+    task.launchPath = @"/usr/bin/unzip";
+    task.arguments = args;
+    
+    [task launch];
+    [task waitUntilExit];
+    
+    if (task.terminationStatus != 0) {
+        NSLog(@"Failed to extract zip archive");
+        return NO;
+    }
+    
+    return YES;
+}
+
 - (NSURL *)largeArchive
 {
     NSMutableArray *emptyFiles = [NSMutableArray array];

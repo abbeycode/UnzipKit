@@ -1359,8 +1359,8 @@
 
 - (void)testWriteData_PasswordProtected
 {
-    NSArray *testFiles = [self.nonZipTestFilePaths.allObjects sortedArrayUsingSelector:@selector(compare:)];
-    NSMutableArray *testFileData = [NSMutableArray arrayWithCapacity:testFiles.count];
+    NSArray *testFilePaths = [self.nonZipTestFilePaths.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSMutableArray *testFileData = [NSMutableArray arrayWithCapacity:testFilePaths.count];
     
     NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"WriteDataTest.zip"];
     
@@ -1371,17 +1371,19 @@
     
     __block NSError *writeError = nil;
     
-    [testFiles enumerateObjectsUsingBlock:^(NSString *testFile, NSUInteger idx, BOOL *stop) {
-        NSData *fileData = [NSData dataWithContentsOfURL:self.testFileURLs[testFile]];
+    [testFilePaths enumerateObjectsUsingBlock:^(NSString *testFilePath, NSUInteger idx, BOOL *stop) {
+        NSData *fileData = [NSData dataWithContentsOfURL:self.testFileURLs[testFilePath]];
         [testFileData addObject:fileData];
         
         BOOL result = [writeArchive writeData:fileData
-                                     filePath:testFile
+                                     filePath:testFilePath
                                         error:&writeError];
         
         XCTAssertTrue(result, @"Error writing archive data");
-        XCTAssertNil(writeError, @"Error writing to file %@: %@", testFile, writeError);
+        XCTAssertNil(writeError, @"Error writing to file %@: %@", testFilePath, writeError);
     }];
+    
+    // Read with UnzipKit
     
     UZKArchive *readArchive = [UZKArchive zipArchiveAtPath:testArchiveURL.path
                                                   password:password];
@@ -1394,14 +1396,18 @@
         NSData *expectedData = testFileData[idx];
         uLong expectedCRC = crc32(0, expectedData.bytes, (uInt)expectedData.length);
         
-        XCTAssertEqualObjects(fileInfo.filename, testFiles[idx], @"Incorrect filename in archive");
+        XCTAssertEqualObjects(fileInfo.filename, testFilePaths[idx], @"Incorrect filename in archive");
         XCTAssertEqual(fileInfo.CRC, expectedCRC, @"CRC of extracted data doesn't match what was written");
         XCTAssertEqualObjects(fileData, expectedData, @"Data extracted doesn't match what was written");
         
         idx++;
     } error:&readError];
     
-    XCTAssertEqual(idx, testFiles.count, @"Not all files enumerated");
+    XCTAssertEqual(idx, testFilePaths.count, @"Not all files enumerated");
+    
+    // Read with the unzip command line tool
+    BOOL success = [self extractArchive:testArchiveURL password:password];
+    XCTAssertTrue(success, @"Failed to extract the archive on the command line");
 }
 
 - (void)testWriteData_Unicode

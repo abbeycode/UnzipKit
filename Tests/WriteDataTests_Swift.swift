@@ -32,6 +32,8 @@ class WriteDataTests_Swift: UZKArchiveTestCase {
             XCTAssertNil(writeError, "Error writing to file \(testFilePath): \(writeError)")
         }
         
+        // Read with UnzipKit
+        
         let readArchive = UZKArchive.zipArchiveAtPath(testArchiveURL.path, password: password)
         XCTAssertTrue(readArchive.isPasswordProtected(), "Archive is not marked as password-protected")
         
@@ -50,6 +52,10 @@ class WriteDataTests_Swift: UZKArchiveTestCase {
         }, error: &readError)
         
         XCTAssertEqual(index, testFilePaths.count, "Not all files enumerated")
+        
+        // Read with the unzip command line tool
+        let success = extractArchive(testArchiveURL, password: password)
+        XCTAssertTrue(success, "Failed to extract the archive on the command line")
     }
     
 }
