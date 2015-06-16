@@ -9,23 +9,23 @@ matrix:
     - xcode_workspace: UnzipKit.xcworkspace
       xcode_scheme: UnzipKit
       xcode_sdk: macosx
-      env: SHOULDTEST=test
+      env: TEST=test
 
     - xcode_workspace: UnzipKit.xcworkspace
       xcode_scheme: UnzipKit
       xcode_sdk: macosx10.9
-      env: SHOULDTEST=
+      env: NAME=MavericksBuild
 
     - xcode_workspace: UnzipKitDemo/UnzipKitDemo.xcworkspace
       xcode_scheme: UnzipKitDemo
       xcode_sdk: iphonesimulator
-      env: SHOULDTEST=test
+      env: NAME=DemoAppBuild
 
 before_script:
   - ./Scripts/install-demo-libs.sh
 
 script:
-  - xctool -workspace $TRAVIS_XCODE_WORKSPACE -scheme $TRAVIS_XCODE_SCHEME -sdk $TRAVIS_XCODE_SDK -configuration Release analyze $SHOULDTEST
+  - xctool -workspace $TRAVIS_XCODE_WORKSPACE -scheme $TRAVIS_XCODE_SCHEME -sdk $TRAVIS_XCODE_SDK -configuration Release analyze $TEST
 
 after_script:
   - ./Scripts/cocoapod-validate.sh

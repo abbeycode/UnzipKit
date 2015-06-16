@@ -8,6 +8,7 @@
 
 #import "UZKArchiveTestCase.h"
 
+#import "unzip.h"
 
 static NSDateFormatter *testFileInfoDateFormatter;
 
@@ -247,7 +248,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 {
     NSURL *fileURL = [self urlOfTestFile:filename];
     NSData *fileContents = [[NSFileManager defaultManager] contentsAtPath:fileURL.path];
-    return crc32(0, fileContents.bytes, fileContents.length);
+    return crc32(0, fileContents.bytes, (uInt)fileContents.length);
 }
 
 
