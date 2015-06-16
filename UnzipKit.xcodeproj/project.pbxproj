@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		961A9BB51B306881007C4C6B /* WriteDataTests_Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961A9BB41B306881007C4C6B /* WriteDataTests_Swift.swift */; };
 		966A971C1A4A1F2A003597AA /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C81A40C44300685B6D /* unzip.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		966A971D1A4A2348003597AA /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65CA1A40C44300685B6D /* zip.h */; };
 		966A971E1A4A234C003597AA /* mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C61A40C44300685B6D /* mztools.h */; };
@@ -26,6 +27,7 @@
 		96EA65FA1A40C8D000685B6D /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 96EA65F71A40C88800685B6D /* libz.dylib */; };
 		96EA66011A40E31900685B6D /* UZKFileInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65FF1A40E31900685B6D /* UZKFileInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96EA66021A40E31900685B6D /* UZKFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA66001A40E31900685B6D /* UZKFileInfo.m */; };
+		96FCC8411B306CDD00726AC7 /* UZKArchiveTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 96FCC8401B306CDD00726AC7 /* UZKArchiveTestCase.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +41,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		961A9BB31B306880007C4C6B /* UnzipKitTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UnzipKitTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		961A9BB41B306881007C4C6B /* WriteDataTests_Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WriteDataTests_Swift.swift; sourceTree = "<group>"; };
+		961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZKArchiveTestCase.h; sourceTree = "<group>"; };
 		96EA659E1A40AEAE00685B6D /* UnzipKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = UnzipKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		96EA65A21A40AEAE00685B6D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		96EA65A31A40AEAE00685B6D /* UnzipKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnzipKit.h; sourceTree = "<group>"; };
@@ -60,6 +65,7 @@
 		96EA65FF1A40E31900685B6D /* UZKFileInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UZKFileInfo.h; sourceTree = "<group>"; };
 		96EA66001A40E31900685B6D /* UZKFileInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UZKFileInfo.m; sourceTree = "<group>"; };
 		96EA66031A435D8200685B6D /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
+		96FCC8401B306CDD00726AC7 /* UZKArchiveTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UZKArchiveTestCase.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,7 +135,10 @@
 			isa = PBXGroup;
 			children = (
 				96EA65BF1A40BF1A00685B6D /* Test Data */,
+				961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */,
+				96FCC8401B306CDD00726AC7 /* UZKArchiveTestCase.m */,
 				96EA65B01A40AEAE00685B6D /* UZKArchiveTests.m */,
+				961A9BB41B306881007C4C6B /* WriteDataTests_Swift.swift */,
 				96EA65AE1A40AEAE00685B6D /* Supporting Files */,
 			);
 			name = UnzipKitTests;
@@ -140,6 +149,7 @@
 			isa = PBXGroup;
 			children = (
 				96EA65AF1A40AEAE00685B6D /* Info.plist */,
+				961A9BB31B306880007C4C6B /* UnzipKitTests-Bridging-Header.h */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -304,7 +314,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96FCC8411B306CDD00726AC7 /* UZKArchiveTestCase.m in Sources */,
 				96EA65B11A40AEAE00685B6D /* UZKArchiveTests.m in Sources */,
+				961A9BB51B306881007C4C6B /* WriteDataTests_Swift.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -446,6 +458,7 @@
 		96EA65B81A40AEAE00685B6D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
@@ -458,6 +471,8 @@
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/UnzipKitTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WARNING_CFLAGS = (
 					"$(inherited)",
 					"-Wno-everything",
@@ -468,6 +483,7 @@
 		96EA65B91A40AEAE00685B6D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
@@ -476,6 +492,7 @@
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/UnzipKitTests-Bridging-Header.h";
 				WARNING_CFLAGS = (
 					"$(inherited)",
 					"-Wno-everything",
