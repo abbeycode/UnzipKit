@@ -1233,7 +1233,7 @@ compressionMethod:(UZKCompressionMethod)method
         const char *passwordStr = NULL;
         
         if (self.password) {
-            passwordStr = password.UTF8String;
+            passwordStr = [password cStringUsingEncoding:NSISOLatin1StringEncoding];
         }
         
         int err = zipOpenNewFileInZip3(self.zipFile,
@@ -1547,7 +1547,7 @@ compressionMethod:(UZKCompressionMethod)method
     const char *passwordStr = NULL;
     
     if (self.password) {
-        passwordStr = self.password.UTF8String;
+        passwordStr = [self.password cStringUsingEncoding:NSISOLatin1StringEncoding];
     }
     
     err = unzOpenCurrentFilePassword(self.unzFile, passwordStr);
