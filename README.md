@@ -37,55 +37,62 @@ BOOL fileAtURLIsArchive = [UZKArchive urlIsAZip:url];
 
 # Reading Zip contents
 
-You can use UnzipKit to:
-
-* List the contents of the archive
-* Extract all files to disk
-* Extract each archived file into memory
-
 ```Objective-C
 UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip"];
-
 NSError *error = nil;
+```
 
-// Write archive's contents out to disk
+You can use UnzipKit to perform these read-only operations:
+
+* List the contents of the archive
+    
+    ```Objective-C
 NSArray *filesInArchive = [archive listFilenames:&error];
+    ```
+* Extract all files to disk
+    
+    ```Objective-C
 BOOL extractFilesSuccessful = [archive extractFilesTo:@"some/directory"
-                                            overWrite:NO
-                                             progress:
+                                                overWrite:NO
+                                                 progress:
     ^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
         NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed);
     }
-                                                error:&error];
+                                                    error:&error];
+    ```
 
-// Read an archive's file into an NSData in memory
+* Extract each archived file into memory
+    
+    ```Objective-C
 NSData *extractedData = [archive extractDataFromFile:@"a file in the archive.jpg"
-                                            progress:^(CGFloat percentDecompressed) {
-                                                         NSLog(@"Extracting, %f%% complete", percentDecompressed);
-                                            }
-                                               error:&error];
-```
+                                                progress:^(CGFloat percentDecompressed) {
+                                                             NSLog(@"Extracting, %f%% complete", percentDecompressed);
+                                                }
+                                                   error:&error];
+    ```
 
-# Writing to archives
-
-You can also write data to Zip archives:
-
-* You can write an `NSData` into the archive
-* Write data as a stream to the archive, using a block
-* Delete files from the archive
+# Modifying archives
 
 ```Objective-C
 UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip"];
+NSError *error = nil;
 NSData *someFile = // Some data to write
+```
 
-// Write the data's contents to the archive
+You can also modify Zip archives:
+
+* Write an in-memory `NSData` into the archive
+    
+    ```Objective-C
 BOOL success = [archive writeData:someFile
-                         filePath:@"dir/filename.jpg"
-                            error:&error];
-
-// Stream contents from disk or over a network into the archive
+                             filePath:@"dir/filename.jpg"
+                                error:&error];
+    ```
+* Write data as a stream to the archive (from disk or over the network), using a block:
+    
+    ```Objective-C
 BOOL success = [archive writeIntoBuffer:@"dir/filename.png"
-                                  error:&writeError
+                                  error:&error
                                   block:
                 ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
                     for (NSUInteger i = 0; i <= someFile.length; i += bufferSize) {
@@ -104,7 +111,12 @@ BOOL success = [archive writeIntoBuffer:@"dir/filename.png"
 
                     return YES;
                 }];
-```
+    ```
+* Delete files from the archive
+    
+    ```Objective-C
+BOOL success = [archive deleteFile:@"No-good-file.txt" error:&error];
+    ```
 
 # License
 
