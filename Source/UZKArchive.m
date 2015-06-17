@@ -704,7 +704,7 @@ compressionMethod:(UZKCompressionMethod)method
                   filePath:filePath
                   fileDate:fileDate
          compressionMethod:UZKCompressionMethodDefault
-                  password:nil
+                  password:password
                  overwrite:YES
                   progress:progress
                      error:error];
@@ -1232,7 +1232,7 @@ compressionMethod:(UZKCompressionMethod)method
         
         const char *passwordStr = NULL;
         
-        if (self.password) {
+        if (password) {
             passwordStr = password.UTF8String;
         }
         
