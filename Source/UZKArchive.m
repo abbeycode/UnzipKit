@@ -704,7 +704,7 @@ compressionMethod:(UZKCompressionMethod)method
                   filePath:filePath
                   fileDate:fileDate
          compressionMethod:UZKCompressionMethodDefault
-                  password:nil
+                  password:password
                  overwrite:YES
                   progress:progress
                      error:error];
