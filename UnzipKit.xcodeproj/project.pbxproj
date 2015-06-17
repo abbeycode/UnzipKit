@@ -9,9 +9,9 @@
 /* Begin PBXBuildFile section */
 		9645479D1B31B86E00202B28 /* UZKArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65BB1A40B2EC00685B6D /* UZKArchive.m */; };
 		9645479E1B31B87200202B28 /* UZKFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA66001A40E31900685B6D /* UZKFileInfo.m */; };
-		9645479F1B31B87500202B28 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C31A40C44300685B6D /* ioapi.c */; };
-		964547A01B31B87900202B28 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C71A40C44300685B6D /* unzip.c */; };
-		964547A11B31B87E00202B28 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C91A40C44300685B6D /* zip.c */; };
+		9645479F1B31B87500202B28 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C31A40C44300685B6D /* ioapi.c */; settings = {COMPILER_FLAGS = " -Wno-everything"; }; };
+		964547A01B31B87900202B28 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C71A40C44300685B6D /* unzip.c */; settings = {COMPILER_FLAGS = "-Xanalyzer -analyzer-disable-all-checks -Wno-everything"; }; };
+		964547A11B31B87E00202B28 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C91A40C44300685B6D /* zip.c */; settings = {COMPILER_FLAGS = "-Xanalyzer -analyzer-disable-all-checks -Wno-everything"; }; };
 		964547A21B31B88200202B28 /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C51A40C44300685B6D /* mztools.c */; };
 		964547A31B31B89300202B28 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 96EA65F71A40C88800685B6D /* libz.dylib */; };
 		964547A41B31B8A200202B28 /* UZKArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65BA1A40B2EC00685B6D /* UZKArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
