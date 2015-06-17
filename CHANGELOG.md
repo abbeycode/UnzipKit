@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.3.2
+
+Fixed a bug causing file-specific passwords never to be written to an archive (Issue #15)
+
 ## 1.3.1
 
 Fixed a bug, in which `password` was passed through as `nil` for the overload of `-writeData...` that doesn't take the `overwrite` argument (Issue #14)
