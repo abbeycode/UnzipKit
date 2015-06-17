@@ -1232,7 +1232,7 @@ compressionMethod:(UZKCompressionMethod)method
         
         const char *passwordStr = NULL;
         
-        if (self.password) {
+        if (password) {
             passwordStr = password.UTF8String;
         }
         
