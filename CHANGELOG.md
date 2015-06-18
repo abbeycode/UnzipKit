@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.4
+
+Updated the implementation of `isPasswordProtected` to check all files, not just the first (Issue #13)
+
 ## 1.3.2
 
 Fixed a bug causing file-specific passwords never to be written to an archive (Issue #15)
