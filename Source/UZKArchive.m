@@ -599,13 +599,13 @@ NS_DESIGNATED_INITIALIZER
         return NO;
     }
     
-    UZKFileInfo *firstFile = fileInfos.firstObject;
-    
-    if (!firstFile) {
-        return NO;
+    for (UZKFileInfo *fileInfo in fileInfos) {
+        if (fileInfo.isEncryptedWithPassword) {
+            return YES;
+        }
     }
     
-    return firstFile.isEncryptedWithPassword;
+    return NO;
 }
 
 - (BOOL)validatePassword
@@ -704,7 +704,7 @@ compressionMethod:(UZKCompressionMethod)method
                   filePath:filePath
                   fileDate:fileDate
          compressionMethod:UZKCompressionMethodDefault
-                  password:nil
+                  password:password
                  overwrite:YES
                   progress:progress
                      error:error];
@@ -1232,7 +1232,7 @@ compressionMethod:(UZKCompressionMethod)method
         
         const char *passwordStr = NULL;
         
-        if (self.password) {
+        if (password) {
             passwordStr = [password cStringUsingEncoding:NSISOLatin1StringEncoding];
         }
         

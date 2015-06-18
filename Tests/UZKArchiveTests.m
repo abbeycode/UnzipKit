@@ -1254,13 +1254,51 @@
 #pragma mark Is Password Protected
 
 
-- (void)testIsPasswordProtected_PasswordRequired
+- (void)testIsPasswordProtected_PasswordRequired_AllFiles
 {
     NSURL *archiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
     
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:archiveURL];
     
     XCTAssertTrue(archive.isPasswordProtected, @"isPasswordProtected = NO for password-protected archive");
+}
+
+- (void)testIsPasswordProtected_PasswordRequired_LastFileOnly
+{
+    NSArray *testFiles = [self.nonZipTestFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSMutableArray *testFileData = [NSMutableArray arrayWithCapacity:testFiles.count];
+    
+    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"testIsPasswordProtected_PasswordRequired_LastFileOnly.zip"];
+    
+    UZKArchive *writeArchive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    
+    __block NSError *writeError = nil;
+    
+    [testFiles enumerateObjectsUsingBlock:^(NSString *testFile, NSUInteger idx, BOOL *stop) {
+        NSData *fileData = [NSData dataWithContentsOfURL:self.testFileURLs[testFile]];
+        [testFileData addObject:fileData];
+        
+        NSString *password = nil;
+        
+        if (idx == testFiles.count - 1) {
+            password = @"111111";
+        }
+        
+        BOOL result = [writeArchive writeData:fileData
+                                     filePath:testFile
+                                     fileDate:nil
+                            compressionMethod:UZKCompressionMethodDefault
+                                     password:password
+                                     progress:nil
+                                        error:&writeError];
+        
+        XCTAssertTrue(result, @"Error writing archive data");
+        XCTAssertNil(writeError, @"Error writing to file %@: %@", testFile, writeError);
+    }];
+    
+    UZKArchive *readArchive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    
+    XCTAssertTrue(readArchive.isPasswordProtected, @"isPasswordProtected = NO for password-protected archive");
 }
 
 - (void)testIsPasswordProtected_PasswordNotRequired
