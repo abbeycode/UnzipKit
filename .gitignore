@@ -9,4 +9,5 @@ build
 
 UnzipKitDemo/Pods/*
 UnzipKitDemo/Carthage/*
+UnzipKitDemo/Cartfile
 UnzipKitDemo/Cartfile.resolved
