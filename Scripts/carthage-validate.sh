@@ -18,4 +18,5 @@ CARTHAGE_EXIT=$?
 
 popd
 
+echo "Carthage exit: $CARTHAGE_EXIT"
 exit $CARTHAGE_EXIT
