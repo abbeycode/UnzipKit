@@ -11,12 +11,23 @@ rm -rf UnzipKitDemo/Carthage
 
 echo "git \"$TRAVIS_BUILD_DIR\" \"$TRAVIS_BRANCH\"" > UnzipKitDemo/Cartfile
 
-pushd UnzipKitDemo
+pushd UnzipKitDemo > /dev/null
 
 carthage bootstrap --configuration Debug --verbose
-CARTHAGE_EXIT=$?
+EXIT_CODE=$?
 
-popd
+echo "Checking for build products..."
 
-echo "Carthage exit: $CARTHAGE_EXIT"
-exit $CARTHAGE_EXIT
+if [ ! -d "Carthage/Build/Mac/UnzipKit.framework" ]; then
+    echo "No Mac library built"
+    EXIT_CODE=1
+fi
+
+if [ ! -d "Carthage/Build/iOS/UnzipKit.framework" ]; then
+    echo "No iOS library built"
+    EXIT_CODE=1
+fi
+
+popd > /dev/null
+
+exit $EXIT_CODE
