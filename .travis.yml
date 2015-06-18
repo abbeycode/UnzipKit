@@ -1,6 +1,9 @@
 language:
   - objective-c
 
+# Required, for now, to use Carthage
+osx_image: beta-xcode6.3
+
 matrix:
   include:
     - xcode_workspace: UnzipKit.xcworkspace
@@ -17,6 +20,7 @@ matrix:
 
 before_script:
   - ./Scripts/install-demo-libs.sh
+  - brew install carthage
 
 script:
   - xctool -workspace $TRAVIS_XCODE_WORKSPACE -scheme $TRAVIS_XCODE_SCHEME -sdk $TRAVIS_XCODE_SDK -configuration Release analyze test
