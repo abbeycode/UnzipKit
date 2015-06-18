@@ -1265,7 +1265,7 @@
 
 - (void)testIsPasswordProtected_PasswordRequired_LastFileOnly
 {
-    NSArray *testFiles = [self.nonZipTestFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *testFiles = [self.nonZipTestFilePaths.allObjects sortedArrayUsingSelector:@selector(compare:)];
     NSMutableArray *testFileData = [NSMutableArray arrayWithCapacity:testFiles.count];
     
     NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"testIsPasswordProtected_PasswordRequired_LastFileOnly.zip"];
