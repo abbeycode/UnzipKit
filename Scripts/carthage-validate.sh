@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ -z ${TRAVIS+x} ]; then
     TRAVIS_BUILD_DIR="~/Source Code/UnzipKit"
     TRAVIS_BRANCH=carthage
