@@ -10,5 +10,10 @@ rm -rf UnzipKitDemo/Carthage
 echo "git \"$TRAVIS_BUILD_DIR\" \"$TRAVIS_BRANCH\"" > UnzipKitDemo/Cartfile
 
 pushd UnzipKitDemo
+
 carthage bootstrap --configuration Debug --verbose
+CARTHAGE_EXIT=$?
+
 popd
+
+exit $CARTHAGE_EXIT
