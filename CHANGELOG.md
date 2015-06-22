@@ -2,7 +2,11 @@
 
 ## 1.4
 
-Updated the implementation of `isPasswordProtected` to check all files, not just the first (Issue #13)
+* Fixed file encryption (Issue #12)
+
+    _Due to Zip format requirements (the CRC needs to be known before a file write begins), passwords can no longer be used with the block-based file writing methods (`-writeIntobuffer...`). This is checked with an assertion, since the `password` property could be set already before starting the buffered write_
+
+* Updated the implementation of `isPasswordProtected` to check all files, not just the first (Issue #13)
 
 ## 1.3.2
 
