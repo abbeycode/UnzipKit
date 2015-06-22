@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		961A9BB51B306881007C4C6B /* WriteDataTests_Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961A9BB41B306881007C4C6B /* WriteDataTests_Swift.swift */; };
+		961A9BB51B306881007C4C6B /* WriteDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961A9BB41B306881007C4C6B /* WriteDataTests.swift */; };
 		966A971C1A4A1F2A003597AA /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C81A40C44300685B6D /* unzip.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		966A971D1A4A2348003597AA /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65CA1A40C44300685B6D /* zip.h */; };
 		966A971E1A4A234C003597AA /* mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C61A40C44300685B6D /* mztools.h */; };
@@ -42,7 +42,7 @@
 
 /* Begin PBXFileReference section */
 		961A9BB31B306880007C4C6B /* UnzipKitTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UnzipKitTests-Bridging-Header.h"; sourceTree = "<group>"; };
-		961A9BB41B306881007C4C6B /* WriteDataTests_Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WriteDataTests_Swift.swift; sourceTree = "<group>"; };
+		961A9BB41B306881007C4C6B /* WriteDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WriteDataTests.swift; sourceTree = "<group>"; };
 		961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZKArchiveTestCase.h; sourceTree = "<group>"; };
 		96EA659E1A40AEAE00685B6D /* UnzipKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = UnzipKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		96EA65A21A40AEAE00685B6D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -138,7 +138,7 @@
 				961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */,
 				96FCC8401B306CDD00726AC7 /* UZKArchiveTestCase.m */,
 				96EA65B01A40AEAE00685B6D /* UZKArchiveTests.m */,
-				961A9BB41B306881007C4C6B /* WriteDataTests_Swift.swift */,
+				961A9BB41B306881007C4C6B /* WriteDataTests.swift */,
 				96EA65AE1A40AEAE00685B6D /* Supporting Files */,
 			);
 			name = UnzipKitTests;
@@ -316,7 +316,7 @@
 			files = (
 				96FCC8411B306CDD00726AC7 /* UZKArchiveTestCase.m in Sources */,
 				96EA65B11A40AEAE00685B6D /* UZKArchiveTests.m in Sources */,
-				961A9BB51B306881007C4C6B /* WriteDataTests_Swift.swift in Sources */,
+				961A9BB51B306881007C4C6B /* WriteDataTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
