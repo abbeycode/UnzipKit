@@ -182,7 +182,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     //    NSLog(@"LSOF output:\n%@", lsofOutput);
     
     NSInteger result = [lsofOutput componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]].count;
-    NSLog(@"LSOF result: %@", result);
+    NSLog(@"LSOF result: %ld", result);
     
     return result;
 }
