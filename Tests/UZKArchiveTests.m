@@ -220,7 +220,7 @@
     
     NSInteger initialFileCount = [self numberOfOpenFileHandles];
     
-    for (NSInteger i = 0; i < 10000; i++) {
+    for (NSInteger i = 0; i < 5000; i++) {
         BOOL smallFileIsZip = [UZKArchive pathIsAZip:smallFileURL.path];
         XCTAssertFalse(smallFileIsZip, @"Small non-Zip file is reported as a zip");
         
@@ -288,7 +288,7 @@
     
     NSInteger initialFileCount = [self numberOfOpenFileHandles];
     
-    for (NSInteger i = 0; i < 10000; i++) {
+    for (NSInteger i = 0; i < 5000; i++) {
         BOOL smallFileIsZip = [UZKArchive urlIsAZip:smallFileURL];
         XCTAssertFalse(smallFileIsZip, @"Small non-Zip file is reported as a zip");
         

@@ -179,10 +179,10 @@ static NSDateFormatter *testFileInfoDateFormatter;
     
     NSString *lsofOutput = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
     
-    //    NSLog(@"LSOF output:\n%@", lsofOutput);
+//    NSLog(@"LSOF output:\n%@", lsofOutput);
     
     NSInteger result = [lsofOutput componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]].count;
-    NSLog(@"LSOF result: %ld", result);
+//    NSLog(@"LSOF result: %ld", result);
     
     return result;
 }
