@@ -179,9 +179,12 @@ static NSDateFormatter *testFileInfoDateFormatter;
     
     NSString *lsofOutput = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
     
-    //    NSLog(@"LSOF:\n%@", lsofOutput);
+    //    NSLog(@"LSOF output:\n%@", lsofOutput);
     
-    return [lsofOutput componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]].count;
+    NSInteger result = [lsofOutput componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]].count;
+    NSLog(@"LSOF result: %@", result);
+    
+    return result;
 }
 
 - (NSURL *)emptyTextFileOfLength:(NSUInteger)fileSize
