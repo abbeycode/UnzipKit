@@ -479,7 +479,6 @@ compressionMethod:(UZKCompressionMethod)method
  *  @param filePath The full path to the target file in the archive
  *  @param fileDate The timestamp of the file in the archive. Uses the current time if nil
  *  @param method   The full path to the target file in the archive
- *  @param password Override the password associated with the archive (not recommended)
  *  @param error    Contains an NSError object when there was an error writing to the archive
  *  @param action   Contains your code to loop through the source bytes and write them to the
  *                  archive. Each time a chunk of data is ready to be written, call writeData,
@@ -496,7 +495,6 @@ compressionMethod:(UZKCompressionMethod)method
 - (BOOL)writeIntoBuffer:(NSString *)filePath
                fileDate:(NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
-               password:(NSString *)password
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
 
@@ -511,7 +509,6 @@ compressionMethod:(UZKCompressionMethod)method
  *  @param filePath  The full path to the target file in the archive
  *  @param fileDate  The timestamp of the file in the archive. Uses the current time if nil
  *  @param method    The full path to the target file in the archive
- *  @param password  Override the password associated with the archive (not recommended)
  *  @param overwrite If YES, and the file exists, delete it before writing. If NO, append
  *                   the data into the archive without removing it first (legacy Objective-Zip
  *                   behavior)
@@ -531,7 +528,6 @@ compressionMethod:(UZKCompressionMethod)method
 - (BOOL)writeIntoBuffer:(NSString *)filePath
                fileDate:(NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
-               password:(NSString *)password
               overwrite:(BOOL)overwrite
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;

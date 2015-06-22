@@ -1818,7 +1818,6 @@
         BOOL result = [archive writeIntoBuffer:testFile
                                       fileDate:testDates[idx]
                              compressionMethod:UZKCompressionMethodDefault
-                                      password:nil
                                      overwrite:YES
                                          error:&writeError
                                          block:
@@ -1866,7 +1865,6 @@
     BOOL result = [archive writeIntoBuffer:@"Test File A.txt"
                                   fileDate:[[UZKArchiveTestCase dateFormatter] dateFromString:@"12/20/2014 9:35 AM"]
                          compressionMethod:UZKCompressionMethodDefault
-                                  password:nil
                                  overwrite:YES
                                      error:&writeError
                                      block:
