@@ -806,7 +806,7 @@ compressionMethod:(UZKCompressionMethod)method
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
     NSAssert([self.password length] == 0, @"Cannot provide a password when writing into a buffer, "
-             "since the CRC must be known up front for encryption");
+             "since the CRC must be known up front for encryption", nil);
     
     BOOL success = [self performWriteAction:^int(uLong *crc, NSError * __autoreleasing*innerError) {
         __block int writeErr;
