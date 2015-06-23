@@ -4,150 +4,20 @@
 //
 //
 
-#import <Cocoa/Cocoa.h>
-#import <XCTest/XCTest.h>
 #import <DTPerformanceSession/DTSignalFlag.h>
+
+#import "UZKArchiveTestCase.h"
 
 @import UnzipKit;
 
 
-@interface UZKArchiveTests : XCTestCase
-
-@property BOOL testFailed;
-
-@property NSURL *tempDirectory;
-@property NSMutableDictionary *testFileURLs;
-@property NSMutableDictionary *unicodeFileURLs;
-@property NSSet *nonZipTestFileURLs;
-@property NSSet *nonZipUnicodeFileURLs;
-@property NSURL *corruptArchive;
-
-@end
-
-static NSDateFormatter *testFileInfoDateFormatter;
+@interface UZKArchiveTests : UZKArchiveTestCase @end
 
 @implementation UZKArchiveTests
 
 
 
-#pragma mark - Test Management
-
-
-- (void)setUp {
-    [super setUp];
-    
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        testFileInfoDateFormatter = [[NSDateFormatter alloc] init];
-        testFileInfoDateFormatter.dateFormat = @"M/dd/yyyy h:mm a";
-        testFileInfoDateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
-    });
-    
-
-    NSFileManager *fm = [NSFileManager defaultManager];
-    NSString *uniqueName = [self randomDirectoryName];
-    NSError *error = nil;
-    
-    NSArray *testFiles = @[@"Test Archive.zip",
-                           @"Test Archive (Password).zip",
-                           @"L'incertain.zip",
-                           @"Aces.zip",
-                           @"Comments Archive.zip",
-                           @"Empty Archive.zip",
-                           @"Spanned Archive.zip.001",
-                           @"Test File A.txt",
-                           @"Test File B.jpg",
-                           @"Test File C.m4a"];
-    
-    NSArray *unicodeFiles = @[@"Ⓣest Ⓐrchive.zip",
-                              @"Test File Ⓐ.txt",
-                              @"Test File Ⓑ.jpg",
-                              @"Test File Ⓒ.m4a"];
-    
-    NSString *tempDirSubtree = [@"UnzipKitTest" stringByAppendingPathComponent:uniqueName];
-    
-    self.testFailed = NO;
-    self.testFileURLs = [[NSMutableDictionary alloc] init];
-    self.unicodeFileURLs = [[NSMutableDictionary alloc] init];
-    self.tempDirectory = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:tempDirSubtree]
-                                    isDirectory:YES];
-    
-    NSLog(@"Temp directory: %@", self.tempDirectory);
-    
-    [fm createDirectoryAtURL:self.tempDirectory
- withIntermediateDirectories:YES
-                  attributes:nil
-                       error:&error];
-    
-    XCTAssertNil(error, @"Failed to create temp directory: %@", self.tempDirectory);
-    
-    NSMutableArray *filesToCopy = [NSMutableArray arrayWithArray:testFiles];
-    [filesToCopy addObjectsFromArray:unicodeFiles];
-    
-    for (NSString *file in filesToCopy) {
-        NSURL *testFileURL = [self urlOfTestFile:file];
-        BOOL testFileExists = [fm fileExistsAtPath:testFileURL.path];
-        XCTAssertTrue(testFileExists, @"%@ not found", file);
-        
-        NSURL *destinationURL = [self.tempDirectory URLByAppendingPathComponent:file isDirectory:NO];
-        
-        NSError *error = nil;
-        if (file.pathComponents.count > 1) {
-            [fm createDirectoryAtPath:destinationURL.URLByDeletingLastPathComponent.path
-          withIntermediateDirectories:YES
-                           attributes:nil
-                                error:&error];
-            XCTAssertNil(error, @"Failed to create directories for file %@", file);
-        }
-        
-        [fm copyItemAtURL:testFileURL
-                    toURL:destinationURL
-                    error:&error];
-        
-        XCTAssertNil(error, @"Failed to copy temp file %@ from %@ to %@",
-                     file, testFileURL, destinationURL);
-        
-        if ([testFiles containsObject:file]) {
-            self.testFileURLs[file] = destinationURL;
-        }
-        else if ([unicodeFiles containsObject:file]) {
-            self.unicodeFileURLs[file] = destinationURL;
-        }
-    }
-    
-    self.nonZipTestFileURLs = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return [key rangeOfString:@"zip"].location == NSNotFound;
-    }];
-    
-    self.nonZipUnicodeFileURLs = [self.unicodeFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return [key rangeOfString:@"zip"].location == NSNotFound;
-    }];
-    
-    // Make a "corrupt" zip file
-    NSURL *m4aFileURL = [self urlOfTestFile:@"Test File C.m4a"];
-    self.corruptArchive = [self.tempDirectory URLByAppendingPathComponent:@"corrupt.zip"];
-    [fm copyItemAtURL:m4aFileURL
-                toURL:self.corruptArchive
-                error:&error];
-}
-
-- (void)tearDown {
-    if (!self.testFailed) {
-        NSError *error = nil;
-        [[NSFileManager defaultManager] removeItemAtURL:self.tempDirectory error:&error];
-        
-        XCTAssertNil(error, @"Error deleting temp directory");
-    }
-    
-    [super tearDown];
-}
-
-
-
-#pragma mark - Test Cases
-
-
-#pragma mark Archive File
+#pragma mark - Archive File
 
 
 - (void)testFileURL {
@@ -206,7 +76,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testModes_NestedReads
 {
-    NSArray *expectedFiles = [self.nonZipTestFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *expectedFiles = [self.nonZipTestFilePaths.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive.zip"];
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
@@ -350,7 +220,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     
     NSInteger initialFileCount = [self numberOfOpenFileHandles];
     
-    for (NSInteger i = 0; i < 10000; i++) {
+    for (NSInteger i = 0; i < 5000; i++) {
         BOOL smallFileIsZip = [UZKArchive pathIsAZip:smallFileURL.path];
         XCTAssertFalse(smallFileIsZip, @"Small non-Zip file is reported as a zip");
         
@@ -418,7 +288,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     
     NSInteger initialFileCount = [self numberOfOpenFileHandles];
     
-    for (NSInteger i = 0; i < 10000; i++) {
+    for (NSInteger i = 0; i < 5000; i++) {
         BOOL smallFileIsZip = [UZKArchive urlIsAZip:smallFileURL];
         XCTAssertFalse(smallFileIsZip, @"Small non-Zip file is reported as a zip");
         
@@ -444,7 +314,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
     
-    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     for (NSString *testArchiveName in testArchives) {
@@ -472,7 +342,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 - (void)testListFilenames_Unicode
 {
     NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
-    NSSet *expectedFileSet = self.nonZipUnicodeFileURLs;
+    NSSet *expectedFileSet = self.nonZipUnicodeFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
@@ -498,7 +368,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:@"password"];
     
-    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSArray *filesInArchive = nil;
@@ -522,7 +392,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
     
-    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSArray *filesInArchive = nil;
@@ -559,10 +429,10 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testListFileInfo {
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Test Archive.zip"]];
-    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
-    NSDate *expectedDate = [testFileInfoDateFormatter dateFromString:@"3/22/2014 11:17 PM"];
+    NSDate *expectedDate = [[UZKArchiveTestCase dateFormatter] dateFromString:@"3/22/2014 11:17 PM"];
     NSDictionary *expectedCompressionMethods = @{@"Test File A.txt": @(UZKCompressionMethodNone),
                                                  @"Test File B.jpg": @(UZKCompressionMethodDefault),
                                                  @"Test File C.m4a": @(UZKCompressionMethodDefault),};
@@ -610,7 +480,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testListFileInfo_Unicode
 {
-    NSSet *expectedFileSet = self.nonZipUnicodeFileURLs;
+    NSSet *expectedFileSet = self.nonZipUnicodeFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
@@ -666,7 +536,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:@"password"];
     
-    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSArray *filesInArchive = nil;
@@ -689,7 +559,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
     UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
     
-    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSArray *filesInArchive = nil;
@@ -729,7 +599,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
 
-    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -787,7 +657,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testExtractFiles_Unicode
 {
-    NSSet *expectedFileSet = self.nonZipUnicodeFileURLs;
+    NSSet *expectedFileSet = self.nonZipUnicodeFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -951,7 +821,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
     
-    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     for (NSString *testArchiveName in testArchives) {
@@ -1001,7 +871,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testExtractData_Unicode
 {
-    NSSet *expectedFileSet = self.nonZipUnicodeFileURLs;
+    NSSet *expectedFileSet = self.nonZipUnicodeFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
@@ -1092,7 +962,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
     
-    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     for (NSString *testArchiveName in testArchives) {
@@ -1118,7 +988,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testPerformOnFiles_Unicode
 {
-    NSSet *expectedFileSet = self.nonZipUnicodeFileURLs;
+    NSSet *expectedFileSet = self.nonZipUnicodeFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
@@ -1146,7 +1016,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
     
-    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     for (NSString *testArchiveName in testArchives) {
@@ -1177,7 +1047,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testPerformOnData_Unicode
 {
-    NSSet *expectedFileSet = self.nonZipUnicodeFileURLs;
+    NSSet *expectedFileSet = self.nonZipUnicodeFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
@@ -1395,7 +1265,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 - (void)testIsPasswordProtected_PasswordRequired_LastFileOnly
 {
-    NSArray *testFiles = [self.nonZipTestFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *testFiles = [self.nonZipTestFilePaths.allObjects sortedArrayUsingSelector:@selector(compare:)];
     NSMutableArray *testFileData = [NSMutableArray arrayWithCapacity:testFiles.count];
     
     NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"testIsPasswordProtected_PasswordRequired_LastFileOnly.zip"];
@@ -1472,464 +1342,15 @@ static NSDateFormatter *testFileInfoDateFormatter;
 }
 
 
-#pragma mark Write Data
-
-
-- (void)testWriteData
-{
-    NSArray *testFiles = [self.nonZipTestFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
-    NSArray *testDates = @[[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"],
-                           [testFileInfoDateFormatter dateFromString:@"12/21/2014 10:00 AM"],
-                           [testFileInfoDateFormatter dateFromString:@"12/22/2014 11:54 PM"]];
-    NSMutableArray *testFileData = [NSMutableArray arrayWithCapacity:testFiles.count];
-    
-    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"WriteDataTest.zip"];
-    
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
-    
-    __block NSError *writeError = nil;
-    
-    [testFiles enumerateObjectsUsingBlock:^(NSString *testFile, NSUInteger idx, BOOL *stop) {
-        NSData *fileData = [NSData dataWithContentsOfURL:self.testFileURLs[testFile]];
-        [testFileData addObject:fileData];
-        
-        BOOL result = [archive writeData:fileData
-                                filePath:testFile
-                                fileDate:testDates[idx]
-                       compressionMethod:UZKCompressionMethodDefault
-                                password:nil
-                                progress:^(CGFloat percentCompressed) {
-#if DEBUG
-                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
-#endif
-                                }
-                                   error:&writeError];
-        
-        XCTAssertTrue(result, @"Error writing archive data");
-        XCTAssertNil(writeError, @"Error writing to file %@: %@", testFile, writeError);
-    }];
-    
-    __block NSError *readError = nil;
-    __block NSUInteger idx = 0;
-    
-    [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
-        NSData *expectedData = testFileData[idx];
-        uLong expectedCRC = crc32(0, expectedData.bytes, (uInt)expectedData.length);
-        
-        XCTAssertEqualObjects(fileInfo.filename, testFiles[idx], @"Incorrect filename in archive");
-        XCTAssertEqualObjects(fileInfo.timestamp, testDates[idx], @"Incorrect timestamp in archive");
-        XCTAssertEqual(fileInfo.CRC, expectedCRC, @"CRC of extracted data doesn't match what was written");
-        XCTAssertEqualObjects(fileData, expectedData, @"Data extracted doesn't match what was written");
-        
-        idx++;
-    } error:&readError];
-}
-
-- (void)testWriteData_Unicode
-{
-    NSArray *testFiles = [self.nonZipUnicodeFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
-    NSArray *testDates = @[[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"],
-                           [testFileInfoDateFormatter dateFromString:@"12/21/2014 10:00 AM"],
-                           [testFileInfoDateFormatter dateFromString:@"12/22/2014 11:54 PM"]];
-    NSMutableArray *testFileData = [NSMutableArray arrayWithCapacity:testFiles.count];
-    
-    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"UnicodeWriteDataTest.zip"];
-    
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
-    
-    __block NSError *writeError = nil;
-    
-    [testFiles enumerateObjectsUsingBlock:^(NSString *testFile, NSUInteger idx, BOOL *stop) {
-        NSData *fileData = [NSData dataWithContentsOfURL:self.unicodeFileURLs[testFile]];
-        [testFileData addObject:fileData];
-        
-        BOOL result = [archive writeData:fileData
-                                filePath:testFile
-                                fileDate:testDates[idx]
-                       compressionMethod:UZKCompressionMethodDefault
-                                password:nil
-                                progress:^(CGFloat percentCompressed) {
-#if DEBUG
-                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
-#endif
-                                }
-                                   error:&writeError];
-        
-        XCTAssertTrue(result, @"Error writing archive data");
-        XCTAssertNil(writeError, @"Error writing to file %@: %@", testFile, writeError);
-    }];
-    
-    __block NSError *readError = nil;
-    __block NSUInteger idx = 0;
-    
-    [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
-        NSData *expectedData = testFileData[idx];
-        uLong expectedCRC = crc32(0, expectedData.bytes, (uInt)expectedData.length);
-        
-        XCTAssertEqualObjects(fileInfo.filename, testFiles[idx], @"Incorrect filename in archive");
-        XCTAssertEqualObjects(fileInfo.timestamp, testDates[idx], @"Incorrect timestamp in archive");
-        XCTAssertEqual(fileInfo.CRC, expectedCRC, @"CRC of extracted data doesn't match what was written");
-        XCTAssertEqualObjects(fileData, expectedData, @"Data extracted doesn't match what was written");
-        
-        idx++;
-    } error:&readError];
-}
-
-- (void)testWriteData_Overwrite
-{
-    NSArray *testFiles = [self.nonZipTestFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
-    NSArray *testDates = @[[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"],
-                           [testFileInfoDateFormatter dateFromString:@"12/21/2014 10:00 AM"],
-                           [testFileInfoDateFormatter dateFromString:@"12/22/2014 11:54 PM"]];
-    NSMutableArray *testFileData = [NSMutableArray arrayWithCapacity:testFiles.count];
-    
-    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"RewriteDataTest.zip"];
-    
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
-    
-    __block NSError *writeError = nil;
-    
-    [testFiles enumerateObjectsUsingBlock:^(NSString *testFile, NSUInteger idx, BOOL *stop) {
-        NSData *fileData = [NSData dataWithContentsOfURL:self.testFileURLs[testFile]];
-        [testFileData addObject:fileData];
-        
-        BOOL result = [archive writeData:fileData
-                                filePath:testFile
-                                fileDate:testDates[idx]
-                       compressionMethod:UZKCompressionMethodDefault
-                                password:nil
-                                progress:^(CGFloat percentCompressed) {
-#if DEBUG
-                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
-#endif
-                                }
-                                   error:&writeError];
-        
-        XCTAssertTrue(result, @"Error writing archive data");
-        XCTAssertNil(writeError, @"Error writing to file %@: %@", testFile, writeError);
-    }];
-    
-    __block NSError *readError = nil;
-    __block NSUInteger idx = 0;
-    
-    [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
-        NSData *expectedData = testFileData[idx];
-        uLong expectedCRC = crc32(0, expectedData.bytes, (uInt)expectedData.length);
-        
-        XCTAssertEqualObjects(fileInfo.filename, testFiles[idx], @"Incorrect filename in archive");
-        XCTAssertEqualObjects(fileInfo.timestamp, testDates[idx], @"Incorrect timestamp in archive");
-        XCTAssertEqual(fileInfo.CRC, expectedCRC, @"CRC of extracted data doesn't match what was written");
-        XCTAssertEqualObjects(fileData, expectedData, @"Data extracted doesn't match what was written");
-        
-        idx++;
-    } error:&readError];
-    
-    // Now write the files' contents to the zip in reverse
-    NSLog(@"Testing a second write, by reversing the contents and timestamps of the files from the first run");
-    
-    __block NSError *reverseWriteError = nil;
-    
-    for (NSUInteger i = 0; i < testFiles.count; i++) {
-        NSUInteger x = testFiles.count - 1 - i;
-        
-        BOOL result = [archive writeData:testFileData[x]
-                                filePath:testFiles[i]
-                                fileDate:testDates[x]
-                       compressionMethod:UZKCompressionMethodDefault
-                                password:nil
-                                progress:^(CGFloat percentCompressed) {
-#if DEBUG
-                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
-#endif
-                                }
-                                   error:&reverseWriteError];
-        
-        XCTAssertTrue(result, @"Error writing archive data");
-        XCTAssertNil(reverseWriteError, @"Error writing to file %@ with data of file %@: %@",
-                     testFiles[x], testFiles[i], reverseWriteError);
-    }
-    
-    __block NSError *reverseReadError = nil;
-    __block NSUInteger forwardIndex = 0;
-    
-    [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
-        XCTAssertEqualObjects(fileInfo.filename, testFiles[forwardIndex], @"Incorrect filename in archive");
-        
-        NSUInteger reverseIndex = testFiles.count - 1 - forwardIndex;
-        
-        NSData *expectedData = testFileData[reverseIndex];
-        uLong expectedCRC = crc32(0, expectedData.bytes, (uInt)expectedData.length);
-        
-        XCTAssertEqualObjects(fileInfo.timestamp, testDates[reverseIndex], @"Incorrect timestamp in archive");
-        XCTAssertEqual(fileInfo.CRC, expectedCRC, @"CRC of extracted data doesn't match what was written");
-        XCTAssertTrue([fileData isEqualToData:expectedData], @"Data extracted doesn't match what was written");
-        
-        forwardIndex++;
-    } error:&reverseReadError];
-    
-    XCTAssertNil(reverseReadError, @"Error reading a re-written archive");
-}
-
-- (void)testWriteData_Overwrite_Unicode
-{
-    NSArray *testFiles = [self.nonZipUnicodeFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
-    NSArray *testDates = @[[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"],
-                           [testFileInfoDateFormatter dateFromString:@"12/21/2014 10:00 AM"],
-                           [testFileInfoDateFormatter dateFromString:@"12/22/2014 11:54 PM"]];
-    NSMutableArray *testFileData = [NSMutableArray arrayWithCapacity:testFiles.count];
-    
-    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"RewriteDataTest.zip"];
-    
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
-    
-    __block NSError *writeError = nil;
-    
-    [testFiles enumerateObjectsUsingBlock:^(NSString *testFile, NSUInteger idx, BOOL *stop) {
-        NSData *fileData = [NSData dataWithContentsOfURL:self.unicodeFileURLs[testFile]];
-        [testFileData addObject:fileData];
-        
-        BOOL result = [archive writeData:fileData
-                                filePath:testFile
-                                fileDate:testDates[idx]
-                       compressionMethod:UZKCompressionMethodDefault
-                                password:nil
-                                progress:^(CGFloat percentCompressed) {
-#if DEBUG
-                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
-#endif
-                                }
-                                   error:&writeError];
-        
-        XCTAssertTrue(result, @"Error writing archive data");
-        XCTAssertNil(writeError, @"Error writing to file %@: %@", testFile, writeError);
-    }];
-    
-    __block NSError *readError = nil;
-    __block NSUInteger idx = 0;
-    
-    [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
-        NSData *expectedData = testFileData[idx];
-        uLong expectedCRC = crc32(0, expectedData.bytes, (uInt)expectedData.length);
-        
-        XCTAssertEqualObjects(fileInfo.filename, testFiles[idx], @"Incorrect filename in archive");
-        XCTAssertEqualObjects(fileInfo.timestamp, testDates[idx], @"Incorrect timestamp in archive");
-        XCTAssertEqual(fileInfo.CRC, expectedCRC, @"CRC of extracted data doesn't match what was written");
-        XCTAssertEqualObjects(fileData, expectedData, @"Data extracted doesn't match what was written");
-        
-        idx++;
-    } error:&readError];
-    
-    // Now write the files' contents to the zip in reverse
-    NSLog(@"Testing a second write, by reversing the contents and timestamps of the files from the first run");
-    
-    __block NSError *reverseWriteError = nil;
-    
-    for (NSUInteger i = 0; i < testFiles.count; i++) {
-        NSUInteger x = testFiles.count - 1 - i;
-        
-        BOOL result = [archive writeData:testFileData[x]
-                                filePath:testFiles[i]
-                                fileDate:testDates[x]
-                       compressionMethod:UZKCompressionMethodDefault
-                                password:nil
-                                progress:^(CGFloat percentCompressed) {
-#if DEBUG
-                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
-#endif
-                                }
-                                   error:&reverseWriteError];
-        
-        XCTAssertTrue(result, @"Error writing archive data");
-        XCTAssertNil(reverseWriteError, @"Error writing to file %@ with data of file %@: %@",
-                     testFiles[x], testFiles[i], reverseWriteError);
-    }
-    
-    __block NSError *reverseReadError = nil;
-    __block NSUInteger forwardIndex = 0;
-    
-    [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
-        XCTAssertEqualObjects(fileInfo.filename, testFiles[forwardIndex], @"Incorrect filename in archive");
-        
-        NSUInteger reverseIndex = testFiles.count - 1 - forwardIndex;
-        
-        NSData *expectedData = testFileData[reverseIndex];
-        uLong expectedCRC = crc32(0, expectedData.bytes, (uInt)expectedData.length);
-        
-        XCTAssertEqualObjects(fileInfo.timestamp, testDates[reverseIndex], @"Incorrect timestamp in archive");
-        XCTAssertEqual(fileInfo.CRC, expectedCRC, @"CRC of extracted data doesn't match what was written");
-        XCTAssertTrue([fileData isEqualToData:expectedData], @"Data extracted doesn't match what was written");
-        
-        forwardIndex++;
-    } error:&reverseReadError];
-    
-    XCTAssertNil(reverseReadError, @"Error reading a re-written archive");
-}
-
-- (void)testWriteData_NoOverwrite
-{
-    NSArray *testFiles = [self.nonZipTestFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
-    NSArray *testDates = @[[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"],
-                           [testFileInfoDateFormatter dateFromString:@"12/21/2014 10:00 AM"],
-                           [testFileInfoDateFormatter dateFromString:@"12/22/2014 11:54 PM"]];
-    NSMutableArray *testFileData = [NSMutableArray arrayWithCapacity:testFiles.count];
-    
-    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"RewriteDataTest.zip"];
-    
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
-    
-    __block NSError *writeError = nil;
-    
-    [testFiles enumerateObjectsUsingBlock:^(NSString *testFile, NSUInteger idx, BOOL *stop) {
-        NSData *fileData = [NSData dataWithContentsOfURL:self.testFileURLs[testFile]];
-        [testFileData addObject:fileData];
-        
-        BOOL result = [archive writeData:fileData
-                                filePath:testFile
-                                fileDate:testDates[idx]
-                       compressionMethod:UZKCompressionMethodDefault
-                                password:nil
-                               overwrite:NO
-                                progress:nil
-                                   error:&writeError];
-        
-        XCTAssertTrue(result, @"Error writing archive data");
-        XCTAssertNil(writeError, @"Error writing to file %@: %@", testFile, writeError);
-    }];
-    
-    __block NSError *readError = nil;
-    __block NSUInteger idx = 0;
-    
-    [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
-        NSData *expectedData = testFileData[idx];
-        uLong expectedCRC = crc32(0, expectedData.bytes, (uInt)expectedData.length);
-        
-        XCTAssertEqualObjects(fileInfo.filename, testFiles[idx], @"Incorrect filename in archive");
-        XCTAssertEqualObjects(fileInfo.timestamp, testDates[idx], @"Incorrect timestamp in archive");
-        XCTAssertEqual(fileInfo.CRC, expectedCRC, @"CRC of extracted data doesn't match what was written");
-        XCTAssertEqualObjects(fileData, expectedData, @"Data extracted doesn't match what was written");
-        
-        idx++;
-    } error:&readError];
-    
-    // Now write the files' contents to the zip in reverse. No writes should occur, with overwrite:NO
-    
-    __block NSError *reverseWriteError = nil;
-    NSUInteger originalFileCount = testFiles.count;
-    
-    for (NSUInteger i = 0; i < originalFileCount; i++) {
-        NSUInteger x = testFiles.count - 1 - i;
-        
-        BOOL result = [archive writeData:testFileData[x]
-                                filePath:testFiles[i]
-                                fileDate:testDates[x]
-                       compressionMethod:UZKCompressionMethodDefault
-                                password:nil
-                               overwrite:NO
-                                progress:^(CGFloat percentCompressed) {
-#if DEBUG
-                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
-#endif
-                                }
-                                   error:&reverseWriteError];
-        
-        XCTAssertTrue(result, @"Error writing archive data");
-        XCTAssertNil(reverseWriteError, @"Error writing to file %@ with data of file %@: %@",
-                     testFiles[x], testFiles[i], reverseWriteError);
-    }
-    
-    __block NSError *listError = nil;
-    
-    NSArray *newFileList = [archive listFileInfo:&listError];
-    XCTAssertNil(listError, @"Error reading a re-written archive");
-    
-    // This is the most we can guarantee, the number of files in the directory
-    XCTAssertEqual(newFileList.count, testFiles.count * 2, @"Files not appended correctly");
-}
-
-- (void)testWriteData_MultipleWrites
-{
-    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"MultipleDataWriteTest.zip"];
-    NSString *testFilename = self.nonZipTestFileURLs.anyObject;
-    NSURL *testFileURL = self.testFileURLs[testFilename];
-    NSData *testFileData = [NSData dataWithContentsOfURL:testFileURL];
-    
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
-    
-    unsigned long long lastFileSize = 0;
-    
-    for (NSUInteger i = 0; i < 100; i++) {
-        NSError *writeError = nil;
-        BOOL result = [archive writeData:testFileData
-                                filePath:testFilename
-                                fileDate:nil
-                       compressionMethod:UZKCompressionMethodDefault
-                                password:nil
-                                progress:^(CGFloat percentCompressed) {
-#if DEBUG
-                                    NSLog(@"Compressing data: %f%% complete", percentCompressed);
-#endif
-                                }
-                                   error:&writeError];
-        
-        XCTAssertTrue(result, @"Error writing archive data");
-        XCTAssertNil(writeError, @"Error writing to file %@: %@", testFileURL, writeError);
-        
-        NSError *fileSizeError = nil;
-        NSNumber *fileSize = [[NSFileManager defaultManager] attributesOfItemAtPath:testArchiveURL.path
-                                                                              error:&fileSizeError][NSFileSize];
-        
-        if (lastFileSize > 0) {
-            XCTAssertEqual(lastFileSize, fileSize.longLongValue, @"File changed size between writes");
-        }
-        
-        lastFileSize = fileSize.longLongValue;
-    }
-}
-
-- (void)testWriteData_DefaultDate
-{
-    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"DefaultDateWriteTest.zip"];
-    NSString *testFilename = self.nonZipTestFileURLs.anyObject;
-    NSURL *testFileURL = self.testFileURLs[testFilename];
-    
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
-    
-    NSError *writeError = nil;
-    BOOL result = [archive writeData:[NSData dataWithContentsOfURL:testFileURL]
-                            filePath:testFilename
-                            fileDate:nil
-                   compressionMethod:UZKCompressionMethodDefault
-                            password:nil
-                            progress:^(CGFloat percentCompressed) {
-#if DEBUG
-                                NSLog(@"Compressing data: %f%% complete", percentCompressed);
-#endif
-                            }
-                               error:&writeError];
-    
-    XCTAssertTrue(result, @"Error writing archive data");
-    XCTAssertNil(writeError, @"Error writing to file %@: %@", testFileURL, writeError);
-    
-    NSError *listError = nil;
-    NSArray *fileList = [archive listFileInfo:&listError];
-    UZKFileInfo *writtenFileInfo = fileList.firstObject;
-    
-    NSTimeInterval actualDate = writtenFileInfo.timestamp.timeIntervalSinceReferenceDate;
-    NSTimeInterval expectedDate = [NSDate date].timeIntervalSinceReferenceDate;
-    
-    XCTAssertEqualWithAccuracy(actualDate, expectedDate, 30, @"Incorrect default date value written to file");
-}
-
-
 #pragma mark Write Into Buffer
 
 
 - (void)testWriteInfoBuffer
 {
-    NSArray *testFiles = [self.nonZipTestFileURLs.allObjects sortedArrayUsingSelector:@selector(compare:)];
-    NSArray *testDates = @[[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"],
-                           [testFileInfoDateFormatter dateFromString:@"12/21/2014 10:00 AM"],
-                           [testFileInfoDateFormatter dateFromString:@"12/22/2014 11:54 PM"]];
+    NSArray *testFiles = [self.nonZipTestFilePaths.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *testDates = @[[[UZKArchiveTestCase dateFormatter] dateFromString:@"12/20/2014 9:35 AM"],
+                           [[UZKArchiveTestCase dateFormatter] dateFromString:@"12/21/2014 10:00 AM"],
+                           [[UZKArchiveTestCase dateFormatter] dateFromString:@"12/22/2014 11:54 PM"]];
     NSMutableArray *testFileData = [NSMutableArray arrayWithCapacity:testFiles.count];
     
     NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"WriteIntoBufferTest.zip"];
@@ -1948,7 +1369,6 @@ static NSDateFormatter *testFileInfoDateFormatter;
         BOOL result = [archive writeIntoBuffer:testFile
                                       fileDate:testDates[idx]
                              compressionMethod:UZKCompressionMethodDefault
-                                      password:nil
                                      overwrite:YES
                                          error:&writeError
                                          block:
@@ -1994,9 +1414,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSError *writeError = nil;
     
     BOOL result = [archive writeIntoBuffer:@"Test File A.txt"
-                                  fileDate:[testFileInfoDateFormatter dateFromString:@"12/20/2014 9:35 AM"]
+                                  fileDate:[[UZKArchiveTestCase dateFormatter] dateFromString:@"12/20/2014 9:35 AM"]
                          compressionMethod:UZKCompressionMethodDefault
-                                  password:nil
                                  overwrite:YES
                                      error:&writeError
                                      block:
@@ -2023,7 +1442,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
     
-    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     NSString *fileToDelete = expectedFiles[0];
     
@@ -2066,7 +1485,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
     
-    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     NSString *fileToDelete = expectedFiles[1];
     
@@ -2109,7 +1528,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
     
-    NSSet *expectedFileSet = self.nonZipTestFileURLs;
+    NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     NSString *fileToDelete = expectedFiles[2];
     
@@ -2536,123 +1955,6 @@ static NSDateFormatter *testFileInfoDateFormatter;
             NSLog(@"Error while waiting for expectations: %@", error);
         }
     }];
-}
-
-
-
-#pragma mark - Helper Methods
-
-
-- (NSURL *)urlOfTestFile:(NSString *)filename
-{
-    NSString *baseDirectory = @"Test Data";
-    NSString *subPath = filename.stringByDeletingLastPathComponent;
-    NSString *bundleSubdir = [baseDirectory stringByAppendingPathComponent:subPath];
-    
-    return [[NSBundle bundleForClass:[self class]] URLForResource:filename.lastPathComponent
-                                                    withExtension:nil
-                                                     subdirectory:bundleSubdir];
-}
-
-- (NSString *)randomDirectoryName
-{
-    NSString *globallyUnique = [[NSProcessInfo processInfo] globallyUniqueString];
-    NSRange firstHyphen = [globallyUnique rangeOfString:@"-"];
-    return [globallyUnique substringToIndex:firstHyphen.location];
-}
-
-- (NSString *)randomDirectoryWithPrefix:(NSString *)prefix
-{
-    return [NSString stringWithFormat:@"%@ %@", prefix, [self randomDirectoryName]];
-}
-
-- (NSInteger)numberOfOpenFileHandles {
-    int pid = [[NSProcessInfo processInfo] processIdentifier];
-    NSPipe *pipe = [NSPipe pipe];
-    NSFileHandle *file = pipe.fileHandleForReading;
-    
-    NSTask *task = [[NSTask alloc] init];
-    task.launchPath = @"/usr/sbin/lsof";
-    task.arguments = @[@"-P", @"-n", @"-p", [NSString stringWithFormat:@"%d", pid]];
-    task.standardOutput = pipe;
-    
-    [task launch];
-    
-    NSData *data = [file readDataToEndOfFile];
-    [file closeFile];
-    
-    NSString *lsofOutput = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
-    
-//    NSLog(@"LSOF:\n%@", lsofOutput);
-    
-    return [lsofOutput componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]].count;
-}
-
-- (NSURL *)emptyTextFileOfLength:(NSUInteger)fileSize
-{
-    NSURL *resultURL = [self.tempDirectory URLByAppendingPathComponent:
-                        [NSString stringWithFormat:@"%@.txt", [[NSProcessInfo processInfo] globallyUniqueString]]];
-    
-    [[NSFileManager defaultManager] createFileAtPath:resultURL.path
-                                            contents:nil
-                                          attributes:nil];
-    
-    NSError *error = nil;
-    NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingToURL:resultURL
-                                                                 error:&error];
-    XCTAssertNil(error, @"Error creating file handle for URL: %@", resultURL);
-    
-    [fileHandle seekToFileOffset:fileSize];
-    [fileHandle writeData:[@"\x00" dataUsingEncoding:NSUTF8StringEncoding]];
-    [fileHandle closeFile];
-    
-    return resultURL;
-}
-
-- (NSURL *)archiveWithFiles:(NSArray *)fileURLs
-{
-    NSString *uniqueString = [[NSProcessInfo processInfo] globallyUniqueString];
-    return [self archiveWithFiles:fileURLs name:uniqueString];
-}
-
-- (NSURL *)archiveWithFiles:(NSArray *)fileURLs name:(NSString *)name
-{
-    NSURL *archiveURL = [[self.tempDirectory URLByAppendingPathComponent:name]
-                         URLByAppendingPathExtension:@"zip"];
-    
-    NSTask *task = [[NSTask alloc] init];
-    task.launchPath = @"/usr/bin/zip";
-    task.arguments = [@[@"-j", archiveURL.path] arrayByAddingObjectsFromArray:[fileURLs valueForKeyPath:@"path"]];
-    
-    [task launch];
-    [task waitUntilExit];
-    
-    if (task.terminationStatus != 0) {
-        NSLog(@"Failed to create zip archive");
-        return nil;
-    }
-    
-    return archiveURL;
-}
-
-- (NSURL *)largeArchive
-{
-    NSMutableArray *emptyFiles = [NSMutableArray array];
-    for (NSInteger i = 0; i < 5; i++) {
-        [emptyFiles addObject:[self emptyTextFileOfLength:20000000]];
-    }
-    
-    static NSInteger archiveNumber = 1;
-    NSURL *largeArchiveURL = [self archiveWithFiles:emptyFiles
-                                               name:[NSString stringWithFormat:@"Large Archive %ld", archiveNumber++]];
-    return largeArchiveURL;
-}
-
-- (NSUInteger)crcOfTestFile:(NSString *)filename
-{
-    NSURL *fileURL = [self urlOfTestFile:filename];
-    NSData *fileContents = [[NSFileManager defaultManager] contentsAtPath:fileURL.path];
-    return crc32(0, fileContents.bytes, (uInt)fileContents.length);
 }
 
 

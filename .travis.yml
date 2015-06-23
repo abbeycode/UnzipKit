@@ -1,7 +1,7 @@
 language:
   - objective-c
 
-# Required, for now, to use Carthage
+# Required, for now, to use Swift 1.2
 osx_image: beta-xcode6.3
 
 matrix:
@@ -9,21 +9,24 @@ matrix:
     - xcode_workspace: UnzipKit.xcworkspace
       xcode_scheme: UnzipKit
       xcode_sdk: macosx
+      env: TEST=test
 
     - xcode_workspace: UnzipKit.xcworkspace
       xcode_scheme: UnzipKit
       xcode_sdk: macosx10.9
+      env: NAME=MavericksBuild
 
     - xcode_workspace: UnzipKitDemo/UnzipKitDemo.xcworkspace
       xcode_scheme: UnzipKitDemo
       xcode_sdk: iphonesimulator
+      env: NAME=DemoAppBuild
 
 before_script:
   - ./Scripts/install-demo-libs.sh
   - brew install carthage
 
 script:
-  - xctool -workspace $TRAVIS_XCODE_WORKSPACE -scheme $TRAVIS_XCODE_SCHEME -sdk $TRAVIS_XCODE_SDK -configuration Release analyze test
+  - xctool -workspace $TRAVIS_XCODE_WORKSPACE -scheme $TRAVIS_XCODE_SCHEME -sdk $TRAVIS_XCODE_SDK -configuration Release analyze $TEST
   - ./Scripts/carthage-validate.sh
   - ./Scripts/cocoapod-validate.sh
 
