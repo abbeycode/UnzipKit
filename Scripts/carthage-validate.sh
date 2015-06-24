@@ -13,7 +13,7 @@ echo "git \"$TRAVIS_BUILD_DIR\" \"$TRAVIS_BRANCH\"" > UnzipKitDemo/Cartfile
 
 pushd UnzipKitDemo > /dev/null
 
-carthage bootstrap --configuration Debug --verbose
+carthage bootstrap --configuration Debug --verbose --simulator-only
 EXIT_CODE=$?
 
 echo "Checking for build products..."
