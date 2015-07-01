@@ -1402,7 +1402,6 @@
     } error:&readError];
 }
 
-
 - (void)testWriteInfoBuffer_Failure
 {
     NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"WriteIntoBufferTest_Failure.zip"];
@@ -1431,6 +1430,107 @@
     XCTAssertFalse(result, @"Success returned during failure writing archive data");
     XCTAssertNotNil(writeError, @"No error after failure writing to archive");
     XCTAssertEqual(writeError.code, errorCode, @"Wrong error code returned");
+}
+
+- (void)testWriteInfoBuffer_PasswordGiven
+{
+    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"testWriteInfoBuffer_PasswordGiven.zip"];
+    
+    NSString *password = @"a password";
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password];
+    
+    NSError *writeError = nil;
+    
+    unsigned int bufferSize = 1024; //Arbitrary
+    
+    NSString *testFile = @"Test File A.txt";
+    NSData *fileData = [NSData dataWithContentsOfURL:self.testFileURLs[testFile]];
+    
+    const void *bytes = fileData.bytes;
+    
+    BOOL result = [archive writeIntoBuffer:testFile
+                                  fileDate:nil
+                         compressionMethod:UZKCompressionMethodDefault
+                                 overwrite:YES
+                                       CRC:841856539
+                                     error:&writeError
+                                     block:
+                   ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
+                       for (NSUInteger i = 0; i <= fileData.length; i += bufferSize) {
+                           unsigned int size = (unsigned int)MIN(fileData.length - i, bufferSize);
+                           BOOL writeSuccess = writeData(&bytes[i], size);
+                           XCTAssertTrue(writeSuccess, @"Failed to write buffered data");
+                       }
+                       
+                       return YES;
+                   }];
+    
+    XCTAssertTrue(result, @"Error writing archive data");
+    XCTAssertNil(writeError, @"Error writing to file %@: %@", testFile, writeError);
+
+    BOOL extractSuccess = [self extractArchive:testArchiveURL
+                                      password:password];
+
+    XCTAssertTrue(extractSuccess, @"Failed to extract archive (encryption is incorrect)");
+}
+
+- (void)testWriteInfoBuffer_PasswordGiven_NoCRC
+{
+    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"testWriteInfoBuffer_PasswordGiven_NoCRC.zip"];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:@"a password"];
+    
+    NSError *writeError = nil;
+    
+    XCTAssertThrows([archive writeIntoBuffer:@"Test File A.txt"
+                                    fileDate:[[UZKArchiveTestCase dateFormatter] dateFromString:@"12/20/2014 9:35 AM"]
+                           compressionMethod:UZKCompressionMethodDefault
+                                   overwrite:YES
+                                       error:&writeError
+                                       block:
+                     ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
+                         return YES;
+                     }],
+                    @"No assertion failed when streaming an encypted file with no CRC given");
+}
+
+- (void)testWriteInfoBuffer_PasswordGiven_MismatchedCRC
+{
+    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"testWriteInfoBuffer_PasswordGiven_MismatchedCRC.zip"];
+    
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:@"a password"];
+    
+    NSError *writeError = nil;
+    
+    unsigned int bufferSize = 1024; //Arbitrary
+    
+    NSString *testFile = @"Test File A.txt";
+    NSData *fileData = [NSData dataWithContentsOfURL:self.testFileURLs[testFile]];
+    
+    const void *bytes = fileData.bytes;
+    
+    BOOL result = [archive writeIntoBuffer:testFile
+                                  fileDate:nil
+                         compressionMethod:UZKCompressionMethodDefault
+                                 overwrite:YES
+                                       CRC:3
+                                     error:&writeError
+                                     block:
+                   ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
+                       for (NSUInteger i = 0; i <= fileData.length; i += bufferSize) {
+                           unsigned int size = (unsigned int)MIN(fileData.length - i, bufferSize);
+                           BOOL writeSuccess = writeData(&bytes[i], size);
+                           XCTAssertTrue(writeSuccess, @"Failed to write buffered data");
+                       }
+                       
+                       return YES;
+                   }];
+    
+    XCTAssertFalse(result, @"No error writing archive data");
+    XCTAssertNotNil(writeError, @"No error writing to file");
+    XCTAssertEqual(writeError.code, UZKErrorCodePreCRCMismatch, @"Wrong error code returned for CRC mismatch");
+    XCTAssertTrue([writeError.localizedRecoverySuggestion containsString:@"0000000003"], @"Bad CRC not included in message");
+    XCTAssertTrue([writeError.localizedRecoverySuggestion containsString:@"0841856539"], @"Good CRC not included in message");
 }
 
 
