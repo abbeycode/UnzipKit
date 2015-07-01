@@ -92,9 +92,11 @@ NS_DESIGNATED_INITIALIZER
 - (instancetype)initWithFile:(NSURL *)fileURL password:(NSString*)password
 {
     if ((self = [super init])) {
-        NSError *error = nil;
-        if (![self storeFileBookmark:fileURL error:&error]) {
-            NSLog(@"Error creating bookmark to ZIP archive: %@", error);
+        if ([fileURL checkResourceIsReachableAndReturnError:NULL]) {
+            NSError *error = nil;
+            if (![self storeFileBookmark:fileURL error:&error]) {
+                NSLog(@"Error creating bookmark to ZIP archive: %@", error);
+            }
         }
 
         _openCount = 0;
