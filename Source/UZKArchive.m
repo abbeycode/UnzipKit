@@ -875,7 +875,7 @@ compressionMethod:(UZKCompressionMethod)method
             return YES;
         }, innerError);
         
-        if (*crc != preCRC) {
+        if (preCRC != 0 && *crc != preCRC) {
             uLong calculatedCRC = *crc;
             return [self assignError:innerError
                                 code:UZKErrorCodePreCRCMismatch
