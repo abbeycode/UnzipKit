@@ -267,6 +267,11 @@ NS_DESIGNATED_INITIALIZER
         *error = nil;
     }
     
+    NSError *checkExistsError = nil;
+    if (![self.fileURL checkResourceIsReachableAndReturnError:&checkExistsError]) {
+        return @[];
+    }
+    
     NSError *unzipError;
     
     NSMutableArray *zipInfos = [NSMutableArray array];
@@ -1639,6 +1644,12 @@ compressionMethod:(UZKCompressionMethod)method
 }
 
 - (NSString *)readGlobalComment {
+    
+    NSError *checkExistsError = nil;
+    if (![self.fileURL checkResourceIsReachableAndReturnError:&checkExistsError]) {
+        return nil;
+    }
+    
     __weak UZKArchive *welf = self;
     __block NSString *comment = nil;
     NSError *error = nil;
