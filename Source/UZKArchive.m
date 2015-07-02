@@ -92,9 +92,11 @@ NS_DESIGNATED_INITIALIZER
 - (instancetype)initWithFile:(NSURL *)fileURL password:(NSString*)password
 {
     if ((self = [super init])) {
-        NSError *error = nil;
-        if (![self storeFileBookmark:fileURL error:&error]) {
-            NSLog(@"Error creating bookmark to ZIP archive: %@", error);
+        if ([fileURL checkResourceIsReachableAndReturnError:NULL]) {
+            NSError *error = nil;
+            if (![self storeFileBookmark:fileURL error:&error]) {
+                NSLog(@"Error creating bookmark to ZIP archive: %@", error);
+            }
         }
 
         _openCount = 0;
@@ -263,6 +265,11 @@ NS_DESIGNATED_INITIALIZER
 {
     if (error) {
         *error = nil;
+    }
+    
+    NSError *checkExistsError = nil;
+    if (![self.fileURL checkResourceIsReachableAndReturnError:&checkExistsError]) {
+        return @[];
     }
     
     NSError *unzipError;
@@ -767,6 +774,8 @@ compressionMethod:(UZKCompressionMethod)method
                         fileDate:nil
                compressionMethod:UZKCompressionMethodDefault
                        overwrite:YES
+                             CRC:0
+                        password:nil
                            error:error
                            block:action];
 }
@@ -780,6 +789,8 @@ compressionMethod:(UZKCompressionMethod)method
                         fileDate:fileDate
                compressionMethod:UZKCompressionMethodDefault
                        overwrite:YES
+                             CRC:0
+                        password:nil
                            error:error
                            block:action];
 }
@@ -794,6 +805,8 @@ compressionMethod:(UZKCompressionMethod)method
                         fileDate:fileDate
                compressionMethod:method
                        overwrite:YES
+                             CRC:0
+                        password:nil
                            error:error
                            block:action];
 }
@@ -805,8 +818,46 @@ compressionMethod:(UZKCompressionMethod)method
                   error:(NSError * __autoreleasing*)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
-    NSAssert([self.password length] == 0, @"Cannot provide a password when writing into a buffer, "
-             "since the CRC must be known up front for encryption", nil);
+    return [self writeIntoBuffer:filePath
+                        fileDate:fileDate
+               compressionMethod:method
+                       overwrite:overwrite
+                             CRC:0
+                        password:nil
+                           error:error
+                           block:action];
+}
+
+- (BOOL)writeIntoBuffer:(NSString *)filePath
+               fileDate:(NSDate *)fileDate
+      compressionMethod:(UZKCompressionMethod)method
+              overwrite:(BOOL)overwrite
+                    CRC:(uLong)preCRC
+                  error:(NSError *__autoreleasing *)error
+                  block:(BOOL (^)(BOOL (^)(const void *, unsigned int), NSError *__autoreleasing *))action
+{
+    return [self writeIntoBuffer:filePath
+                        fileDate:fileDate
+               compressionMethod:method
+                       overwrite:YES
+                             CRC:preCRC
+                        password:nil
+                           error:error
+                           block:action];
+}
+
+- (BOOL)writeIntoBuffer:(NSString *)filePath
+               fileDate:(NSDate *)fileDate
+      compressionMethod:(UZKCompressionMethod)method
+              overwrite:(BOOL)overwrite
+                    CRC:(uLong)preCRC
+               password:(NSString *)password
+                  error:(NSError *__autoreleasing *)error
+                  block:(BOOL (^)(BOOL (^)(const void *, unsigned int), NSError *__autoreleasing *))action
+{
+    NSAssert(preCRC != 0 || ([password length] == 0 && [self.password length] == 0),
+             @"Cannot provide a password when writing into a buffer, "
+             "unless a CRC is provided up front for inclusion in the header", nil);
     
     BOOL success = [self performWriteAction:^int(uLong *crc, NSError * __autoreleasing*innerError) {
         __block int writeErr;
@@ -829,14 +880,23 @@ compressionMethod:(UZKCompressionMethod)method
             return YES;
         }, innerError);
         
+        if (preCRC != 0 && *crc != preCRC) {
+            uLong calculatedCRC = *crc;
+            return [self assignError:innerError
+                                code:UZKErrorCodePreCRCMismatch
+                              detail:[NSString stringWithFormat:
+                                      NSLocalizedString(@"Incorrect CRC provided\n%010lu given\n%010lu calculated", @"CRC mismatch error detail"),
+                                      preCRC, calculatedCRC]];
+        }
+        
         return result;
     }
                                    filePath:filePath
                                    fileDate:fileDate
                           compressionMethod:method
-                                   password:nil
+                                   password:password
                                   overwrite:overwrite
-                                        CRC:0
+                                        CRC:preCRC
                                       error:error];
     
     return success;
@@ -1584,6 +1644,12 @@ compressionMethod:(UZKCompressionMethod)method
 }
 
 - (NSString *)readGlobalComment {
+    
+    NSError *checkExistsError = nil;
+    if (![self.fileURL checkResourceIsReachableAndReturnError:&checkExistsError]) {
+        return nil;
+    }
+    
     __weak UZKArchive *welf = self;
     __block NSString *comment = nil;
     NSError *error = nil;
@@ -1751,7 +1817,12 @@ compressionMethod:(UZKCompressionMethod)method
             
         case UZKErrorCodeMixedModeAccess:
             errorName = NSLocalizedString(@"Attempted to read before all writes have completed, or vise-versa",
-                                          @"UZKErrorCodeDeleteFile");
+                                          @"UZKErrorCodeMixedModeAccess");
+            break;
+            
+        case UZKErrorCodePreCRCMismatch:
+            errorName = NSLocalizedString(@"The CRC given up front doesn't match the calculated CRC",
+                                          @"UZKErrorCodePreCRCMismatch");
             break;
             
         default:
