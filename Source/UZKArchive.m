@@ -119,7 +119,9 @@ NS_DESIGNATED_INITIALIZER
 
 - (NSURL *)fileURL
 {
-    if (!self.fileBookmark) {
+    if (!self.fileBookmark
+        || (self.fallbackURL && [self.fallbackURL checkResourceIsReachableAndReturnError:NULL]))
+    {
         return self.fallbackURL;
     }
     
@@ -300,23 +302,25 @@ NS_DESIGNATED_INITIALIZER
         }
 
         for (NSUInteger i = 0; i < fileCount; i++) {
-            UZKFileInfo *info = [self currentFileInZipInfo:innerError];
-            
-            if (info) {
-                [zipInfos addObject:info];
-            } else {
-                return;
-            }
-
-            err = unzGoToNextFile(self.unzFile);
-            if (err == UNZ_END_OF_LIST_OF_FILE)
-                return;
-            
-            if (err != UNZ_OK) {
-                [self assignError:innerError code:UZKErrorCodeFileNavigationError
-                           detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error navigating to next file (%d)", @"Detailed error string"),
-                                   err]];
-                return;
+            @autoreleasepool {
+                UZKFileInfo *info = [self currentFileInZipInfo:innerError];
+                
+                if (info) {
+                    [zipInfos addObject:info];
+                } else {
+                    return;
+                }
+                
+                err = unzGoToNextFile(self.unzFile);
+                if (err == UNZ_END_OF_LIST_OF_FILE)
+                    return;
+                
+                if (err != UNZ_OK) {
+                    [self assignError:innerError code:UZKErrorCodeFileNavigationError
+                               detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error navigating to next file (%d)", @"Detailed error string"),
+                                       err]];
+                    return;
+                }
             }
         }
     } inMode:UZKFileModeUnzip error:&unzipError];
@@ -329,7 +333,7 @@ NS_DESIGNATED_INITIALIZER
         return nil;
     }
     
-    return [NSArray arrayWithArray:zipInfos];
+    return [zipInfos copy];
 }
 
 - (BOOL)extractFilesTo:(NSString *)destinationDirectory
@@ -1410,22 +1414,24 @@ compressionMethod:(UZKCompressionMethod)method
             NSMutableDictionary *dic = [NSMutableDictionary dictionary];
             
             do {
-                UZKFileInfo *info = [self currentFileInZipInfo:error];
-                
-                if (!info) {
-                    return NO;
-                }
-                
-                unz_file_pos pos;
-                int err = unzGetFilePos(self.unzFile, &pos);
-                if (err == UNZ_OK && info.filename) {
-                    NSValue *dictValue = [NSValue valueWithBytes:&pos
-                                                        objCType:@encode(unz_file_pos)];
-                    dic[info.filename.decomposedStringWithCanonicalMapping] = dictValue;
+                @autoreleasepool {
+                    UZKFileInfo *info = [self currentFileInZipInfo:error];
+                    
+                    if (!info) {
+                        return NO;
+                    }
+                    
+                    unz_file_pos pos;
+                    int err = unzGetFilePos(self.unzFile, &pos);
+                    if (err == UNZ_OK && info.filename) {
+                        NSValue *dictValue = [NSValue valueWithBytes:&pos
+                                                            objCType:@encode(unz_file_pos)];
+                        dic[info.filename.decomposedStringWithCanonicalMapping] = dictValue;
+                    }
                 }
             } while (unzGoToNextFile (self.unzFile) != UNZ_END_OF_LIST_OF_FILE);
             
-            self.archiveContents = [NSDictionary dictionaryWithDictionary:dic];
+            self.archiveContents = [dic copy];
             break;
         }
         case UZKFileModeCreate:

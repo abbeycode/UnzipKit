@@ -6,9 +6,16 @@
 
 #import "UZKFileInfo.h"
 
+@interface UZKFileInfo ()
+
+@property (readwrite) tm_unz *zipTMUDate;
+
+@end
+
 
 @implementation UZKFileInfo
 
+@synthesize timestamp = _timestamp;
 
 
 #pragma mark - Initialization
@@ -24,7 +31,7 @@
         _filename = filename;
         _uncompressedSize = fileInfo->uncompressed_size;
         _compressedSize = fileInfo->compressed_size;
-        _timestamp = [self readDate:&fileInfo->tmu_date];
+        _zipTMUDate = &fileInfo->tmu_date;
         _CRC = fileInfo->crc;
         _isEncryptedWithPassword = (fileInfo->flag & 1) != 0;
         _isDirectory = [filename hasSuffix:@"/"];
@@ -37,6 +44,19 @@
                                                     flag:fileInfo->flag];
     }
     return self;
+}
+
+
+
+#pragma mark - Properties
+
+
+- (NSDate *)timestamp {
+    if (!_timestamp) {
+        _timestamp = [self readDate:self.zipTMUDate];
+    }
+    
+    return _timestamp;
 }
 
 
