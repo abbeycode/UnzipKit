@@ -839,7 +839,7 @@ compressionMethod:(UZKCompressionMethod)method
     return [self writeIntoBuffer:filePath
                         fileDate:fileDate
                compressionMethod:method
-                       overwrite:YES
+                       overwrite:overwrite
                              CRC:preCRC
                         password:nil
                            error:error
