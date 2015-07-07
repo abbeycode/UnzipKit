@@ -380,6 +380,27 @@ class WriteDataTests: UZKArchiveTestCase {
         }
     }
     
+    func testWriteData_ManyFiles_MemoryUsage_ForProfiling() {
+        let testArchiveURL = tempDirectory.URLByAppendingPathComponent("ManyFilesMemoryUsageTest.zip")
+        let testFilename = nonZipTestFilePaths.first as! String
+        let testFileURL = testFileURLs[testFilename] as! NSURL
+        let testFileData = NSData(contentsOfURL: testFileURL)
+        
+        let formatter = NSByteCountFormatter()
+        
+        let archive = UZKArchive.zipArchiveAtURL(testArchiveURL)
+        
+        for i in 1...1000 {
+            var writeError: NSError? = nil
+            
+            let result = archive.writeData(testFileData, filePath: "File \(i).txt", fileDate: nil,
+                compressionMethod: .Default, password: nil, overwrite: true, progress: nil, error: &writeError)
+            
+            XCTAssertTrue(result, "Error writing archive data \(i)")
+            XCTAssertNil(writeError, "Error writing to file \(testFileURL): \(writeError)")
+        }
+    }
+    
     func testWriteData_DefaultDate() {
         let testArchiveURL = tempDirectory.URLByAppendingPathComponent("DefaultDateWriteTest.zip")
         let testFilename = nonZipTestFilePaths.first as! String

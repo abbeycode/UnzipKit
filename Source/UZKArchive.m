@@ -300,27 +300,25 @@ NS_DESIGNATED_INITIALIZER
                                err]];
             return;
         }
-
+        
         for (NSUInteger i = 0; i < fileCount; i++) {
-            @autoreleasepool {
-                UZKFileInfo *info = [self currentFileInZipInfo:innerError];
-                
-                if (info) {
-                    [zipInfos addObject:info];
-                } else {
-                    return;
-                }
-                
-                err = unzGoToNextFile(self.unzFile);
-                if (err == UNZ_END_OF_LIST_OF_FILE)
-                    return;
-                
-                if (err != UNZ_OK) {
-                    [self assignError:innerError code:UZKErrorCodeFileNavigationError
-                               detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error navigating to next file (%d)", @"Detailed error string"),
-                                       err]];
-                    return;
-                }
+            UZKFileInfo *info = [self currentFileInZipInfo:innerError];
+            
+            if (info) {
+                [zipInfos addObject:info];
+            } else {
+                return;
+            }
+            
+            err = unzGoToNextFile(self.unzFile);
+            if (err == UNZ_END_OF_LIST_OF_FILE)
+                return;
+            
+            if (err != UNZ_OK) {
+                [self assignError:innerError code:UZKErrorCodeFileNavigationError
+                           detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error navigating to next file (%d)", @"Detailed error string"),
+                                   err]];
+                return;
             }
         }
     } inMode:UZKFileModeUnzip error:&unzipError];
@@ -1270,7 +1268,11 @@ compressionMethod:(UZKCompressionMethod)method
 {
     if (overwrite) {
         NSError *listFilesError = nil;
-        NSArray *existingFiles = [self listFileInfo:&listFilesError];
+        NSArray *existingFiles;
+        
+        @autoreleasepool {
+            existingFiles = [self listFileInfo:&listFilesError];
+        }
         
         if (existingFiles) {
             NSIndexSet *matchingFiles = [existingFiles indexesOfObjectsPassingTest:
