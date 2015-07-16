@@ -1,5 +1,13 @@
 # UnzipKit CHANGELOG
 
+## 1.4.1
+
+* Added the ability to password protect a file over the streaming API (`-writeInfoBuffer:...`), if the CRC of the file is known up front (Issue #16)
+* Fixed a memory consumption bug, causing a crash on iOS when creating an archive with many files when `overwrite =- YES` (Issue #18)
+* Quieted the warning logged every time a `UZKArchive` is created for an as-yet uncreated file (Issue #17)
+
+Fixed a bug causing file-specific passwords never to be written to an archive (Issue #15)
+
 ## 1.4
 
 * Fixed file encryption (Issue #12)
