@@ -46,7 +46,7 @@ typedef NS_ENUM(NSInteger, UZKCompressionMethod) {
 /**
  *  The timestamp of the file
  */
-@property (readonly, strong) NSDate *timestamp;
+@property (readonly, nonatomic) NSDate *timestamp;
 
 /**
  *  The CRC checksum of the file
