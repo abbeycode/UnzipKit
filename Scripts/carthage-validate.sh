@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -z ${TRAVIS+x} ]; then
-    TRAVIS_BUILD_DIR="~/Source Code/UnzipKit"
+    TRAVIS_BUILD_DIR="/Users/Dov/Source Code/UnzipKit"
     TRAVIS_BRANCH=carthage
 fi
 
@@ -13,7 +13,7 @@ echo "git \"$TRAVIS_BUILD_DIR\" \"$TRAVIS_BRANCH\"" > UnzipKitDemo/Cartfile
 
 pushd UnzipKitDemo > /dev/null
 
-carthage bootstrap --configuration Debug --verbose --simulator-only
+carthage bootstrap --configuration Debug --verbose
 EXIT_CODE=$?
 
 echo "Checking for build products..."
