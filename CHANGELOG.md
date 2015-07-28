@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.4.2
+
+Fixed a bug causing global comments not to get written to disk (Issue #19)
+
 ## 1.4.1
 
 * Added the ability to password protect a file over the streaming API (`-writeInfoBuffer:...`), if the CRC of the file is known up front (Issue #16)
