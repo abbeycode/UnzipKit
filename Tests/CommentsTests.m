@@ -42,7 +42,9 @@
     NSString *expectedComment = @"Fünky unicode stuff";
     commentArchive.comment = expectedComment;
     
-    NSString *updatedComment = commentArchive.comment;
+    UZKArchive *newArchiveInstance = [UZKArchive zipArchiveAtURL:commentArchive.fileURL];
+
+    NSString *updatedComment = newArchiveInstance.comment;
     XCTAssertEqualObjects(updatedComment, expectedComment, @"Wrong comment read from archive");
 }
 

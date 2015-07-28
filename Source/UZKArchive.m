@@ -175,7 +175,8 @@ NS_DESIGNATED_INITIALIZER
 - (void)setComment:(NSString *)comment
 {
     _comment = comment;
-    
+    self.commentRetrieved = YES;
+
     NSError *error = nil;
     BOOL success = [self performActionWithArchiveOpen:nil
                                                inMode:UZKFileModeAppend
