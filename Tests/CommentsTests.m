@@ -44,8 +44,9 @@
     
     UZKArchive *newArchiveInstance = [UZKArchive zipArchiveAtURL:commentArchive.fileURL];
 
-    NSString *updatedComment = newArchiveInstance.comment;
-    XCTAssertEqualObjects(updatedComment, expectedComment, @"Wrong comment read from archive");
+    NSString *updatedComment = newArchiveInstance.comment.decomposedStringWithCanonicalMapping;
+    XCTAssertEqualObjects(updatedComment, expectedComment.decomposedStringWithCanonicalMapping,
+                          @"Wrong comment read from archive");
 }
 
 
