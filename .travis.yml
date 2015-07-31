@@ -1,8 +1,12 @@
 language:
   - objective-c
 
-# Required, for now, to use Swift 1.2
-osx_image: beta-xcode7.0
+osx_image: xcode6.4
+
+# Until Xcode 7 is supported
+branches:
+  except:
+    - swift-2.0
 
 matrix:
   include:
