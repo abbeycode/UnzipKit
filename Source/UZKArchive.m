@@ -745,7 +745,7 @@ compressionMethod:(UZKCompressionMethod)method
         for (NSUInteger i = 0; i <= data.length; i += bufferSize) {
             unsigned int dataRemaining = (unsigned int)(data.length - i);
             unsigned int size = (unsigned int)(dataRemaining < bufferSize ? dataRemaining : bufferSize);
-            int err = zipWriteInFileInZip(self.zipFile, (char *)bytes + i, size);
+            int err = zipWriteInFileInZip(self.zipFile, (const char *)bytes + i, size);
             
             if (err != ZIP_OK) {
                 return err;
