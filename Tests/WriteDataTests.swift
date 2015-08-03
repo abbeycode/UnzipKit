@@ -398,7 +398,7 @@ class WriteDataTests: UZKArchiveTestCase {
             XCTFail("Error writing to file \(testFileURL): \(error)")
         }
         
-        let fileList = try! archive.listFileInfo() as! [UZKFileInfo]
+        let fileList = try! archive.listFileInfo()
         let writtenFileInfo = fileList.first!
         
         let expectedDate = NSDate().timeIntervalSinceReferenceDate

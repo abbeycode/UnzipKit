@@ -260,7 +260,7 @@ NS_DESIGNATED_INITIALIZER
 #pragma mark - Read Methods
 
 
-- (NSArray *)listFilenames:(NSError * __autoreleasing*)error
+- (NSArray<NSString*> *)listFilenames:(NSError * __autoreleasing*)error
 {
     NSArray *zipInfos = [self listFileInfo:error];
     
@@ -271,7 +271,7 @@ NS_DESIGNATED_INITIALIZER
     return (NSArray* _Nonnull)[zipInfos valueForKeyPath:@"filename"];
 }
 
-- (NSArray *)listFileInfo:(NSError * __autoreleasing*)error
+- (NSArray<UZKFileInfo*> *)listFileInfo:(NSError * __autoreleasing*)error
 {
     if (error) {
         *error = nil;
