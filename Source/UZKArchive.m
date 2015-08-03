@@ -27,7 +27,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 
 @interface UZKArchive ()
 
-- (instancetype)initWithFile:(NSURL *)fileURL password:(NSString*)password
+- (instancetype)initWithFile:(NSURL *)fileURL password:(NSString*)password error:(NSError * __autoreleasing*)error
 #if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED > __IPHONE_7_0) || MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_9
 NS_DESIGNATED_INITIALIZER
 #endif
@@ -58,25 +58,26 @@ NS_DESIGNATED_INITIALIZER
 #pragma mark - Convenience Methods
 
 
-+ (UZKArchive *)zipArchiveAtPath:(NSString *)filePath
++ (UZKArchive *)zipArchiveAtPath:(NSString *)filePath error:(NSError * __autoreleasing*)error
 {
-    return [[UZKArchive alloc] initWithFile:[NSURL fileURLWithPath:filePath]];
+    return [[UZKArchive alloc] initWithFile:[NSURL fileURLWithPath:filePath] error:error];
 }
 
-+ (UZKArchive *)zipArchiveAtURL:(NSURL *)fileURL
++ (UZKArchive *)zipArchiveAtURL:(NSURL *)fileURL error:(NSError * __autoreleasing*)error
 {
-    return [[UZKArchive alloc] initWithFile:fileURL];
+    return [[UZKArchive alloc] initWithFile:fileURL error:error];
 }
 
-+ (UZKArchive *)zipArchiveAtPath:(NSString *)filePath password:(NSString *)password
++ (UZKArchive *)zipArchiveAtPath:(NSString *)filePath password:(NSString *)password error:(NSError * __autoreleasing*)error
 {
     return [[UZKArchive alloc] initWithFile:[NSURL fileURLWithPath:filePath]
-                                   password:password];
+                                   password:password
+                                      error:error];
 }
 
-+ (UZKArchive *)zipArchiveAtURL:(NSURL *)fileURL password:(NSString *)password
++ (UZKArchive *)zipArchiveAtURL:(NSURL *)fileURL password:(NSString *)password error:(NSError * __autoreleasing*)error
 {
-    return [[UZKArchive alloc] initWithFile:fileURL password:password];
+    return [[UZKArchive alloc] initWithFile:fileURL password:password error:error];
 }
 
 
@@ -84,18 +85,24 @@ NS_DESIGNATED_INITIALIZER
 #pragma mark - Initializers
 
 
-- (instancetype)initWithFile:(NSURL *)fileURL
+- (instancetype)initWithFile:(NSURL *)fileURL error:(NSError * __autoreleasing*)error
 {
-    return [self initWithFile:fileURL password:nil];
+    return [self initWithFile:fileURL password:nil error:error];
 }
 
-- (instancetype)initWithFile:(NSURL *)fileURL password:(NSString*)password
+- (instancetype)initWithFile:(NSURL *)fileURL password:(NSString*)password error:(NSError * __autoreleasing*)error
 {
     if ((self = [super init])) {
         if ([fileURL checkResourceIsReachableAndReturnError:NULL]) {
-            NSError *error = nil;
-            if (![self storeFileBookmark:fileURL error:&error]) {
-                NSLog(@"Error creating bookmark to ZIP archive: %@", error);
+            NSError *bookmarkError = nil;
+            if (![self storeFileBookmark:fileURL error:&bookmarkError]) {
+                NSLog(@"Error creating bookmark to ZIP archive: %@", bookmarkError);
+                
+                if (error) {
+                    *error = bookmarkError;
+                }
+                
+                return nil;
             }
         }
 
@@ -245,7 +252,7 @@ NS_DESIGNATED_INITIALIZER
         return NO;
     }
     
-    return [UZKArchive pathIsAZip:fileURL.path];
+    return [UZKArchive pathIsAZip:(NSString* _Nonnull)fileURL.path];
 }
 
 
@@ -261,7 +268,7 @@ NS_DESIGNATED_INITIALIZER
         return nil;
     }
     
-    return [zipInfos valueForKeyPath:@"filename"];
+    return (NSArray* _Nonnull)[zipInfos valueForKeyPath:@"filename"];
 }
 
 - (NSArray *)listFileInfo:(NSError * __autoreleasing*)error
@@ -632,6 +639,11 @@ NS_DESIGNATED_INITIALIZER
         return NO;
     }
     
+    if (!fileInfos || fileInfos.count == 0) {
+        NSLog(@"No files in archive");
+        return NO;
+    }
+    
     UZKFileInfo *smallest = [fileInfos sortedArrayUsingComparator:^NSComparisonResult(UZKFileInfo *file1, UZKFileInfo *file2) {
         if (file1.uncompressedSize < file2.uncompressedSize)
             return NSOrderedAscending;
@@ -640,7 +652,7 @@ NS_DESIGNATED_INITIALIZER
         return NSOrderedSame;
     }].firstObject;
 
-    NSData *smallestData = [self extractData:smallest
+    NSData *smallestData = [self extractData:(UZKFileInfo* _Nonnull)smallest
                                     progress:nil
                                        error:&error];
     
@@ -911,7 +923,7 @@ compressionMethod:(UZKCompressionMethod)method
     
     NSFileManager *fm = [NSFileManager defaultManager];
     
-    if (![fm fileExistsAtPath:self.filename]) {
+    if (!self.filename || ![fm fileExistsAtPath:(NSString* _Nonnull)self.filename]) {
         NSLog(@"No archive exists at path %@, when trying to delete %@", self.filename, filePath);
         return YES;
     }
@@ -1178,7 +1190,7 @@ compressionMethod:(UZKCompressionMethod)method
     NSError *replaceError = nil;
     NSURL *newURL;
     
-    BOOL result = [fm replaceItemAtURL:self.fileURL
+    BOOL result = [fm replaceItemAtURL:(NSURL* _Nonnull)self.fileURL
                          withItemAtURL:temporaryURL
                         backupItemName:nil
                                options:NSFileManagerItemReplacementWithoutDeletingBackupItem

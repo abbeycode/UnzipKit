@@ -28,7 +28,7 @@
         NSString *password = ([testArchiveName rangeOfString:@"Password"].location != NSNotFound
                               ? @"password"
                               : nil);
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password];
+        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password error:nil];
         
         __block NSUInteger fileIndex = 0;
         NSError *error = nil;
@@ -55,7 +55,7 @@
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL error:nil];
     
     __block NSUInteger fileIndex = 0;
     NSError *error = nil;
@@ -79,7 +79,7 @@
 {
     NSURL *largeArchiveURL = [self largeArchive];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:largeArchiveURL];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:largeArchiveURL error:nil];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [NSThread sleepForTimeInterval:1];
@@ -113,7 +113,7 @@
 {
     NSURL *largeArchiveURL = [self largeArchive];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:largeArchiveURL];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:largeArchiveURL error:nil];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [NSThread sleepForTimeInterval:1];
@@ -145,7 +145,7 @@
 {
     NSURL *largeArchiveURL = [self largeArchive];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:largeArchiveURL];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:largeArchiveURL error:nil];
     
     NSURL *movedURL = [largeArchiveURL URLByAppendingPathExtension:@"unittest"];
     

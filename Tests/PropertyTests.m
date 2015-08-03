@@ -22,7 +22,7 @@
     for (NSString *testArchiveName in testArchives) {
         NSURL *testArchiveURL = self.testFileURLs[testArchiveName];
         
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL error:nil];
         
         NSURL *resolvedURL = archive.fileURL.URLByResolvingSymlinksInPath;
         XCTAssertNotNil(resolvedURL, @"Nil URL returned for valid archive");
@@ -37,7 +37,7 @@
     for (NSString *testArchiveName in testArchives) {
         NSURL *testArchiveURL = self.testFileURLs[testArchiveName];
         
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL error:nil];
         
         NSString *resolvedFilename = archive.filename;
         XCTAssertNotNil(resolvedFilename, @"Nil filename returned for valid archive");

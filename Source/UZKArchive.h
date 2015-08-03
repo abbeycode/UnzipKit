@@ -8,7 +8,7 @@
 
 #import "UZKFileInfo.h"
 
-
+NS_ASSUME_NONNULL_BEGIN
 @interface UZKArchive : NSObject
 
 extern NSString *UZKErrorDomain;
@@ -116,57 +116,69 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
 };
 
 /**
- *  The URL of the archive
+ *  The URL of the archive. Returns nil if the URL becomes unreachable
  */
-@property(weak, nonatomic, readonly) NSURL *fileURL;
+@property(weak, nonatomic, readonly, nullable) NSURL *fileURL;
 
 /**
- *  The filename of the archive
+ *  The filename of the archive. Returns nil if the archive file becomes unreachable
  */
-@property(weak, nonatomic, readonly) NSString *filename;
+@property(weak, nonatomic, readonly, nullable)  NSString *filename;
 
 /**
  *  The password of the archive
  */
-@property(strong) NSString *password;
+@property(strong, nullable) NSString *password;
 
 /**
  *  The global comment inside the archive
  *
  *  Comments are written in UTF-8, and read in UTF-8 and Windows/CP-1252, falling back to defaultCStringEncoding
  */
-@property(atomic) NSString *comment;
+@property(atomic, nullable) NSString *comment;
 
 
 /**
  *  Creates and returns an archive at the given path
  *
  *  @param filePath A path to the archive file
+ *  @param error    Returns an error code if the object can't be initialized
+ *
+ *  @return Returns a UZKArchive object, or nil if the path isn't reachable
  */
-+ (instancetype)zipArchiveAtPath:(NSString *)filePath;
++ (nullable instancetype)zipArchiveAtPath:(NSString *)filePath error:(NSError **)error;
 
 /**
  *  Creates and returns an archive at the given URL
  *
  *  @param fileURL The URL of the archive file
+ *  @param error    Returns an error code if the object can't be initialized
+ *
+ *  @return Returns a UZKArchive object, or nil if the URL isn't reachable
  */
-+ (instancetype)zipArchiveAtURL:(NSURL *)fileURL;
++ (nullable instancetype)zipArchiveAtURL:(NSURL *)fileURL error:(NSError **)error;
 
 /**
  *  Creates and returns an archive at the given path, with a given password
  *
  *  @param filePath A path to the archive file
- *  @param password The passowrd of the given archive
+ *  @param password The password of the given archive
+ *  @param error    Returns an error code if the object can't be initialized
+ *
+ *  @return Returns a UZKArchive object, or nil if the path isn't reachable
  */
-+ (instancetype)zipArchiveAtPath:(NSString *)filePath password:(NSString *)password;
++ (nullable instancetype)zipArchiveAtPath:(NSString *)filePath password:(NSString *)password error:(NSError **)error;
 
 /**
  *  Creates and returns an archive at the given URL, with a given password
  *
  *  @param fileURL  The URL of the archive file
- *  @param password The passowrd of the given archive
+ *  @param password The password of the given archive
+ *  @param error    Returns an error code if the object can't be initialized
+ *
+ *  @return Returns a UZKArchive object, or nil if the URL isn't reachable
  */
-+ (instancetype)zipArchiveAtURL:(NSURL *)fileURL password:(NSString *)password;
++ (nullable instancetype)zipArchiveAtURL:(NSURL *)fileURL password:(NSString *)password error:(NSError **)error;
 
 
 
@@ -199,7 +211,7 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *
  *  @return Returns a list of NSString containing the paths within the archive's contents, or nil if an error was encountered
  */
-- (NSArray *)listFilenames:(NSError **)error;
+- (nullable NSArray *)listFilenames:(NSError **)error;
 
 /**
  *  Lists the various attributes of each file in the archive
@@ -208,7 +220,7 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *
  *  @return Returns a list of UZKFileInfo objects, which contain metadata about the archive's files, or nil if an error was encountered
  */
-- (NSArray *)listFileInfo:(NSError **)error;
+- (nullable NSArray *)listFileInfo:(NSError **)error;
 
 /**
  *  Writes all files in the archive to the given path
@@ -226,7 +238,7 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  */
 - (BOOL)extractFilesTo:(NSString *)destinationDirectory
              overwrite:(BOOL)overwrite
-              progress:(void (^)(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed))progress
+              progress:(nullable void (^)(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed))progress
                  error:(NSError **)error;
 
 /**
@@ -242,7 +254,7 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *  @return An NSData object containing the bytes of the file, or nil if an error was encountered
  */
 - (NSData *)extractData:(UZKFileInfo *)fileInfo
-               progress:(void (^)(CGFloat percentDecompressed))progress
+               progress:(nullable void (^)(CGFloat percentDecompressed))progress
                   error:(NSError **)error;
 
 /**
@@ -258,7 +270,7 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *  @return An NSData object containing the bytes of the file, or nil if an error was encountered
  */
 - (NSData *)extractDataFromFile:(NSString *)filePath
-                       progress:(void (^)(CGFloat percentDecompressed))progress
+                       progress:(nullable void (^)(CGFloat percentDecompressed))progress
                           error:(NSError **)error;
 
 /**
@@ -353,7 +365,7 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  */
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
-         progress:(void (^)(CGFloat percentCompressed))progress
+         progress:(nullable void (^)(CGFloat percentCompressed))progress
             error:(NSError **)error;
 
 /**
@@ -372,8 +384,8 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  */
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
-         fileDate:(NSDate *)fileDate
-         progress:(void (^)(CGFloat percentCompressed))progress
+         fileDate:(nullable NSDate *)fileDate
+         progress:(nullable void (^)(CGFloat percentCompressed))progress
             error:(NSError **)error;
 
 /**
@@ -394,10 +406,10 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  */
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
-         fileDate:(NSDate *)fileDate
+         fileDate:(nullable NSDate *)fileDate
 compressionMethod:(UZKCompressionMethod)method
-         password:(NSString *)password
-         progress:(void (^)(CGFloat percentCompressed))progress
+         password:(nullable NSString *)password
+         progress:(nullable void (^)(CGFloat percentCompressed))progress
             error:(NSError **)error;
 
 /**
@@ -424,11 +436,11 @@ compressionMethod:(UZKCompressionMethod)method
  */
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
-         fileDate:(NSDate *)fileDate
+         fileDate:(nullable NSDate *)fileDate
 compressionMethod:(UZKCompressionMethod)method
-         password:(NSString *)password
+         password:(nullable NSString *)password
         overwrite:(BOOL)overwrite
-         progress:(void (^)(CGFloat percentCompressed))progress
+         progress:(nullable void (^)(CGFloat percentCompressed))progress
             error:(NSError **)error;
 
 /**
@@ -473,7 +485,7 @@ compressionMethod:(UZKCompressionMethod)method
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-               fileDate:(NSDate *)fileDate
+               fileDate:(nullable NSDate *)fileDate
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
 
@@ -498,7 +510,7 @@ compressionMethod:(UZKCompressionMethod)method
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-               fileDate:(NSDate *)fileDate
+               fileDate:(nullable NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
@@ -531,7 +543,7 @@ compressionMethod:(UZKCompressionMethod)method
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-               fileDate:(NSDate *)fileDate
+               fileDate:(nullable NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
               overwrite:(BOOL)overwrite
                   error:(NSError **)error
@@ -567,7 +579,7 @@ compressionMethod:(UZKCompressionMethod)method
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-               fileDate:(NSDate *)fileDate
+               fileDate:(nullable NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
               overwrite:(BOOL)overwrite
                     CRC:(uLong)preCRC
@@ -605,11 +617,11 @@ compressionMethod:(UZKCompressionMethod)method
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
-               fileDate:(NSDate *)fileDate
+               fileDate:(nullable NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
               overwrite:(BOOL)overwrite
                     CRC:(uLong)preCRC
-               password:(NSString *)password
+               password:(nullable NSString *)password
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
 
@@ -625,3 +637,4 @@ compressionMethod:(UZKCompressionMethod)method
 
 
 @end
+NS_ASSUME_NONNULL_END

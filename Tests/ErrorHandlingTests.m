@@ -18,7 +18,7 @@
 - (void)testNestedError
 {
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive.zip"];
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL error:nil];
     
     NSError *error = nil;
     NSData *extractedData = [archive extractDataFromFile:@"file-doesnt-exist.txt"
