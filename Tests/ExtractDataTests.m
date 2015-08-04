@@ -29,7 +29,7 @@
         NSString *password = ([testArchiveName rangeOfString:@"Password"].location != NSNotFound
                               ? @"password"
                               : nil);
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password error:nil];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
         
         NSError *error = nil;
         NSArray *fileInfos = [archive listFileInfo:&error];
@@ -74,7 +74,7 @@
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL error:nil];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     NSError *error = nil;
     NSArray *fileInfos = [archive listFileInfo:&error];
@@ -117,7 +117,7 @@
     NSArray *testArchives = @[@"Test Archive (Password).zip"];
     
     for (NSString *testArchiveName in testArchives) {
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:self.testFileURLs[testArchiveName] error:nil];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:self.testFileURLs[testArchiveName] error:nil];
         
         NSError *error = nil;
         NSData *data = [archive extractDataFromFile:@"Test File A.txt"
@@ -136,7 +136,7 @@
 
 - (void)testExtractData_InvalidArchive
 {
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Test File A.txt"] error:nil];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:self.testFileURLs[@"Test File A.txt"] error:nil];
     
     NSError *error = nil;
     NSData *data = [archive extractDataFromFile:@"Any file.txt"

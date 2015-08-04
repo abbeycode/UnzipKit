@@ -19,7 +19,7 @@
 - (void)testModes_WriteWhileReading
 {
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive.zip"];
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL error:nil];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     NSError *readError = nil;
     
     [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
@@ -37,7 +37,7 @@
     NSArray *expectedFiles = [self.nonZipTestFilePaths.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive.zip"];
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL error:nil];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     NSError *performOnFilesError = nil;
     __block NSInteger i = 0;
@@ -71,7 +71,7 @@
 - (void)testModes_ReadWhileWriting
 {
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive.zip"];
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL error:nil];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     NSError *writeError = nil;
     
     NSData *dataToWrite = [NSData dataWithContentsOfFile:testArchiveURL];
@@ -95,7 +95,7 @@
 - (void)testModes_NestedWrites
 {
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive.zip"];
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL error:nil];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     NSError *outerWriteError = nil;
     
     NSData *dataToWrite = [NSData dataWithContentsOfFile:testArchiveURL];

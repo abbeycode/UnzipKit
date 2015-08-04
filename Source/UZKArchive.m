@@ -55,35 +55,55 @@ NS_DESIGNATED_INITIALIZER
 @synthesize comment = _comment;
 
 
-#pragma mark - Convenience Methods
+#pragma mark - Deprecated Convenience Methods
 
 
-+ (UZKArchive *)zipArchiveAtPath:(NSString *)filePath error:(NSError * __autoreleasing*)error
++ (UZKArchive *)zipArchiveAtPath:(NSString *)filePath
 {
-    return [[UZKArchive alloc] initWithFile:[NSURL fileURLWithPath:filePath] error:error];
+    return [[UZKArchive alloc] initWithPath:filePath error:nil];
 }
 
-+ (UZKArchive *)zipArchiveAtURL:(NSURL *)fileURL error:(NSError * __autoreleasing*)error
++ (UZKArchive *)zipArchiveAtURL:(NSURL *)fileURL
 {
-    return [[UZKArchive alloc] initWithFile:fileURL error:error];
+    return [[UZKArchive alloc] initWithURL:fileURL error:nil];
 }
 
-+ (UZKArchive *)zipArchiveAtPath:(NSString *)filePath password:(NSString *)password error:(NSError * __autoreleasing*)error
++ (UZKArchive *)zipArchiveAtPath:(NSString *)filePath password:(NSString *)password
 {
-    return [[UZKArchive alloc] initWithFile:[NSURL fileURLWithPath:filePath]
-                                   password:password
-                                      error:error];
+    return [[UZKArchive alloc] initWithPath:filePath password:password error:nil];
 }
 
-+ (UZKArchive *)zipArchiveAtURL:(NSURL *)fileURL password:(NSString *)password error:(NSError * __autoreleasing*)error
++ (UZKArchive *)zipArchiveAtURL:(NSURL *)fileURL password:(NSString *)password
 {
-    return [[UZKArchive alloc] initWithFile:fileURL password:password error:error];
+    return [[UZKArchive alloc] initWithURL:fileURL password:password error:nil];
 }
 
 
 
 #pragma mark - Initializers
 
+
+- (instancetype)initWithPath:(NSString *)filePath error:(NSError * __autoreleasing*)error
+{
+    return [[UZKArchive alloc] initWithFile:[NSURL fileURLWithPath:filePath] error:error];
+}
+
+- (instancetype)initWithURL:(NSURL *)fileURL error:(NSError * __autoreleasing*)error
+{
+    return [[UZKArchive alloc] initWithFile:fileURL error:error];
+}
+
+- (instancetype)initWithPath:(NSString *)filePath password:(NSString *)password error:(NSError * __autoreleasing*)error
+{
+    return [[UZKArchive alloc] initWithFile:[NSURL fileURLWithPath:filePath]
+                                   password:password
+                                      error:error];
+}
+
+- (instancetype)initWithURL:(NSURL *)fileURL password:(NSString *)password error:(NSError * __autoreleasing*)error
+{
+    return [[UZKArchive alloc] initWithFile:fileURL password:password error:error];
+}
 
 - (instancetype)initWithFile:(NSURL *)fileURL error:(NSError * __autoreleasing*)error
 {

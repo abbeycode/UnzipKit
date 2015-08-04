@@ -26,7 +26,7 @@
     for (NSString *testArchiveName in testArchives) {
         NSURL *testArchiveURL = self.testFileURLs[testArchiveName];
         
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL error:nil];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
         
         NSError *error = nil;
         NSArray *filesInArchive = [archive listFilenames:&error];
@@ -51,7 +51,7 @@
     NSSet *expectedFileSet = self.nonZipUnicodeFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL error:nil];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     NSError *error = nil;
     NSArray *filesInArchive = [archive listFilenames:&error];
@@ -72,7 +72,7 @@
 - (void)testListFilenames_Password
 {
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:@"password" error:nil];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:@"password" error:nil];
     
     NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
@@ -96,7 +96,7 @@
 - (void)testListFilenames_NoPasswordGiven
 {
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL error:nil];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
@@ -119,7 +119,7 @@
 
 - (void)testListFilenames_InvalidArchive
 {
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Test File A.txt"] error:nil];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:self.testFileURLs[@"Test File A.txt"] error:nil];
     
     NSError *error = nil;
     NSArray *files = [archive listFilenames:&error];

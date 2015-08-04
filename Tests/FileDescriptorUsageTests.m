@@ -39,7 +39,7 @@
         [fm copyItemAtURL:testArchiveOriginalURL toURL:testArchiveCopyURL error:&error];
         XCTAssertNil(error, @"Error copying test archive \n from: %@ \n\n   to: %@", testArchiveOriginalURL, testArchiveCopyURL);
         
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveCopyURL error:nil];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveCopyURL error:nil];
         
         NSArray *fileList = [archive listFilenames:&error];
         XCTAssertNotNil(fileList);
@@ -82,7 +82,7 @@
         [fm copyItemAtURL:testArchiveOriginalURL toURL:testArchiveCopyURL error:&error];
         XCTAssertNil(error, @"Error copying test archive \n from: %@ \n\n   to: %@", testArchiveOriginalURL, testArchiveCopyURL);
         
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveCopyURL error:nil];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveCopyURL error:nil];
         
         NSError *performOnFilesError = nil;
         BOOL performOnFilesResult =  [archive performOnFilesInArchive:^(UZKFileInfo *fileInfo, BOOL *stop) {
@@ -123,7 +123,7 @@
         [fm copyItemAtURL:testArchiveOriginalURL toURL:testArchiveCopyURL error:&error];
         XCTAssertNil(error, @"Error copying test archive \n from: %@ \n\n   to: %@", testArchiveOriginalURL, testArchiveCopyURL);
         
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveCopyURL error:nil];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveCopyURL error:nil];
         
         NSArray *fileList = [archive listFilenames:&error];
         XCTAssertNotNil(fileList);

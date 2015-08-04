@@ -16,9 +16,9 @@
 
 
 - (void)testMultithreading {
-    UZKArchive *largeArchiveA = [UZKArchive zipArchiveAtURL:[self largeArchive] error:nil];
-    UZKArchive *largeArchiveB = [UZKArchive zipArchiveAtURL:[self largeArchive] error:nil];
-    UZKArchive *largeArchiveC = [UZKArchive zipArchiveAtURL:[self largeArchive] error:nil];
+    UZKArchive *largeArchiveA = [[UZKArchive alloc] initWithURL:[self largeArchive] error:nil];
+    UZKArchive *largeArchiveB = [[UZKArchive alloc] initWithURL:[self largeArchive] error:nil];
+    UZKArchive *largeArchiveC = [[UZKArchive alloc] initWithURL:[self largeArchive] error:nil];
     
     XCTestExpectation *expectationA = [self expectationWithDescription:@"A finished"];
     XCTestExpectation *expectationB = [self expectationWithDescription:@"B finished"];
@@ -72,9 +72,9 @@
 }
 
 - (void)testMultithreading_SingleFile {
-    UZKArchive *largeArchiveA = [UZKArchive zipArchiveAtURL:[self largeArchive] error:nil];
-    UZKArchive *largeArchiveB = [UZKArchive zipArchiveAtURL:largeArchiveA.fileURL error:nil];
-    UZKArchive *largeArchiveC = [UZKArchive zipArchiveAtURL:largeArchiveA.fileURL error:nil];
+    UZKArchive *largeArchiveA = [[UZKArchive alloc] initWithURL:[self largeArchive] error:nil];
+    UZKArchive *largeArchiveB = [[UZKArchive alloc] initWithURL:largeArchiveA.fileURL error:nil];
+    UZKArchive *largeArchiveC = [[UZKArchive alloc] initWithURL:largeArchiveA.fileURL error:nil];
     
     XCTestExpectation *expectationA = [self expectationWithDescription:@"A finished"];
     XCTestExpectation *expectationB = [self expectationWithDescription:@"B finished"];
@@ -128,7 +128,7 @@
 }
 
 - (void)testMultithreading_SingleArchiveObject {
-    UZKArchive *largeArchive = [UZKArchive zipArchiveAtURL:[self largeArchive] error:nil];
+    UZKArchive *largeArchive = [[UZKArchive alloc] initWithURL:[self largeArchive] error:nil];
     
     XCTestExpectation *expectationA = [self expectationWithDescription:@"A finished"];
     XCTestExpectation *expectationB = [self expectationWithDescription:@"B finished"];

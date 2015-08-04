@@ -32,7 +32,7 @@
         NSString *password = ([testArchiveName rangeOfString:@"Password"].location != NSNotFound
                               ? @"password"
                               : nil);
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password error:nil];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
         
         NSError *deleteError;
         BOOL result = [archive deleteFile:fileToDelete error:&deleteError];
@@ -75,7 +75,7 @@
         NSString *password = ([testArchiveName rangeOfString:@"Password"].location != NSNotFound
                               ? @"password"
                               : nil);
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password error:nil];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
         
         NSError *deleteError;
         BOOL result = [archive deleteFile:fileToDelete error:&deleteError];
@@ -118,7 +118,7 @@
         NSString *password = ([testArchiveName rangeOfString:@"Password"].location != NSNotFound
                               ? @"password"
                               : nil);
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password error:nil];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
         
         NSError *deleteError;
         BOOL result = [archive deleteFile:fileToDelete error:&deleteError];

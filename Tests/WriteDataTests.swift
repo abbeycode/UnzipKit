@@ -20,7 +20,7 @@ class WriteDataTests: UZKArchiveTestCase {
         var testFileData = [NSData]()
         
         let testArchiveURL = tempDirectory.URLByAppendingPathComponent("WriteDataTest.zip")
-        let archive = try! UZKArchive.zipArchiveAtURL(testArchiveURL)
+        let archive = try! UZKArchive(URL: testArchiveURL)
         
         for (index, testFilePath) in testFilePaths.enumerate() {
             let fileData = NSData(contentsOfURL: testFileURLs[testFilePath] as! NSURL)
@@ -64,7 +64,7 @@ class WriteDataTests: UZKArchiveTestCase {
         var testFileData = [NSData]()
         
         let testArchiveURL = tempDirectory.URLByAppendingPathComponent("UnicodeWriteDataTest.zip")
-        let archive = try! UZKArchive.zipArchiveAtURL(testArchiveURL)
+        let archive = try! UZKArchive(URL: testArchiveURL)
         
         for (index, testFilePath) in testFilePaths.enumerate() {
             let fileData = NSData(contentsOfURL: unicodeFileURLs[testFilePath] as! NSURL)
@@ -108,7 +108,7 @@ class WriteDataTests: UZKArchiveTestCase {
         var testFileData = [NSData]()
         
         let testArchiveURL = tempDirectory.URLByAppendingPathComponent("RewriteDataTest.zip")
-        let archive = try! UZKArchive.zipArchiveAtURL(testArchiveURL)
+        let archive = try! UZKArchive(URL: testArchiveURL)
         
         for (index, testFilePath) in testFilePaths.enumerate() {
             let fileData = NSData(contentsOfURL: testFileURLs[testFilePath] as! NSURL)
@@ -190,7 +190,7 @@ class WriteDataTests: UZKArchiveTestCase {
         var testFileData = [NSData]()
         
         let testArchiveURL = tempDirectory.URLByAppendingPathComponent("RewriteDataTest.zip")
-        let archive = try! UZKArchive.zipArchiveAtURL(testArchiveURL)
+        let archive = try! UZKArchive(URL: testArchiveURL)
         
         for (index, testFilePath) in testFilePaths.enumerate() {
             let fileData = NSData(contentsOfURL: unicodeFileURLs[testFilePath] as! NSURL)
@@ -272,7 +272,7 @@ class WriteDataTests: UZKArchiveTestCase {
         var testFileData = [NSData]()
         
         let testArchiveURL = tempDirectory.URLByAppendingPathComponent("RewriteDataTest.zip")
-        let archive = try! UZKArchive.zipArchiveAtURL(testArchiveURL)
+        let archive = try! UZKArchive(URL: testArchiveURL)
         
         for (index, testFilePath) in testFilePaths.enumerate() {
             let fileData = NSData(contentsOfURL: testFileURLs[testFilePath] as! NSURL)
@@ -333,7 +333,7 @@ class WriteDataTests: UZKArchiveTestCase {
         let testFileURL = testFileURLs[testFilename] as! NSURL
         let testFileData = NSData(contentsOfURL: testFileURL)!
         
-        let archive = try! UZKArchive.zipArchiveAtURL(testArchiveURL)
+        let archive = try! UZKArchive(URL: testArchiveURL)
         
         var lastFileSize: UInt64 = 0
         
@@ -367,7 +367,7 @@ class WriteDataTests: UZKArchiveTestCase {
         let testFileURL = testFileURLs[testFilename] as! NSURL
         let testFileData = NSData(contentsOfURL: testFileURL)!
         
-        let archive = try! UZKArchive.zipArchiveAtURL(testArchiveURL)
+        let archive = try! UZKArchive(URL: testArchiveURL)
         
         for i in 1...1000 {
             do {
@@ -385,7 +385,7 @@ class WriteDataTests: UZKArchiveTestCase {
         let testFileURL = testFileURLs[testFilename] as! NSURL
         let testFileData = NSData(contentsOfURL: testFileURL)!
         
-        let archive = try! UZKArchive.zipArchiveAtURL(testArchiveURL)
+        let archive = try! UZKArchive(URL: testArchiveURL)
         
         do {
             try archive.writeData(testFileData, filePath: testFilename, fileDate: nil,
@@ -414,7 +414,7 @@ class WriteDataTests: UZKArchiveTestCase {
         let testArchiveURL = tempDirectory.URLByAppendingPathComponent("SwiftWriteDataTest.zip")
         let password = "111111"
         
-        let writeArchive = try! UZKArchive.zipArchiveAtPath(testArchiveURL.path!, password: password)
+        let writeArchive = try! UZKArchive(path: testArchiveURL.path!, password: password)
         
         for testFilePath in testFilePaths {
             let fileData = NSData(contentsOfURL: testFileURLs[testFilePath] as! NSURL)
@@ -429,7 +429,7 @@ class WriteDataTests: UZKArchiveTestCase {
         
         // Read with UnzipKit
         
-        let readArchive = try! UZKArchive.zipArchiveAtPath(testArchiveURL.path!, password: password)
+        let readArchive = try! UZKArchive(path: testArchiveURL.path!, password: password)
         XCTAssertTrue(readArchive.isPasswordProtected(), "Archive is not marked as password-protected")
         
         var index = 0

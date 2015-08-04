@@ -34,7 +34,7 @@
         NSString *password = ([testArchiveName rangeOfString:@"Password"].location != NSNotFound
                               ? @"password"
                               : nil);
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password error:nil];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
         
         NSError *error = nil;
         BOOL success = [archive extractFilesTo:extractURL.path
@@ -89,7 +89,7 @@
                                   [testArchiveName stringByDeletingPathExtension]];
     NSURL *extractURL = [self.tempDirectory URLByAppendingPathComponent:extractDirectory];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL error:nil];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     NSError *error = nil;
     BOOL success = [archive extractFilesTo:extractURL.path
@@ -132,7 +132,7 @@
 
 - (void)testExtractFiles_NoPasswordGiven
 {
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Test Archive (Password).zip"] error:nil];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:self.testFileURLs[@"Test Archive (Password).zip"] error:nil];
     
     NSString *extractDirectory = [self randomDirectoryWithPrefix:archive.filename.stringByDeletingPathExtension];
     NSURL *extractURL = [self.tempDirectory URLByAppendingPathComponent:extractDirectory];
@@ -160,7 +160,7 @@
 {
     NSFileManager *fm = [NSFileManager defaultManager];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Test File A.txt"] error:nil];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:self.testFileURLs[@"Test File A.txt"] error:nil];
     
     NSString *extractDirectory = [self randomDirectoryWithPrefix:@"ExtractInvalidArchive"];
     NSURL *extractURL = [self.tempDirectory URLByAppendingPathComponent:extractDirectory];
@@ -185,7 +185,7 @@
 {
     NSFileManager *fm = [NSFileManager defaultManager];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Aces.zip"] error:nil];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:self.testFileURLs[@"Aces.zip"] error:nil];
     
     NSString *extractDirectory = [self randomDirectoryWithPrefix:@"ExtractAcesArchive"];
     NSURL *extractURL = [self.tempDirectory URLByAppendingPathComponent:extractDirectory];
