@@ -47,7 +47,8 @@
              NSString *expectedFilename = newFileList[fileIndex++];
              XCTAssertEqualObjects(fileInfo.filename, expectedFilename, @"Unexpected filename encountered");
              
-             NSData *expectedFileData = [NSData dataWithContentsOfURL:self.testFileURLs[expectedFilename]];
+             NSURL *expectedURL = self.testFileURLs[expectedFilename];
+             NSData *expectedFileData = [NSData dataWithContentsOfURL:expectedURL];
              
              XCTAssertNotNil(fileData, @"No data extracted");
              XCTAssertTrue([expectedFileData isEqualToData:fileData], @"File data doesn't match original file");
@@ -90,7 +91,8 @@
              NSString *expectedFilename = newFileList[fileIndex++];
              XCTAssertEqualObjects(fileInfo.filename, expectedFilename, @"Unexpected filename encountered");
              
-             NSData *expectedFileData = [NSData dataWithContentsOfURL:self.testFileURLs[expectedFilename]];
+             NSURL *expectedURL = self.testFileURLs[expectedFilename];
+             NSData *expectedFileData = [NSData dataWithContentsOfURL:expectedURL];
              
              XCTAssertNotNil(fileData, @"No data extracted");
              XCTAssertTrue([expectedFileData isEqualToData:fileData], @"File data doesn't match original file");

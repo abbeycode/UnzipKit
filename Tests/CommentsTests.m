@@ -21,7 +21,7 @@
     
     NSString *comment = commentArchive.comment;
     XCTAssertNotNil(comment, @"No comment returned from archive");
-    XCTAssertGreaterThan(comment.length, 0, @"Comment has no content");
+    XCTAssertGreaterThan(comment.length, (uLong)0, @"Comment has no content");
 }
 
 - (void)testGlobalComment_ReadWhenNonePresent

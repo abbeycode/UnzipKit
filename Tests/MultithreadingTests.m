@@ -30,7 +30,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration A");
         [expectationA fulfill];
     }];
     
@@ -40,7 +40,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration B");
         [expectationB fulfill];
     }];
     
@@ -50,7 +50,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration C");
         [expectationC fulfill];
     }];
     
@@ -72,9 +72,11 @@
 }
 
 - (void)testMultithreading_SingleFile {
-    UZKArchive *largeArchiveA = [[UZKArchive alloc] initWithURL:[self largeArchive] error:nil];
-    UZKArchive *largeArchiveB = [[UZKArchive alloc] initWithURL:largeArchiveA.fileURL error:nil];
-    UZKArchive *largeArchiveC = [[UZKArchive alloc] initWithURL:largeArchiveA.fileURL error:nil];
+    NSURL *largeArchiveURL = [self largeArchive];
+    
+    UZKArchive *largeArchiveA = [[UZKArchive alloc] initWithURL:largeArchiveURL error:nil];
+    UZKArchive *largeArchiveB = [[UZKArchive alloc] initWithURL:largeArchiveURL error:nil];
+    UZKArchive *largeArchiveC = [[UZKArchive alloc] initWithURL:largeArchiveURL error:nil];
     
     XCTestExpectation *expectationA = [self expectationWithDescription:@"A finished"];
     XCTestExpectation *expectationB = [self expectationWithDescription:@"B finished"];
@@ -86,7 +88,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration A");
         [expectationA fulfill];
     }];
     
@@ -96,7 +98,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration B");
         [expectationB fulfill];
     }];
     
@@ -106,7 +108,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration C");
         [expectationC fulfill];
     }];
     
@@ -140,7 +142,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration A");
         [expectationA fulfill];
     }];
     
@@ -150,7 +152,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration B");
         [expectationB fulfill];
     }];
     
@@ -160,7 +162,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration C");
         [expectationC fulfill];
     }];
     

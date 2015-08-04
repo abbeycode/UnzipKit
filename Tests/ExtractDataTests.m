@@ -35,7 +35,7 @@
         NSArray *fileInfos = [archive listFileInfo:&error];
         XCTAssertNil(error, @"Error reading file info");
         
-        for (NSInteger i = 0; i < expectedFiles.count; i++) {
+        for (NSUInteger i = 0; i < expectedFiles.count; i++) {
             NSString *expectedFilename = expectedFiles[i];
             
             NSError *error = nil;
@@ -80,7 +80,7 @@
     NSArray *fileInfos = [archive listFileInfo:&error];
     XCTAssertNil(error, @"Error reading file info");
     
-    for (NSInteger i = 0; i < expectedFiles.count; i++) {
+    for (NSUInteger i = 0; i < expectedFiles.count; i++) {
         NSString *expectedFilename = expectedFiles[i];
         
         NSError *error = nil;

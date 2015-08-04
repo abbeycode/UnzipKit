@@ -38,7 +38,7 @@
     
     XCTAssertTrue(success, @"Failed to read buffered data");
     XCTAssertNil(error, @"Error reading buffered data");
-    XCTAssertGreaterThan(reconstructedFile.length, 0, @"No data returned");
+    XCTAssertGreaterThan(reconstructedFile.length, (uLong)0, @"No data returned");
     
     NSData *originalFile = [NSData dataWithContentsOfURL:self.testFileURLs[extractedFile]];
     XCTAssertTrue([originalFile isEqualToData:reconstructedFile],

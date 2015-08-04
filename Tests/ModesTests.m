@@ -74,9 +74,6 @@
     UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     NSError *writeError = nil;
     
-    NSData *dataToWrite = [NSData dataWithContentsOfFile:testArchiveURL];
-    uInt crc = (uInt)crc32(0, dataToWrite.bytes, (uInt)dataToWrite.length);
-    
     [archive writeIntoBuffer:@"newFile.zip"
                        error:&writeError
                        block:
@@ -98,9 +95,6 @@
     UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     NSError *outerWriteError = nil;
     
-    NSData *dataToWrite = [NSData dataWithContentsOfFile:testArchiveURL];
-    uInt crc = (uInt)crc32(0, dataToWrite.bytes, (uInt)dataToWrite.length);
-    
     [archive writeIntoBuffer:@"newFile.zip"
                        error:&outerWriteError
                        block:
@@ -108,8 +102,8 @@
          NSError *innerWriteError = nil;
          [archive writeIntoBuffer:@"newFile.zip"
                             error:&innerWriteError
-                            block:nil];
-         XCTAssertNotNil(innerWriteError, @"Nested write operation succeeded");
+                            block:^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {return YES;}];
+                  XCTAssertNotNil(innerWriteError, @"Nested write operation succeeded");
          XCTAssertEqual(innerWriteError.code, UZKErrorCodeFileWrite, @"Wrong error code returned");
          
          return YES;

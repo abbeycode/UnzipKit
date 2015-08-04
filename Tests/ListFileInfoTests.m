@@ -34,7 +34,7 @@
     
     NSFileManager *fm = [NSFileManager defaultManager];
     
-    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+    for (NSUInteger i = 0; i < filesInArchive.count; i++) {
         UZKFileInfo *fileInfo = filesInArchive[i];
         
         // Test Filename
@@ -57,7 +57,7 @@
                                                                     error:&attributesError];
         XCTAssertNil(attributesError, @"Error getting file attributes of %@", expectedFilename);
         
-        long long expectedFileSize = expectedFileAttributes.fileSize;
+        uLong expectedFileSize = expectedFileAttributes.fileSize;
         XCTAssertEqual(fileInfo.uncompressedSize, expectedFileSize, @"Incorrect uncompressed file size");
         
         // Test Compression method
@@ -82,7 +82,7 @@
     XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
     
-    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+    for (NSUInteger i = 0; i < filesInArchive.count; i++) {
         UZKFileInfo *fileInfo = filesInArchive[i];
         
         XCTAssertEqualObjects(fileInfo.filename, expectedFiles[i], @"Incorrect filename listed");
@@ -109,7 +109,7 @@
     XCTAssertNotNil(filesInArchive, @"No list of files returned");
     XCTAssertEqual(filesInArchive.count, expectedFiles.count, @"Incorrect number of files listed in archive");
     
-    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+    for (NSUInteger i = 0; i < filesInArchive.count; i++) {
         UZKFileInfo *fileInfo = (UZKFileInfo *)filesInArchive[i];
         
         XCTAssertEqualObjects(fileInfo.filename, expectedFiles[i], @"Incorrect filename listed");
@@ -135,7 +135,7 @@
     XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
     
-    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+    for (NSUInteger i = 0; i < filesInArchive.count; i++) {
         UZKFileInfo *fileInfo = filesInArchive[i];
         NSString *expectedFilename = expectedFiles[i];
         
@@ -158,7 +158,7 @@
     XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
     
-    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+    for (NSUInteger i = 0; i < filesInArchive.count; i++) {
         UZKFileInfo *fileInfo = filesInArchive[i];
         NSString *expectedFilename = expectedFiles[i];
         

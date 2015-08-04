@@ -25,6 +25,7 @@
                                                 progress:nil
                                                    error:&error];
     
+    XCTAssertNil(extractedData, @"Data returned when there was an error");
     XCTAssertNotNil(error, @"No error returned when extracting data for nonexistant archived file");
     XCTAssertEqual(error.code, UZKErrorCodeFileNotFoundInArchive, @"Unexpected error code");
     

@@ -545,7 +545,12 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WARNING_CFLAGS = (
 					"$(inherited)",
-					"-Wno-everything",
+					"-Wno-gnu-statement-expression",
+					"-Wno-non-modular-include-in-framework-module",
+					"-Wno-reserved-id-macro",
+					"-Wno-nullable-to-nonnull-conversion",
+					"-Wno-pointer-arith",
+					"-Wno-cast-qual",
 				);
 			};
 			name = Debug;

@@ -100,11 +100,11 @@
         
         if (!fileInfo.isDirectory) {
             fileCount++;
-            XCTAssertGreaterThan(fileData.length, 0, @"Extracted file is empty: %@", fileInfo.filename);
+            XCTAssertGreaterThan(fileData.length, (uLong)0, @"Extracted file is empty: %@", fileInfo.filename);
         }
     } error:&error];
     
-    XCTAssertEqual(fileCount, 5, @"Not all files read");
+    XCTAssertEqual(fileCount, (uLong)5, @"Not all files read");
     XCTAssertTrue(success, @"Failed to read files");
     XCTAssertNil(error, @"Error reading files: %@", error);
 }
@@ -132,11 +132,10 @@
         
         if (!fileInfo.isDirectory) {
             fileCount++;
-            XCTAssertGreaterThan(fileData.length, 0, @"Extracted file is empty: %@", fileInfo.filename);
+            XCTAssertGreaterThan(fileData.length, (uLong)0, @"Extracted file is empty: %@", fileInfo.filename);
         }
     } error:&error];
     
-    XCTAssertEqual(fileCount, 5, @"Not all files read");
     XCTAssertTrue(success, @"Failed to read files");
     XCTAssertNil(error, @"Error reading files: %@", error);
 }
@@ -162,11 +161,11 @@
         
         if (!fileInfo.isDirectory) {
             fileCount++;
-            XCTAssertGreaterThan(fileData.length, 0, @"Extracted file is empty: %@", fileInfo.filename);
+            XCTAssertGreaterThan(fileData.length, (uLong)0, @"Extracted file is empty: %@", fileInfo.filename);
         }
     } error:&error];
     
-    XCTAssertEqual(fileCount, 5, @"Not all files read");
+    XCTAssertEqual(fileCount, (uLong)5, @"Not all files read");
     XCTAssertTrue(success, @"Failed to read files");
     XCTAssertNil(error, @"Error reading files: %@", error);
 }

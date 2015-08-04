@@ -36,7 +36,7 @@
         XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                        @"Incorrect number of files listed in archive");
         
-        for (NSInteger i = 0; i < filesInArchive.count; i++) {
+        for (NSUInteger i = 0; i < filesInArchive.count; i++) {
             NSString *archiveFilename = filesInArchive[i];
             NSString *expectedFilename = expectedFiles[i];
             
@@ -61,7 +61,7 @@
     XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
     
-    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+    for (NSUInteger i = 0; i < filesInArchive.count; i++) {
         NSString *archiveFilename = filesInArchive[i];
         NSString *expectedFilename = expectedFiles[i];
         
@@ -85,7 +85,7 @@
     XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
     
-    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+    for (NSUInteger i = 0; i < filesInArchive.count; i++) {
         NSString *archiveFilename = filesInArchive[i];
         NSString *expectedFilename = expectedFiles[i];
         
@@ -109,7 +109,7 @@
     XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
     
-    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+    for (NSUInteger i = 0; i < filesInArchive.count; i++) {
         NSString *archiveFilename = filesInArchive[i];
         NSString *expectedFilename = expectedFiles[i];
         
@@ -119,7 +119,8 @@
 
 - (void)testListFilenames_InvalidArchive
 {
-    UZKArchive *archive = [[UZKArchive alloc] initWithURL:self.testFileURLs[@"Test File A.txt"] error:nil];
+    NSURL *testURLA = self.testFileURLs[@"Test File A.txt"];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testURLA error:nil];
     
     NSError *error = nil;
     NSArray *files = [archive listFilenames:&error];

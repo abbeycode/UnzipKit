@@ -59,7 +59,7 @@
         XCTAssertEqual(extractedFiles.count, expectedFileSet.count,
                        @"Incorrect number of files listed in archive");
         
-        for (NSInteger i = 0; i < extractedFiles.count; i++) {
+        for (NSUInteger i = 0; i < extractedFiles.count; i++) {
             NSString *extractedFilename = extractedFiles[i];
             NSString *expectedFilename = expectedFiles[i];
             
@@ -114,7 +114,7 @@
     XCTAssertEqual(extractedFiles.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
     
-    for (NSInteger i = 0; i < extractedFiles.count; i++) {
+    for (NSUInteger i = 0; i < extractedFiles.count; i++) {
         NSString *extractedFilename = extractedFiles[i];
         NSString *expectedFilename = expectedFiles[i];
         
@@ -202,16 +202,18 @@
     
     XCTAssertTrue(success, @"Extract Aces archive failed");
     
-    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager]
-                                         enumeratorAtURL:extractURL
-                                         includingPropertiesForKeys:nil
-                                         options:0
-                                         errorHandler:^(NSURL *url, NSError *error) {
-                                             // Handle the error.
-                                             // Return YES if the enumeration should continue after the error.
-                                             XCTFail(@"Error listing contents of directory %@: %@", url, error);
-                                             return NO;
-                                         }];
+    NSDirectoryEnumerator *enumerator = [fm enumeratorAtURL:extractURL
+                                 includingPropertiesForKeys:nil
+                                                    options:(NSDirectoryEnumerationOptions)0
+                                               errorHandler:^(NSURL *url, NSError *error) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments" // This appears to be an erroneous warning. rdar://22133126
+                                                   // Handle the error.
+                                                   // Return YES if the enumeration should continue after the error.
+                                                   XCTFail(@"Error listing contents of directory %@: %@", url, error);
+                                                   return NO;
+#pragma clang diagnostic pop
+                                               }];
     
     NSArray *expectedFiles = @[
                                @"aces-dev-1.0",
