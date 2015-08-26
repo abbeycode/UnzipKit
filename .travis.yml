@@ -3,11 +3,6 @@ language:
 
 osx_image: xcode7
 
-# Until Xcode 7 is supported
-branches:
-  except:
-    - swift-2.0
-
 matrix:
   include:
     - xcode_workspace: UnzipKit.xcworkspace
