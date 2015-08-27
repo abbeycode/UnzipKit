@@ -484,6 +484,7 @@
 					"-Weverything",
 					"-Wno-objc-missing-property-synthesis",
 					"-Wno-auto-import",
+					"-Wno-error=reserved-id-macro",
 				);
 			};
 			name = Release;
