@@ -10,10 +10,10 @@ matrix:
       xcode_sdk: macosx
       env: TEST=test
 
-    - xcode_workspace: UnzipKit.xcworkspace
-      xcode_scheme: UnzipKit
-      xcode_sdk: macosx10.9
-      env: NAME=MavericksBuild
+#    - xcode_workspace: UnzipKit.xcworkspace
+#      xcode_scheme: UnzipKit
+#      xcode_sdk: macosx10.9
+#      env: NAME=MavericksBuild
 
     - xcode_workspace: UnzipKitDemo/UnzipKitDemo.xcworkspace
       xcode_scheme: UnzipKitDemo
