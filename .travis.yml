@@ -22,7 +22,7 @@ matrix:
 
 before_install:
     - gem install cocoapods --pre
-    - pod --version
+    - bundle exec pod --version
 
 before_script:
   - ./Scripts/install-demo-libs.sh

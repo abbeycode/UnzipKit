@@ -2,6 +2,6 @@
 
 if [ "$TRAVIS_XCODE_SCHEME" = "UnzipKitDemo" ]; then
     pushd UnzipKitDemo
-    pod update
+    bundle exec pod update
     popd
 fi
