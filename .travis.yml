@@ -20,9 +20,9 @@ matrix:
       xcode_sdk: iphonesimulator
       env: NAME=DemoAppBuild
 
-#before_install:
-#    - sudo gem install cocoapods --pre
-#    - bundle exec pod --version
+before_install:
+    - brew update
+    - brew upgrade xctool --HEAD
 
 before_script:
   - ./Scripts/install-demo-libs.sh
