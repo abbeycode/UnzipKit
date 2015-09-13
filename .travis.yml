@@ -4,6 +4,10 @@ language:
 # Required, for now, to use Swift 1.2
 osx_image: beta-xcode6.3
 
+before_install:
+    - brew update
+    - brew install carthage
+
 matrix:
   include:
     - xcode_workspace: UnzipKit.xcworkspace
