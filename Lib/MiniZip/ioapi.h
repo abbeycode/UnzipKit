@@ -18,25 +18,25 @@
 
 */
 
-#ifndef _ZLIBIOAPI64_H
-#define _ZLIBIOAPI64_H
+#ifndef ZLIBIOAPI64_H
+#define ZLIBIOAPI64_H
 
 #if (!defined(_WIN32)) && (!defined(WIN32))
 
   // Linux needs this to support file operation on files larger then 4+GB
   // But might need better if/def to select just the platforms that needs them.
 
-        #ifndef __USE_FILE_OFFSET64
-                #define __USE_FILE_OFFSET64
+        #ifndef USE_FILE_OFFSET64
+                #define USE_FILE_OFFSET64
         #endif
-        #ifndef __USE_LARGEFILE64
-                #define __USE_LARGEFILE64
+        #ifndef USE_LARGEFILE64
+                #define USE_LARGEFILE64
         #endif
-        #ifndef _LARGEFILE64_SOURCE
-                #define _LARGEFILE64_SOURCE
+        #ifndef LARGEFILE64_SOURCE
+                #define LARGEFILE64_SOURCE
         #endif
-        #ifndef _FILE_OFFSET_BIT
-                #define _FILE_OFFSET_BIT 64
+        #ifndef FILE_OFFSET_BIT
+                #define FILE_OFFSET_BIT 64
         #endif
 #endif
 

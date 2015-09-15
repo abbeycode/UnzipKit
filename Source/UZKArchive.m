@@ -242,7 +242,9 @@ NS_DESIGNATED_INITIALIZER
         return NO;
     }
     
-    return [UZKArchive pathIsAZip:fileURL.path];
+    NSString *path = fileURL.path;
+    
+    return [UZKArchive pathIsAZip:path];
 }
 
 
@@ -742,7 +744,8 @@ compressionMethod:(UZKCompressionMethod)method
         for (NSUInteger i = 0; i <= data.length; i += bufferSize) {
             unsigned int dataRemaining = (unsigned int)(data.length - i);
             unsigned int size = (unsigned int)(dataRemaining < bufferSize ? dataRemaining : bufferSize);
-            int err = zipWriteInFileInZip(self.zipFile, (char *)bytes + i, size);
+
+            int err = zipWriteInFileInZip(self.zipFile, (char *)(unsigned long)bytes + i, size);
             
             if (err != ZIP_OK) {
                 return err;
@@ -908,7 +911,13 @@ compressionMethod:(UZKCompressionMethod)method
     
     NSFileManager *fm = [NSFileManager defaultManager];
     
-    if (![fm fileExistsAtPath:self.filename]) {
+    NSString *fileName = self.filename;
+    
+    if (!fileName){
+        return YES;
+    }
+    
+    if (![fm fileExistsAtPath:fileName]) {
         NSLog(@"No archive exists at path %@, when trying to delete %@", self.filename, filePath);
         return YES;
     }
@@ -1175,7 +1184,9 @@ compressionMethod:(UZKCompressionMethod)method
     NSError *replaceError = nil;
     NSURL *newURL;
     
-    BOOL result = [fm replaceItemAtURL:self.fileURL
+    NSURL *fileURL = self.fileURL;
+    
+    BOOL result = [fm replaceItemAtURL:fileURL
                          withItemAtURL:temporaryURL
                         backupItemName:nil
                                options:NSFileManagerItemReplacementWithoutDeletingBackupItem
