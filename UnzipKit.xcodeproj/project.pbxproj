@@ -50,7 +50,7 @@
 		96EA65BC1A40B2EC00685B6D /* UZKArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65BA1A40B2EC00685B6D /* UZKArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96EA65BD1A40B2EC00685B6D /* UZKArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65BB1A40B2EC00685B6D /* UZKArchive.m */; };
 		96EA65C01A40BF1A00685B6D /* Test Data in Resources */ = {isa = PBXBuildFile; fileRef = 96EA65BF1A40BF1A00685B6D /* Test Data */; };
-		96EA65D81A40C44300685B6D /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C31A40C44300685B6D /* ioapi.c */; settings = {COMPILER_FLAGS = " -Wno-everything"; }; };
+		96EA65D81A40C44300685B6D /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C31A40C44300685B6D /* ioapi.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
 		96EA65DB1A40C44300685B6D /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C51A40C44300685B6D /* mztools.c */; };
 		96EA65DE1A40C44300685B6D /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C71A40C44300685B6D /* unzip.c */; settings = {COMPILER_FLAGS = "-Xanalyzer -analyzer-disable-all-checks -Wno-everything"; }; };
 		96EA65E11A40C44300685B6D /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C91A40C44300685B6D /* zip.c */; settings = {COMPILER_FLAGS = "-Xanalyzer -analyzer-disable-all-checks -Wno-everything"; }; };
@@ -354,7 +354,9 @@
 		96EA65951A40AEAE00685B6D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0630;
+				LastSwiftMigration = 0700;
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Abbey Code";
 				TargetAttributes = {
 					964547831B31B76C00202B28 = {
@@ -543,6 +545,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -611,6 +614,7 @@
 					"-Weverything",
 					"-Wno-objc-missing-property-synthesis",
 					"-Wno-auto-import",
+					"-Wno-error=reserved-id-macro",
 				);
 			};
 			name = Release;
@@ -627,6 +631,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -644,6 +649,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -664,12 +670,18 @@
 				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/UnzipKitTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WARNING_CFLAGS = (
 					"$(inherited)",
-					"-Wno-everything",
+					"-Wno-gnu-statement-expression",
+					"-Wno-non-modular-include-in-framework-module",
+					"-Wno-reserved-id-macro",
+					"-Wno-nullable-to-nonnull-conversion",
+					"-Wno-pointer-arith",
+					"-Wno-cast-qual",
 				);
 			};
 			name = Debug;
@@ -685,6 +697,7 @@
 				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/UnzipKitTests-Bridging-Header.h";
 				WARNING_CFLAGS = (

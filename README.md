@@ -19,7 +19,8 @@ Using the method `-deleteFile:error:` currently creates a new copy of the archiv
 If that's not a concern, such as when creating a new archive from scratch, it would improve performance, particularly for archives with a large number of files.
 
 ```Objective-C
-UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip"];
+NSError *archiveError = nil;
+UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip" error:&archiveError];
 BOOL deleteSuccessful = [archive deleteFile:@"dir/anotherFilename.jpg"
                                       error:&error];
 ```
@@ -38,19 +39,20 @@ BOOL fileAtURLIsArchive = [UZKArchive urlIsAZip:url];
 # Reading Zip contents
 
 ```Objective-C
-UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip"];
+NSError *archiveError = nil;
+UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip" error:&archiveError];
 NSError *error = nil;
 ```
 
 You can use UnzipKit to perform these read-only operations:
 
 * List the contents of the archive
-    
+
     ```Objective-C
-NSArray *filesInArchive = [archive listFilenames:&error];
+NSArray<NSString*> *filesInArchive = [archive listFilenames:&error];
     ```
 * Extract all files to disk
-    
+
     ```Objective-C
 BOOL extractFilesSuccessful = [archive extractFilesTo:@"some/directory"
                                                 overWrite:NO
@@ -62,7 +64,7 @@ BOOL extractFilesSuccessful = [archive extractFilesTo:@"some/directory"
     ```
 
 * Extract each archived file into memory
-    
+
     ```Objective-C
 NSData *extractedData = [archive extractDataFromFile:@"a file in the archive.jpg"
                                                 progress:^(CGFloat percentDecompressed) {
@@ -74,7 +76,8 @@ NSData *extractedData = [archive extractDataFromFile:@"a file in the archive.jpg
 # Modifying archives
 
 ```Objective-C
-UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip"];
+NSError *archiveError = nil;
+UZKArchive *archive = [UZKArchive zipArchiveAtPath:@"An Archive.zip" error:&archiveError];
 NSError *error = nil;
 NSData *someFile = // Some data to write
 ```
@@ -82,14 +85,14 @@ NSData *someFile = // Some data to write
 You can also modify Zip archives:
 
 * Write an in-memory `NSData` into the archive
-    
+
     ```Objective-C
 BOOL success = [archive writeData:someFile
                              filePath:@"dir/filename.jpg"
                                 error:&error];
     ```
 * Write data as a stream to the archive (from disk or over the network), using a block:
-    
+
     ```Objective-C
 BOOL success = [archive writeIntoBuffer:@"dir/filename.png"
                                   error:&error
@@ -113,7 +116,7 @@ BOOL success = [archive writeIntoBuffer:@"dir/filename.png"
                 }];
     ```
 * Delete files from the archive
-    
+
     ```Objective-C
 BOOL success = [archive deleteFile:@"No-good-file.txt" error:&error];
     ```

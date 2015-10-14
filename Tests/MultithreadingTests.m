@@ -16,9 +16,9 @@
 
 
 - (void)testMultithreading {
-    UZKArchive *largeArchiveA = [UZKArchive zipArchiveAtURL:[self largeArchive]];
-    UZKArchive *largeArchiveB = [UZKArchive zipArchiveAtURL:[self largeArchive]];
-    UZKArchive *largeArchiveC = [UZKArchive zipArchiveAtURL:[self largeArchive]];
+    UZKArchive *largeArchiveA = [[UZKArchive alloc] initWithURL:[self largeArchive] error:nil];
+    UZKArchive *largeArchiveB = [[UZKArchive alloc] initWithURL:[self largeArchive] error:nil];
+    UZKArchive *largeArchiveC = [[UZKArchive alloc] initWithURL:[self largeArchive] error:nil];
     
     XCTestExpectation *expectationA = [self expectationWithDescription:@"A finished"];
     XCTestExpectation *expectationB = [self expectationWithDescription:@"B finished"];
@@ -30,7 +30,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration A");
         [expectationA fulfill];
     }];
     
@@ -40,7 +40,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration B");
         [expectationB fulfill];
     }];
     
@@ -50,7 +50,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration C");
         [expectationC fulfill];
     }];
     
@@ -72,9 +72,11 @@
 }
 
 - (void)testMultithreading_SingleFile {
-    UZKArchive *largeArchiveA = [UZKArchive zipArchiveAtURL:[self largeArchive]];
-    UZKArchive *largeArchiveB = [UZKArchive zipArchiveAtURL:largeArchiveA.fileURL];
-    UZKArchive *largeArchiveC = [UZKArchive zipArchiveAtURL:largeArchiveA.fileURL];
+    NSURL *largeArchiveURL = [self largeArchive];
+    
+    UZKArchive *largeArchiveA = [[UZKArchive alloc] initWithURL:largeArchiveURL error:nil];
+    UZKArchive *largeArchiveB = [[UZKArchive alloc] initWithURL:largeArchiveURL error:nil];
+    UZKArchive *largeArchiveC = [[UZKArchive alloc] initWithURL:largeArchiveURL error:nil];
     
     XCTestExpectation *expectationA = [self expectationWithDescription:@"A finished"];
     XCTestExpectation *expectationB = [self expectationWithDescription:@"B finished"];
@@ -86,7 +88,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration A");
         [expectationA fulfill];
     }];
     
@@ -96,7 +98,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration B");
         [expectationB fulfill];
     }];
     
@@ -106,7 +108,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration C");
         [expectationC fulfill];
     }];
     
@@ -128,7 +130,7 @@
 }
 
 - (void)testMultithreading_SingleArchiveObject {
-    UZKArchive *largeArchive = [UZKArchive zipArchiveAtURL:[self largeArchive]];
+    UZKArchive *largeArchive = [[UZKArchive alloc] initWithURL:[self largeArchive] error:nil];
     
     XCTestExpectation *expectationA = [self expectationWithDescription:@"A finished"];
     XCTestExpectation *expectationB = [self expectationWithDescription:@"B finished"];
@@ -140,7 +142,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration A");
         [expectationA fulfill];
     }];
     
@@ -150,7 +152,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration B");
         [expectationB fulfill];
     }];
     
@@ -160,7 +162,7 @@
             NSLog(@"File name: %@", fileInfo.filename);
         } error:&error];
         
-        XCTAssertNil(error);
+        XCTAssertNil(error, @"Failed enumeration C");
         [expectationC fulfill];
     }];
     

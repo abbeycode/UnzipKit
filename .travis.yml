@@ -1,8 +1,7 @@
 language:
   - objective-c
 
-# Required, for now, to use Swift 1.2
-osx_image: beta-xcode6.3
+osx_image: xcode7
 
 before_install:
     - brew update
@@ -15,15 +14,19 @@ matrix:
       xcode_sdk: macosx
       env: TEST=test
 
-    - xcode_workspace: UnzipKit.xcworkspace
-      xcode_scheme: UnzipKit
-      xcode_sdk: macosx10.9
-      env: NAME=MavericksBuild
+#    - xcode_workspace: UnzipKit.xcworkspace
+#      xcode_scheme: UnzipKit
+#      xcode_sdk: macosx10.9
+#      env: NAME=MavericksBuild
 
     - xcode_workspace: UnzipKitDemo/UnzipKitDemo.xcworkspace
       xcode_scheme: UnzipKitDemo
       xcode_sdk: iphonesimulator
       env: NAME=DemoAppBuild
+
+before_install:
+    - brew update
+    - brew upgrade xctool --HEAD
 
 before_script:
   - ./Scripts/install-demo-libs.sh

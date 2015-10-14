@@ -26,7 +26,7 @@
     for (NSString *testArchiveName in testArchives) {
         NSURL *testArchiveURL = self.testFileURLs[testArchiveName];
         
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
         
         NSError *error = nil;
         NSArray *filesInArchive = [archive listFilenames:&error];
@@ -36,7 +36,7 @@
         XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                        @"Incorrect number of files listed in archive");
         
-        for (NSInteger i = 0; i < filesInArchive.count; i++) {
+        for (NSUInteger i = 0; i < filesInArchive.count; i++) {
             NSString *archiveFilename = filesInArchive[i];
             NSString *expectedFilename = expectedFiles[i];
             
@@ -51,7 +51,7 @@
     NSSet *expectedFileSet = self.nonZipUnicodeFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     NSError *error = nil;
     NSArray *filesInArchive = [archive listFilenames:&error];
@@ -61,7 +61,7 @@
     XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
     
-    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+    for (NSUInteger i = 0; i < filesInArchive.count; i++) {
         NSString *archiveFilename = filesInArchive[i];
         NSString *expectedFilename = expectedFiles[i];
         
@@ -72,7 +72,7 @@
 - (void)testListFilenames_Password
 {
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:@"password"];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:@"password" error:nil];
     
     NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
@@ -85,7 +85,7 @@
     XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
     
-    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+    for (NSUInteger i = 0; i < filesInArchive.count; i++) {
         NSString *archiveFilename = filesInArchive[i];
         NSString *expectedFilename = expectedFiles[i];
         
@@ -96,7 +96,7 @@
 - (void)testListFilenames_NoPasswordGiven
 {
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     NSSet *expectedFileSet = self.nonZipTestFilePaths;
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
@@ -109,7 +109,7 @@
     XCTAssertEqual(filesInArchive.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
     
-    for (NSInteger i = 0; i < filesInArchive.count; i++) {
+    for (NSUInteger i = 0; i < filesInArchive.count; i++) {
         NSString *archiveFilename = filesInArchive[i];
         NSString *expectedFilename = expectedFiles[i];
         
@@ -119,7 +119,8 @@
 
 - (void)testListFilenames_InvalidArchive
 {
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Test File A.txt"]];
+    NSURL *testURLA = self.testFileURLs[@"Test File A.txt"];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testURLA error:nil];
     
     NSError *error = nil;
     NSArray *files = [archive listFilenames:&error];

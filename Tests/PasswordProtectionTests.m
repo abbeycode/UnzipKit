@@ -23,7 +23,7 @@
 {
     NSURL *archiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:archiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:archiveURL error:nil];
     
     XCTAssertTrue(archive.isPasswordProtected, @"isPasswordProtected = NO for password-protected archive");
 }
@@ -35,7 +35,7 @@
     
     NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"testIsPasswordProtected_PasswordRequired_LastFileOnly.zip"];
     
-    UZKArchive *writeArchive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    UZKArchive *writeArchive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     __block NSError *writeError = nil;
     
@@ -61,7 +61,7 @@
         XCTAssertNil(writeError, @"Error writing to file %@: %@", testFile, writeError);
     }];
     
-    UZKArchive *readArchive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    UZKArchive *readArchive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     XCTAssertTrue(readArchive.isPasswordProtected, @"isPasswordProtected = NO for password-protected archive");
 }
@@ -70,7 +70,7 @@
 {
     NSURL *archiveURL = self.testFileURLs[@"Test Archive.zip"];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:archiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:archiveURL error:nil];
     
     XCTAssertFalse(archive.isPasswordProtected, @"isPasswordProtected = YES for password-protected archive");
 }
@@ -84,7 +84,7 @@
 {
     NSURL *archiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:archiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:archiveURL error:nil];
     
     XCTAssertFalse(archive.validatePassword, @"validatePassword = YES when no password supplied");
     
@@ -99,7 +99,7 @@
 {
     NSURL *archiveURL = self.testFileURLs[@"Test Archive.zip"];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:archiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:archiveURL error:nil];
     
     XCTAssertTrue(archive.validatePassword, @"validatePassword = NO when no password supplied");
     

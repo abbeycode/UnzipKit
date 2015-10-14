@@ -21,7 +21,7 @@
 {
     NSURL *archiveURL = self.testFileURLs[@"Test Archive.zip"];
     NSString *extractedFile = @"Test File B.jpg";
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:archiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:archiveURL error:nil];
     
     NSError *error = nil;
     NSMutableData *reconstructedFile = [NSMutableData data];
@@ -38,7 +38,7 @@
     
     XCTAssertTrue(success, @"Failed to read buffered data");
     XCTAssertNil(error, @"Error reading buffered data");
-    XCTAssertGreaterThan(reconstructedFile.length, 0, @"No data returned");
+    XCTAssertGreaterThan(reconstructedFile.length, (uLong)0, @"No data returned");
     
     NSData *originalFile = [NSData dataWithContentsOfURL:self.testFileURLs[extractedFile]];
     XCTAssertTrue([originalFile isEqualToData:reconstructedFile],
@@ -68,7 +68,7 @@
                                                                error:&handleError];
     XCTAssertNil(handleError, @"Error creating a file handle");
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:archiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:archiveURL error:nil];
     
     DTSendSignalFlag("Begin extracting buffered data", DT_START_SIGNAL, TRUE);
     

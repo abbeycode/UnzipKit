@@ -28,7 +28,7 @@
         NSString *password = ([testArchiveName rangeOfString:@"Password"].location != NSNotFound
                               ? @"password"
                               : nil);
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
         
         __block NSUInteger fileIndex = 0;
         NSError *error = nil;
@@ -50,7 +50,7 @@
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     __block NSUInteger fileIndex = 0;
     NSError *error = nil;

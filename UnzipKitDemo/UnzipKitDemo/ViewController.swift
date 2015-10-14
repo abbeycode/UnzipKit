@@ -24,15 +24,13 @@ class ViewController: UIViewController {
     }
 
     @IBAction func listFiles(sender: AnyObject) {
-        let fileURL = NSBundle.mainBundle().URLForResource("Test Data/Test Archive", withExtension: "zip")
-        let archive = UZKArchive.zipArchiveAtURL(fileURL)
+        let fileURL = NSBundle.mainBundle().URLForResource("Test Data/Test Archive", withExtension: "zip")!
         
-        var listFilesError: NSError? = nil
-        let filesList = archive.listFilenames(&listFilesError) as? [String]
-        
-        if let list = filesList {
-            self.textView.text = "\n".join(list)
-        } else if let error = listFilesError {
+        do {
+            let archive = try! UZKArchive(URL: fileURL)
+            let filesList = try archive.listFilenames()
+            self.textView.text = filesList.joinWithSeparator("\n")
+        } catch let error as NSError {
             self.textView.text = error.localizedDescription
         }
     }

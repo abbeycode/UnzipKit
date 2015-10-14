@@ -72,14 +72,14 @@
     NSInteger initialFileCount = [self numberOfOpenFileHandles];
     
     for (NSInteger i = 0; i < 5000; i++) {
-        BOOL smallFileIsZip = [UZKArchive pathIsAZip:smallFileURL.path];
+        BOOL smallFileIsZip = [UZKArchive pathIsAZip:(NSString *__nonnull)smallFileURL.path];
         XCTAssertFalse(smallFileIsZip, @"Small non-Zip file is reported as a zip");
         
-        BOOL jpgIsZip = [UZKArchive pathIsAZip:jpgURL.path];
+        BOOL jpgIsZip = [UZKArchive pathIsAZip:(NSString *__nonnull)jpgURL.path];
         XCTAssertFalse(jpgIsZip, @"JPG file is reported as a zip");
         
         NSURL *zipURL = self.testFileURLs[@"Test Archive.zip"];
-        BOOL zipFileIsZip = [UZKArchive pathIsAZip:zipURL.path];
+        BOOL zipFileIsZip = [UZKArchive pathIsAZip:(NSString *__nonnull)zipURL.path];
         XCTAssertTrue(zipFileIsZip, @"Zip file is not reported as a zip");
     }
     
