@@ -179,11 +179,6 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
 
 
 /**
- *  Do not use -init. Use one of the -initWithPath or -initWithURL variants
- */
-- (instancetype)init NS_UNAVAILABLE;
-
-/**
  *  Creates and returns an archive at the given path
  *
  *  @param filePath A path to the archive file

@@ -27,6 +27,8 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 
 @interface UZKArchive ()
 
+- (instancetype)init NS_UNAVAILABLE;
+
 - (instancetype)initWithFile:(NSURL *)fileURL password:(NSString*)password error:(NSError * __autoreleasing*)error
 #if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED > __IPHONE_7_0) || MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_9
 NS_DESIGNATED_INITIALIZER
@@ -83,7 +85,7 @@ NS_DESIGNATED_INITIALIZER
 #pragma mark - Initializers
 
 - (instancetype)init {
-    NSAssert(NO, nil);
+    NSAssert(NO, @"Do not use -init. Use one of the -initWithPath or -initWithURL variants", nil);
     @throw nil;
 }
 
