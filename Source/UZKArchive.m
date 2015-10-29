@@ -82,27 +82,26 @@ NS_DESIGNATED_INITIALIZER
 
 #pragma mark - Initializers
 
-
 - (instancetype)initWithPath:(NSString *)filePath error:(NSError * __autoreleasing*)error
 {
-    return [[UZKArchive alloc] initWithFile:[NSURL fileURLWithPath:filePath] error:error];
+    return [self initWithFile:[NSURL fileURLWithPath:filePath] error:error];
 }
 
 - (instancetype)initWithURL:(NSURL *)fileURL error:(NSError * __autoreleasing*)error
 {
-    return [[UZKArchive alloc] initWithFile:fileURL error:error];
+    return [self initWithFile:fileURL error:error];
 }
 
 - (instancetype)initWithPath:(NSString *)filePath password:(NSString *)password error:(NSError * __autoreleasing*)error
 {
-    return [[UZKArchive alloc] initWithFile:[NSURL fileURLWithPath:filePath]
-                                   password:password
-                                      error:error];
+    return [self initWithFile:[NSURL fileURLWithPath:filePath]
+                     password:password
+                        error:error];
 }
 
 - (instancetype)initWithURL:(NSURL *)fileURL password:(NSString *)password error:(NSError * __autoreleasing*)error
 {
-    return [[UZKArchive alloc] initWithFile:fileURL password:password error:error];
+    return [self initWithFile:fileURL password:password error:error];
 }
 
 - (instancetype)initWithFile:(NSURL *)fileURL error:(NSError * __autoreleasing*)error

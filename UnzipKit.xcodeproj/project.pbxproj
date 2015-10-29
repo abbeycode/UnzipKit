@@ -160,7 +160,6 @@
 			children = (
 				96EA659E1A40AEAE00685B6D /* UnzipKit.framework */,
 				96EA65A91A40AEAE00685B6D /* UnzipKitTests.xctest */,
-				964547841B31B76C00202B28 /* UnzipKit.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -309,7 +308,6 @@
 			);
 			name = "UnzipKit-iOS";
 			productName = "UnzipKit-iOS";
-			productReference = 964547841B31B76C00202B28 /* UnzipKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		96EA659D1A40AEAE00685B6D /* UnzipKit */ = {
