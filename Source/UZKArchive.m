@@ -82,6 +82,11 @@ NS_DESIGNATED_INITIALIZER
 
 #pragma mark - Initializers
 
+- (instancetype)init {
+    NSAssert(NO, nil);
+    @throw nil;
+}
+
 - (instancetype)initWithPath:(NSString *)filePath error:(NSError * __autoreleasing*)error
 {
     return [self initWithFile:[NSURL fileURLWithPath:filePath] error:error];
