@@ -19,7 +19,7 @@
 		964547A61B31B8A800202B28 /* UnzipKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65A31A40AEAE00685B6D /* UnzipKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		964547A71B31B8AC00202B28 /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C81A40C44300685B6D /* unzip.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		964547A81B31B8B200202B28 /* crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA66031A435D8200685B6D /* crypt.h */; };
-		964547A91B31B8B700202B28 /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C41A40C44300685B6D /* ioapi.h */; };
+		964547A91B31B8B700202B28 /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C41A40C44300685B6D /* ioapi.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		964547AA1B31B8BB00202B28 /* mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C61A40C44300685B6D /* mztools.h */; };
 		964547AB1B31B8C000202B28 /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65CA1A40C44300685B6D /* zip.h */; };
 		966A971C1A4A1F2A003597AA /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C81A40C44300685B6D /* unzip.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -268,8 +268,8 @@
 				964547A51B31B8A500202B28 /* UZKFileInfo.h in Headers */,
 				964547A61B31B8A800202B28 /* UnzipKit.h in Headers */,
 				964547A71B31B8AC00202B28 /* unzip.h in Headers */,
-				964547A81B31B8B200202B28 /* crypt.h in Headers */,
 				964547A91B31B8B700202B28 /* ioapi.h in Headers */,
+				964547A81B31B8B200202B28 /* crypt.h in Headers */,
 				964547AA1B31B8BB00202B28 /* mztools.h in Headers */,
 				964547AB1B31B8C000202B28 /* zip.h in Headers */,
 			);
