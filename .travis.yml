@@ -12,7 +12,7 @@ matrix:
     - xcode_workspace: UnzipKit.xcworkspace
       xcode_scheme: UnzipKit
       xcode_sdk: macosx
-      env: NAME=Mac; TEST=test
+      env: Name=Mac; TEST=test
 
     - xcode_workspace: UnzipKit.xcworkspace
       xcode_scheme: UnzipKit-iOS
@@ -22,7 +22,7 @@ matrix:
     - xcode_workspace: UnzipKitDemo/UnzipKitDemo.xcworkspace
       xcode_scheme: UnzipKitDemo
       xcode_sdk: iphonesimulator
-      env: NAME=DemoAppBuild
+      env: Name=DemoAppBuild
 
 before_script:
   - ./Scripts/install-demo-libs.sh
