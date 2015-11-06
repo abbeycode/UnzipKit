@@ -25,6 +25,7 @@ matrix:
       env: NAME=DemoAppBuild
 
 before_script:
+  - ./Scripts/install-demo-libs.sh
   - brew install carthage
 
 script:
