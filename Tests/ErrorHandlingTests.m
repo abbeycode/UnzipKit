@@ -18,13 +18,14 @@
 - (void)testNestedError
 {
     NSURL *testArchiveURL = self.testFileURLs[@"Test Archive.zip"];
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     NSError *error = nil;
     NSData *extractedData = [archive extractDataFromFile:@"file-doesnt-exist.txt"
                                                 progress:nil
                                                    error:&error];
     
+    XCTAssertNil(extractedData, @"Data returned when there was an error");
     XCTAssertNotNil(error, @"No error returned when extracting data for nonexistant archived file");
     XCTAssertEqual(error.code, UZKErrorCodeFileNotFoundInArchive, @"Unexpected error code");
     

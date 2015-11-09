@@ -18,6 +18,10 @@
 
 */
 
+// Modification to silence "Macro name is a reserved identifier" warning
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+
 #ifndef _ZLIBIOAPI64_H
 #define _ZLIBIOAPI64_H
 
@@ -39,6 +43,8 @@
                 #define _FILE_OFFSET_BIT 64
         #endif
 #endif
+
+#pragma clang diagnostic pop
 
 #include <stdio.h>
 #include <stdlib.h>

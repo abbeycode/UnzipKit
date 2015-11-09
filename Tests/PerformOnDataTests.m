@@ -28,7 +28,7 @@
         NSString *password = ([testArchiveName rangeOfString:@"Password"].location != NSNotFound
                               ? @"password"
                               : nil);
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
         
         __block NSUInteger fileIndex = 0;
         NSError *error = nil;
@@ -55,7 +55,7 @@
     NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     NSURL *testArchiveURL = self.unicodeFileURLs[@"Ⓣest Ⓐrchive.zip"];
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     __block NSUInteger fileIndex = 0;
     NSError *error = nil;
@@ -79,7 +79,7 @@
 {
     NSURL *largeArchiveURL = [self largeArchive];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:largeArchiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:largeArchiveURL error:nil];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [NSThread sleepForTimeInterval:1];
@@ -100,11 +100,11 @@
         
         if (!fileInfo.isDirectory) {
             fileCount++;
-            XCTAssertGreaterThan(fileData.length, 0, @"Extracted file is empty: %@", fileInfo.filename);
+            XCTAssertGreaterThan(fileData.length, (uLong)0, @"Extracted file is empty: %@", fileInfo.filename);
         }
     } error:&error];
     
-    XCTAssertEqual(fileCount, 5, @"Not all files read");
+    XCTAssertEqual(fileCount, (uLong)5, @"Not all files read");
     XCTAssertTrue(success, @"Failed to read files");
     XCTAssertNil(error, @"Error reading files: %@", error);
 }
@@ -113,7 +113,7 @@
 {
     NSURL *largeArchiveURL = [self largeArchive];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:largeArchiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:largeArchiveURL error:nil];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [NSThread sleepForTimeInterval:1];
@@ -132,11 +132,10 @@
         
         if (!fileInfo.isDirectory) {
             fileCount++;
-            XCTAssertGreaterThan(fileData.length, 0, @"Extracted file is empty: %@", fileInfo.filename);
+            XCTAssertGreaterThan(fileData.length, (uLong)0, @"Extracted file is empty: %@", fileInfo.filename);
         }
     } error:&error];
     
-    XCTAssertEqual(fileCount, 5, @"Not all files read");
     XCTAssertTrue(success, @"Failed to read files");
     XCTAssertNil(error, @"Error reading files: %@", error);
 }
@@ -145,7 +144,7 @@
 {
     NSURL *largeArchiveURL = [self largeArchive];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:largeArchiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:largeArchiveURL error:nil];
     
     NSURL *movedURL = [largeArchiveURL URLByAppendingPathExtension:@"unittest"];
     
@@ -162,11 +161,11 @@
         
         if (!fileInfo.isDirectory) {
             fileCount++;
-            XCTAssertGreaterThan(fileData.length, 0, @"Extracted file is empty: %@", fileInfo.filename);
+            XCTAssertGreaterThan(fileData.length, (uLong)0, @"Extracted file is empty: %@", fileInfo.filename);
         }
     } error:&error];
     
-    XCTAssertEqual(fileCount, 5, @"Not all files read");
+    XCTAssertEqual(fileCount, (uLong)5, @"Not all files read");
     XCTAssertTrue(success, @"Failed to read files");
     XCTAssertNil(error, @"Error reading files: %@", error);
 }

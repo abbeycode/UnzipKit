@@ -34,7 +34,7 @@
         NSString *password = ([testArchiveName rangeOfString:@"Password"].location != NSNotFound
                               ? @"password"
                               : nil);
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
         
         NSError *error = nil;
         BOOL success = [archive extractFilesTo:extractURL.path
@@ -59,7 +59,7 @@
         XCTAssertEqual(extractedFiles.count, expectedFileSet.count,
                        @"Incorrect number of files listed in archive");
         
-        for (NSInteger i = 0; i < extractedFiles.count; i++) {
+        for (NSUInteger i = 0; i < extractedFiles.count; i++) {
             NSString *extractedFilename = extractedFiles[i];
             NSString *expectedFilename = expectedFiles[i];
             
@@ -89,7 +89,7 @@
                                   [testArchiveName stringByDeletingPathExtension]];
     NSURL *extractURL = [self.tempDirectory URLByAppendingPathComponent:extractDirectory];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     NSError *error = nil;
     BOOL success = [archive extractFilesTo:extractURL.path
@@ -114,7 +114,7 @@
     XCTAssertEqual(extractedFiles.count, expectedFileSet.count,
                    @"Incorrect number of files listed in archive");
     
-    for (NSInteger i = 0; i < extractedFiles.count; i++) {
+    for (NSUInteger i = 0; i < extractedFiles.count; i++) {
         NSString *extractedFilename = extractedFiles[i];
         NSString *expectedFilename = expectedFiles[i];
         
@@ -132,7 +132,7 @@
 
 - (void)testExtractFiles_NoPasswordGiven
 {
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Test Archive (Password).zip"]];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:self.testFileURLs[@"Test Archive (Password).zip"] error:nil];
     
     NSString *extractDirectory = [self randomDirectoryWithPrefix:archive.filename.stringByDeletingPathExtension];
     NSURL *extractURL = [self.tempDirectory URLByAppendingPathComponent:extractDirectory];
@@ -160,7 +160,7 @@
 {
     NSFileManager *fm = [NSFileManager defaultManager];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Test File A.txt"]];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:self.testFileURLs[@"Test File A.txt"] error:nil];
     
     NSString *extractDirectory = [self randomDirectoryWithPrefix:@"ExtractInvalidArchive"];
     NSURL *extractURL = [self.tempDirectory URLByAppendingPathComponent:extractDirectory];
@@ -185,7 +185,7 @@
 {
     NSFileManager *fm = [NSFileManager defaultManager];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Aces.zip"]];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:self.testFileURLs[@"Aces.zip"] error:nil];
     
     NSString *extractDirectory = [self randomDirectoryWithPrefix:@"ExtractAcesArchive"];
     NSURL *extractURL = [self.tempDirectory URLByAppendingPathComponent:extractDirectory];
@@ -202,16 +202,18 @@
     
     XCTAssertTrue(success, @"Extract Aces archive failed");
     
-    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager]
-                                         enumeratorAtURL:extractURL
-                                         includingPropertiesForKeys:nil
-                                         options:0
-                                         errorHandler:^(NSURL *url, NSError *error) {
-                                             // Handle the error.
-                                             // Return YES if the enumeration should continue after the error.
-                                             XCTFail(@"Error listing contents of directory %@: %@", url, error);
-                                             return NO;
-                                         }];
+    NSDirectoryEnumerator *enumerator = [fm enumeratorAtURL:extractURL
+                                 includingPropertiesForKeys:nil
+                                                    options:(NSDirectoryEnumerationOptions)0
+                                               errorHandler:^(NSURL *url, NSError *error) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments" // This appears to be an erroneous warning. rdar://22133126
+                                                   // Handle the error.
+                                                   // Return YES if the enumeration should continue after the error.
+                                                   XCTFail(@"Error listing contents of directory %@: %@", url, error);
+                                                   return NO;
+#pragma clang diagnostic pop
+                                               }];
     
     NSArray *expectedFiles = @[
                                @"aces-dev-1.0",

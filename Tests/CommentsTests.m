@@ -17,16 +17,16 @@
 
 - (void)testGlobalComment_Read
 {
-    UZKArchive *commentArchive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Comments Archive.zip"]];
+    UZKArchive *commentArchive = [[UZKArchive alloc] initWithURL:self.testFileURLs[@"Comments Archive.zip"] error:nil];
     
     NSString *comment = commentArchive.comment;
     XCTAssertNotNil(comment, @"No comment returned from archive");
-    XCTAssertGreaterThan(comment.length, 0, @"Comment has no content");
+    XCTAssertGreaterThan(comment.length, (uLong)0, @"Comment has no content");
 }
 
 - (void)testGlobalComment_ReadWhenNonePresent
 {
-    UZKArchive *commentFreeArchive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Test Archive.zip"]];
+    UZKArchive *commentFreeArchive = [[UZKArchive alloc] initWithURL:self.testFileURLs[@"Test Archive.zip"] error:nil];
     
     NSString *comment = commentFreeArchive.comment;
     XCTAssertNil(comment, @"Comment returned from archive that should have none");
@@ -34,7 +34,7 @@
 
 - (void)testGlobalComment_Write
 {
-    UZKArchive *commentArchive = [UZKArchive zipArchiveAtURL:self.testFileURLs[@"Test Archive.zip"]];
+    UZKArchive *commentArchive = [[UZKArchive alloc] initWithURL:self.testFileURLs[@"Test Archive.zip"] error:nil];
     
     NSString *originalComment = commentArchive.comment;
     XCTAssertNil(originalComment, @"Comment returned from archive that should have none");
@@ -42,7 +42,7 @@
     NSString *expectedComment = @"Fünky unicode stuff";
     commentArchive.comment = expectedComment;
     
-    UZKArchive *newArchiveInstance = [UZKArchive zipArchiveAtURL:commentArchive.fileURL];
+    UZKArchive *newArchiveInstance = [[UZKArchive alloc] initWithURL:commentArchive.fileURL error:nil];
 
     NSString *updatedComment = newArchiveInstance.comment.decomposedStringWithCanonicalMapping;
     XCTAssertEqualObjects(updatedComment, expectedComment.decomposedStringWithCanonicalMapping,

@@ -74,14 +74,14 @@ static NSDateFormatter *testFileInfoDateFormatter;
     
     for (NSString *file in filesToCopy) {
         NSURL *testFileURL = [self urlOfTestFile:file];
-        BOOL testFileExists = [fm fileExistsAtPath:testFileURL.path];
+        BOOL testFileExists = [fm fileExistsAtPath:(NSString* _Nonnull)testFileURL.path];
         XCTAssertTrue(testFileExists, @"%@ not found", file);
         
         NSURL *destinationURL = [self.tempDirectory URLByAppendingPathComponent:file isDirectory:NO];
         
         NSError *error = nil;
         if (file.pathComponents.count > 1) {
-            [fm createDirectoryAtPath:destinationURL.URLByDeletingLastPathComponent.path
+            [fm createDirectoryAtPath:(NSString* _Nonnull)destinationURL.URLByDeletingLastPathComponent.path
           withIntermediateDirectories:YES
                            attributes:nil
                                 error:&error];
@@ -192,7 +192,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     NSURL *resultURL = [self.tempDirectory URLByAppendingPathComponent:
                         [NSString stringWithFormat:@"%@.txt", [[NSProcessInfo processInfo] globallyUniqueString]]];
     
-    [[NSFileManager defaultManager] createFileAtPath:resultURL.path
+    [[NSFileManager defaultManager] createFileAtPath:(NSString *__nonnull)resultURL.path
                                             contents:nil
                                           attributes:nil];
     
@@ -202,7 +202,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     XCTAssertNil(error, @"Error creating file handle for URL: %@", resultURL);
     
     [fileHandle seekToFileOffset:fileSize];
-    [fileHandle writeData:[@"\x00" dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileHandle writeData:(NSData *__nonnull)[@"\x00" dataUsingEncoding:NSUTF8StringEncoding]];
     [fileHandle closeFile];
     
     return resultURL;
@@ -221,7 +221,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
     
     NSTask *task = [[NSTask alloc] init];
     task.launchPath = @"/usr/bin/zip";
-    task.arguments = [@[@"-j", archiveURL.path] arrayByAddingObjectsFromArray:[fileURLs valueForKeyPath:@"path"]];
+    task.arguments = [@[@"-j", archiveURL.path] arrayByAddingObjectsFromArray:(NSArray *__nonnull)[fileURLs valueForKeyPath:@"path"]];
     
     [task launch];
     [task waitUntilExit];

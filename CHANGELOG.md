@@ -1,5 +1,10 @@
 # UnzipKit CHANGELOG
 
+## 1.5
+
+* Added full support for Carthage (Issue #11)
+* Added annotations for nullability, improving compatibility with Xcode 7 and Swift
+
 ## 1.4.2
 
 Fixed a bug causing global comments not to get written to disk (Issue #19)

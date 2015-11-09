@@ -25,7 +25,7 @@
     
     NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"WriteIntoBufferTest.zip"];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     unsigned int bufferSize = 1024; //Arbitrary
     
@@ -76,7 +76,7 @@
 {
     NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"WriteIntoBufferTest_Failure.zip"];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     NSInteger errorCode = 718;
     
@@ -107,7 +107,7 @@
     NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"testWriteInfoBuffer_PasswordGiven.zip"];
     
     NSString *password = @"a password";
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
     
     NSError *writeError = nil;
     
@@ -148,7 +148,7 @@
 {
     NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"testWriteInfoBuffer_PasswordGiven_NoCRC.zip"];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:@"a password"];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:@"a password" error:nil];
     
     NSError *writeError = nil;
     
@@ -168,7 +168,7 @@
 {
     NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"testWriteInfoBuffer_PasswordGiven_MismatchedCRC.zip"];
     
-    UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:@"a password"];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:@"a password" error:nil];
     
     NSError *writeError = nil;
     

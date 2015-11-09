@@ -39,17 +39,17 @@
         [fm copyItemAtURL:testArchiveOriginalURL toURL:testArchiveCopyURL error:&error];
         XCTAssertNil(error, @"Error copying test archive \n from: %@ \n\n   to: %@", testArchiveOriginalURL, testArchiveCopyURL);
         
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveCopyURL];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveCopyURL error:nil];
         
         NSArray *fileList = [archive listFilenames:&error];
-        XCTAssertNotNil(fileList);
+        XCTAssertNotNil(fileList, @"No filenames returned");
         
         for (NSString *fileName in fileList) {
             NSData *fileData = [archive extractDataFromFile:fileName
                                                    progress:nil
                                                       error:&error];
-            XCTAssertNotNil(fileData);
-            XCTAssertNil(error);
+            XCTAssertNotNil(fileData, @"No data returned");
+            XCTAssertNil(error, @"Error extracting data");
         }
     }
     
@@ -82,7 +82,7 @@
         [fm copyItemAtURL:testArchiveOriginalURL toURL:testArchiveCopyURL error:&error];
         XCTAssertNil(error, @"Error copying test archive \n from: %@ \n\n   to: %@", testArchiveOriginalURL, testArchiveCopyURL);
         
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveCopyURL];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveCopyURL error:nil];
         
         NSError *performOnFilesError = nil;
         BOOL performOnFilesResult =  [archive performOnFilesInArchive:^(UZKFileInfo *fileInfo, BOOL *stop) {
@@ -123,17 +123,17 @@
         [fm copyItemAtURL:testArchiveOriginalURL toURL:testArchiveCopyURL error:&error];
         XCTAssertNil(error, @"Error copying test archive \n from: %@ \n\n   to: %@", testArchiveOriginalURL, testArchiveCopyURL);
         
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveCopyURL];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveCopyURL error:nil];
         
         NSArray *fileList = [archive listFilenames:&error];
-        XCTAssertNotNil(fileList);
+        XCTAssertNotNil(fileList, @"No filenames listed");
         
         for (NSString *fileName in fileList) {
             NSData *fileData = [archive extractDataFromFile:fileName
                                                    progress:nil
                                                       error:&error];
-            XCTAssertNotNil(fileData);
-            XCTAssertNil(error);
+            XCTAssertNotNil(fileData, @"No data extracted");
+            XCTAssertNil(error, @"Error extracting data");
         }
         
         for (int x = 0; x < 50; x++) {

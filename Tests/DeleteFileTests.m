@@ -32,7 +32,7 @@
         NSString *password = ([testArchiveName rangeOfString:@"Password"].location != NSNotFound
                               ? @"password"
                               : nil);
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
         
         NSError *deleteError;
         BOOL result = [archive deleteFile:fileToDelete error:&deleteError];
@@ -47,7 +47,8 @@
              NSString *expectedFilename = newFileList[fileIndex++];
              XCTAssertEqualObjects(fileInfo.filename, expectedFilename, @"Unexpected filename encountered");
              
-             NSData *expectedFileData = [NSData dataWithContentsOfURL:self.testFileURLs[expectedFilename]];
+             NSURL *expectedURL = self.testFileURLs[expectedFilename];
+             NSData *expectedFileData = [NSData dataWithContentsOfURL:expectedURL];
              
              XCTAssertNotNil(fileData, @"No data extracted");
              XCTAssertTrue([expectedFileData isEqualToData:fileData], @"File data doesn't match original file");
@@ -75,7 +76,7 @@
         NSString *password = ([testArchiveName rangeOfString:@"Password"].location != NSNotFound
                               ? @"password"
                               : nil);
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
         
         NSError *deleteError;
         BOOL result = [archive deleteFile:fileToDelete error:&deleteError];
@@ -90,7 +91,8 @@
              NSString *expectedFilename = newFileList[fileIndex++];
              XCTAssertEqualObjects(fileInfo.filename, expectedFilename, @"Unexpected filename encountered");
              
-             NSData *expectedFileData = [NSData dataWithContentsOfURL:self.testFileURLs[expectedFilename]];
+             NSURL *expectedURL = self.testFileURLs[expectedFilename];
+             NSData *expectedFileData = [NSData dataWithContentsOfURL:expectedURL];
              
              XCTAssertNotNil(fileData, @"No data extracted");
              XCTAssertTrue([expectedFileData isEqualToData:fileData], @"File data doesn't match original file");
@@ -118,7 +120,7 @@
         NSString *password = ([testArchiveName rangeOfString:@"Password"].location != NSNotFound
                               ? @"password"
                               : nil);
-        UZKArchive *archive = [UZKArchive zipArchiveAtURL:testArchiveURL password:password];
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
         
         NSError *deleteError;
         BOOL result = [archive deleteFile:fileToDelete error:&deleteError];
