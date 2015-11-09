@@ -622,7 +622,7 @@ compressionMethod:(UZKCompressionMethod)method
                fileDate:(nullable NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
               overwrite:(BOOL)overwrite
-                    CRC:(uLong)preCRC
+                    CRC:(unsigned long)preCRC
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
 
@@ -660,7 +660,7 @@ compressionMethod:(UZKCompressionMethod)method
                fileDate:(nullable NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
               overwrite:(BOOL)overwrite
-                    CRC:(uLong)preCRC
+                    CRC:(unsigned long)preCRC
                password:(nullable NSString *)password
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
