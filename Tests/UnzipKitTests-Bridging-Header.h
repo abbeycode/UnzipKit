@@ -4,4 +4,5 @@
 
 #import "UZKArchive.h"
 
+#import "zip.h"
 #import "UZKArchiveTestCase.h"

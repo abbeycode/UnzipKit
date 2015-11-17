@@ -7,6 +7,7 @@
 //
 
 #import "UZKArchiveTestCase.h"
+#import "zip.h"
 @import UnzipKit;
 
 @interface WriteBufferedDataTests : UZKArchiveTestCase
@@ -61,7 +62,7 @@
     
     [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
         NSData *expectedData = testFileData[idx];
-        uLong expectedCRC = crc32(0, expectedData.bytes, (uInt)expectedData.length);
+        unsigned long expectedCRC = crc32(0, expectedData.bytes, (unsigned int)expectedData.length);
         
         XCTAssertEqualObjects(fileInfo.filename, testFiles[idx], @"Incorrect filename in archive");
         XCTAssertEqualObjects(fileInfo.timestamp, testDates[idx], @"Incorrect timestamp in archive");

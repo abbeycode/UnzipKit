@@ -57,7 +57,7 @@
                                                                     error:&attributesError];
         XCTAssertNil(attributesError, @"Error getting file attributes of %@", expectedFilename);
         
-        uLong expectedFileSize = expectedFileAttributes.fileSize;
+        unsigned long long expectedFileSize = expectedFileAttributes.fileSize;
         XCTAssertEqual(fileInfo.uncompressedSize, expectedFileSize, @"Incorrect uncompressed file size");
         
         // Test Compression method
