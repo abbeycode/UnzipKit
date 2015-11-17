@@ -79,15 +79,5 @@ typedef NS_ENUM(NSInteger, UZKCompressionMethod) {
 @property (readonly) UZKCompressionMethod compressionMethod;
 
 
-/**
- *  Returns a UZKFileInfo instance for the given extended header data
- *
- *  @param fileInfo The header data for a Zip file
- *  @param filename The archive that contains the file
- *
- *  @return an instance of UZKFileInfo
- */
-//+ (instancetype) fileInfo:(unz_file_info *)fileInfo filename:(NSString *)filename;
-
 
 @end

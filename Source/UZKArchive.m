@@ -7,9 +7,9 @@
 #import "UZKArchive.h"
 
 #import "zip.h"
-#import "unzip.h"
 
 #import "UZKFileInfo.h"
+#import "UZKFileInfo_Private.h"
 
 
 NSString *UZKErrorDomain = @"UZKErrorDomain";
@@ -24,13 +24,6 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     UZKFileModeAppend
 };
 
-
-
-@interface UZKFileInfo (private)
-
-+ (instancetype) fileInfo:(unz_file_info *)fileInfo filename:(NSString *)filename;
-
-@end
 
 
 @interface UZKArchive ()
