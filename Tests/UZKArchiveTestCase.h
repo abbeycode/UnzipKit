@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
+#import "zip.h"
 
 
 @interface UZKArchiveTestCase : XCTestCase
