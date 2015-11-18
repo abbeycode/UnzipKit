@@ -12,6 +12,18 @@ It provides the following over Objective-Zip:
 * Full documentation for all methods
 * Pervasive use of `NSError`, instead of throwing exceptions
 
+# Installation
+
+UnzipKit supports both [CocoaPods](https://cocoapods.org/) and [Carthage](https://github.com/Carthage/Carthage). CocoaPods does not support dynamic framework targets (as of v0.39.0), so in that case, please use Carthage.
+
+Cartfile:
+
+    github "abbeycode/UnzipKit"
+
+Podfile:
+
+    pod "UnzipKit"
+
 # Deleting files
 
 Using the method `-deleteFile:error:` currently creates a new copy of the archive in a temporary location, without the deleted file, then replaces the original archive. By default, all methods to write data perform a delete on the file name they write before archiving the new data. You can turn this off by calling the overload with an `overwrite` argument, setting it to `NO`. This will not remove the original copy of that file, though, causing the archive to grow with each write of the same file name.
