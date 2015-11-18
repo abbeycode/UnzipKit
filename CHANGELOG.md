@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.6
+
+* Added support using UnzipKit from a Swift dynamic framework target (Issue #21, PR #22). Thanks @iblacksun!
+
 ## 1.5
 
 * Added full support for Carthage (Issue #11)
