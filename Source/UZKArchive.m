@@ -1884,7 +1884,7 @@ compressionMethod:(UZKCompressionMethod)method
 
 + (zip_fileinfo)zipFileInfoForDate:(NSDate *)fileDate
 {
-    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
     
     // Use "now" if no date given
     if (!fileDate) {
@@ -1909,7 +1909,7 @@ compressionMethod:(UZKCompressionMethod)method
     zi.tmz_date.tm_min = (uInt)date.minute;
     zi.tmz_date.tm_hour = (uInt)date.hour;
     zi.tmz_date.tm_mday = (uInt)date.day;
-    zi.tmz_date.tm_mon = (uInt)date.month - 1;
+    zi.tmz_date.tm_mon = (uInt)date.month - 1; // 0-indexed
     zi.tmz_date.tm_year = (uInt)date.year;
     zi.internal_fa = 0;
     zi.external_fa = 0;
