@@ -6,7 +6,7 @@ Fixed issue that can cause a crash when writing to Zip files across multiple thr
 
 ## 1.6
 
-* Added support using UnzipKit from a Swift dynamic framework target (Issue #21, PR #22). Thanks @iblacksun!
+Added support for using UnzipKit from a Swift dynamic framework target (Issue #21, PR #22). Thanks @iblacksun!
 
 ## 1.5
 
