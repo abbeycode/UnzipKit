@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.6.1
+
+* Fixed issue that can cause a crash when writing to Zip files across multiple threads (Issue #23). Thanks again, @iblacksun!
+
 ## 1.6
 
 * Added support using UnzipKit from a Swift dynamic framework target (Issue #21, PR #22). Thanks @iblacksun!
