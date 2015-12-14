@@ -2,7 +2,7 @@
 
 ## 1.6.1
 
-* Fixed issue that can cause a crash when writing to Zip files across multiple threads (Issue #23). Thanks again, @iblacksun!
+Fixed issue that can cause a crash when writing to Zip files across multiple threads (Issue #23). Thanks again, @iblacksun!
 
 ## 1.6
 
