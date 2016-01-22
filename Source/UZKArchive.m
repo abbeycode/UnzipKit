@@ -395,16 +395,20 @@ NS_DESIGNATED_INITIALIZER
     NSError *extractError = nil;
     
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
+        __strong NSError *strongError = nil;
         for (UZKFileInfo *info in fileInfo) {
             @autoreleasepool {
                 if (progress) {
                     progress(info, bytesDecompressed / totalSize.floatValue);
                 }
                 
-                if (![self locateFileInZip:info.filename error:innerError]) {
-                    [self assignError:innerError code:UZKErrorCodeFileNotFoundInArchive
+                if (![self locateFileInZip:info.filename error:&strongError]) {
+                    [self assignError:&strongError code:UZKErrorCodeFileNotFoundInArchive
                                detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error locating file '%@' in archive", @"Detailed error string"),
                                        info.filename]];
+                    if (innerError) {
+                        *innerError = strongError;
+                    }
                     return;
                 }
                 
@@ -419,7 +423,7 @@ NS_DESIGNATED_INITIALIZER
                 
                 NSData *data = [self readFile:info.filename
                                        length:info.uncompressedSize
-                                        error:innerError];
+                                        error:&strongError];
                 
                 int err = unzCloseCurrentFile(self.unzFile);
                 if (err != UNZ_OK) {
@@ -427,9 +431,12 @@ NS_DESIGNATED_INITIALIZER
                         err = UZKErrorCodeInvalidPassword;
                     }
                     
-                    [self assignError:innerError code:err
+                    [self assignError:&strongError code:err
                                detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error closing current file (%d) '%@'", @"Detailed error string"),
                                        err, info.filename]];
+                    if (innerError) {
+                        *innerError = strongError;
+                    }
                     return;
                 }
                 
@@ -441,15 +448,21 @@ NS_DESIGNATED_INITIALIZER
                                                              attributes:nil
                                                                   error:error];
                     if (!directoriesCreated) {
-                        [self assignError:innerError code:UZKErrorCodeOutputError
+                        [self assignError:&strongError code:UZKErrorCodeOutputError
                                    detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Failed to create destination directory: %@", @"Detailed error string"),
                                            extractDir]];
+                        if (innerError) {
+                            *innerError = strongError;
+                        }
                         return;
                     }
                 } else if (!isDirectory) {
-                    [self assignError:innerError code:UZKErrorCodeOutputErrorPathIsAFile
+                    [self assignError:&strongError code:UZKErrorCodeOutputErrorPathIsAFile
                                detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Extract path exists, but is not a directory: %@", @"Detailed error string"),
                                        extractDir]];
+                    if (innerError) {
+                        *innerError = strongError;
+                    }
                     return;
                 }
                 
@@ -457,9 +470,12 @@ NS_DESIGNATED_INITIALIZER
                                               options:NSDataWritingAtomic
                                                 error:innerError];
                 if (!writeSuccess) {
-                    [self assignError:innerError code:UZKErrorCodeOutputError
+                    [self assignError:&strongError code:UZKErrorCodeOutputError
                                detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Failed to extract file to path: %@", @"Detailed error string"),
                                        extractPath]];
+                    if (innerError) {
+                        *innerError = strongError;
+                    }
                     return;
                 }
                 
