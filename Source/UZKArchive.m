@@ -427,8 +427,8 @@ NS_DESIGNATED_INITIALIZER
                 }
                 
                 [self assignError:innerError code:err
-                           detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error closing current file '%@'", @"Detailed error string"),
-                                   info.filename]];
+                           detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error closing current file (%d) '%@'", @"Detailed error string"),
+                                   err, info.filename]];
                 return;
             }
 
@@ -1664,7 +1664,7 @@ compressionMethod:(UZKCompressionMethod)method
     err = unzOpenCurrentFilePassword(self.unzFile, passwordStr);
     if (err != UNZ_OK) {
         return [self assignError:error code:UZKErrorCodeFileRead
-                          detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error opening password protected archive (%d)", @"Detailed error string"),
+                          detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error opening archive (%d)", @"Detailed error string"),
                                   err]];
     }
     
