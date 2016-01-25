@@ -395,91 +395,96 @@ NS_DESIGNATED_INITIALIZER
     NSError *extractError = nil;
     
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
-        __strong NSError *strongError = nil;
-        for (UZKFileInfo *info in fileInfo) {
-            @autoreleasepool {
-                if (progress) {
-                    progress(info, bytesDecompressed / totalSize.floatValue);
-                }
-                
-                if (![self locateFileInZip:info.filename error:&strongError]) {
-                    [self assignError:&strongError code:UZKErrorCodeFileNotFoundInArchive
-                               detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error locating file '%@' in archive", @"Detailed error string"),
-                                       info.filename]];
-                    if (innerError) {
-                        *innerError = strongError;
-                    }
-                    return;
-                }
-                
-                NSString *extractPath = [destinationDirectory stringByAppendingPathComponent:info.filename];
-                if ([fm fileExistsAtPath:extractPath] && !overwrite) {
-                    return;
-                }
-                
-                if (info.isDirectory) {
-                    continue;
-                }
-                
-                NSData *data = [self readFile:info.filename
-                                       length:info.uncompressedSize
-                                        error:&strongError];
-                
-                int err = unzCloseCurrentFile(self.unzFile);
-                if (err != UNZ_OK) {
-                    if (err == UZKErrorCodeCRCError) {
-                        err = UZKErrorCodeInvalidPassword;
+        NSError *strongError = nil;
+        
+        @try {
+            for (UZKFileInfo *info in fileInfo) {
+                @autoreleasepool {
+                    if (progress) {
+                        progress(info, bytesDecompressed / totalSize.floatValue);
                     }
                     
-                    [self assignError:&strongError code:err
-                               detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error closing current file (%d) '%@'", @"Detailed error string"),
-                                       err, info.filename]];
-                    if (innerError) {
-                        *innerError = strongError;
-                    }
-                    return;
-                }
-                
-                BOOL isDirectory = YES;
-                NSString *extractDir = extractPath.stringByDeletingLastPathComponent;
-                if (![fm fileExistsAtPath:extractDir]) {
-                    BOOL directoriesCreated = [fm createDirectoryAtPath:extractDir
-                                            withIntermediateDirectories:YES
-                                                             attributes:nil
-                                                                  error:error];
-                    if (!directoriesCreated) {
-                        [self assignError:&strongError code:UZKErrorCodeOutputError
-                                   detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Failed to create destination directory: %@", @"Detailed error string"),
-                                           extractDir]];
-                        if (innerError) {
-                            *innerError = strongError;
-                        }
+                    if (![self locateFileInZip:info.filename error:&strongError]) {
+                        [self assignError:&strongError code:UZKErrorCodeFileNotFoundInArchive
+                                   detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error locating file '%@' in archive", @"Detailed error string"),
+                                           info.filename]];
                         return;
                     }
-                } else if (!isDirectory) {
-                    [self assignError:&strongError code:UZKErrorCodeOutputErrorPathIsAFile
-                               detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Extract path exists, but is not a directory: %@", @"Detailed error string"),
-                                       extractDir]];
-                    if (innerError) {
-                        *innerError = strongError;
+                    
+                    NSString *extractPath = [destinationDirectory stringByAppendingPathComponent:info.filename];
+                    if ([fm fileExistsAtPath:extractPath] && !overwrite) {
+                        return;
                     }
-                    return;
-                }
-                
-                BOOL writeSuccess = [data writeToFile:extractPath
-                                              options:NSDataWritingAtomic
-                                                error:innerError];
-                if (!writeSuccess) {
-                    [self assignError:&strongError code:UZKErrorCodeOutputError
-                               detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Failed to extract file to path: %@", @"Detailed error string"),
-                                       extractPath]];
-                    if (innerError) {
-                        *innerError = strongError;
+                    
+                    if (info.isDirectory) {
+                        continue;
                     }
-                    return;
+                    
+                    NSData *data = [self readFile:info.filename
+                                           length:info.uncompressedSize
+                                            error:&strongError];
+                    
+                    if (!data && strongError) {
+                        [self assignError:&strongError code:UZKErrorCodeFileRead
+                                   detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error reading current file '%@'", @"Detailed error string"),
+                                           info.filename]];
+                        return;
+                    }
+                    
+                    int err = unzCloseCurrentFile(self.unzFile);
+                    if (err != UNZ_OK) {
+                        if (err == UZKErrorCodeCRCError) {
+                            err = UZKErrorCodeInvalidPassword;
+                        }
+                        
+                        [self assignError:&strongError code:err
+                                   detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error closing current file (%d) '%@'", @"Detailed error string"),
+                                           err, info.filename]];
+                        return;
+                    }
+                    
+                    // Return if there was an error reading the file not closing it
+                    if (strongError) {
+                        return;
+                    }
+                    
+                    BOOL isDirectory = YES;
+                    NSString *extractDir = extractPath.stringByDeletingLastPathComponent;
+                    if (![fm fileExistsAtPath:extractDir]) {
+                        BOOL directoriesCreated = [fm createDirectoryAtPath:extractDir
+                                                withIntermediateDirectories:YES
+                                                                 attributes:nil
+                                                                      error:error];
+                        if (!directoriesCreated) {
+                            [self assignError:&strongError code:UZKErrorCodeOutputError
+                                       detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Failed to create destination directory: %@", @"Detailed error string"),
+                                               extractDir]];
+                            return;
+                        }
+                    } else if (!isDirectory) {
+                        [self assignError:&strongError code:UZKErrorCodeOutputErrorPathIsAFile
+                                   detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Extract path exists, but is not a directory: %@", @"Detailed error string"),
+                                           extractDir]];
+                        return;
+                    }
+                    
+                    BOOL writeSuccess = [data writeToFile:extractPath
+                                                  options:NSDataWritingAtomic
+                                                    error:innerError];
+                    if (!writeSuccess) {
+                        [self assignError:&strongError code:UZKErrorCodeOutputError
+                                   detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Failed to extract file to path: %@", @"Detailed error string"),
+                                           extractPath]];
+                        return;
+                    }
+                    
+                    bytesDecompressed += data.length;
                 }
-                
-                bytesDecompressed += data.length;
+            }
+        }
+        @finally {
+            if (strongError && innerError) {
+                *innerError = strongError;
             }
         }
     } inMode:UZKFileModeUnzip error:&extractError];
