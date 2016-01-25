@@ -1686,7 +1686,7 @@ compressionMethod:(UZKCompressionMethod)method
     
     err = unzOpenCurrentFilePassword(self.unzFile, passwordStr);
     if (err != UNZ_OK) {
-        return [self assignError:error code:UZKErrorCodeFileRead
+        return [self assignError:error code:err
                           detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error opening archive (%d)", @"Detailed error string"),
                                   err]];
     }
