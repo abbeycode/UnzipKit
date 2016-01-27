@@ -235,5 +235,77 @@
     }
 }
 
+- (void)testExtractZip64_LargeFile
+{
+    NSURL *fourGigFileURL = [self emptyTextFileOfLength:4 * pow(2.0, 30.0)];
+    NSURL *smallFileURL = [self emptyTextFileOfLength:4];
+    
+    NSError *error = nil;
+    NSURL *url = [self archiveWithFiles:@[fourGigFileURL, smallFileURL]];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:url error:&error];
+    
+    XCTAssertNil(error, @"Failed to init archive");
+    
+    NSString *extractDirectory = [self randomDirectoryWithPrefix:@"LargeZip64"];
+    NSURL *extractURL = [self.tempDirectory URLByAppendingPathComponent:extractDirectory];
+    
+    BOOL success = [archive extractFilesTo:extractURL.path
+                                 overwrite:NO
+                                  progress:
+#if DEBUG
+                    ^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
+                        NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
+                    }
+#else
+                    nil
+#endif
+                                     error:&error];
+    
+    XCTAssertTrue(success, @"Extract large Zip64 archive failed");
+    XCTAssertNil(error, @"Error extracting large Zip64 archive");
+}
+
+- (void)testExtractZip64_ManyFiles
+{
+    NSUInteger numberOfFiles = pow(2.0, 16) + 1000;
+    NSMutableArray<NSURL*> *urls = [NSMutableArray arrayWithCapacity:numberOfFiles];
+
+    for (NSUInteger i = 0; i < numberOfFiles; i++) {
+        NSURL *smallFileURL = [self emptyTextFileOfLength:1];
+        [urls addObject:smallFileURL];
+    }
+    
+    
+    NSError *error = nil;
+    NSURL *url = [self archiveWithFiles:urls];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:url error:&error];
+    
+    XCTAssertNil(error, @"Failed to init archive");
+    
+    NSString *extractDirectory = [self randomDirectoryWithPrefix:@"NumerousZip64"];
+    NSURL *extractURL = [self.tempDirectory URLByAppendingPathComponent:extractDirectory];
+    
+    BOOL success = [archive extractFilesTo:extractURL.path
+                                 overwrite:NO
+                                  progress:
+#if DEBUG
+                    ^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
+                        NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
+                    }
+#else
+                    nil
+#endif
+                                     error:&error];
+    
+    XCTAssertTrue(success, @"Extract numerous Zip64 archive failed");
+    XCTAssertNil(error, @"Error extracting numerous Zip64 archive");
+    
+    NSArray *extractedFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:extractURL.path
+                                                                                  error:&error];
+    
+    XCTAssertNil(error, @"Failed to list extracted files from numerous Zip64 archive");
+    XCTAssertEqual(extractedFiles.count, numberOfFiles, @"Incorrect number of files extracted from numerous Zip64 archive");
+}
+
 
 @end

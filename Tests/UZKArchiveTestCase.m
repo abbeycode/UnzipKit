@@ -218,19 +218,56 @@ static NSDateFormatter *testFileInfoDateFormatter;
 {
     NSURL *archiveURL = [[self.tempDirectory URLByAppendingPathComponent:name]
                          URLByAppendingPathExtension:@"zip"];
+    NSFileHandle *consoleOutputHandle = nil;
     
-    NSTask *task = [[NSTask alloc] init];
-    task.launchPath = @"/usr/bin/zip";
-    task.arguments = [@[@"-j", archiveURL.path] arrayByAddingObjectsFromArray:(NSArray *__nonnull)[fileURLs valueForKeyPath:@"path"]];
-    
-    [task launch];
-    [task waitUntilExit];
-    
-    if (task.terminationStatus != 0) {
-        NSLog(@"Failed to create zip archive");
-        return nil;
+    if (fileURLs.count > 100) {
+        NSURL *consoleOutputFile = [archiveURL URLByAppendingPathExtension:@"filewriteoutput.txt"];
+        [[NSFileManager defaultManager] createFileAtPath:(NSString *__nonnull)consoleOutputFile.path
+                                                contents:nil
+                                              attributes:nil];
+
+        consoleOutputHandle = [NSFileHandle fileHandleForWritingAtPath:consoleOutputFile.path];
+        
+        NSLog(@"Writing zip command output to: %@", consoleOutputFile.path);
     }
     
+    const NSUInteger maxFilesPerCall = 1500;
+    NSArray *filePaths = (NSArray *__nonnull)[fileURLs valueForKeyPath:@"path"];
+    
+    NSUInteger startIndex = 0;
+    NSUInteger pathsRemaining = filePaths.count;
+    
+    while (startIndex < filePaths.count) {
+        @autoreleasepool {
+            NSRange currentRange = NSMakeRange(startIndex, MIN(pathsRemaining, maxFilesPerCall));
+            NSArray *pathArrayChunk = [filePaths subarrayWithRange:currentRange];
+            
+            NSTask *task = [[NSTask alloc] init];
+            task.launchPath = @"/usr/bin/zip";
+            task.arguments = [@[@"-j", archiveURL.path] arrayByAddingObjectsFromArray:pathArrayChunk];
+            task.standardOutput = consoleOutputHandle;
+            
+            [task launch];
+            [task waitUntilExit];
+            
+            if (task.terminationStatus != 0) {
+                if (startIndex == 0) {
+                    NSLog(@"Failed to create zip archive");
+                } else {
+                    NSLog(@"Failed to add files to zip archive");
+                }
+                return nil;
+            }
+            
+            pathsRemaining -= currentRange.length;
+            startIndex += currentRange.length;
+        }
+    }
+
+    if (consoleOutputHandle) {
+        [consoleOutputHandle closeFile];
+    }
+                
     return archiveURL;
 }
 
