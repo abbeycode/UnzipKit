@@ -237,11 +237,13 @@
 
 - (void)testExtractZip64_LargeFile
 {
-    NSURL *fourGigFileURL = [self emptyTextFileOfLength:4 * pow(2.0, 30.0)];
-    NSURL *smallFileURL = [self emptyTextFileOfLength:4];
+    NSArray<NSURL*> *urls = @[
+                              [self emptyTextFileOfLength:4 * pow(2.0, 30.0)],
+                              self.unicodeFileURLs[@"Test File Ⓐ.txt"]
+                              ];
     
     NSError *error = nil;
-    NSURL *url = [self archiveWithFiles:@[fourGigFileURL, smallFileURL]];
+    NSURL *url = [self archiveWithFiles:urls];
     UZKArchive *archive = [[UZKArchive alloc] initWithURL:url error:&error];
     
     XCTAssertNil(error, @"Failed to init archive");
@@ -263,6 +265,20 @@
     
     XCTAssertTrue(success, @"Extract large Zip64 archive failed");
     XCTAssertNil(error, @"Error extracting large Zip64 archive");
+    
+    NSArray *expectedCRCs = @[
+                              @([self crcOfFile:urls[0]]),
+                              @([self crcOfFile:urls[1]])
+                              ];
+    
+    NSArray *actualCRCs = @[
+                            @([self crcOfFile:[extractURL URLByAppendingPathComponent:urls[0].lastPathComponent]]),
+                            @([self crcOfFile:[extractURL URLByAppendingPathComponent:urls[1].lastPathComponent]]),
+                              ];
+    
+    for (NSUInteger i = 0; i < expectedCRCs.count; i++) {
+        XCTAssertEqualObjects(expectedCRCs[i], actualCRCs[i], @"CRCs didn't match");
+    }
 }
 
 - (void)testExtractZip64_ManyFiles

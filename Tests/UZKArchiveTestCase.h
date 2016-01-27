@@ -38,6 +38,7 @@
 - (BOOL)extractArchive:(NSURL *)url password:(NSString *)password;
 - (NSURL *)largeArchive;
 
+- (NSUInteger)crcOfFile:(NSURL *)url;
 - (NSUInteger)crcOfTestFile:(NSString *)filename;
 
 @end

@@ -201,8 +201,11 @@ static NSDateFormatter *testFileInfoDateFormatter;
                                                                  error:&error];
     XCTAssertNil(error, @"Error creating file handle for URL: %@", resultURL);
     
+    NSData *emptyByte = [@"\x01" dataUsingEncoding:NSUTF8StringEncoding];
+    
+    [fileHandle writeData:emptyByte];
     [fileHandle seekToFileOffset:fileSize];
-    [fileHandle writeData:(NSData *__nonnull)[@"\x00" dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileHandle writeData:emptyByte];
     [fileHandle closeFile];
     
     return resultURL;
@@ -308,11 +311,16 @@ static NSDateFormatter *testFileInfoDateFormatter;
     return largeArchiveURL;
 }
 
+- (NSUInteger)crcOfFile:(NSURL *)url
+{
+    NSData *fileContents = [[NSFileManager defaultManager] contentsAtPath:url.path];
+    return crc32(0, fileContents.bytes, (uInt)fileContents.length);
+}
+
 - (NSUInteger)crcOfTestFile:(NSString *)filename
 {
     NSURL *fileURL = [self urlOfTestFile:filename];
-    NSData *fileContents = [[NSFileManager defaultManager] contentsAtPath:fileURL.path];
-    return crc32(0, fileContents.bytes, (uInt)fileContents.length);
+    return [self crcOfFile:fileURL];
 }
 
 
