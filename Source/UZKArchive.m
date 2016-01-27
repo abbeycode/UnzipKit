@@ -375,11 +375,7 @@ NS_DESIGNATED_INITIALIZER
                  error:(NSError * __autoreleasing*)error
 {
     NSError *listError = nil;
-    NSArray *fileInfo = [[self listFileInfo:&listError] sortedArrayUsingComparator:^NSComparisonResult(UZKFileInfo*  _Nonnull obj1, UZKFileInfo*  _Nonnull obj2) {
-        return ([obj1.filename isGreaterThan:obj2.filename]
-                ? NSOrderedAscending
-                : NSOrderedDescending);
-    }];
+    NSArray *fileInfo = [self listFileInfo:&listError];
     
     if (!fileInfo || listError) {
         NSLog(@"Error listing contents of archive: %@", listError);
