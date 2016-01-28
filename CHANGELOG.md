@@ -4,7 +4,7 @@
 
 Fixed some issues when extracting files from an archive:
 
-* Extracting the first file past the 4 GB mark in the file would fail, due to a bug in the Zip64 implementation (Issue #25)
+* Extracting the first file past the 4 GB mark in an archive would fail, due to a bug in the Zip64 implementation (Issue #25)
 * Memory would grow as each file was extracted, potentially consuming multiple gigabytes for large archives
 * Improved error messages when there's an error extracting a file (the underlying error is no longer hidden)
 
