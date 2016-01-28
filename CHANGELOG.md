@@ -1,5 +1,15 @@
 # UnzipKit CHANGELOG
 
+## 1.6.2
+
+Fixed some issues when extracting files from an archive:
+
+* Extracting the first file past the 4 GB mark in the file would fail, due to a bug in the Zip64 implementation (Issue #25)
+* Memory would grow as each file was extracted, potentially consuming multiple gigabytes for large archives
+* Improved error messages when there's an error extracting a file (the underlying error is no longer hidden)
+
+Thanks @brendand!
+
 ## 1.6.1
 
 Fixed issue that can cause a crash when writing to Zip files across multiple threads (Issue #23). Thanks again, @iblacksun!
