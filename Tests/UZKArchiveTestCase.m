@@ -250,6 +250,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
             task.arguments = [@[@"-j", archiveURL.path] arrayByAddingObjectsFromArray:pathArrayChunk];
             task.standardOutput = consoleOutputHandle;
             
+            NSLog(@"Compressing files %lu-%lu of %lu", startIndex + 1, startIndex + pathArrayChunk.count, filePaths.count);
+
             [task launch];
             [task waitUntilExit];
             
