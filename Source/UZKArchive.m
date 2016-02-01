@@ -401,7 +401,7 @@ NS_DESIGNATED_INITIALIZER
             for (UZKFileInfo *info in fileInfo) {
                 @autoreleasepool {
                     if (progress) {
-                        progress(info, bytesDecompressed / totalSize.floatValue);
+                        progress(info, bytesDecompressed / totalSize.doubleValue);
                     }
                     
                     if (![self locateFileInZip:info.filename error:&strongError]) {
