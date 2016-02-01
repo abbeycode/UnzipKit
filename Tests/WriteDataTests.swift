@@ -6,8 +6,13 @@
 //  Copyright (c) 2015 Abbey Code. All rights reserved.
 //
 
-import Cocoa
+#if os(iOS)
+    import UIKit
+#else
+    import Cocoa
+#endif
 import XCTest
+import UnzipKit
 
 class WriteDataTests: UZKArchiveTestCase {
 
@@ -407,6 +412,7 @@ class WriteDataTests: UZKArchiveTestCase {
         XCTAssertEqualWithAccuracy(actualDate, expectedDate, accuracy: 30, "Incorrect default date value written to file")
     }
     
+    #if os(OSX)
     func testWriteData_PasswordProtected() {
         let testFilePaths = [String](nonZipTestFilePaths as! Set<String>).sort(<)
         var testFileData = [NSData]()
@@ -451,5 +457,6 @@ class WriteDataTests: UZKArchiveTestCase {
         let success = extractArchive(testArchiveURL, password: password)
         XCTAssertTrue(success, "Failed to extract the archive on the command line")
     }
+    #endif
     
 }

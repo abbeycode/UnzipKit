@@ -13,7 +13,7 @@ matrix:
     - xcode_workspace: UnzipKit.xcworkspace
       xcode_scheme: UnzipKit-iOS
       xcode_sdk: iphonesimulator
-      env: Name=iOS
+      env: Name=iOS; TEST=test
 
     - xcode_workspace: UnzipKitDemo/UnzipKitDemo.xcworkspace
       xcode_scheme: UnzipKitDemo

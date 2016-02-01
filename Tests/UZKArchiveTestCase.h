@@ -6,7 +6,14 @@
 //  Copyright (c) 2015 Abbey Code. All rights reserved.
 //
 
+#import "TargetConditionals.h"
+
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h>
+#else
 #import <Cocoa/Cocoa.h>
+#endif
+
 #import <XCTest/XCTest.h>
 
 
@@ -31,12 +38,14 @@
 - (NSString *)randomDirectoryName;
 - (NSString *)randomDirectoryWithPrefix:(NSString *)prefix;
 
-- (NSInteger)numberOfOpenFileHandles;
-
 - (NSURL *)emptyTextFileOfLength:(NSUInteger)fileSize;
+
+#if !TARGET_OS_IPHONE
+- (NSInteger)numberOfOpenFileHandles;
 - (NSURL *)archiveWithFiles:(NSArray *)fileURLs;
 - (BOOL)extractArchive:(NSURL *)url password:(NSString *)password;
 - (NSURL *)largeArchive;
+#endif
 
 - (NSUInteger)crcOfFile:(NSURL *)url;
 - (NSUInteger)crcOfTestFile:(NSString *)filename;

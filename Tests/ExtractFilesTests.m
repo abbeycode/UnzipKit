@@ -235,6 +235,7 @@
     }
 }
 
+#if !TARGET_OS_IPHONE
 - (void)testExtractZip64_LargeFile
 {
     NSArray<NSURL*> *urls = @[
@@ -254,13 +255,13 @@
     BOOL success = [archive extractFilesTo:extractURL.path
                                  overwrite:NO
                                   progress:
-#if DEBUG
+# if DEBUG
                     ^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
                         NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
                     }
-#else
+# else
                     nil
-#endif
+# endif
                                      error:&error];
     
     XCTAssertTrue(success, @"Extract large Zip64 archive failed");
@@ -304,13 +305,13 @@
     BOOL success = [archive extractFilesTo:extractURL.path
                                  overwrite:NO
                                   progress:
-#if DEBUG
+# if DEBUG
                     ^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
                         NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
                     }
-#else
+# else
                     nil
-#endif
+# endif
                                      error:&error];
     
     XCTAssertTrue(success, @"Extract numerous Zip64 archive failed");
@@ -322,6 +323,7 @@
     XCTAssertNil(error, @"Failed to list extracted files from numerous Zip64 archive");
     XCTAssertEqual(extractedFiles.count, numberOfFiles, @"Incorrect number of files extracted from numerous Zip64 archive");
 }
+#endif
 
 
 @end

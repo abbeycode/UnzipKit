@@ -49,6 +49,25 @@
 		969993961BE3BA89003D18DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 969993951BE3BA89003D18DA /* libz.tbd */; };
 		969993971BE3BA9C003D18DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 969993951BE3BA89003D18DA /* libz.tbd */; };
 		969993981BE3BB0C003D18DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 969993951BE3BA89003D18DA /* libz.tbd */; };
+		96B10B2F1C5FF3AA003A692C /* ExtractFilesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40C71B5861F4004C128E /* ExtractFilesTests.m */; };
+		96B10B301C5FF453003A692C /* UZKArchiveTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 96FCC8401B306CDD00726AC7 /* UZKArchiveTestCase.m */; };
+		96B10B311C5FF771003A692C /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 969993951BE3BA89003D18DA /* libz.tbd */; };
+		96B10B321C5FF898003A692C /* Test Data in Resources */ = {isa = PBXBuildFile; fileRef = 96EA65BF1A40BF1A00685B6D /* Test Data */; };
+		96B10B331C5FF8D5003A692C /* CommentsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40DB1B586401004C128E /* CommentsTests.m */; };
+		96B10B341C5FF8DE003A692C /* DeleteFileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40D51B586380004C128E /* DeleteFileTests.m */; };
+		96B10B351C5FF8E7003A692C /* ErrorHandlingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40D71B5863A9004C128E /* ErrorHandlingTests.m */; };
+		96B10B361C5FF8F4003A692C /* ExtractBufferedDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40CF1B5862A0004C128E /* ExtractBufferedDataTests.m */; };
+		96DC15C11C5FFAA800B71F19 /* DTPerformanceSession.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96DC15C01C5FFAA800B71F19 /* DTPerformanceSession.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		96DC15C31C5FFC7600B71F19 /* ListFilenamesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40C31B58619C004C128E /* ListFilenamesTests.m */; };
+		96DC15C41C5FFC8100B71F19 /* ListFileInfoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40C51B5861C3004C128E /* ListFileInfoTests.m */; };
+		96DC15C51C5FFC8A00B71F19 /* ModesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40BF1B585FDE004C128E /* ModesTests.m */; };
+		96DC15C71C5FFE8C00B71F19 /* PasswordProtectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40D11B586310004C128E /* PasswordProtectionTests.m */; };
+		96DC15C81C5FFE9900B71F19 /* PerformOnDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40CD1B586277004C128E /* PerformOnDataTests.m */; };
+		96DC15C91C5FFEE900B71F19 /* PerformOnFilesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40CB1B586253004C128E /* PerformOnFilesTests.m */; };
+		96DC15CA1C5FFEF300B71F19 /* PropertyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40DF1B586490004C128E /* PropertyTests.m */; };
+		96DC15CB1C5FFEFE00B71F19 /* WriteBufferedDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40D31B586345004C128E /* WriteBufferedDataTests.m */; };
+		96DC15CC1C5FFF2300B71F19 /* WriteDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961A9BB41B306881007C4C6B /* WriteDataTests.swift */; };
+		96DC15CD1C60008400B71F19 /* ZipFileDetectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40C11B586132004C128E /* ZipFileDetectionTests.m */; };
 		96EA65A41A40AEAE00685B6D /* UnzipKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65A31A40AEAE00685B6D /* UnzipKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96EA65AA1A40AEAE00685B6D /* UnzipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96EA659E1A40AEAE00685B6D /* UnzipKit.framework */; };
 		96EA65BC1A40B2EC00685B6D /* UZKArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65BA1A40B2EC00685B6D /* UZKArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -64,6 +83,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		96B10B2A1C5FF337003A692C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 96EA65951A40AEAE00685B6D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 964547831B31B76C00202B28;
+			remoteInfo = "UnzipKit-iOS";
+		};
 		96EA65AB1A40AEAE00685B6D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 96EA65951A40AEAE00685B6D /* Project object */;
@@ -96,6 +122,8 @@
 		968C40DD1B58642C004C128E /* MultithreadingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MultithreadingTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		968C40DF1B586490004C128E /* PropertyTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = PropertyTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		969993951BE3BA89003D18DA /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		96B10B251C5FF337003A692C /* UnzipKitTests-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "UnzipKitTests-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		96DC15C01C5FFAA800B71F19 /* DTPerformanceSession.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DTPerformanceSession.framework; path = Library/Frameworks/DTPerformanceSession.framework; sourceTree = DEVELOPER_DIR; };
 		96EA659E1A40AEAE00685B6D /* UnzipKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = UnzipKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		96EA65A21A40AEAE00685B6D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		96EA65A31A40AEAE00685B6D /* UnzipKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = UnzipKit.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -127,6 +155,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		96B10B221C5FF337003A692C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96B10B311C5FF771003A692C /* libz.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		96EA659A1A40AEAE00685B6D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -139,6 +175,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96DC15C11C5FFAA800B71F19 /* DTPerformanceSession.framework in Frameworks */,
 				96EA65AA1A40AEAE00685B6D /* UnzipKit.framework in Frameworks */,
 				969993981BE3BB0C003D18DA /* libz.tbd in Frameworks */,
 			);
@@ -163,6 +200,7 @@
 			children = (
 				96EA659E1A40AEAE00685B6D /* UnzipKit.framework */,
 				96EA65A91A40AEAE00685B6D /* UnzipKitTests.xctest */,
+				96B10B251C5FF337003A692C /* UnzipKitTests-iOS.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -256,6 +294,7 @@
 		96EA65F61A40C86200685B6D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				96DC15C01C5FFAA800B71F19 /* DTPerformanceSession.framework */,
 				969993951BE3BA89003D18DA /* libz.tbd */,
 			);
 			name = Frameworks;
@@ -316,6 +355,24 @@
 			productName = "UnzipKit-iOS";
 			productType = "com.apple.product-type.framework";
 		};
+		96B10B241C5FF337003A692C /* UnzipKitTests-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 96B10B2C1C5FF337003A692C /* Build configuration list for PBXNativeTarget "UnzipKitTests-iOS" */;
+			buildPhases = (
+				96B10B211C5FF337003A692C /* Sources */,
+				96B10B221C5FF337003A692C /* Frameworks */,
+				96B10B231C5FF337003A692C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				96B10B2B1C5FF337003A692C /* PBXTargetDependency */,
+			);
+			name = "UnzipKitTests-iOS";
+			productName = "UnzipKitTests-iOS";
+			productReference = 96B10B251C5FF337003A692C /* UnzipKitTests-iOS.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		96EA659D1A40AEAE00685B6D /* UnzipKit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 96EA65B41A40AEAE00685B6D /* Build configuration list for PBXNativeTarget "UnzipKit" */;
@@ -359,12 +416,15 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftMigration = 0700;
-				LastSwiftUpdateCheck = 0700;
+				LastSwiftUpdateCheck = 0720;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Abbey Code";
 				TargetAttributes = {
 					964547831B31B76C00202B28 = {
 						CreatedOnToolsVersion = 6.3.2;
+					};
+					96B10B241C5FF337003A692C = {
+						CreatedOnToolsVersion = 7.2;
 					};
 					96EA659D1A40AEAE00685B6D = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -389,6 +449,7 @@
 				96EA659D1A40AEAE00685B6D /* UnzipKit */,
 				96EA65A81A40AEAE00685B6D /* UnzipKitTests */,
 				964547831B31B76C00202B28 /* UnzipKit-iOS */,
+				96B10B241C5FF337003A692C /* UnzipKitTests-iOS */,
 			);
 		};
 /* End PBXProject section */
@@ -398,6 +459,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		96B10B231C5FF337003A692C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96B10B321C5FF898003A692C /* Test Data in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -429,6 +498,29 @@
 				964547A01B31B87900202B28 /* unzip.c in Sources */,
 				964547A11B31B87E00202B28 /* zip.c in Sources */,
 				964547A21B31B88200202B28 /* mztools.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		96B10B211C5FF337003A692C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96B10B351C5FF8E7003A692C /* ErrorHandlingTests.m in Sources */,
+				96DC15C41C5FFC8100B71F19 /* ListFileInfoTests.m in Sources */,
+				96DC15C91C5FFEE900B71F19 /* PerformOnFilesTests.m in Sources */,
+				96B10B2F1C5FF3AA003A692C /* ExtractFilesTests.m in Sources */,
+				96DC15CB1C5FFEFE00B71F19 /* WriteBufferedDataTests.m in Sources */,
+				96DC15C71C5FFE8C00B71F19 /* PasswordProtectionTests.m in Sources */,
+				96B10B361C5FF8F4003A692C /* ExtractBufferedDataTests.m in Sources */,
+				96DC15CD1C60008400B71F19 /* ZipFileDetectionTests.m in Sources */,
+				96DC15C31C5FFC7600B71F19 /* ListFilenamesTests.m in Sources */,
+				96DC15C51C5FFC8A00B71F19 /* ModesTests.m in Sources */,
+				96DC15CC1C5FFF2300B71F19 /* WriteDataTests.swift in Sources */,
+				96B10B331C5FF8D5003A692C /* CommentsTests.m in Sources */,
+				96B10B341C5FF8DE003A692C /* DeleteFileTests.m in Sources */,
+				96B10B301C5FF453003A692C /* UZKArchiveTestCase.m in Sources */,
+				96DC15CA1C5FFEF300B71F19 /* PropertyTests.m in Sources */,
+				96DC15C81C5FFE9900B71F19 /* PerformOnDataTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,6 +566,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		96B10B2B1C5FF337003A692C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 964547831B31B76C00202B28 /* UnzipKit-iOS */;
+			targetProxy = 96B10B2A1C5FF337003A692C /* PBXContainerItemProxy */;
+		};
 		96EA65AC1A40AEAE00685B6D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 96EA659D1A40AEAE00685B6D /* UnzipKit */;
@@ -528,6 +625,63 @@
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		96B10B2D1C5FF337003A692C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.UnzipKitTests-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/UnzipKitTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Wno-gnu-statement-expression",
+					"-Wno-non-modular-include-in-framework-module",
+					"-Wno-reserved-id-macro",
+					"-Wno-nullable-to-nonnull-conversion",
+					"-Wno-pointer-arith",
+					"-Wno-cast-qual",
+				);
+			};
+			name = Debug;
+		};
+		96B10B2E1C5FF337003A692C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.UnzipKitTests-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/UnzipKitTests-Bridging-Header.h";
+				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Wno-everything",
+				);
 			};
 			name = Release;
 		};
@@ -721,6 +875,15 @@
 			buildConfigurations = (
 				964547971B31B76C00202B28 /* Debug */,
 				964547981B31B76C00202B28 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		96B10B2C1C5FF337003A692C /* Build configuration list for PBXNativeTarget "UnzipKitTests-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				96B10B2D1C5FF337003A692C /* Debug */,
+				96B10B2E1C5FF337003A692C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

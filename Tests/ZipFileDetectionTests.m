@@ -64,6 +64,7 @@
     XCTAssertFalse(pathIsZip, @"Missing file is reported as a zip");
 }
 
+#if !TARGET_OS_IPHONE
 - (void)testPathIsAZip_FileHandleLeaks
 {
     NSURL *smallFileURL = [self emptyTextFileOfLength:1];
@@ -87,6 +88,7 @@
     
     XCTAssertEqualWithAccuracy(initialFileCount, finalFileCount, 5, @"File descriptors were left open");
 }
+#endif
 
 #pragma mark - By URL
 
@@ -132,6 +134,7 @@
     XCTAssertFalse(urlIsZip, @"Missing file is reported as a zip");
 }
 
+#if !TARGET_OS_IPHONE
 - (void)testURLIsAZip_FileHandleLeaks
 {
     NSURL *smallFileURL = [self emptyTextFileOfLength:1];
@@ -155,5 +158,6 @@
     
     XCTAssertEqualWithAccuracy(initialFileCount, finalFileCount, 5, @"File descriptors were left open");
 }
+#endif
 
 @end

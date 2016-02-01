@@ -75,6 +75,7 @@
     XCTAssertEqual(fileIndex, expectedFiles.count, @"Incorrect number of files encountered");
 }
 
+#if !TARGET_OS_IPHONE
 - (void)testPerformOnData_FileMoved
 {
     NSURL *largeArchiveURL = [self largeArchive];
@@ -169,6 +170,7 @@
     XCTAssertTrue(success, @"Failed to read files");
     XCTAssertNil(error, @"Error reading files: %@", error);
 }
+#endif
 
 
 @end

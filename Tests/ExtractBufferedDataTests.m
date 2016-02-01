@@ -45,6 +45,7 @@
                   @"File extracted in buffer not returned correctly");
 }
 
+#if !TARGET_OS_IPHONE
 - (void)testExtractBufferedData_VeryLarge
 {
     DTSendSignalFlag("Begin creating text file", DT_START_SIGNAL, TRUE);
@@ -77,9 +78,9 @@
                                                   error:&error
                                                  action:
                     ^(NSData *dataChunk, CGFloat percentDecompressed) {
-#if DEBUG
+# if DEBUG
                         NSLog(@"Decompressed: %f%%", percentDecompressed);
-#endif
+# endif
                         [deflated writeData:dataChunk];
                     }];
     
@@ -95,6 +96,7 @@
     
     XCTAssertTrue([fileData isEqualToData:deflatedData], @"Data didn't restore correctly");
 }
+#endif
 
 
 @end

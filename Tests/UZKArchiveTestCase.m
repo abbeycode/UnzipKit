@@ -162,6 +162,32 @@ static NSDateFormatter *testFileInfoDateFormatter;
     return [NSString stringWithFormat:@"%@ %@", prefix, [self randomDirectoryName]];
 }
 
+- (NSURL *)emptyTextFileOfLength:(NSUInteger)fileSize
+{
+    NSURL *resultURL = [self.tempDirectory URLByAppendingPathComponent:
+                        [NSString stringWithFormat:@"%@.txt", [[NSProcessInfo processInfo] globallyUniqueString]]];
+    
+    [[NSFileManager defaultManager] createFileAtPath:(NSString *__nonnull)resultURL.path
+                                            contents:nil
+                                          attributes:nil];
+    
+    NSError *error = nil;
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingToURL:resultURL
+                                                                 error:&error];
+    XCTAssertNil(error, @"Error creating file handle for URL: %@", resultURL);
+    
+    NSData *emptyByte = [@"\x01" dataUsingEncoding:NSUTF8StringEncoding];
+    
+    [fileHandle writeData:emptyByte];
+    [fileHandle seekToFileOffset:fileSize];
+    [fileHandle writeData:emptyByte];
+    [fileHandle closeFile];
+    
+    return resultURL;
+}
+
+#if !TARGET_OS_IPHONE
+
 - (NSInteger)numberOfOpenFileHandles {
     int pid = [[NSProcessInfo processInfo] processIdentifier];
     NSPipe *pipe = [NSPipe pipe];
@@ -185,30 +211,6 @@ static NSDateFormatter *testFileInfoDateFormatter;
 //    NSLog(@"LSOF result: %ld", result);
     
     return result;
-}
-
-- (NSURL *)emptyTextFileOfLength:(NSUInteger)fileSize
-{
-    NSURL *resultURL = [self.tempDirectory URLByAppendingPathComponent:
-                        [NSString stringWithFormat:@"%@.txt", [[NSProcessInfo processInfo] globallyUniqueString]]];
-    
-    [[NSFileManager defaultManager] createFileAtPath:(NSString *__nonnull)resultURL.path
-                                            contents:nil
-                                          attributes:nil];
-    
-    NSError *error = nil;
-    NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingToURL:resultURL
-                                                                 error:&error];
-    XCTAssertNil(error, @"Error creating file handle for URL: %@", resultURL);
-    
-    NSData *emptyByte = [@"\x01" dataUsingEncoding:NSUTF8StringEncoding];
-    
-    [fileHandle writeData:emptyByte];
-    [fileHandle seekToFileOffset:fileSize];
-    [fileHandle writeData:emptyByte];
-    [fileHandle closeFile];
-    
-    return resultURL;
 }
 
 - (NSURL *)archiveWithFiles:(NSArray *)fileURLs
@@ -312,6 +314,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
                                                name:[NSString stringWithFormat:@"Large Archive %ld", archiveNumber++]];
     return largeArchiveURL;
 }
+
+#endif
 
 - (NSUInteger)crcOfFile:(NSURL *)url
 {
