@@ -473,9 +473,12 @@ NS_DESIGNATED_INITIALIZER
 
 					
 					if (!extractSuccess) {
-						[self assignError:&strongError code:UZKErrorCodeOutputError
-								   detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error extracting current file (%d) '%@'", @"Detailed error string"),
-										   strongError, info.filename]];
+						[self assignError:&strongError code:strongError.code
+								   detail:strongError.localizedDescription];
+                        
+                        // Remove the directory we were going to unzip to if it fails.
+                        [fm removeItemAtURL:defalatedDirectoryURL
+                                      error:nil];
 						return;
 					}
 					
