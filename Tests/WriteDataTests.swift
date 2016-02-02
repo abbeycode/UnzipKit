@@ -54,7 +54,7 @@ class WriteDataTests: UZKArchiveTestCase {
             XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
-            index++;
+            index += 1;
         })
         
         XCTAssert(index > 0, "No data iterated through")
@@ -98,7 +98,7 @@ class WriteDataTests: UZKArchiveTestCase {
             XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
-            index++;
+            index += 1;
         })
         
         XCTAssert(index > 0, "No data iterated through")
@@ -142,7 +142,7 @@ class WriteDataTests: UZKArchiveTestCase {
             XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
-            index++;
+            index += 1;
         })
         
         XCTAssert(index > 0, "No data iterated through")
@@ -180,7 +180,7 @@ class WriteDataTests: UZKArchiveTestCase {
             XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
-            forwardIndex++;
+            forwardIndex += 1;
         })
         
         XCTAssert(index > 0, "No data iterated through")
@@ -224,7 +224,7 @@ class WriteDataTests: UZKArchiveTestCase {
             XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
-            index++;
+            index += 1;
         })
         
         XCTAssert(index > 0, "No data iterated through")
@@ -262,7 +262,7 @@ class WriteDataTests: UZKArchiveTestCase {
             XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
-            forwardIndex++;
+            forwardIndex += 1;
         })
         
         XCTAssert(index > 0, "No data iterated through")
@@ -302,7 +302,7 @@ class WriteDataTests: UZKArchiveTestCase {
             XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
-            index++;
+            index += 1;
         })
         
         XCTAssert(index > 0, "No data iterated through")
@@ -448,7 +448,7 @@ class WriteDataTests: UZKArchiveTestCase {
             XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
-            ++index
+            index += 1;
         })
         
         XCTAssertEqual(index, testFilePaths.count, "Not all files enumerated")
