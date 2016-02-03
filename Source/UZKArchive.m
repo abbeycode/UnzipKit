@@ -441,8 +441,8 @@ NS_DESIGNATED_INITIALIZER
 					}
 
 					
-					NSURL *defalatedDirectoryURL = [NSURL fileURLWithPath:destinationDirectory];
-					NSURL *deflatedFileURL = [defalatedDirectoryURL URLByAppendingPathComponent:info.filename];
+					NSURL *deflatedDirectoryURL = [NSURL fileURLWithPath:destinationDirectory];
+					NSURL *deflatedFileURL = [deflatedDirectoryURL URLByAppendingPathComponent:info.filename];
 					NSString *path = deflatedFileURL.path;
 					
 					BOOL createSuccess = [fm createFileAtPath:path
@@ -459,7 +459,7 @@ NS_DESIGNATED_INITIALIZER
 					__block double dataLength = 0;
 					
 					NSError *handleError = nil;
-					NSFileHandle *deflated = [NSFileHandle fileHandleForWritingToURL:deflatedFileURL
+					NSFileHandle *deflatedFileHandle = [NSFileHandle fileHandleForWritingToURL:deflatedFileURL
 																			   error:&handleError];
 
 					
@@ -468,7 +468,11 @@ NS_DESIGNATED_INITIALIZER
 																 action:
 									^(NSData *dataChunk, CGFloat percentDecompressed) {
 										dataLength += dataChunk.length;
-										[deflated writeData:dataChunk];
+                                        bytesDecompressed += dataChunk.length;
+										[deflatedFileHandle writeData:dataChunk];
+                                        if (progress) {
+                                            progress(info, bytesDecompressed / totalSize.doubleValue);
+                                        }
 									}];
 
 					
@@ -477,14 +481,13 @@ NS_DESIGNATED_INITIALIZER
 								   detail:strongError.localizedDescription];
                         
                         // Remove the directory we were going to unzip to if it fails.
-                        [fm removeItemAtURL:defalatedDirectoryURL
+                        [fm removeItemAtURL:deflatedDirectoryURL
                                       error:nil];
+                        [deflatedFileHandle closeFile];
 						return;
 					}
 					
-					[deflated closeFile];
-					
-                    bytesDecompressed += dataLength;
+					[deflatedFileHandle closeFile];
                 }
             }
         }
