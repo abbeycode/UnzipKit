@@ -293,7 +293,7 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *
  *  @return An NSData object containing the bytes of the file, or nil if an error was encountered
  */
-- (NSData *)extractData:(UZKFileInfo *)fileInfo
+- (nullable NSData *)extractData:(UZKFileInfo *)fileInfo
                progress:(nullable void (^)(CGFloat percentDecompressed))progress
                   error:(NSError **)error;
 
@@ -309,7 +309,7 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *
  *  @return An NSData object containing the bytes of the file, or nil if an error was encountered
  */
-- (NSData *)extractDataFromFile:(NSString *)filePath
+- (nullable NSData *)extractDataFromFile:(NSString *)filePath
                        progress:(nullable void (^)(CGFloat percentDecompressed))progress
                           error:(NSError **)error;
 
