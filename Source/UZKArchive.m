@@ -496,7 +496,7 @@ NS_DESIGNATED_INITIALIZER
     return success;
 }
 
-- (NSData *)extractData:(UZKFileInfo *)fileInfo
+- (nullable NSData *)extractData:(UZKFileInfo *)fileInfo
                progress:(void (^)(CGFloat))progress
                   error:(NSError * __autoreleasing*)error
 {
@@ -505,7 +505,7 @@ NS_DESIGNATED_INITIALIZER
                                error:error];
 }
 
-- (NSData *)extractDataFromFile:(NSString *)filePath
+- (nullable NSData *)extractDataFromFile:(NSString *)filePath
                        progress:(void (^)(CGFloat))progress
                           error:(NSError * __autoreleasing*)error
 {
