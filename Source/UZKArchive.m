@@ -455,19 +455,22 @@ NS_DESIGNATED_INITIALIZER
 										   strongError, info.filename]];
 						return;
 					}
-					
-					__block double dataLength = 0;
-					
-					NSError *handleError = nil;
+										
 					NSFileHandle *deflatedFileHandle = [NSFileHandle fileHandleForWritingToURL:deflatedFileURL
-																			   error:&handleError];
+                                                                                         error:&strongError];
 
 					
+                    if (!deflatedFileHandle) {
+                        [self assignError:&strongError code:UZKErrorCodeFileHandleCreate
+                                   detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error creating file handle for writing to URL: %@", @"Detailed error string"),
+                                           deflatedFileURL]];
+                        return;
+                    }
+                    
 					BOOL extractSuccess = [self extractBufferedDataFromFile:info.filename
 																  error:&strongError
 																 action:
 									^(NSData *dataChunk, CGFloat percentDecompressed) {
-										dataLength += dataChunk.length;
                                         bytesDecompressed += dataChunk.length;
 										[deflatedFileHandle writeData:dataChunk];
                                         if (progress) {
