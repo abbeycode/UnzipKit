@@ -497,8 +497,8 @@ NS_DESIGNATED_INITIALIZER
 }
 
 - (nullable NSData *)extractData:(UZKFileInfo *)fileInfo
-               progress:(void (^)(CGFloat))progress
-                  error:(NSError * __autoreleasing*)error
+                        progress:(void (^)(CGFloat))progress
+                           error:(NSError * __autoreleasing*)error
 {
     return [self extractDataFromFile:fileInfo.filename
                             progress:progress
@@ -506,8 +506,8 @@ NS_DESIGNATED_INITIALIZER
 }
 
 - (nullable NSData *)extractDataFromFile:(NSString *)filePath
-                       progress:(void (^)(CGFloat))progress
-                          error:(NSError * __autoreleasing*)error
+                                progress:(void (^)(CGFloat))progress
+                                   error:(NSError * __autoreleasing*)error
 {
     NSMutableData *result = [NSMutableData data];
     
