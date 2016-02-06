@@ -294,8 +294,8 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *  @return An NSData object containing the bytes of the file, or nil if an error was encountered
  */
 - (nullable NSData *)extractData:(UZKFileInfo *)fileInfo
-               progress:(nullable void (^)(CGFloat percentDecompressed))progress
-                  error:(NSError **)error;
+                        progress:(nullable void (^)(CGFloat percentDecompressed))progress
+                           error:(NSError **)error;
 
 /**
  *  Unarchive a single file from the archive into memory
@@ -310,8 +310,8 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *  @return An NSData object containing the bytes of the file, or nil if an error was encountered
  */
 - (nullable NSData *)extractDataFromFile:(NSString *)filePath
-                       progress:(nullable void (^)(CGFloat percentDecompressed))progress
-                          error:(NSError **)error;
+                                progress:(nullable void (^)(CGFloat percentDecompressed))progress
+                                   error:(NSError **)error;
 
 /**
  *  Loops through each file in the archive into memory, allowing you to perform an action using its info
