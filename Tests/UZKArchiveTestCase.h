@@ -22,7 +22,7 @@
 @property BOOL testFailed;
 
 @property NSURL *tempDirectory;
-@property NSMutableDictionary *testFileURLs;
+@property NSMutableDictionary<NSString*, NSURL*> *testFileURLs;
 @property NSMutableDictionary *unicodeFileURLs;
 @property NSSet *nonZipTestFilePaths;
 @property NSSet *nonZipUnicodeFilePaths;
