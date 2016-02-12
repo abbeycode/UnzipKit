@@ -496,18 +496,18 @@ NS_DESIGNATED_INITIALIZER
     return success;
 }
 
-- (NSData *)extractData:(UZKFileInfo *)fileInfo
-               progress:(void (^)(CGFloat))progress
-                  error:(NSError * __autoreleasing*)error
+- (nullable NSData *)extractData:(UZKFileInfo *)fileInfo
+                        progress:(void (^)(CGFloat))progress
+                           error:(NSError * __autoreleasing*)error
 {
     return [self extractDataFromFile:fileInfo.filename
                             progress:progress
                                error:error];
 }
 
-- (NSData *)extractDataFromFile:(NSString *)filePath
-                       progress:(void (^)(CGFloat))progress
-                          error:(NSError * __autoreleasing*)error
+- (nullable NSData *)extractDataFromFile:(NSString *)filePath
+                                progress:(void (^)(CGFloat))progress
+                                   error:(NSError * __autoreleasing*)error
 {
     NSMutableData *result = [NSMutableData data];
     
