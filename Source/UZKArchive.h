@@ -114,10 +114,6 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
      *  The CRC given up front doesn't match the calculated CRC
      */
     UZKErrorCodePreCRCMismatch = 114,
-    /**
-     *  The CRC given up front doesn't match the calculated CRC
-     */
-    UZKErrorCodeFileHandleCreate = 115,
 };
 
 /**

@@ -461,8 +461,8 @@ NS_DESIGNATED_INITIALIZER
 
 					
                     if (!deflatedFileHandle) {
-                        [self assignError:&strongError code:UZKErrorCodeFileHandleCreate
-                                   detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error creating file handle for writing to URL: %@", @"Detailed error string"),
+                        [self assignError:&strongError code:UZKErrorCodeOutputError
+                                   detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error writing to file: %@", @"Detailed error string"),
                                            deflatedFileURL]];
                         return;
                     }
