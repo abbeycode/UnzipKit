@@ -478,6 +478,7 @@ NS_DESIGNATED_INITIALIZER
                                         }
                                     }];
 
+                    [deflatedFileHandle closeFile];
                     
                     if (!extractSuccess) {
                         [self assignError:&strongError code:strongError.code
@@ -486,11 +487,8 @@ NS_DESIGNATED_INITIALIZER
                         // Remove the directory we were going to unzip to if it fails.
                         [fm removeItemAtURL:deflatedDirectoryURL
                                       error:nil];
-                        [deflatedFileHandle closeFile];
                         return;
                     }
-                    
-                    [deflatedFileHandle closeFile];
                 }
             }
         }
