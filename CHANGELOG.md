@@ -1,5 +1,11 @@
 # UnzipKit CHANGELOG
 
+## 1.7
+
+* Reduced memory footprint while using `extractFilesTo:overwrite:progress:error` to extract an archive. This method now uses a buffer to read and write the archived file, rather than reading it into memory up front (Issue #27, PR #28). Thanks, @brendand!
+* Added `nullable` attribute to the return types of the `extractData...` methods, so they play more nicely with Swift's error handling (PR #29). Thanks, @amosavian!
+* Fixed a compiler warning that started showing up in Xcode 7.3 (Issue #26). Thanks again, @brendand!
+
 ## 1.6.2
 
 Fixed some issues when extracting files from an archive:

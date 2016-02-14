@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "UnzipKit"
-  s.version          = "1.6.2"
+  s.version          = "1.7"
   s.summary          = "An Objective-C zlib wrapper for compressing and decompressing Zip files"
   s.license          = "BSD"
   s.homepage         = "https://github.com/abbeycode/UnzipKit"
