@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/abbeycode/UnzipKit.svg?branch=master)](https://travis-ci.org/abbeycode/UnzipKit)
+[![Documentation Coverage](https://img.shields.io/cocoapods/metrics/doc-percent/UnzipKit.svg)](http://cocoadocs.org/docsets/UnzipKit)
 
 # About
 
