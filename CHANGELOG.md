@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.7.1
+
+Fixed a bug causing the UZKErrorDomain constant not to be visible from client projects using Swift 2.2 (Xcode 7.3) or greater (Issue #33)
+
 ## 1.7
 
 * Reduced memory footprint while using `extractFilesTo:overwrite:progress:error` to extract an archive. This method now uses a buffer to read and write the archived file, rather than reading it into memory up front (Issue #27, PR #28). Thanks, @brendand!
