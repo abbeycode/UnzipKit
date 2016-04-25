@@ -10,9 +10,10 @@
 #import "UZKFileInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
-@interface UZKArchive : NSObject
 
 extern NSString *UZKErrorDomain;
+
+@interface UZKArchive : NSObject
 
 /**
  *  Defines the various error codes that the listing and extraction methods return.
