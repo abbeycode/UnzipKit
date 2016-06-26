@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.7.2
+
+Fixed the nullability attributes of the 'password' argument in the UZKArchive intitializers (Issue #34 - Thanks, Mohammad!)
+
 ## 1.7.1
 
 Fixed a bug causing the UZKErrorDomain constant not to be visible from client projects using Swift 2.2 (Xcode 7.3) or greater (Issue #33)
