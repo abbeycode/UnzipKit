@@ -1,3 +1,4 @@
 platform :ios, '7.0'
 
+target 'UnzipKitDemo'
 pod "UnzipKit", :path => ".."
