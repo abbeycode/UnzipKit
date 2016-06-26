@@ -10,7 +10,10 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = "7.0"
   s.osx.deployment_target = "10.9"
   s.requires_arc = 'Source/**/*'
-  s.source_files = "Source/**/*.{m,h}",
-                   "Lib/**/*.{c,h}"
-  s.library          = "z"
+  s.public_header_files  = "Source/*[^Private].h"
+  s.private_header_files = "Source/UZKFileInfo_Private.h",
+                           "Lib/**/*.h"
+  s.source_files         = "Source/**/*.{m,h}",
+                           "Lib/**/*.{c,h}"
+  s.library              = "z"
 end
