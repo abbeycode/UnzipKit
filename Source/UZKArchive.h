@@ -166,7 +166,7 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *
  *  @return Returns a UZKArchive object, or nil if the path isn't reachable
  */
-+ (nullable instancetype)zipArchiveAtPath:(NSString *)filePath password:(NSString *)password __deprecated_msg("Use -initWithPath:password:error: instead");
++ (nullable instancetype)zipArchiveAtPath:(NSString *)filePath password:(nullable NSString *)password __deprecated_msg("Use -initWithPath:password:error: instead");
 
 /**
  *  DEPRECATED: Creates and returns an archive at the given URL, with a given password
@@ -176,7 +176,7 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *
  *  @return Returns a UZKArchive object, or nil if the URL isn't reachable
  */
-+ (nullable instancetype)zipArchiveAtURL:(NSURL *)fileURL password:(NSString *)password __deprecated_msg("Use -initWithURL:password:error: instead");;
++ (nullable instancetype)zipArchiveAtURL:(NSURL *)fileURL password:(nullable NSString *)password __deprecated_msg("Use -initWithURL:password:error: instead");;
 
 
 /**
@@ -208,7 +208,7 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *
  *  @return Returns a UZKArchive object, or nil if the path isn't reachable
  */
-- (nullable instancetype)initWithPath:(NSString *)filePath password:(NSString *)password error:(NSError **)error;
+- (nullable instancetype)initWithPath:(NSString *)filePath password:(nullable NSString *)password error:(NSError **)error;
 
 /**
  *  Creates and returns an archive at the given URL, with a given password
@@ -219,7 +219,7 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *
  *  @return Returns a UZKArchive object, or nil if the URL isn't reachable
  */
-- (nullable instancetype)initWithURL:(NSURL *)fileURL password:(NSString *)password error:(NSError **)error;
+- (nullable instancetype)initWithURL:(NSURL *)fileURL password:(nullable NSString *)password error:(NSError **)error;
 
 
 
