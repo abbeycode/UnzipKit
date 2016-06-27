@@ -1,4 +1,5 @@
 platform :ios, '7.0'
 
-target 'UnzipKitDemo'
-pod "UnzipKit", :path => ".."
+target 'UnzipKitDemo' do
+    pod "UnzipKit", :path => ".."
+end
