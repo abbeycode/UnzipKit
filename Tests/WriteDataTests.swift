@@ -468,16 +468,13 @@ class WriteDataTests: UZKArchiveTestCase {
         let tempZipFileURL = self.archiveWithFiles([textFileURL])
         NSLog("Original ZIP file: \(tempZipFileURL.path!)")
         
-        // Write that zip file to contents of a DMG
+        // Write that zip file to contents of a DMG and mount it
         let dmgSourceFolderURL = tempDirURL.URLByAppendingPathComponent("DMGSource")
         try! NSFileManager.defaultManager().createDirectoryAtURL(dmgSourceFolderURL, withIntermediateDirectories: true, attributes: [:])
         try! NSFileManager.defaultManager().copyItemAtURL(tempZipFileURL, toURL: dmgSourceFolderURL.URLByAppendingPathComponent(tempZipFileURL.lastPathComponent!))
         let dmgURL = tempDirURL.URLByAppendingPathComponent("testWriteData_ExternalVolume.dmg")
-        createDMG(path: dmgURL, source: dmgSourceFolderURL)
+        let mountPoint = createAndMountDMG(path: dmgURL, source: dmgSourceFolderURL)!
         NSLog("Disk image: \(dmgURL.path!)")
-        
-        // Mount the DMG
-        let mountPoint = mountDMG(dmgURL)!
         
         // Update a file from the archive with overwrite=YES
         let externalVolumeZipURL = NSURL(fileURLWithPath: mountPoint).URLByAppendingPathComponent(tempZipFileURL.lastPathComponent!)
@@ -498,36 +495,24 @@ class WriteDataTests: UZKArchiveTestCase {
         XCTAssertTrue(writeSuccessful, "Failed to update archive on external volume")
     }
     
-    func createDMG(path dmgURL: NSURL, source: NSURL) {
+    func createAndMountDMG(path dmgURL: NSURL, source: NSURL) -> String? {
         let task = NSTask()
         task.launchPath = "/usr/bin/hdiutil"
         task.arguments = ["create",
                           "-fs", "HFS+",
                           "-volname", dmgURL.URLByDeletingPathExtension!.lastPathComponent!,
                           "-srcfolder", source.path!,
+                          "-attach", "-plist",
                           dmgURL.path!]
+        
+        let outputPipe = NSPipe()
+        task.standardOutput = outputPipe
 
         task.launch()
         task.waitUntilExit()
         
         if task.terminationStatus != 0 {
-            NSLog("Failed to create DMG: \(dmgURL.path!)");
-        }
-    }
-    
-    func mountDMG(dmgURL: NSURL) -> String? {
-        let task = NSTask()
-        task.launchPath = "/usr/bin/hdiutil"
-        task.arguments = ["attach", "-plist", dmgURL.path!]
-        
-        let outputPipe = NSPipe()
-        task.standardOutput = outputPipe
-        
-        task.launch()
-        task.waitUntilExit()
-        
-        if task.terminationStatus != 0 {
-            NSLog("Failed to attach DMG: \(dmgURL.path!)");
+            NSLog("Failed to create and mount DMG: \(dmgURL.path!)");
             return nil
         }
         
@@ -536,7 +521,7 @@ class WriteDataTests: UZKArchiveTestCase {
         let outputPlist = try! NSPropertyListSerialization.propertyListWithData(outputData,
                                                                                 options: .Immutable,
                                                                                 format: nil)
-
+        
         let entities = outputPlist["system-entities"] as AnyObject as! [[String:AnyObject]]
         let hfsEntry = entities.filter{ $0["content-hint"] as! String == "Apple_HFS" }.first!
         let mountPoint = hfsEntry["mount-point"] as! String
