@@ -475,7 +475,10 @@ class WriteDataTests: UZKArchiveTestCase {
         let dmgURL = tempDirURL.URLByAppendingPathComponent("testWriteData_ExternalVolume.dmg")
         let mountPoint = createAndMountDMG(path: dmgURL, source: dmgSourceFolderURL)!
         NSLog("Disk image: \(dmgURL.path!)")
-        
+        defer {
+            unmountDMG(mountPoint)
+        }
+
         // Update a file from the archive with overwrite=YES
         let externalVolumeZipURL = NSURL(fileURLWithPath: mountPoint).URLByAppendingPathComponent(tempZipFileURL.lastPathComponent!)
         let archive = try! UZKArchive(URL: externalVolumeZipURL)
@@ -489,8 +492,6 @@ class WriteDataTests: UZKArchiveTestCase {
             NSLog("Error writing data to archive on external volume: \(error)")
             writeSuccessful = false
         }
-        
-        unmountDMG(mountPoint)
         
         XCTAssertTrue(writeSuccessful, "Failed to update archive on external volume")
     }
