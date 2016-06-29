@@ -10,6 +10,7 @@
 
 #import "UZKFileInfo.h"
 #import "UZKFileInfo_Private.h"
+#import "NSURL+UnzipKitExtensions.h"
 
 
 NSString *UZKErrorDomain = @"UZKErrorDomain";
@@ -1247,21 +1248,48 @@ compressionMethod:(UZKCompressionMethod)method
     }
     
     // Replace old file with the new (trimmed) one
-    NSError *replaceError = nil;
     NSURL *newURL;
     
-    BOOL result = [fm replaceItemAtURL:(NSURL* _Nonnull)self.fileURL
-                         withItemAtURL:temporaryURL
-                        backupItemName:nil
-                               options:NSFileManagerItemReplacementWithoutDeletingBackupItem
-                      resultingItemURL:&newURL
-                                 error:&replaceError];
+    NSString *temporaryVolume = temporaryURL.volumeName;
+    NSString *destinationVolume = self.fileURL.volumeName;
     
-    if (!result)
-    {
-        return [self assignError:error code:UZKErrorCodeDeleteFile
-                          detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Failed to replace the old archive with the new one, after deleting '%@' from it", @"Detailed error string"),
-                                  filenameToDelete]];
+    if ([temporaryVolume isEqualToString:destinationVolume]) {
+        NSError *replaceError = nil;
+        BOOL result = [fm replaceItemAtURL:(NSURL* _Nonnull)self.fileURL
+                             withItemAtURL:temporaryURL
+                            backupItemName:nil
+                                   options:NSFileManagerItemReplacementWithoutDeletingBackupItem
+                          resultingItemURL:&newURL
+                                     error:&replaceError];
+        
+        if (!result)
+        {
+            return [self assignError:error code:UZKErrorCodeDeleteFile
+                              detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Failed to replace the old archive with the new one, after deleting '%@' from it", @"Detailed error string"),
+                                      filenameToDelete]
+                           underlyer:replaceError];
+        }
+    } else {
+        newURL = self.fileURL;
+        
+        NSError *deleteError = nil;
+        if (![fm removeItemAtURL:(NSURL* _Nonnull)newURL
+                           error:&deleteError]) {
+            return [self assignError:error code:UZKErrorCodeDeleteFile
+                              detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Failed to remove archive from external volume '%@', after deleting '%@' from a new version to replace it", @"Detailed error string"),
+                                      destinationVolume, filenameToDelete]
+                           underlyer:deleteError];
+        }
+        
+        NSError *copyError = nil;
+        if (![fm copyItemAtURL:temporaryURL
+                         toURL:(NSURL* _Nonnull)newURL
+                         error:&copyError]) {
+            return [self assignError:error code:UZKErrorCodeDeleteFile
+                              detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Failed to copy archive to external volume '%@', after deleting '%@' from it", @"Detailed error string"),
+                                      destinationVolume, filenameToDelete]
+                           underlyer:copyError];
+        }
     }
     
     NSError *bookmarkError = nil;

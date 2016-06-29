@@ -26,6 +26,10 @@
 		964547A91B31B8B700202B28 /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C41A40C44300685B6D /* ioapi.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		964547AA1B31B8BB00202B28 /* mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C61A40C44300685B6D /* mztools.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		964547AB1B31B8C000202B28 /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65CA1A40C44300685B6D /* zip.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		965CF00A1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 965CF0081D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h */; };
+		965CF00B1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 965CF0081D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h */; };
+		965CF00C1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 965CF0091D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m */; };
+		965CF00D1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 965CF0091D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m */; };
 		966A971C1A4A1F2A003597AA /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C81A40C44300685B6D /* unzip.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		966A971D1A4A2348003597AA /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65CA1A40C44300685B6D /* zip.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		966A971E1A4A234C003597AA /* mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C61A40C44300685B6D /* mztools.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -107,6 +111,8 @@
 		961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZKArchiveTestCase.h; sourceTree = "<group>"; };
 		9630C0371C6D27A4000693EE /* ExtractDataTests_Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtractDataTests_Swift.swift; sourceTree = "<group>"; };
 		963603521BFB7F6500BF0C4F /* UZKFileInfo_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZKFileInfo_Private.h; sourceTree = "<group>"; };
+		965CF0081D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+UnzipKitExtensions.h"; sourceTree = "<group>"; };
+		965CF0091D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+UnzipKitExtensions.m"; sourceTree = "<group>"; };
 		968C40BF1B585FDE004C128E /* ModesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ModesTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		968C40C11B586132004C128E /* ZipFileDetectionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZipFileDetectionTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		968C40C31B58619C004C128E /* ListFilenamesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ListFilenamesTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -187,6 +193,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		965CF0071D241A0100C80A88 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				965CF0081D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h */,
+				965CF0091D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		96EA65941A40AEAE00685B6D = {
 			isa = PBXGroup;
 			children = (
@@ -211,6 +226,7 @@
 		96EA65A01A40AEAE00685B6D /* UnzipKit */ = {
 			isa = PBXGroup;
 			children = (
+				965CF0071D241A0100C80A88 /* Extensions */,
 				96EA65A31A40AEAE00685B6D /* UnzipKit.h */,
 				96EA65BA1A40B2EC00685B6D /* UZKArchive.h */,
 				96EA65BB1A40B2EC00685B6D /* UZKArchive.m */,
@@ -320,6 +336,7 @@
 				964547A81B31B8B200202B28 /* crypt.h in Headers */,
 				964547AA1B31B8BB00202B28 /* mztools.h in Headers */,
 				964547AB1B31B8C000202B28 /* zip.h in Headers */,
+				965CF00B1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,6 +353,7 @@
 				966A97201A4A2354003597AA /* crypt.h in Headers */,
 				966A971E1A4A234C003597AA /* mztools.h in Headers */,
 				966A971D1A4A2348003597AA /* zip.h in Headers */,
+				965CF00A1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -502,6 +520,7 @@
 				964547A01B31B87900202B28 /* unzip.c in Sources */,
 				964547A11B31B87E00202B28 /* zip.c in Sources */,
 				964547A21B31B88200202B28 /* mztools.c in Sources */,
+				965CF00D1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -539,6 +558,7 @@
 				96EA65DE1A40C44300685B6D /* unzip.c in Sources */,
 				96EA65E11A40C44300685B6D /* zip.c in Sources */,
 				96EA65DB1A40C44300685B6D /* mztools.c in Sources */,
+				965CF00C1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
