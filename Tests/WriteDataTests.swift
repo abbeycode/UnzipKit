@@ -500,6 +500,7 @@ class WriteDataTests: UZKArchiveTestCase {
         task.launchPath = "/usr/bin/hdiutil"
         task.arguments = ["create",
                           "-fs", "HFS+",
+                          "-format", "UDRW",
                           "-volname", dmgURL.URLByDeletingPathExtension!.lastPathComponent!,
                           "-srcfolder", source.path!,
                           "-attach", "-plist",
@@ -528,6 +529,7 @@ class WriteDataTests: UZKArchiveTestCase {
         
         return mountPoint
     }
+    //TODO: Make the volume read/write
     
     func unmountDMG(mountPoint: String) {
         let task = NSTask()
