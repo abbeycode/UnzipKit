@@ -482,7 +482,8 @@ class WriteDataTests: UZKArchiveTestCase {
         // Update a file from the archive with overwrite=YES
         let externalVolumeZipURL = NSURL(fileURLWithPath: mountPoint).URLByAppendingPathComponent(tempZipFileURL.lastPathComponent!)
         let archive = try! UZKArchive(URL: externalVolumeZipURL)
-        let newTextData = "This is the new text".dataUsingEncoding(NSUTF8StringEncoding)
+        let newText = "This is the new text"
+        let newTextData = newText.dataUsingEncoding(NSUTF8StringEncoding)
         var writeSuccessful = true
         do {
             try archive.writeData(newTextData!, filePath: textFileName, fileDate: nil,
@@ -494,6 +495,12 @@ class WriteDataTests: UZKArchiveTestCase {
         }
         
         XCTAssertTrue(writeSuccessful, "Failed to update archive on external volume")
+        
+        let archivedFileData = try! archive.extractDataFromFile(textFileName, progress: nil)
+        XCTAssertNotNil(archivedFileData, "No data extracted from file in archive on external volume")
+        
+        let archivedText = NSString(data: archivedFileData, encoding: NSUTF8StringEncoding)!
+        XCTAssertEqual(archivedText, newText, "Incorrect text extracted from archive on external volume")
     }
     
     func createAndMountDMG(path dmgURL: NSURL, source: NSURL) -> String? {
