@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.8
+
+Fixed a bug causing delete operations (including writing updated data with the `overwrite` flag set to true) to fail when the archive resides on an external volume (Issue #36)
+
 ## 1.7.2
 
 Fixed the nullability attributes of the 'password' argument in the UZKArchive intitializers (Issue #34 - Thanks, Mohammad!)
