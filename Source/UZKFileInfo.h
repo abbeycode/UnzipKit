@@ -56,12 +56,12 @@ typedef NS_ENUM(NSInteger, UZKCompressionMethod) {
 /**
  *  Size of the uncompressed file
  */
-@property (readonly) NSUInteger uncompressedSize;
+@property (readonly) unsigned long long int uncompressedSize;
 
 /**
  *  Size of the compressed file
  */
-@property (readonly) NSUInteger compressedSize;
+@property (readonly) unsigned long long int compressedSize;
 
 /**
  *  YES if the file will be continued of the next volume

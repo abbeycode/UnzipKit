@@ -1739,7 +1739,7 @@ compressionMethod:(UZKCompressionMethod)method
 }
 
 
-- (NSData *)readFile:(NSString *)filePath length:(NSUInteger)length error:(NSError * __autoreleasing*)error {
+- (NSData *)readFile:(NSString *)filePath length:(unsigned long long int)length error:(NSError * __autoreleasing*)error {
     if (![self openFile:error]) {
         return nil;
     }
