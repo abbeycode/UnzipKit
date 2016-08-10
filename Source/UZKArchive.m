@@ -621,7 +621,7 @@ NS_DESIGNATED_INITIALIZER
             return;
         }
         
-        if (![self openFile:error]) {
+        if (![self openFile:innerError]) {
             return;
         }
         
