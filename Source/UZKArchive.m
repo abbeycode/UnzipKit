@@ -1139,8 +1139,8 @@ compressionMethod:(UZKCompressionMethod)method
                                           currentFileName, filePath]];
             }
             
-            // This malloc may fail if file very large
-            void *buf = malloc(unzipInfo.compressed_size);
+            // This malloc may fail if the file is very large
+            void *buf = malloc((unsigned long)unzipInfo.compressed_size);
             if ((buf == NULL) && (unzipInfo.compressed_size != 0)) {
                 free(extrafield);
                 free(commentary);
@@ -1196,7 +1196,7 @@ compressionMethod:(UZKCompressionMethod)method
             }
             
             // Close destination archive
-            err = zipCloseFileInZipRaw(destZip, unzipInfo.uncompressed_size, unzipInfo.crc);
+            err = zipCloseFileInZipRaw64(destZip, unzipInfo.uncompressed_size, unzipInfo.crc);
             if (err != UNZ_OK) {
                 free(extrafield);
                 free(commentary);
@@ -1744,7 +1744,7 @@ compressionMethod:(UZKCompressionMethod)method
         return nil;
     }
     
-    NSMutableData *data = [NSMutableData dataWithLength:length];
+    NSMutableData *data = [NSMutableData dataWithLength:(NSUInteger)length];
     int bytes = unzReadCurrentFile(self.unzFile, data.mutableBytes, (unsigned)length);
     
     if (bytes < 0) {
