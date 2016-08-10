@@ -1059,9 +1059,9 @@ compressionMethod:(UZKCompressionMethod)method
     {
         // Get zipped file info
         char filename_inzip[FILE_IN_ZIP_MAX_NAME_LENGTH];
-        unz_file_info unzipInfo;
+        unz_file_info64 unzipInfo;
         
-        err = unzGetCurrentFileInfo(sourceZip, &unzipInfo, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
+        err = unzGetCurrentFileInfo64(sourceZip, &unzipInfo, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
         if (err != UNZ_OK) {
             return [self assignError:error code:UZKErrorCodeDeleteFile
                               detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error getting file info of file while deleting %@ (%d)", @"Detailed error string"),
@@ -1090,7 +1090,7 @@ compressionMethod:(UZKCompressionMethod)method
                                           currentFileName, filePath]];
             }
             
-            err = unzGetCurrentFileInfo(sourceZip, &unzipInfo, filename_inzip, FILE_IN_ZIP_MAX_NAME_LENGTH, extrafield, unzipInfo.size_file_extra, commentary, unzipInfo.size_file_comment);
+            err = unzGetCurrentFileInfo64(sourceZip, &unzipInfo, filename_inzip, FILE_IN_ZIP_MAX_NAME_LENGTH, extrafield, unzipInfo.size_file_extra, commentary, unzipInfo.size_file_comment);
             if (err != UNZ_OK) {
                 free(extrafield);
                 free(commentary);
@@ -1656,9 +1656,9 @@ compressionMethod:(UZKCompressionMethod)method
 
 - (UZKFileInfo *)currentFileInZipInfo:(NSError * __autoreleasing*)error {
     char filename_inzip[FILE_IN_ZIP_MAX_NAME_LENGTH];
-    unz_file_info file_info;
+    unz_file_info64 file_info;
     
-    int err = unzGetCurrentFileInfo(self.unzFile, &file_info, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
+    int err = unzGetCurrentFileInfo64(self.unzFile, &file_info, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
     if (err != UNZ_OK) {
         [self assignError:error code:UZKErrorCodeArchiveNotFound
                    detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error getting current file info (%d)", @"Detailed error string"),
@@ -1707,9 +1707,9 @@ compressionMethod:(UZKCompressionMethod)method
 - (BOOL)openFile:(NSError * __autoreleasing*)error
 {
     char filename_inzip[FILE_IN_ZIP_MAX_NAME_LENGTH];
-    unz_file_info file_info;
+    unz_file_info64 file_info;
     
-    int err = unzGetCurrentFileInfo(self.unzFile, &file_info, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
+    int err = unzGetCurrentFileInfo64(self.unzFile, &file_info, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
     if (err != UNZ_OK) {
         return [self assignError:error code:UZKErrorCodeInternalError
                           detail:[NSString localizedStringWithFormat:NSLocalizedString(@"Error getting current file info for archive (%d)", @"Detailed error string"),
@@ -1720,6 +1720,12 @@ compressionMethod:(UZKCompressionMethod)method
     
     if (self.password) {
         passwordStr = [self.password cStringUsingEncoding:NSISOLatin1StringEncoding];
+    }
+    
+    if ([self isDeflate64:file_info]) {
+        return [self assignError:error
+                            code:UZKErrorCodeDeflate64
+                          detail:NSLocalizedString(@"Cannot open archive, since it was compressed using the Deflate64 algorithm", @"Error message")];
     }
     
     err = unzOpenCurrentFilePassword(self.unzFile, passwordStr);
@@ -1934,6 +1940,11 @@ compressionMethod:(UZKCompressionMethod)method
                                           @"UZKErrorCodePreCRCMismatch");
             break;
             
+        case UZKErrorCodeDeflate64:
+            errorName = NSLocalizedString(@"The archive was compressed with the Deflate64 method, which isn't supported",
+                                          @"UZKErrorCodeDeflate64");
+            break;
+            
         default:
             errorName = [NSString localizedStringWithFormat:
                          NSLocalizedString(@"Unknown error code: %ld", @"UnknownErrorCode"), errorCode];
@@ -2028,6 +2039,11 @@ compressionMethod:(UZKCompressionMethod)method
     }
     
     return NO;
+}
+
+- (BOOL)isDeflate64:(unz_file_info64)file_info
+{
+    return file_info.compression_method == 9;
 }
 
 

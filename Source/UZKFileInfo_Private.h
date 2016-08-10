@@ -18,6 +18,6 @@
  *
  *  @return an instance of UZKFileInfo
  */
-+ (instancetype) fileInfo:(unz_file_info *)fileInfo filename:(NSString *)filename;
++ (instancetype) fileInfo:(unz_file_info64 *)fileInfo filename:(NSString *)filename;
 
 @end

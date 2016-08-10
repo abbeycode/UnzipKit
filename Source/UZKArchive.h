@@ -115,6 +115,11 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
      *  The CRC given up front doesn't match the calculated CRC
      */
     UZKErrorCodePreCRCMismatch = 114,
+    
+    /**
+     *  The zip is compressed using Deflate64 (compression method 9), which isn't supported
+     */
+    UZKErrorCodeDeflate64 = 115,
 };
 
 /**

@@ -22,11 +22,11 @@
 #pragma mark - Initialization
 
 
-+ (instancetype) fileInfo:(unz_file_info *)fileInfo filename:(NSString *)filename {
++ (instancetype) fileInfo:(unz_file_info64 *)fileInfo filename:(NSString *)filename {
     return [[UZKFileInfo alloc] initWithFileInfo:fileInfo filename:filename];
 }
 
-- (instancetype)initWithFileInfo:(unz_file_info *)fileInfo filename:(NSString *)filename
+- (instancetype)initWithFileInfo:(unz_file_info64 *)fileInfo filename:(NSString *)filename
 {
     if ((self = [super init])) {
         _filename = filename;
