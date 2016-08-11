@@ -4,17 +4,20 @@
 find -E . -iregex '.*\.(m|h|mm)$' \
     -not -path "./UnzipKitTests*" \
     -print0 \
-| xargs -0 genstrings -o Resources/en.lproj
+| xargs -0 genstrings -o Resources/base.lproj
+
+# This shouldn't be generated. I'm not sure why it is, since all strings have UnzipKit as their table. Delete it
+rm Resources/base.lproj/Localizable.strings
 
 # Define file and temp file
-LOCALIZE=./Resources/en.lproj/Localizable.strings
-UTF8=./Resources/en.lproj/LocalizableUTF8.txt
+LOCALIZE=./Resources/base.lproj/UnzipKit.strings
+UTF8=./Resources/base.lproj/UnzipKitUTF8.txt
 
 # Convert file encoding from UTF-16 to UTF-8
 iconv -f UTF-16LE -t UTF-8 $LOCALIZE >$UTF8
 mv $UTF8 $LOCALIZE
 
-# Replace all \\n tokens in the temp file with a newline (used in comments)
+# Replace all \\n tokens in the file with a newline (used in comments)
 sed -i "" 's_\\\\n_\
 _g' $LOCALIZE
 

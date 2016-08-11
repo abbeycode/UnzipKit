@@ -16,6 +16,9 @@
 /* UZKErrorCodeArchiveNotFound */
 "Can't open archive" = "Can't open archive";
 
+/* Error message */
+"Cannot open archive, since it was compressed using the Deflate64 algorithm (method ID 9)" = "Cannot open archive, since it was compressed using the Deflate64 algorithm (method ID 9)";
+
 /* Detailed error string */
 "Error allocating buffer for file %@ while deleting %@" = "Error allocating buffer for file %1$@ while deleting %2$@";
 
@@ -36,9 +39,6 @@
 
 /* Detailed error string */
 "Error closing %@ in source zip while deleting %@ (%d)" = "Error closing %1$@ in source zip while deleting %2$@ (%3$d)";
-
-/* Detailed error string */
-"Error closing current file '%@'" = "Error closing current file '%@'";
 
 /* Detailed error string */
 "Error closing current file during buffered read" = "Error closing current file during buffered read";
@@ -116,9 +116,6 @@
 "Error opening file '%@' for write (%d)" = "Error opening file '%1$@' for write (%2$d)";
 
 /* Detailed error string */
-"Error opening password protected archive (%d)" = "Error opening password protected archive (%d)";
-
-/* Detailed error string */
 "Error opening the destination file while deleting %@" = "Error opening the destination file while deleting %@";
 
 /* Detailed error string */
@@ -179,9 +176,6 @@
 "Failed to create new file for archive: %@" = "Failed to create new file for archive: %@";
 
 /* Detailed error string */
-"Failed to extract file to path: %@" = "Failed to extract file to path: %@";
-
-/* Detailed error string */
 "Failed to locate '%@' in archive during buffered read" = "Failed to locate '%@' in archive during buffered read";
 
 /* Detailed error string */
@@ -206,7 +200,7 @@
 "File '%@' not found in archive" = "File '%@' not found in archive";
 
 /* CRC mismatch error detail */
-"Incorrect CRC provided\n%010lu given\n%010lu calculated" = "Incorrect CRC provided\n%1$lu given\n%2$lu calculated";
+"Incorrect CRC provided\n%@ given\n%@ calculated" = "Incorrect CRC provided\n%1$@ given\n%2$@ calculated";
 
 /* UZKErrorCodeInvalidPassword */
 "Incorrect password provided" = "Incorrect password provided";
@@ -222,6 +216,9 @@
 
 /* UZKErrorCodeParameterError */
 "Parameter error" = "Parameter error";
+
+/* UZKErrorCodeDeflate64 */
+"The archive was compressed with the Deflate64 method, which isn't supported" = "The archive was compressed with the Deflate64 method, which isn't supported";
 
 /* UZKErrorCodePreCRCMismatch */
 "The CRC given up front doesn't match the calculated CRC" = "The CRC given up front doesn't match the calculated CRC";
