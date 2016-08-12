@@ -25,6 +25,8 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     UZKFileModeAppend
 };
 
+static NSBundle *_resources;
+
 
 
 @interface UZKArchive ()
@@ -85,6 +87,15 @@ NS_DESIGNATED_INITIALIZER
 
 
 #pragma mark - Initializers
+
++ (void)initialize {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSBundle *mainBundle = [NSBundle mainBundle];
+        NSURL *resourcesURL = [mainBundle URLForResource:@"UnzipKitResources" withExtension:@"bundle"];
+        _resources = [NSBundle bundleWithURL:resourcesURL];
+    });
+}
 
 - (instancetype)init {
     NSAssert(NO, @"Do not use -init. Use one of the -initWithPath or -initWithURL variants", nil);
@@ -321,7 +332,7 @@ NS_DESIGNATED_INITIALIZER
         int err = unzGetGlobalInfo(self.unzFile, &gi);
         if (err != UNZ_OK) {
             [self assignError:innerError code:UZKErrorCodeArchiveNotFound
-                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error getting global info (%d)", @"UnzipKit", @"Detailed error string"),
+                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting global info (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                err]];
             return;
         }
@@ -332,7 +343,7 @@ NS_DESIGNATED_INITIALIZER
         
         if (err != UNZ_OK) {
             [self assignError:innerError code:UZKErrorCodeFileNavigationError
-                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error going to first file in archive (%d)", @"UnzipKit", @"Detailed error string"),
+                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error going to first file in archive (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                err]];
             return;
         }
@@ -352,7 +363,7 @@ NS_DESIGNATED_INITIALIZER
             
             if (err != UNZ_OK) {
                 [self assignError:innerError code:UZKErrorCodeFileNavigationError
-                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error navigating to next file (%d)", @"UnzipKit", @"Detailed error string"),
+                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error navigating to next file (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                    err]];
                 return;
             }
@@ -407,7 +418,7 @@ NS_DESIGNATED_INITIALIZER
                     
                     if (![self locateFileInZip:info.filename error:&strongError]) {
                         [self assignError:&strongError code:UZKErrorCodeFileNotFoundInArchive
-                                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error locating file '%@' in archive", @"UnzipKit", @"Detailed error string"),
+                                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error locating file '%@' in archive", @"UnzipKit", _resources, @"Detailed error string"),
                                            info.filename]];
                         return;
                     }
@@ -430,13 +441,13 @@ NS_DESIGNATED_INITIALIZER
                                                                       error:error];
                         if (!directoriesCreated) {
                             [self assignError:&strongError code:UZKErrorCodeOutputError
-                                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Failed to create destination directory: %@", @"UnzipKit", @"Detailed error string"),
+                                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to create destination directory: %@", @"UnzipKit", _resources, @"Detailed error string"),
                                                extractDir]];
                             return;
                         }
                     } else if (!isDirectory) {
                         [self assignError:&strongError code:UZKErrorCodeOutputErrorPathIsAFile
-                                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Extract path exists, but is not a directory: %@", @"UnzipKit", @"Detailed error string"),
+                                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Extract path exists, but is not a directory: %@", @"UnzipKit", _resources, @"Detailed error string"),
                                            extractDir]];
                         return;
                     }
@@ -452,7 +463,7 @@ NS_DESIGNATED_INITIALIZER
 
                     if (!createSuccess) {
                         [self assignError:&strongError code:UZKErrorCodeOutputError
-                                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error creating current file (%d) '%@'", @"UnzipKit", @"Detailed error string"),
+                                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error creating current file (%d) '%@'", @"UnzipKit", _resources, @"Detailed error string"),
                                            strongError, info.filename]];
                         return;
                     }
@@ -463,7 +474,7 @@ NS_DESIGNATED_INITIALIZER
                     
                     if (!deflatedFileHandle) {
                         [self assignError:&strongError code:UZKErrorCodeOutputError
-                                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error writing to file: %@", @"UnzipKit", @"Detailed error string"),
+                                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error writing to file: %@", @"UnzipKit", _resources, @"Detailed error string"),
                                            deflatedFileURL]];
                         return;
                     }
@@ -582,7 +593,7 @@ NS_DESIGNATED_INITIALIZER
     return [self performOnFilesInArchive:^(UZKFileInfo *fileInfo, BOOL *stop) {
         if (![self locateFileInZip:fileInfo.filename error:error]) {
             [self assignError:error code:UZKErrorCodeFileNotFoundInArchive
-                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Failed to locate '%@' in archive during-perform on-data operation", @"UnzipKit", @"Detailed error string"),
+                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to locate '%@' in archive during-perform on-data operation", @"UnzipKit", _resources, @"Detailed error string"),
                                fileInfo.filename]];
             return;
         }
@@ -609,7 +620,7 @@ NS_DESIGNATED_INITIALIZER
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         if (![self locateFileInZip:filePath error:innerError]) {
             [self assignError:innerError code:UZKErrorCodeFileNotFoundInArchive
-                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Failed to locate '%@' in archive during buffered read", @"UnzipKit", @"Detailed error string"),
+                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to locate '%@' in archive during buffered read", @"UnzipKit", _resources, @"Detailed error string"),
                                filePath]];
             return;
         }
@@ -635,7 +646,7 @@ NS_DESIGNATED_INITIALIZER
                 
                 if (bytesRead < 0) {
                     [self assignError:innerError code:bytesRead
-                               detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Failed to read file %@ in zip", @"UnzipKit", @"Detailed error string"),
+                               detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to read file %@ in zip", @"UnzipKit", _resources, @"Detailed error string"),
                                        info.filename]];
                     return;
                 }
@@ -659,7 +670,7 @@ NS_DESIGNATED_INITIALIZER
             }
             
             [self assignError:innerError code:err
-                       detail:NSLocalizedStringFromTable(@"Error closing current file during buffered read", @"UnzipKit", @"Detailed error string")];
+                       detail:NSLocalizedStringFromTableInBundle(@"Error closing current file during buffered read", @"UnzipKit", _resources, @"Detailed error string")];
             return;
         }
     } inMode:UZKFileModeUnzip error:error];
@@ -963,7 +974,7 @@ compressionMethod:(UZKCompressionMethod)method
             return [self assignError:innerError
                                 code:UZKErrorCodePreCRCMismatch
                               detail:[NSString stringWithFormat:
-                                      NSLocalizedStringFromTable(@"Incorrect CRC provided\n%@ given\n%@ calculated", @"UnzipKit", @"CRC mismatch error detail"),
+                                      NSLocalizedStringFromTableInBundle(@"Incorrect CRC provided\n%@ given\n%@ calculated", @"UnzipKit", _resources, @"CRC mismatch error detail"),
                                       preCRCStr, calculatedCRCStr]];
         }
         
@@ -1003,7 +1014,7 @@ compressionMethod:(UZKCompressionMethod)method
     zipFile sourceZip = unzOpen(originalFilename);
     if (sourceZip == NULL) {
         return [self assignError:error code:UZKErrorCodeDeleteFile
-                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error opening the source file while deleting %@", @"UnzipKit", @"Detailed error string"),
+                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening the source file while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                   filePath]];
     }
     
@@ -1011,7 +1022,7 @@ compressionMethod:(UZKCompressionMethod)method
     if (destZip == NULL) {
         unzClose(sourceZip);
         return [self assignError:error code:UZKErrorCodeDeleteFile
-                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error opening the destination file while deleting %@", @"UnzipKit", @"Detailed error string"),
+                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening the destination file while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                   filePath]];
     }
     
@@ -1023,7 +1034,7 @@ compressionMethod:(UZKCompressionMethod)method
         zipClose(destZip, NULL);
         unzClose(sourceZip);
         return [self assignError:error code:UZKErrorCodeDeleteFile
-                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error getting the global info of the source file while deleting %@ (%d)", @"UnzipKit", @"Detailed error string"),
+                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting the global info of the source file while deleting %@ (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                   filePath, err]];
     }
     
@@ -1036,7 +1047,7 @@ compressionMethod:(UZKCompressionMethod)method
             zipClose(destZip, NULL);
             unzClose(sourceZip);
             return [self assignError:error code:UZKErrorCodeDeleteFile
-                              detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error reading the global comment of the source file while deleting %@", @"UnzipKit", @"Detailed error string"),
+                              detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error reading the global comment of the source file while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                       filePath]];
         }
         
@@ -1045,7 +1056,7 @@ compressionMethod:(UZKCompressionMethod)method
             unzClose(sourceZip);
             free(globalComment);
             return [self assignError:error code:UZKErrorCodeDeleteFile
-                              detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error reading the global comment of the source file while deleting %@ (wrong size)", @"UnzipKit", @"Detailed error string"),
+                              detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error reading the global comment of the source file while deleting %@ (wrong size)", @"UnzipKit", _resources, @"Detailed error string"),
                                       filePath]];
         }
     }
@@ -1066,7 +1077,7 @@ compressionMethod:(UZKCompressionMethod)method
         err = unzGetCurrentFileInfo64(sourceZip, &unzipInfo, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
         if (err != UNZ_OK) {
             return [self assignError:error code:UZKErrorCodeDeleteFile
-                              detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error getting file info of file while deleting %@ (%d)", @"UnzipKit", @"Detailed error string"),
+                              detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting file info of file while deleting %@ (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                       filePath, err]];
         }
         
@@ -1080,7 +1091,7 @@ compressionMethod:(UZKCompressionMethod)method
             char *extrafield = (char*)malloc(unzipInfo.size_file_extra);
             if ((extrafield == NULL) && (unzipInfo.size_file_extra != 0)) {
                 return [self assignError:error code:UZKErrorCodeDeleteFile
-                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error allocating extrafield info of %@ while deleting %@", @"UnzipKit", @"Detailed error string"),
+                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error allocating extrafield info of %@ while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath]];
             }
             
@@ -1088,7 +1099,7 @@ compressionMethod:(UZKCompressionMethod)method
             if ((commentary == NULL) && (unzipInfo.size_file_comment != 0)) {
                 free(extrafield);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
-                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error allocating commentary info of %@ while deleting %@", @"UnzipKit", @"Detailed error string"),
+                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error allocating commentary info of %@ while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath]];
             }
             
@@ -1097,7 +1108,7 @@ compressionMethod:(UZKCompressionMethod)method
                 free(extrafield);
                 free(commentary);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
-                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error reading extrafield and commentary info of %@ while deleting %@ (%d)", @"UnzipKit", @"Detailed error string"),
+                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error reading extrafield and commentary info of %@ while deleting %@ (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath, err]];
             }
             
@@ -1110,7 +1121,7 @@ compressionMethod:(UZKCompressionMethod)method
                 free(extrafield);
                 free(commentary);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
-                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error opening %@ for raw reading while deleting %@ (%d)", @"UnzipKit", @"Detailed error string"),
+                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening %@ for raw reading while deleting %@ (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath, err]];
             }
             
@@ -1119,7 +1130,7 @@ compressionMethod:(UZKCompressionMethod)method
                 free(extrafield);
                 free(commentary);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
-                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error getting size_local_extra for file while deleting %@", @"UnzipKit", @"Detailed error string"),
+                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting size_local_extra for file while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath]];
             }
             
@@ -1128,7 +1139,7 @@ compressionMethod:(UZKCompressionMethod)method
                 free(extrafield);
                 free(commentary);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
-                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error allocating local_extra for file %@ while deleting %@", @"UnzipKit", @"Detailed error string"),
+                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error allocating local_extra for file %@ while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath]];
             }
             
@@ -1137,7 +1148,7 @@ compressionMethod:(UZKCompressionMethod)method
                 free(commentary);
                 free(local_extra);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
-                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error getting local_extra for file %@ while deleting %@", @"UnzipKit", @"Detailed error string"),
+                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting local_extra for file %@ while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath]];
             }
             
@@ -1148,7 +1159,7 @@ compressionMethod:(UZKCompressionMethod)method
                 free(commentary);
                 free(local_extra);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
-                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error allocating buffer for file %@ while deleting %@", @"UnzipKit", @"Detailed error string"),
+                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error allocating buffer for file %@ while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath]];
             }
             
@@ -1160,7 +1171,7 @@ compressionMethod:(UZKCompressionMethod)method
                 free(local_extra);
                 free(buf);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
-                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error reading %@ into buffer while deleting %@", @"UnzipKit", @"Detailed error string"),
+                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error reading %@ into buffer while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath]];
             }
             
@@ -1181,7 +1192,7 @@ compressionMethod:(UZKCompressionMethod)method
                 free(local_extra);
                 free(buf);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
-                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error opening %@ in destination zip while deleting %@ (%d)", @"UnzipKit", @"Detailed error string"),
+                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening %@ in destination zip while deleting %@ (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath, err]];
             }
             
@@ -1193,7 +1204,7 @@ compressionMethod:(UZKCompressionMethod)method
                 free(local_extra);
                 free(buf);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
-                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error writing %@ to destination zip while deleting %@ (%d)", @"UnzipKit", @"Detailed error string"),
+                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error writing %@ to destination zip while deleting %@ (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath, err]];
             }
             
@@ -1205,7 +1216,7 @@ compressionMethod:(UZKCompressionMethod)method
                 free(local_extra);
                 free(buf);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
-                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error closing %@ in destination zip while deleting %@ (%d)", @"UnzipKit", @"Detailed error string"),
+                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error closing %@ in destination zip while deleting %@ (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath, err]];
             }
             
@@ -1217,7 +1228,7 @@ compressionMethod:(UZKCompressionMethod)method
                 free(local_extra);
                 free(buf);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
-                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error closing %@ in source zip while deleting %@ (%d)", @"UnzipKit", @"Detailed error string"),
+                                  detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error closing %@ in source zip while deleting %@ (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath, err]];
             }
             
@@ -1245,7 +1256,7 @@ compressionMethod:(UZKCompressionMethod)method
     {
         remove(tempFilename);
         return [self assignError:error code:UZKErrorCodeDeleteFile
-                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Failed to seek to the next file, while deleting %@ from the archive", @"UnzipKit", @"Detailed error string"),
+                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to seek to the next file, while deleting %@ from the archive", @"UnzipKit", _resources, @"Detailed error string"),
                                   filenameToDelete]];
     }
     
@@ -1267,7 +1278,7 @@ compressionMethod:(UZKCompressionMethod)method
         if (!result)
         {
             return [self assignError:error code:UZKErrorCodeDeleteFile
-                              detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Failed to replace the old archive with the new one, after deleting '%@' from it", @"UnzipKit", @"Detailed error string"),
+                              detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to replace the old archive with the new one, after deleting '%@' from it", @"UnzipKit", _resources, @"Detailed error string"),
                                       filenameToDelete]
                            underlyer:replaceError];
         }
@@ -1278,7 +1289,7 @@ compressionMethod:(UZKCompressionMethod)method
         if (![fm removeItemAtURL:(NSURL* _Nonnull)newURL
                            error:&deleteError]) {
             return [self assignError:error code:UZKErrorCodeDeleteFile
-                              detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Failed to remove archive from external volume '%@', after deleting '%@' from a new version to replace it", @"UnzipKit", @"Detailed error string"),
+                              detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to remove archive from external volume '%@', after deleting '%@' from a new version to replace it", @"UnzipKit", _resources, @"Detailed error string"),
                                       destinationVolume, filenameToDelete]
                            underlyer:deleteError];
         }
@@ -1288,7 +1299,7 @@ compressionMethod:(UZKCompressionMethod)method
                          toURL:(NSURL* _Nonnull)newURL
                          error:&copyError]) {
             return [self assignError:error code:UZKErrorCodeDeleteFile
-                              detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Failed to copy archive to external volume '%@', after deleting '%@' from it", @"UnzipKit", @"Detailed error string"),
+                              detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to copy archive to external volume '%@', after deleting '%@' from it", @"UnzipKit", _resources, @"Detailed error string"),
                                       destinationVolume, filenameToDelete]
                            underlyer:copyError];
         }
@@ -1299,7 +1310,7 @@ compressionMethod:(UZKCompressionMethod)method
                            error:&bookmarkError])
     {
         return [self assignError:error code:UZKErrorCodeDeleteFile
-                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Failed to store the new file bookmark to the archive after deleting '%@' from it: %@", @"UnzipKit", @"Detailed error string"),
+                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to store the new file bookmark to the archive after deleting '%@' from it: %@", @"UnzipKit", _resources, @"Detailed error string"),
                                   filenameToDelete, bookmarkError.localizedDescription]
                        underlyer:bookmarkError];
     }
@@ -1421,7 +1432,7 @@ compressionMethod:(UZKCompressionMethod)method
         
         if (err != ZIP_OK) {
             [self assignError:innerError code:UZKErrorCodeFileOpenForWrite
-                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error opening file '%@' for write (%d)", @"UnzipKit", @"Detailed error string"),
+                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening file '%@' for write (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                filePath, err]];
             return;
         }
@@ -1430,7 +1441,7 @@ compressionMethod:(UZKCompressionMethod)method
         err = write(&outCRC, innerError);
         if (err < 0) {
             [self assignError:innerError code:UZKErrorCodeFileWrite
-                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error writing to file  '%@' (%d)", @"UnzipKit", @"Detailed error string"),
+                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error writing to file  '%@' (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                filePath, err]];
             return;
         }
@@ -1438,7 +1449,7 @@ compressionMethod:(UZKCompressionMethod)method
         err = zipCloseFileInZipRaw(self.zipFile, 0, outCRC);
         if (err != ZIP_OK) {
             [self assignError:innerError code:UZKErrorCodeFileWrite
-                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error closing file '%@' for write (%d)", @"UnzipKit", @"Detailed error string"),
+                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error closing file '%@' for write (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                filePath, err]];
             return;
         }
@@ -1461,9 +1472,9 @@ compressionMethod:(UZKCompressionMethod)method
         NSString *message;
         
         if (self.mode == UZKFileModeUnzip) {
-            message = NSLocalizedStringFromTable(@"Unable to begin writing to the archive until all read operations have completed", @"UnzipKit", @"Detailed error string");
+            message = NSLocalizedStringFromTableInBundle(@"Unable to begin writing to the archive until all read operations have completed", @"UnzipKit", _resources, @"Detailed error string");
         } else {
-            message = NSLocalizedStringFromTable(@"Unable to begin reading from the archive until all write operations have completed", @"UnzipKit", @"Detailed error string");
+            message = NSLocalizedStringFromTableInBundle(@"Unable to begin reading from the archive until all write operations have completed", @"UnzipKit", _resources, @"Detailed error string");
         }
         
         return [self assignError:error code:UZKErrorCodeMixedModeAccess detail:message];
@@ -1471,7 +1482,7 @@ compressionMethod:(UZKCompressionMethod)method
     
     if (mode != UZKFileModeUnzip && self.openCount > 0) {
         return [self assignError:error code:UZKErrorCodeFileWrite
-                          detail:NSLocalizedStringFromTable(@"Attempted to write to the archive while another write operation is already in progress", @"UnzipKit", @"Detailed error string")];
+                          detail:NSLocalizedStringFromTableInBundle(@"Attempted to write to the archive while another write operation is already in progress", @"UnzipKit", _resources, @"Detailed error string")];
     }
     
     // Always initialize comment, so it can be read when the file is closed
@@ -1495,7 +1506,7 @@ compressionMethod:(UZKCompressionMethod)method
         case UZKFileModeUnzip: {
             if (![fm fileExistsAtPath:zipFile]) {
                 [self assignError:error code:UZKErrorCodeArchiveNotFound
-                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"No file found at path %@", @"UnzipKit", @"Detailed error string"),
+                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"No file found at path %@", @"UnzipKit", _resources, @"Detailed error string"),
                                    zipFile]];
                 return NO;
             }
@@ -1503,7 +1514,7 @@ compressionMethod:(UZKCompressionMethod)method
             self.unzFile = unzOpen(self.filename.UTF8String);
             if (self.unzFile == NULL) {
                 [self assignError:error code:UZKErrorCodeBadZipFile
-                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error opening zip file %@", @"UnzipKit", @"Detailed error string"),
+                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening zip file %@", @"UnzipKit", _resources, @"Detailed error string"),
                                    zipFile]];
                 return NO;
             }
@@ -1511,7 +1522,7 @@ compressionMethod:(UZKCompressionMethod)method
             int err = unzGoToFirstFile(self.unzFile);
             if (err != UNZ_OK) {
                 [self assignError:error code:UZKErrorCodeFileNavigationError
-                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error going to first file in archive (%d)", @"UnzipKit", @"Detailed error string"),
+                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error going to first file in archive (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                    err]];
                 return NO;
             }
@@ -1546,7 +1557,7 @@ compressionMethod:(UZKCompressionMethod)method
                 
                 if (![[NSData data] writeToFile:zipFile options:NSDataWritingAtomic error:&createFileError]) {
                     return [self assignError:error code:UZKErrorCodeFileOpenForWrite
-                                      detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Failed to create new file for archive: %@", @"UnzipKit", @"Detailed error string"),
+                                      detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to create new file for archive: %@", @"UnzipKit", _resources, @"Detailed error string"),
                                               createFileError.localizedDescription]
                                    underlyer:createFileError];
                 }
@@ -1556,7 +1567,7 @@ compressionMethod:(UZKCompressionMethod)method
                                        error:&bookmarkError])
                 {
                     return [self assignError:error code:UZKErrorCodeFileOpenForWrite
-                                      detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error creating bookmark to new archive file: %@", @"UnzipKit", @"Detailed error string"),
+                                      detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error creating bookmark to new archive file: %@", @"UnzipKit", _resources, @"Detailed error string"),
                                               bookmarkError.localizedDescription]
                                    underlyer:bookmarkError];
                 }
@@ -1567,7 +1578,7 @@ compressionMethod:(UZKCompressionMethod)method
             self.zipFile = zipOpen(self.filename.UTF8String, appendStatus);
             if (self.zipFile == NULL) {
                 [self assignError:error code:UZKErrorCodeArchiveNotFound
-                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error opening zip file for write: %@", @"UnzipKit", @"Detailed error string"),
+                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening zip file for write: %@", @"UnzipKit", _resources, @"Detailed error string"),
                                    zipFile]];
                 return NO;
             }
@@ -1605,7 +1616,7 @@ compressionMethod:(UZKCompressionMethod)method
             err = unzClose(self.unzFile);
             if (err != UNZ_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError
-                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error closing file in archive after read (%d)", @"UnzipKit", @"Detailed error string"),
+                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error closing file in archive after read (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                    err]];
                 closeSucceeded = NO;
             }
@@ -1619,7 +1630,7 @@ compressionMethod:(UZKCompressionMethod)method
             err = zipClose(self.zipFile, cmt);
             if (err != ZIP_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError
-                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error closing file in archive after create (%d)", @"UnzipKit", @"Detailed error string"),
+                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error closing file in archive after create (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                    err]];
                 closeSucceeded = NO;
             }
@@ -1633,7 +1644,7 @@ compressionMethod:(UZKCompressionMethod)method
             err= zipClose(self.zipFile, cmt);
             if (err != ZIP_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError
-                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error closing file in archive after append (%d)", @"UnzipKit", @"Detailed error string"),
+                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error closing file in archive after append (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                    err]];
                 closeSucceeded = NO;
             }
@@ -1663,7 +1674,7 @@ compressionMethod:(UZKCompressionMethod)method
     int err = unzGetCurrentFileInfo64(self.unzFile, &file_info, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
     if (err != UNZ_OK) {
         [self assignError:error code:UZKErrorCodeArchiveNotFound
-                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error getting current file info (%d)", @"UnzipKit", @"Detailed error string"),
+                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting current file info (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                            err]];
         return nil;
     }
@@ -1677,7 +1688,7 @@ compressionMethod:(UZKCompressionMethod)method
     
     if (!filePosValue) {
         return [self assignError:error code:UZKErrorCodeFileNotFoundInArchive
-                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"No file position found for '%@'", @"UnzipKit", @"Detailed error string"),
+                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"No file position found for '%@'", @"UnzipKit", _resources, @"Detailed error string"),
                                   fileNameInZip]];
     }
     
@@ -1688,13 +1699,13 @@ compressionMethod:(UZKCompressionMethod)method
     
     if (err == UNZ_END_OF_LIST_OF_FILE) {
         return [self assignError:error code:UZKErrorCodeFileNotFoundInArchive
-                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"File '%@' not found in archive", @"UnzipKit", @"Detailed error string"),
+                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"File '%@' not found in archive", @"UnzipKit", _resources, @"Detailed error string"),
                                   fileNameInZip]];
     }
 
     if (err != UNZ_OK) {
         return [self assignError:error code:err
-                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error seeking to file position (%d)", @"UnzipKit", @"Detailed error string"),
+                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error seeking to file position (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                   err]];
     }
     
@@ -1714,7 +1725,7 @@ compressionMethod:(UZKCompressionMethod)method
     int err = unzGetCurrentFileInfo64(self.unzFile, &file_info, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
     if (err != UNZ_OK) {
         return [self assignError:error code:UZKErrorCodeInternalError
-                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error getting current file info for archive (%d)", @"UnzipKit", @"Detailed error string"),
+                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting current file info for archive (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                   err]];
     }
     
@@ -1727,13 +1738,13 @@ compressionMethod:(UZKCompressionMethod)method
     if ([self isDeflate64:file_info]) {
         return [self assignError:error
                             code:UZKErrorCodeDeflate64
-                          detail:NSLocalizedStringFromTable(@"Cannot open archive, since it was compressed using the Deflate64 algorithm (method ID 9)", @"UnzipKit", @"Error message")];
+                          detail:NSLocalizedStringFromTableInBundle(@"Cannot open archive, since it was compressed using the Deflate64 algorithm (method ID 9)", @"UnzipKit", _resources, @"Error message")];
     }
     
     err = unzOpenCurrentFilePassword(self.unzFile, passwordStr);
     if (err != UNZ_OK) {
         return [self assignError:error code:err
-                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error opening archive (%d)", @"UnzipKit", @"Detailed error string"),
+                          detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening archive (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                   err]];
     }
     
@@ -1751,7 +1762,7 @@ compressionMethod:(UZKCompressionMethod)method
     
     if (bytes < 0) {
         [self assignError:error code:bytes
-                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"Error reading data from '%@' in archive", @"UnzipKit", @"Detailed error string"),
+                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error reading data from '%@' in archive", @"UnzipKit", _resources, @"Detailed error string"),
                            filePath]];
         return nil;
     }
@@ -1858,84 +1869,84 @@ compressionMethod:(UZKCompressionMethod)method
     
     switch (errorCode) {
         case UZKErrorCodeZLibError:
-            errorName = NSLocalizedStringFromTable(@"Error reading/writing file", @"UnzipKit", @"UZKErrorCodeZLibError");
+            errorName = NSLocalizedStringFromTableInBundle(@"Error reading/writing file", @"UnzipKit", _resources, @"UZKErrorCodeZLibError");
             break;
             
         case UZKErrorCodeParameterError:
-            errorName = NSLocalizedStringFromTable(@"Parameter error", @"UnzipKit", @"UZKErrorCodeParameterError");
+            errorName = NSLocalizedStringFromTableInBundle(@"Parameter error", @"UnzipKit", _resources, @"UZKErrorCodeParameterError");
             break;
             
         case UZKErrorCodeBadZipFile:
-            errorName = NSLocalizedStringFromTable(@"Bad zip file", @"UnzipKit", @"UZKErrorCodeBadZipFile");
+            errorName = NSLocalizedStringFromTableInBundle(@"Bad zip file", @"UnzipKit", _resources, @"UZKErrorCodeBadZipFile");
             break;
             
         case UZKErrorCodeInternalError:
-            errorName = NSLocalizedStringFromTable(@"Internal error", @"UnzipKit", @"UZKErrorCodeInternalError");
+            errorName = NSLocalizedStringFromTableInBundle(@"Internal error", @"UnzipKit", _resources, @"UZKErrorCodeInternalError");
             break;
             
         case UZKErrorCodeCRCError:
-            errorName = NSLocalizedStringFromTable(@"The data got corrupted during decompression", @"UnzipKit", @"UZKErrorCodeCRCError");
+            errorName = NSLocalizedStringFromTableInBundle(@"The data got corrupted during decompression", @"UnzipKit", _resources, @"UZKErrorCodeCRCError");
             break;
             
         case UZKErrorCodeArchiveNotFound:
-            errorName = NSLocalizedStringFromTable(@"Can't open archive", @"UnzipKit", @"UZKErrorCodeArchiveNotFound");
+            errorName = NSLocalizedStringFromTableInBundle(@"Can't open archive", @"UnzipKit", _resources, @"UZKErrorCodeArchiveNotFound");
             break;
             
         case UZKErrorCodeFileNavigationError:
-            errorName = NSLocalizedStringFromTable(@"Error navigating through the archive", @"UnzipKit", @"UZKErrorCodeFileNavigationError");
+            errorName = NSLocalizedStringFromTableInBundle(@"Error navigating through the archive", @"UnzipKit", _resources, @"UZKErrorCodeFileNavigationError");
             break;
             
         case UZKErrorCodeFileNotFoundInArchive:
-            errorName = NSLocalizedStringFromTable(@"Can't find a file in the archive", @"UnzipKit", @"UZKErrorCodeFileNotFoundInArchive");
+            errorName = NSLocalizedStringFromTableInBundle(@"Can't find a file in the archive", @"UnzipKit", _resources, @"UZKErrorCodeFileNotFoundInArchive");
             break;
             
         case UZKErrorCodeOutputError:
-            errorName = NSLocalizedStringFromTable(@"Error extracting files from the archive", @"UnzipKit", @"UZKErrorCodeOutputError");
+            errorName = NSLocalizedStringFromTableInBundle(@"Error extracting files from the archive", @"UnzipKit", _resources, @"UZKErrorCodeOutputError");
             break;
             
         case UZKErrorCodeOutputErrorPathIsAFile:
-            errorName = NSLocalizedStringFromTable(@"Attempted to extract the archive to a path that is a file, not a directory", @"UnzipKit", @"UZKErrorCodeOutputErrorPathIsAFile");
+            errorName = NSLocalizedStringFromTableInBundle(@"Attempted to extract the archive to a path that is a file, not a directory", @"UnzipKit", _resources, @"UZKErrorCodeOutputErrorPathIsAFile");
             break;
             
         case UZKErrorCodeInvalidPassword:
-            errorName = NSLocalizedStringFromTable(@"Incorrect password provided", @"UnzipKit", @"UZKErrorCodeInvalidPassword");
+            errorName = NSLocalizedStringFromTableInBundle(@"Incorrect password provided", @"UnzipKit", _resources, @"UZKErrorCodeInvalidPassword");
             break;
             
         case UZKErrorCodeFileRead:
-            errorName = NSLocalizedStringFromTable(@"Error reading a file in the archive", @"UnzipKit", @"UZKErrorCodeFileRead");
+            errorName = NSLocalizedStringFromTableInBundle(@"Error reading a file in the archive", @"UnzipKit", _resources, @"UZKErrorCodeFileRead");
             break;
             
         case UZKErrorCodeFileOpenForWrite:
-            errorName = NSLocalizedStringFromTable(@"Error opening a file in the archive to write it", @"UnzipKit", @"UZKErrorCodeFileOpenForWrite");
+            errorName = NSLocalizedStringFromTableInBundle(@"Error opening a file in the archive to write it", @"UnzipKit", _resources, @"UZKErrorCodeFileOpenForWrite");
             break;
             
         case UZKErrorCodeFileWrite:
-            errorName = NSLocalizedStringFromTable(@"Error writing a file in the archive", @"UnzipKit", @"UZKErrorCodeFileWrite");
+            errorName = NSLocalizedStringFromTableInBundle(@"Error writing a file in the archive", @"UnzipKit", _resources, @"UZKErrorCodeFileWrite");
             break;
             
         case UZKErrorCodeFileCloseWriting:
-            errorName = NSLocalizedStringFromTable(@"Error clonsing a file in the archive after writing it", @"UnzipKit", @"UZKErrorCodeFileCloseWriting");
+            errorName = NSLocalizedStringFromTableInBundle(@"Error clonsing a file in the archive after writing it", @"UnzipKit", _resources, @"UZKErrorCodeFileCloseWriting");
             break;
             
         case UZKErrorCodeDeleteFile:
-            errorName = NSLocalizedStringFromTable(@"Error deleting a file in the archive", @"UnzipKit", @"UZKErrorCodeDeleteFile");
+            errorName = NSLocalizedStringFromTableInBundle(@"Error deleting a file in the archive", @"UnzipKit", _resources, @"UZKErrorCodeDeleteFile");
             break;
             
         case UZKErrorCodeMixedModeAccess:
-            errorName = NSLocalizedStringFromTable(@"Attempted to read before all writes have completed, or vise-versa", @"UnzipKit", @"UZKErrorCodeMixedModeAccess");
+            errorName = NSLocalizedStringFromTableInBundle(@"Attempted to read before all writes have completed, or vise-versa", @"UnzipKit", _resources, @"UZKErrorCodeMixedModeAccess");
             break;
             
         case UZKErrorCodePreCRCMismatch:
-            errorName = NSLocalizedStringFromTable(@"The CRC given up front doesn't match the calculated CRC", @"UnzipKit", @"UZKErrorCodePreCRCMismatch");
+            errorName = NSLocalizedStringFromTableInBundle(@"The CRC given up front doesn't match the calculated CRC", @"UnzipKit", _resources, @"UZKErrorCodePreCRCMismatch");
             break;
             
         case UZKErrorCodeDeflate64:
-            errorName = NSLocalizedStringFromTable(@"The archive was compressed with the Deflate64 method, which isn't supported", @"UnzipKit", @"UZKErrorCodeDeflate64");
+            errorName = NSLocalizedStringFromTableInBundle(@"The archive was compressed with the Deflate64 method, which isn't supported", @"UnzipKit", _resources, @"UZKErrorCodeDeflate64");
             break;
             
         default:
             errorName = [NSString localizedStringWithFormat:
-                         NSLocalizedStringFromTable(@"Unknown error code: %ld", @"UnzipKit", @"UnknownErrorCode"), errorCode];
+                         NSLocalizedStringFromTableInBundle(@"Unknown error code: %ld", @"UnzipKit", _resources, @"UnknownErrorCode"), errorCode];
             break;
     }
     
