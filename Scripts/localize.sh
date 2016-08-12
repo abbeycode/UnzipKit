@@ -6,9 +6,6 @@ find -E . -iregex '.*\.(m|h|mm)$' \
     -print0 \
 | xargs -0 genstrings -o Resources/base.lproj
 
-# This shouldn't be generated. I'm not sure why it is, since all strings have UnzipKit as their table. Delete it
-rm Resources/base.lproj/Localizable.strings
-
 # Define file and temp file
 LOCALIZE=./Resources/base.lproj/UnzipKit.strings
 UTF8=./Resources/base.lproj/UnzipKitUTF8.txt
