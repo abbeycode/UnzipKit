@@ -5,6 +5,8 @@ if [ -z ${TRAVIS+x} ]; then
     TRAVIS_BRANCH=carthage
 fi
 
+brew install carthage
+
 rm UnzipKitDemo/Cartfile
 rm UnzipKitDemo/Cartfile.resolved
 rm -rf UnzipKitDemo/Carthage

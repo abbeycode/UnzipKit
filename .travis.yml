@@ -5,29 +5,20 @@ osx_image: xcode7.3
 
 matrix:
   include:
-    - xcode_workspace: UnzipKit.xcworkspace
-      xcode_scheme: UnzipKit
-      xcode_sdk: macosx
+    - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release analyze test ENABLE_NS_ASSERTIONS=1
       env: Name=Mac; TEST=test
 
-    - xcode_workspace: UnzipKit.xcworkspace
-      xcode_scheme: UnzipKit-iOS
-      xcode_sdk: iphonesimulator
+    - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit-iOS -sdk iphonesimulator -configuration Release analyze test ENABLE_NS_ASSERTIONS=1
       env: Name=iOS; TEST=test
 
-    - xcode_workspace: UnzipKitDemo/UnzipKitDemo.xcworkspace
-      xcode_scheme: UnzipKitDemo
-      xcode_sdk: iphonesimulator
+    - script: xctool -workspace UnzipKitDemo/UnzipKitDemo.xcworkspace -scheme UnzipKitDemo-iOS -sdk iphonesimulator -configuration Release analyze test ENABLE_NS_ASSERTIONS=1
       env: Name=DemoAppBuild
 
-before_script:
-  - ./Scripts/install-demo-libs.sh
-  - brew install carthage
+    - script: ./Scripts/cocoapod-validate.sh
+      env: Name=CocoaPods
 
-script:
-  - xctool -workspace $TRAVIS_XCODE_WORKSPACE -scheme $TRAVIS_XCODE_SCHEME -sdk $TRAVIS_XCODE_SDK analyze -configuration Release $TEST ENABLE_NS_ASSERTIONS=1
-  - ./Scripts/carthage-validate.sh
-  - ./Scripts/cocoapod-validate.sh
+    - script: ./Scripts/carthage-validate.sh
+      env: Name=Carthage
 
 # Turn on Docker, container-based infrastructure
 sudo: false
