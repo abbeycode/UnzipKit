@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "UnzipKit"
-  s.version          = "1.8"
+  s.version          = "1.8.1"
   s.summary          = "An Objective-C zlib wrapper for compressing and decompressing Zip files"
   s.license          = "BSD"
   s.homepage         = "https://github.com/abbeycode/UnzipKit"
@@ -17,8 +17,9 @@ Pod::Spec.new do |s|
                            "Lib/**/*.h"
   s.source_files         = "Source/**/*.{m,h}",
                            "Lib/**/*.{c,h}"
+  s.exclude_files        = 'Resources/**/Info.plist'
   s.resource_bundles = {
-      'UnzipKitResources' => ['Resources/**/*.strings']
+      'UnzipKitResources' => ['Resources/**/*']
   }
   s.library = "z"
 end
