@@ -11,7 +11,7 @@ matrix:
     - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit-iOS -sdk iphonesimulator -configuration Release analyze test ENABLE_NS_ASSERTIONS=1
       env: Name=iOS; TEST=test
 
-    - script: xctool -workspace UnzipKitDemo/UnzipKitDemo.xcworkspace -scheme UnzipKitDemo-iOS -sdk iphonesimulator -configuration Release analyze test ENABLE_NS_ASSERTIONS=1
+    - script: xctool -workspace UnzipKitDemo/UnzipKitDemo.xcworkspace -scheme UnzipKitDemo-iOS -sdk iphonesimulator -configuration Release analyze ENABLE_NS_ASSERTIONS=1
       env: Name=DemoAppBuild
 
     - script: ./Scripts/cocoapod-validate.sh
