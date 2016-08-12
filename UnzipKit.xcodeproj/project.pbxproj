@@ -65,6 +65,7 @@
 		96B10B341C5FF8DE003A692C /* DeleteFileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40D51B586380004C128E /* DeleteFileTests.m */; };
 		96B10B351C5FF8E7003A692C /* ErrorHandlingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40D71B5863A9004C128E /* ErrorHandlingTests.m */; };
 		96B10B361C5FF8F4003A692C /* ExtractBufferedDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40CF1B5862A0004C128E /* ExtractBufferedDataTests.m */; };
+		96D2414A1D5D492F004C1F3C /* UnzipKit.strings in Resources */ = {isa = PBXBuildFile; fileRef = 962F9DA41D5D286B00205BEC /* UnzipKit.strings */; };
 		96DC15C11C5FFAA800B71F19 /* DTPerformanceSession.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96DC15C01C5FFAA800B71F19 /* DTPerformanceSession.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		96DC15C31C5FFC7600B71F19 /* ListFilenamesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40C31B58619C004C128E /* ListFilenamesTests.m */; };
 		96DC15C41C5FFC8100B71F19 /* ListFileInfoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40C51B5861C3004C128E /* ListFileInfoTests.m */; };
@@ -535,6 +536,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96D2414A1D5D492F004C1F3C /* UnzipKit.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
