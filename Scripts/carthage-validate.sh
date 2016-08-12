@@ -2,7 +2,7 @@
 
 if [ -z ${TRAVIS+x} ]; then
     TRAVIS_BUILD_DIR="/Users/Dov/Source Code/UnzipKit"
-    TRAVIS_BRANCH=carthage
+    TRAVIS_BRANCH=`git rev-parse --abbrev-ref HEAD` #Current Git branch
 fi
 
 brew install carthage
