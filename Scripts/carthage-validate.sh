@@ -2,7 +2,7 @@
 
 if [ -z ${TRAVIS+x} ]; then
     TRAVIS_BUILD_DIR="/Users/Dov/Source Code/UnzipKit"
-    TRAVIS_BRANCH=carthage
+    TRAVIS_BRANCH=`git branch | grep -e "^*" | cut -d' ' -f 2` #Current Git branch
 fi
 
 rm UnzipKitDemo/Cartfile
