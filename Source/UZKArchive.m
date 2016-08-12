@@ -25,7 +25,7 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
     UZKFileModeAppend
 };
 
-static NSBundle *_resources;
+static NSBundle *_resources = nil;
 
 
 
@@ -93,7 +93,10 @@ NS_DESIGNATED_INITIALIZER
     dispatch_once(&onceToken, ^{
         NSBundle *mainBundle = [NSBundle mainBundle];
         NSURL *resourcesURL = [mainBundle URLForResource:@"UnzipKitResources" withExtension:@"bundle"];
-        _resources = [NSBundle bundleWithURL:resourcesURL];
+        
+            _resources = (resourcesURL
+                          ? [NSBundle bundleWithURL:resourcesURL]
+                          : mainBundle);
     });
 }
 
