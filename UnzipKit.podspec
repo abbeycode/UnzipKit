@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.source_files         = "Source/**/*.{m,h}",
                            "Lib/**/*.{c,h}"
   s.resource_bundles = {
-      'UnzipKitResources' => ['Resources/**/*']
+      'UnzipKitResources' => ['Resources/**/*.strings']
   }
   s.library = "z"
 end
