@@ -1,5 +1,10 @@
 # UnzipKit CHANGELOG
 
+## 1.8.1
+
+• Added checking whether a file is compressed with the Deflate64 method, and returning a specific error code for that unsupported format (Issue #37)
+• Fixed internationalization, laying the groundwork for non-US-English localization in the future. If you use UnzipKit from Carthage or CocoaPods, and run your app using the "Show non-localized strings" option, UnzipKit's strings should no longer display as all-cap (Issue #38)
+
 ## 1.8
 
 Fixed a bug causing delete operations (including writing updated data with the `overwrite` flag set to true) to fail when the archive resides on an external volume (Issue #36)
