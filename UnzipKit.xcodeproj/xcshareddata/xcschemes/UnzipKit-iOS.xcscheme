@@ -14,20 +14,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "962F9D9D1D5D281E00205BEC"
-               BuildableName = "UnzipKitResources.bundle"
-               BlueprintName = "UnzipKitResources"
-               ReferencedContainer = "container:UnzipKit.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "964547831B31B76C00202B28"
                BuildableName = "UnzipKit-iOS"
                BlueprintName = "UnzipKit-iOS"
