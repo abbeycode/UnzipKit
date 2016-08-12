@@ -27,6 +27,9 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
+# Update version number in Podspec
+sed -i '' -E "s/(s\.version[[:space:]]+\=[[:space:]]*\")[[:alnum:]\.\-]+(\")/\1$1\2/" UnzipKit.podspec
+
 RELEASE_NOTES=$(./Scripts/get-release-notes.sh $1)
 if [ -z "$RELEASE_NOTES" ]; then
     echo -e "${RED}Please add release notes for v$1 into CHANGELOG.md$COLOR_OFF"
@@ -43,7 +46,7 @@ if [ "$THIS_FILE_CHANGED" -gt 0 ]; then
 fi
 
 echo -e "${GREEN}Committing updated plist...$COLOR_OFF"
-git commit -m "Updated version to v$1" Source UnzipKit.xcodeproj
+git commit -m "Updated version to v$1" Source Resources UnzipKit.xcodeproj
 
 # Revert changes to other plist files
 git checkout .
