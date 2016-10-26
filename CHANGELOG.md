@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.8.2
+
+Fixed issues with localization, that could affect submission through iTunes Connect (Issue #42)
+
 ## 1.8.1
 
 • Added checking whether a file is compressed with the Deflate64 method, and returning a specific error code for that unsupported format (Issue #37)
