@@ -8,12 +8,6 @@ matrix:
     - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release analyze test -omit UnzipKitTests:ExtractFilesTests/testExtractZip64_LargeFile,ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
       env: Name=Mac
 
-    - script: travis_wait 20 xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only UnzipKitTests:ExtractFilesTests/testExtractZip64_LargeFile ENABLE_NS_ASSERTIONS=1
-      env: Name=Mac-Tests-Zip64Large
-
-    - script: travis_wait 30 xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only UnzipKitTests:ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
-      env: Name=Mac-Tests-Zip64Many
-
     - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit-iOS -sdk iphonesimulator -configuration Release analyze test ENABLE_NS_ASSERTIONS=1
       env: Name=iOS
 
@@ -25,6 +19,12 @@ matrix:
 
     - script: ./Scripts/carthage-validate.sh
       env: Name=Carthage
+
+    - script: travis_wait 20 xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only UnzipKitTests:ExtractFilesTests/testExtractZip64_LargeFile ENABLE_NS_ASSERTIONS=1
+      env: Name=Mac-Tests-Zip64Large
+
+    - script: travis_wait 30 xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only UnzipKitTests:ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
+      env: Name=Mac-Tests-Zip64Many
 
 # Turn on Docker, container-based infrastructure
 sudo: false
