@@ -5,22 +5,22 @@ osx_image: xcode7.3
 
 matrix:
   include:
-    - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release analyze ENABLE_NS_ASSERTIONS=1
+    - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release analyze
       env: Name=Mac
 
-    - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test ENABLE_NS_ASSERTIONS=1 -omit UnzipKitTests:ExtractFilesTests/testExtractZip64_LargeFile,UnzipKitTests:ExtractFilesTests/testExtractZip64_ManyFiles
+    - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -omit UnzipKitTests:ExtractFilesTests/testExtractZip64_LargeFile,UnzipKitTests:ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
       env: Name=Mac-Tests
 
-    - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test ENABLE_NS_ASSERTIONS=1 -only UnzipKitTests:ExtractFilesTests/testExtractZip64_LargeFile
+    - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only UnzipKitTests:ExtractFilesTests/testExtractZip64_LargeFile ENABLE_NS_ASSERTIONS=1
       env: Name=Mac-Tests-OnlyZip64Large
 
-    - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test ENABLE_NS_ASSERTIONS=1 -only UnzipKitTests:ExtractFilesTests/testExtractZip64_ManyFiles
+    - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only UnzipKitTests:ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
       env: Name=Mac-Tests-OnlyZip64Many
 
     - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit-iOS -sdk iphonesimulator -configuration Release analyze test ENABLE_NS_ASSERTIONS=1
       env: Name=iOS
 
-    - script: ./Scripts/install-demo-libs.sh && xctool -workspace UnzipKitDemo/UnzipKitDemo.xcworkspace -scheme UnzipKitDemo -sdk iphonesimulator -configuration Release analyze ENABLE_NS_ASSERTIONS=1
+    - script: ./Scripts/install-demo-libs.sh && xctool -workspace UnzipKitDemo/UnzipKitDemo.xcworkspace -scheme UnzipKitDemo -sdk iphonesimulator -configuration Release analyze
       env: Name=DemoAppBuild
 
     - script: ./Scripts/cocoapod-validate.sh
