@@ -8,7 +8,7 @@ matrix:
     - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release analyze test -omit UnzipKitTests:ExtractFilesTests/testExtractZip64_LargeFile,ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
       env: Name=Mac
 
-    - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only UnzipKitTests:ExtractFilesTests/testExtractZip64_LargeFile ENABLE_NS_ASSERTIONS=1
+    - script: travis_wait 20 xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only UnzipKitTests:ExtractFilesTests/testExtractZip64_LargeFile ENABLE_NS_ASSERTIONS=1
       env: Name=Mac-Tests-Zip64Large
 
     - script: travis_wait 25 xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only UnzipKitTests:ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
