@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.8.3
+
+Added CI automation to release tagged successful builds to CocoaPods from Travis (Issue #49)
+
 ## 1.8.2
 
 Fixed issues with localization, that could affect submission through iTunes Connect (Issue #42)
