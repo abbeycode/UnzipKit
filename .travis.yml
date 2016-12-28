@@ -26,5 +26,8 @@ matrix:
     - script: travis_wait 30 xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only UnzipKitTests:ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
       env: Name=Mac-Tests-Zip64Many
 
+after_script:
+  - ./Scripts/push-output.sh
+
 # Turn on Docker, container-based infrastructure
 sudo: false
