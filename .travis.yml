@@ -5,6 +5,12 @@ osx_image: xcode7.3
 
 matrix:
   include:
+    - script: travis_wait 20 xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only UnzipKitTests:ExtractFilesTests/testExtractZip64_LargeFile ENABLE_NS_ASSERTIONS=1
+      env: Name=Mac-Tests-Zip64Large
+
+    - script: travis_wait 30 xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only UnzipKitTests:ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
+      env: Name=Mac-Tests-Zip64Many
+
     - script: xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release analyze test -omit UnzipKitTests:ExtractFilesTests/testExtractZip64_LargeFile,ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
       env: Name=Mac
 
@@ -19,12 +25,6 @@ matrix:
 
     - script: ./Scripts/carthage-validate.sh
       env: Name=Carthage
-
-    - script: travis_wait 20 xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only UnzipKitTests:ExtractFilesTests/testExtractZip64_LargeFile ENABLE_NS_ASSERTIONS=1
-      env: Name=Mac-Tests-Zip64Large
-
-    - script: travis_wait 30 xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only UnzipKitTests:ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
-      env: Name=Mac-Tests-Zip64Many
 
 after_script:
   - ./Scripts/push-output.sh
