@@ -26,5 +26,8 @@ matrix:
     - script: ./Scripts/carthage-validate.sh
       env: Name=Carthage
 
+after_script:
+  - ./Scripts/push-output.sh
+
 # Turn on Docker, container-based infrastructure
 sudo: false
