@@ -2,7 +2,8 @@
 
 ## 1.8.3
 
-Added CI automation to release tagged successful builds to CocoaPods from Travis (Issue #49)
+* Fixed bug in iOS framework target causing a framework bundle not to be produces (Issue #48 – Thanks, @amosavian!)
+* Added CI automation to release tagged successful builds to CocoaPods from Travis (Issue #49)
 
 ## 1.8.2
 
@@ -10,8 +11,8 @@ Fixed issues with localization, that could affect submission through iTunes Conn
 
 ## 1.8.1
 
-• Added checking whether a file is compressed with the Deflate64 method, and returning a specific error code for that unsupported format (Issue #37)
-• Fixed internationalization, laying the groundwork for non-US-English localization in the future. If you use UnzipKit from Carthage or CocoaPods, and run your app using the "Show non-localized strings" option, UnzipKit's strings should no longer display as all-cap (Issue #38)
+* Added checking whether a file is compressed with the Deflate64 method, and returning a specific error code for that unsupported format (Issue #37)
+* Fixed internationalization, laying the groundwork for non-US-English localization in the future. If you use UnzipKit from Carthage or CocoaPods, and run your app using the "Show non-localized strings" option, UnzipKit's strings should no longer display as all-cap (Issue #38)
 
 ## 1.8
 
