@@ -27,9 +27,6 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
-# Update version number in Podspec
-sed -i '' -E "s/(s\.version[[:space:]]+\=[[:space:]]*\")[[:alnum:]\.\-]+(\")/\1$1\2/" UnzipKit.podspec
-
 RELEASE_NOTES=$(./Scripts/get-release-notes.sh $1)
 if [ -z "$RELEASE_NOTES" ]; then
     echo -e "${RED}Please add release notes for v$1 into CHANGELOG.md$COLOR_OFF"
