@@ -13,25 +13,8 @@
 		9630C0381C6D27A4000693EE /* ExtractDataTests_Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9630C0371C6D27A4000693EE /* ExtractDataTests_Swift.swift */; };
 		9630C0391C6D27A4000693EE /* ExtractDataTests_Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9630C0371C6D27A4000693EE /* ExtractDataTests_Swift.swift */; };
 		963603531BFB815600BF0C4F /* UZKFileInfo_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 963603521BFB7F6500BF0C4F /* UZKFileInfo_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		963603541BFB816A00BF0C4F /* UZKFileInfo_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 963603521BFB7F6500BF0C4F /* UZKFileInfo_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9645479D1B31B86E00202B28 /* UZKArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65BB1A40B2EC00685B6D /* UZKArchive.m */; settings = {COMPILER_FLAGS = "-Wno-format-nonliteral"; }; };
-		9645479E1B31B87200202B28 /* UZKFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA66001A40E31900685B6D /* UZKFileInfo.m */; };
-		9645479F1B31B87500202B28 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C31A40C44300685B6D /* ioapi.c */; settings = {COMPILER_FLAGS = " -Wno-everything"; }; };
-		964547A01B31B87900202B28 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C71A40C44300685B6D /* unzip.c */; settings = {COMPILER_FLAGS = "-Xanalyzer -analyzer-disable-all-checks -Wno-everything"; }; };
-		964547A11B31B87E00202B28 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C91A40C44300685B6D /* zip.c */; settings = {COMPILER_FLAGS = "-Xanalyzer -analyzer-disable-all-checks -Wno-everything"; }; };
-		964547A21B31B88200202B28 /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C51A40C44300685B6D /* mztools.c */; };
-		964547A41B31B8A200202B28 /* UZKArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65BA1A40B2EC00685B6D /* UZKArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		964547A51B31B8A500202B28 /* UZKFileInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65FF1A40E31900685B6D /* UZKFileInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		964547A61B31B8A800202B28 /* UnzipKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65A31A40AEAE00685B6D /* UnzipKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		964547A71B31B8AC00202B28 /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C81A40C44300685B6D /* unzip.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		964547A81B31B8B200202B28 /* crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA66031A435D8200685B6D /* crypt.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		964547A91B31B8B700202B28 /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C41A40C44300685B6D /* ioapi.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		964547AA1B31B8BB00202B28 /* mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C61A40C44300685B6D /* mztools.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		964547AB1B31B8C000202B28 /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65CA1A40C44300685B6D /* zip.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		965CF00A1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 965CF0081D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h */; };
-		965CF00B1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 965CF0081D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h */; };
 		965CF00C1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 965CF0091D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m */; };
-		965CF00D1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 965CF0091D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m */; };
 		966A971C1A4A1F2A003597AA /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C81A40C44300685B6D /* unzip.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		966A971D1A4A2348003597AA /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65CA1A40C44300685B6D /* zip.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		966A971E1A4A234C003597AA /* mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C61A40C44300685B6D /* mztools.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -54,7 +37,6 @@
 		968C40DC1B586401004C128E /* CommentsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40DB1B586401004C128E /* CommentsTests.m */; };
 		968C40DE1B58642C004C128E /* MultithreadingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40DD1B58642C004C128E /* MultithreadingTests.m */; };
 		968C40E01B586490004C128E /* PropertyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40DF1B586490004C128E /* PropertyTests.m */; };
-		969993961BE3BA89003D18DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 969993951BE3BA89003D18DA /* libz.tbd */; };
 		969993971BE3BA9C003D18DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 969993951BE3BA89003D18DA /* libz.tbd */; };
 		969993981BE3BB0C003D18DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 969993951BE3BA89003D18DA /* libz.tbd */; };
 		96B10B2F1C5FF3AA003A692C /* ExtractFilesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40C71B5861F4004C128E /* ExtractFilesTests.m */; };
@@ -65,7 +47,6 @@
 		96B10B341C5FF8DE003A692C /* DeleteFileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40D51B586380004C128E /* DeleteFileTests.m */; };
 		96B10B351C5FF8E7003A692C /* ErrorHandlingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40D71B5863A9004C128E /* ErrorHandlingTests.m */; };
 		96B10B361C5FF8F4003A692C /* ExtractBufferedDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40CF1B5862A0004C128E /* ExtractBufferedDataTests.m */; };
-		96D2414A1D5D492F004C1F3C /* UnzipKit.strings in Resources */ = {isa = PBXBuildFile; fileRef = 962F9DA41D5D286B00205BEC /* UnzipKit.strings */; };
 		96DC15C11C5FFAA800B71F19 /* DTPerformanceSession.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96DC15C01C5FFAA800B71F19 /* DTPerformanceSession.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		96DC15C31C5FFC7600B71F19 /* ListFilenamesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40C31B58619C004C128E /* ListFilenamesTests.m */; };
 		96DC15C41C5FFC8100B71F19 /* ListFileInfoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40C51B5861C3004C128E /* ListFileInfoTests.m */; };
@@ -89,22 +70,41 @@
 		96EA66011A40E31900685B6D /* UZKFileInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65FF1A40E31900685B6D /* UZKFileInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96EA66021A40E31900685B6D /* UZKFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA66001A40E31900685B6D /* UZKFileInfo.m */; };
 		96FCC8411B306CDD00726AC7 /* UZKArchiveTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 96FCC8401B306CDD00726AC7 /* UZKArchiveTestCase.m */; };
+		96FFB3FD1E1EC35900CCA47B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 96FFB3FC1E1EC35900CCA47B /* libz.tbd */; };
+		96FFB4001E1EC55600CCA47B /* UnzipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96FFB3F41E1EC31000CCA47B /* UnzipKit.framework */; };
+		96FFB4011E1EC68E00CCA47B /* UnzipKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65A31A40AEAE00685B6D /* UnzipKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96FFB4021E1EC68E00CCA47B /* UZKArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65BA1A40B2EC00685B6D /* UZKArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96FFB4031E1EC68E00CCA47B /* UZKFileInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65FF1A40E31900685B6D /* UZKFileInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96FFB4041E1EC6A100CCA47B /* UZKArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65BB1A40B2EC00685B6D /* UZKArchive.m */; settings = {COMPILER_FLAGS = "-Wno-format-nonliteral"; }; };
+		96FFB4051E1EC6A400CCA47B /* UZKFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA66001A40E31900685B6D /* UZKFileInfo.m */; };
+		96FFB4061E1EC6C800CCA47B /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C31A40C44300685B6D /* ioapi.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		96FFB4071E1EC6C800CCA47B /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C51A40C44300685B6D /* mztools.c */; };
+		96FFB4081E1EC6C800CCA47B /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C71A40C44300685B6D /* unzip.c */; settings = {COMPILER_FLAGS = "-Xanalyzer -analyzer-disable-all-checks -Wno-everything"; }; };
+		96FFB4091E1EC6C800CCA47B /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C91A40C44300685B6D /* zip.c */; settings = {COMPILER_FLAGS = "-Xanalyzer -analyzer-disable-all-checks -Wno-everything"; }; };
+		96FFB40A1E1EC6FC00CCA47B /* NSURL+UnzipKitExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 965CF0091D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m */; };
+		96FFB40B1E1EC70800CCA47B /* UZKFileInfo_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 963603521BFB7F6500BF0C4F /* UZKFileInfo_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		96FFB40C1E1EC71800CCA47B /* crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA66031A435D8200685B6D /* crypt.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		96FFB40D1E1EC71800CCA47B /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C41A40C44300685B6D /* ioapi.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		96FFB40E1E1EC71800CCA47B /* mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C61A40C44300685B6D /* mztools.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		96FFB40F1E1EC71800CCA47B /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C81A40C44300685B6D /* unzip.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		96FFB4101E1EC71800CCA47B /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65CA1A40C44300685B6D /* zip.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		96FFB4111E1EC72F00CCA47B /* NSURL+UnzipKitExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 965CF0081D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		96B10B2A1C5FF337003A692C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 96EA65951A40AEAE00685B6D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 964547831B31B76C00202B28;
-			remoteInfo = "UnzipKit-iOS";
-		};
 		96EA65AB1A40AEAE00685B6D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 96EA65951A40AEAE00685B6D /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 96EA659D1A40AEAE00685B6D;
 			remoteInfo = UnzipKit;
+		};
+		96FFB3FE1E1EC54100CCA47B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 96EA65951A40AEAE00685B6D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 96FFB3F31E1EC31000CCA47B;
+			remoteInfo = "UnzipKit-iOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -159,6 +159,8 @@
 		96EA66001A40E31900685B6D /* UZKFileInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UZKFileInfo.m; sourceTree = "<group>"; };
 		96EA66031A435D8200685B6D /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
 		96FCC8401B306CDD00726AC7 /* UZKArchiveTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UZKArchiveTestCase.m; sourceTree = "<group>"; };
+		96FFB3F41E1EC31000CCA47B /* UnzipKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = UnzipKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		96FFB3FC1E1EC35900CCA47B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,18 +171,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		964547801B31B76C00202B28 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				969993961BE3BA89003D18DA /* libz.tbd in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		96B10B221C5FF337003A692C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96FFB4001E1EC55600CCA47B /* UnzipKit.framework in Frameworks */,
 				96B10B311C5FF771003A692C /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -200,6 +195,14 @@
 				96DC15C11C5FFAA800B71F19 /* DTPerformanceSession.framework in Frameworks */,
 				96EA65AA1A40AEAE00685B6D /* UnzipKit.framework in Frameworks */,
 				969993981BE3BB0C003D18DA /* libz.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		96FFB3F01E1EC31000CCA47B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96FFB3FD1E1EC35900CCA47B /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,6 +247,7 @@
 				96EA65A91A40AEAE00685B6D /* UnzipKitTests.xctest */,
 				96B10B251C5FF337003A692C /* UnzipKitTests-iOS.xctest */,
 				962F9D9E1D5D281E00205BEC /* UnzipKitResources.bundle */,
+				96FFB3F41E1EC31000CCA47B /* UnzipKit.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -339,6 +343,7 @@
 		96EA65F61A40C86200685B6D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				96FFB3FC1E1EC35900CCA47B /* libz.tbd */,
 				96DC15C01C5FFAA800B71F19 /* DTPerformanceSession.framework */,
 				969993951BE3BA89003D18DA /* libz.tbd */,
 			);
@@ -348,23 +353,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		964547811B31B76C00202B28 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				964547A41B31B8A200202B28 /* UZKArchive.h in Headers */,
-				964547A51B31B8A500202B28 /* UZKFileInfo.h in Headers */,
-				964547A61B31B8A800202B28 /* UnzipKit.h in Headers */,
-				963603541BFB816A00BF0C4F /* UZKFileInfo_Private.h in Headers */,
-				964547A71B31B8AC00202B28 /* unzip.h in Headers */,
-				964547A91B31B8B700202B28 /* ioapi.h in Headers */,
-				964547A81B31B8B200202B28 /* crypt.h in Headers */,
-				964547AA1B31B8BB00202B28 /* mztools.h in Headers */,
-				964547AB1B31B8C000202B28 /* zip.h in Headers */,
-				965CF00B1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		96EA659B1A40AEAE00685B6D /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -379,6 +367,23 @@
 				966A971E1A4A234C003597AA /* mztools.h in Headers */,
 				966A971D1A4A2348003597AA /* zip.h in Headers */,
 				965CF00A1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		96FFB3F11E1EC31000CCA47B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96FFB4021E1EC68E00CCA47B /* UZKArchive.h in Headers */,
+				96FFB4031E1EC68E00CCA47B /* UZKFileInfo.h in Headers */,
+				96FFB4011E1EC68E00CCA47B /* UnzipKit.h in Headers */,
+				96FFB40B1E1EC70800CCA47B /* UZKFileInfo_Private.h in Headers */,
+				96FFB40F1E1EC71800CCA47B /* unzip.h in Headers */,
+				96FFB40D1E1EC71800CCA47B /* ioapi.h in Headers */,
+				96FFB40C1E1EC71800CCA47B /* crypt.h in Headers */,
+				96FFB40E1E1EC71800CCA47B /* mztools.h in Headers */,
+				96FFB4101E1EC71800CCA47B /* zip.h in Headers */,
+				96FFB4111E1EC72F00CCA47B /* NSURL+UnzipKitExtensions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -402,23 +407,6 @@
 			productReference = 962F9D9E1D5D281E00205BEC /* UnzipKitResources.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
-		964547831B31B76C00202B28 /* UnzipKit-iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 9645479B1B31B76C00202B28 /* Build configuration list for PBXNativeTarget "UnzipKit-iOS" */;
-			buildPhases = (
-				9645477F1B31B76C00202B28 /* Sources */,
-				964547801B31B76C00202B28 /* Frameworks */,
-				964547811B31B76C00202B28 /* Headers */,
-				964547821B31B76C00202B28 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "UnzipKit-iOS";
-			productName = "UnzipKit-iOS";
-			productType = "com.apple.product-type.framework";
-		};
 		96B10B241C5FF337003A692C /* UnzipKitTests-iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 96B10B2C1C5FF337003A692C /* Build configuration list for PBXNativeTarget "UnzipKitTests-iOS" */;
@@ -430,7 +418,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				96B10B2B1C5FF337003A692C /* PBXTargetDependency */,
+				96FFB3FF1E1EC54100CCA47B /* PBXTargetDependency */,
 			);
 			name = "UnzipKitTests-iOS";
 			productName = "UnzipKitTests-iOS";
@@ -473,6 +461,24 @@
 			productReference = 96EA65A91A40AEAE00685B6D /* UnzipKitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		96FFB3F31E1EC31000CCA47B /* UnzipKit-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 96FFB3FB1E1EC31000CCA47B /* Build configuration list for PBXNativeTarget "UnzipKit-iOS" */;
+			buildPhases = (
+				96FFB3EF1E1EC31000CCA47B /* Sources */,
+				96FFB3F01E1EC31000CCA47B /* Frameworks */,
+				96FFB3F11E1EC31000CCA47B /* Headers */,
+				96FFB3F21E1EC31000CCA47B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "UnzipKit-iOS";
+			productName = "UnzipKit-iOS";
+			productReference = 96FFB3F41E1EC31000CCA47B /* UnzipKit.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -487,8 +493,8 @@
 					962F9D9D1D5D281E00205BEC = {
 						CreatedOnToolsVersion = 7.3.1;
 					};
-					964547831B31B76C00202B28 = {
-						CreatedOnToolsVersion = 6.3.2;
+					96FFB3F31E1EC31000CCA47B = {
+						CreatedOnToolsVersion = 7.3.1;
 					};
 					96B10B241C5FF337003A692C = {
 						CreatedOnToolsVersion = 7.2;
@@ -515,8 +521,8 @@
 			projectRoot = "";
 			targets = (
 				96EA659D1A40AEAE00685B6D /* UnzipKit */,
+				96FFB3F31E1EC31000CCA47B /* UnzipKit-iOS */,
 				96EA65A81A40AEAE00685B6D /* UnzipKitTests */,
-				964547831B31B76C00202B28 /* UnzipKit-iOS */,
 				96B10B241C5FF337003A692C /* UnzipKitTests-iOS */,
 				962F9D9D1D5D281E00205BEC /* UnzipKitResources */,
 			);
@@ -529,14 +535,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				962F9DA61D5D286B00205BEC /* UnzipKit.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		964547821B31B76C00202B28 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				96D2414A1D5D492F004C1F3C /* UnzipKit.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -564,6 +562,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		96FFB3F21E1EC31000CCA47B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -571,20 +576,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		9645477F1B31B76C00202B28 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				9645479D1B31B86E00202B28 /* UZKArchive.m in Sources */,
-				9645479E1B31B87200202B28 /* UZKFileInfo.m in Sources */,
-				9645479F1B31B87500202B28 /* ioapi.c in Sources */,
-				964547A01B31B87900202B28 /* unzip.c in Sources */,
-				964547A11B31B87E00202B28 /* zip.c in Sources */,
-				964547A21B31B88200202B28 /* mztools.c in Sources */,
-				965CF00D1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -653,18 +644,32 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		96FFB3EF1E1EC31000CCA47B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96FFB4041E1EC6A100CCA47B /* UZKArchive.m in Sources */,
+				96FFB4051E1EC6A400CCA47B /* UZKFileInfo.m in Sources */,
+				96FFB4061E1EC6C800CCA47B /* ioapi.c in Sources */,
+				96FFB4081E1EC6C800CCA47B /* unzip.c in Sources */,
+				96FFB4091E1EC6C800CCA47B /* zip.c in Sources */,
+				96FFB4071E1EC6C800CCA47B /* mztools.c in Sources */,
+				96FFB40A1E1EC6FC00CCA47B /* NSURL+UnzipKitExtensions.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		96B10B2B1C5FF337003A692C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 964547831B31B76C00202B28 /* UnzipKit-iOS */;
-			targetProxy = 96B10B2A1C5FF337003A692C /* PBXContainerItemProxy */;
-		};
 		96EA65AC1A40AEAE00685B6D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 96EA659D1A40AEAE00685B6D /* UnzipKit */;
 			targetProxy = 96EA65AB1A40AEAE00685B6D /* PBXContainerItemProxy */;
+		};
+		96FFB3FF1E1EC54100CCA47B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 96FFB3F31E1EC31000CCA47B /* UnzipKit-iOS */;
+			targetProxy = 96FFB3FE1E1EC54100CCA47B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -713,53 +718,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
-			};
-			name = Release;
-		};
-		964547971B31B76C00202B28 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1.8.2;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = Source/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.UnzipKit";
-				PRODUCT_NAME = UnzipKit;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		964547981B31B76C00202B28 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1.8.2;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = Source/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.UnzipKit";
-				PRODUCT_NAME = UnzipKit;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -1006,6 +964,45 @@
 			};
 			name = Release;
 		};
+		96FFB3F91E1EC31000CCA47B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1.8.2;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Source/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.UnzipKit";
+				PRODUCT_NAME = UnzipKit;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		96FFB3FA1E1EC31000CCA47B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1.8.2;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Source/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.UnzipKit";
+				PRODUCT_NAME = UnzipKit;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1014,15 +1011,6 @@
 			buildConfigurations = (
 				962F9DA21D5D281E00205BEC /* Debug */,
 				962F9DA31D5D281E00205BEC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		9645479B1B31B76C00202B28 /* Build configuration list for PBXNativeTarget "UnzipKit-iOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				964547971B31B76C00202B28 /* Debug */,
-				964547981B31B76C00202B28 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1062,6 +1050,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		96FFB3FB1E1EC31000CCA47B /* Build configuration list for PBXNativeTarget "UnzipKit-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				96FFB3F91E1EC31000CCA47B /* Debug */,
+				96FFB3FA1E1EC31000CCA47B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
