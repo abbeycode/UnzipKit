@@ -3,6 +3,10 @@ language:
 
 osx_image: xcode7.3
 
+before_install:
+    # Used to allow pushing to CocoaPods only after all matrixed builds have succeeded
+    - npm install --save-dev travis-after-all
+
 matrix:
   include:
     - script: travis_wait 20 xctool -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only UnzipKitTests:ExtractFilesTests/testExtractZip64_LargeFile ENABLE_NS_ASSERTIONS=1
