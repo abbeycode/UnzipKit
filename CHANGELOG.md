@@ -2,7 +2,7 @@
 
 ## 1.8.3
 
-* Fixed bug in iOS framework target causing a framework bundle not to be produces (Issue #48 – Thanks, @amosavian!)
+* Fixed bug in iOS framework target causing a framework bundle not to be produced (Issue #48 – Thanks, @amosavian!)
 * Added CI automation to release tagged successful builds to CocoaPods from Travis (Issue #49)
 
 ## 1.8.2
