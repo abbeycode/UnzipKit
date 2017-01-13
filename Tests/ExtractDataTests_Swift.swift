@@ -12,14 +12,14 @@ class ExtractDataTests_Swift: UZKArchiveTestCase {
 
     func testExtractData_NoPassword() {
         let testArchives = ["Test Archive (Password).zip"]
-        let testFileURLs = (self.testFileURLs as NSDictionary) as! [String: NSURL]
+        let testFileURLs = (self.testFileURLs as NSDictionary) as! [String: URL]
         
         for testArchiveName in testArchives {
-            var thrownError: ErrorType?
+            var thrownError: Error?
             
             do {
-                let archive = try UZKArchive(URL: testFileURLs[testArchiveName]!)
-                try archive.extractDataFromFile("Test File A.txt", progress: nil)
+                let archive = try UZKArchive(url: testFileURLs[testArchiveName]!)
+                try archive.extractData(fromFile: "Test File A.txt", progress: nil)
             } catch let error {
                 thrownError = error
             }
@@ -31,21 +31,21 @@ class ExtractDataTests_Swift: UZKArchiveTestCase {
                 continue
             }
             
-            XCTAssertEqual(thrownNSError.code, UZKErrorCode.InvalidPassword.rawValue,
+            XCTAssertEqual(thrownNSError.code, UZKErrorCode.invalidPassword.rawValue,
                 "Unexpected error code returned for \(testArchiveName)");
         }
     }
     
     func testExtractData_InvalidArchive() {
         let testArchives = ["Test File A.txt"]
-        let testFileURLs = (self.testFileURLs as NSDictionary) as! [String: NSURL]
+        let testFileURLs = (self.testFileURLs as NSDictionary) as! [String: URL]
 
         for testArchiveName in testArchives {
-            var thrownError: ErrorType?
+            var thrownError: Error?
             
             do {
-                let archive = try UZKArchive(URL: testFileURLs[testArchiveName]!)
-                try archive.extractDataFromFile("Test File A.txt", progress: nil)
+                let archive = try UZKArchive(url: testFileURLs[testArchiveName]!)
+                try archive.extractData(fromFile: "Test File A.txt", progress: nil)
             } catch let error {
                 thrownError = error
             }
@@ -57,7 +57,7 @@ class ExtractDataTests_Swift: UZKArchiveTestCase {
                 continue
             }
             
-            XCTAssertEqual(thrownNSError.code, UZKErrorCode.BadZipFile.rawValue,
+            XCTAssertEqual(thrownNSError.code, UZKErrorCode.badZipFile.rawValue,
                 "Unexpected error code returned for \(testArchiveName)");
         }
     }

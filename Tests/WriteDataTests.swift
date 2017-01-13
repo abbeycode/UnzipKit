@@ -17,27 +17,27 @@ import UnzipKit
 class WriteDataTests: UZKArchiveTestCase {
 
     func testWriteData() {
-        let testFilePaths = [String](nonZipTestFilePaths as! Set<String>).sort(<)
+        let testFilePaths = [String](nonZipTestFilePaths as! Set<String>).sorted(by: <)
         let testDates = [
-            UZKArchiveTestCase.dateFormatter().dateFromString("12/20/2014 9:35 AM"),
-            UZKArchiveTestCase.dateFormatter().dateFromString("12/21/2014 10:00 AM"),
-            UZKArchiveTestCase.dateFormatter().dateFromString("12/22/2014 11:54 PM")]
-        var testFileData = [NSData]()
+            UZKArchiveTestCase.dateFormatter().date(from: "12/20/2014 9:35 AM"),
+            UZKArchiveTestCase.dateFormatter().date(from: "12/21/2014 10:00 AM"),
+            UZKArchiveTestCase.dateFormatter().date(from: "12/22/2014 11:54 PM")]
+        var testFileData = [Data]()
         
-        let testArchiveURL = tempDirectory.URLByAppendingPathComponent("WriteDataTest.zip")
-        let archive = try! UZKArchive(URL: testArchiveURL)
+        let testArchiveURL = tempDirectory.appendingPathComponent("WriteDataTest.zip")
+        let archive = try! UZKArchive(url: testArchiveURL)
         
-        for (index, testFilePath) in testFilePaths.enumerate() {
-            let fileData = NSData(contentsOfURL: testFileURLs[testFilePath] as! NSURL)
+        for (index, testFilePath) in testFilePaths.enumerated() {
+            let fileData = try? Data(contentsOf: testFileURLs[testFilePath] as! URL)
             testFileData.append(fileData!)
             
             do {
-                try archive.writeData(fileData!, filePath: testFilePath, fileDate: testDates[index],
-                                compressionMethod: .Default, password: nil, progress: { (percentCompressed) -> Void in
+                try archive.write(fileData!, filePath: testFilePath, fileDate: testDates[index],
+                                  compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
                                     #if DEBUG
                                         NSLog("Compressing data: %f%% complete", percentCompressed)
                                     #endif
-                                })
+                })
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePath): \(error)")
             }
@@ -45,13 +45,13 @@ class WriteDataTests: UZKArchiveTestCase {
         
         var index = 0
         
-        try! archive.performOnDataInArchive({ (fileInfo, fileData, stop) -> Void in
+        try! archive.performOnData(inArchive: { (fileInfo, fileData, stop) -> Void in
             let expectedData = testFileData[index]
-            let expectedCRC = crc32(0, UnsafePointer<Bytef>(expectedData.bytes), uInt(expectedData.length))
+            let expectedCRC = crc32(0, (expectedData as NSData).bytes.bindMemory(to: Bytef.self, capacity: expectedData.count), uInt(expectedData.count))
             
             XCTAssertEqual(fileInfo.filename, testFilePaths[index], "Incorrect filename in archive")
             XCTAssertEqual(fileInfo.timestamp, testDates[index]!, "Incorrect timestamp in archive")
-            XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
+            XCTAssertEqual(fileInfo.crc, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
             index += 1;
@@ -61,27 +61,27 @@ class WriteDataTests: UZKArchiveTestCase {
     }
     
     func testWriteData_Unicode() {
-        let testFilePaths = [String](nonZipUnicodeFilePaths as! Set<String>).sort(<)
+        let testFilePaths = [String](nonZipUnicodeFilePaths as! Set<String>).sorted(by: <)
         let testDates = [
-            UZKArchiveTestCase.dateFormatter().dateFromString("12/20/2014 9:35 AM"),
-            UZKArchiveTestCase.dateFormatter().dateFromString("12/21/2014 10:00 AM"),
-            UZKArchiveTestCase.dateFormatter().dateFromString("12/22/2014 11:54 PM")]
-        var testFileData = [NSData]()
+            UZKArchiveTestCase.dateFormatter().date(from: "12/20/2014 9:35 AM"),
+            UZKArchiveTestCase.dateFormatter().date(from: "12/21/2014 10:00 AM"),
+            UZKArchiveTestCase.dateFormatter().date(from: "12/22/2014 11:54 PM")]
+        var testFileData = [Data]()
         
-        let testArchiveURL = tempDirectory.URLByAppendingPathComponent("UnicodeWriteDataTest.zip")
-        let archive = try! UZKArchive(URL: testArchiveURL)
+        let testArchiveURL = tempDirectory.appendingPathComponent("UnicodeWriteDataTest.zip")
+        let archive = try! UZKArchive(url: testArchiveURL)
         
-        for (index, testFilePath) in testFilePaths.enumerate() {
-            let fileData = NSData(contentsOfURL: unicodeFileURLs[testFilePath] as! NSURL)
+        for (index, testFilePath) in testFilePaths.enumerated() {
+            let fileData = try? Data(contentsOf: unicodeFileURLs[testFilePath] as! URL)
             testFileData.append(fileData!)
             
             do {
-                try archive.writeData(fileData!, filePath: testFilePath, fileDate: testDates[index],
-                                compressionMethod: .Default, password: nil, progress: { (percentCompressed) -> Void in
+                try archive.write(fileData!, filePath: testFilePath, fileDate: testDates[index],
+                                  compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
                                     #if DEBUG
                                         NSLog("Compressing data: %f%% complete", percentCompressed)
                                     #endif
-                                })
+                })
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePath): \(error)")
             }
@@ -89,13 +89,13 @@ class WriteDataTests: UZKArchiveTestCase {
         
         var index = 0
         
-        try! archive.performOnDataInArchive({ (fileInfo, fileData, stop) -> Void in
+        try! archive.performOnData(inArchive: { (fileInfo, fileData, stop) -> Void in
             let expectedData = testFileData[index]
-            let expectedCRC = crc32(0, UnsafePointer<Bytef>(expectedData.bytes), uInt(expectedData.length))
+            let expectedCRC = crc32(0, (expectedData as NSData).bytes.bindMemory(to: Bytef.self, capacity: expectedData.count), uInt(expectedData.count))
             
             XCTAssertEqual(fileInfo.filename, testFilePaths[index], "Incorrect filename in archive")
             XCTAssertEqual(fileInfo.timestamp, testDates[index]!, "Incorrect timestamp in archive")
-            XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
+            XCTAssertEqual(fileInfo.crc, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
             index += 1;
@@ -105,27 +105,27 @@ class WriteDataTests: UZKArchiveTestCase {
     }
     
     func testWriteData_Overwrite() {
-        let testFilePaths = [String](nonZipTestFilePaths as! Set<String>).sort(<)
+        let testFilePaths = [String](nonZipTestFilePaths as! Set<String>).sorted(by: <)
         let testDates = [
-            UZKArchiveTestCase.dateFormatter().dateFromString("12/20/2014 9:35 AM"),
-            UZKArchiveTestCase.dateFormatter().dateFromString("12/21/2014 10:00 AM"),
-            UZKArchiveTestCase.dateFormatter().dateFromString("12/22/2014 11:54 PM")]
-        var testFileData = [NSData]()
+            UZKArchiveTestCase.dateFormatter().date(from: "12/20/2014 9:35 AM"),
+            UZKArchiveTestCase.dateFormatter().date(from: "12/21/2014 10:00 AM"),
+            UZKArchiveTestCase.dateFormatter().date(from: "12/22/2014 11:54 PM")]
+        var testFileData = [Data]()
         
-        let testArchiveURL = tempDirectory.URLByAppendingPathComponent("RewriteDataTest.zip")
-        let archive = try! UZKArchive(URL: testArchiveURL)
+        let testArchiveURL = tempDirectory.appendingPathComponent("RewriteDataTest.zip")
+        let archive = try! UZKArchive(url: testArchiveURL)
         
-        for (index, testFilePath) in testFilePaths.enumerate() {
-            let fileData = NSData(contentsOfURL: testFileURLs[testFilePath] as! NSURL)
+        for (index, testFilePath) in testFilePaths.enumerated() {
+            let fileData = try? Data(contentsOf: testFileURLs[testFilePath] as! URL)
             testFileData.append(fileData!)
             
             do {
-                try archive.writeData(fileData!, filePath: testFilePath, fileDate: testDates[index],
-                                compressionMethod: .Default, password: nil, progress: { (percentCompressed) -> Void in
+                try archive.write(fileData!, filePath: testFilePath, fileDate: testDates[index],
+                                  compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
                                     #if DEBUG
                                         NSLog("Compressing data: %f%% complete", percentCompressed)
                                     #endif
-                                })
+                })
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePath): \(error)")
             }
@@ -133,13 +133,13 @@ class WriteDataTests: UZKArchiveTestCase {
         
         var index = 0
         
-        try! archive.performOnDataInArchive({ (fileInfo, fileData, stop) -> Void in
+        try! archive.performOnData(inArchive: { (fileInfo, fileData, stop) -> Void in
             let expectedData = testFileData[index]
-            let expectedCRC = crc32(0, UnsafePointer<Bytef>(expectedData.bytes), uInt(expectedData.length))
+            let expectedCRC = crc32(0, (expectedData as NSData).bytes.bindMemory(to: Bytef.self, capacity: expectedData.count), uInt(expectedData.count))
             
             XCTAssertEqual(fileInfo.filename, testFilePaths[index], "Incorrect filename in archive")
             XCTAssertEqual(fileInfo.timestamp, testDates[index]!, "Incorrect timestamp in archive")
-            XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
+            XCTAssertEqual(fileInfo.crc, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
             index += 1;
@@ -154,12 +154,12 @@ class WriteDataTests: UZKArchiveTestCase {
             let x = testFilePaths.count - 1 - i
             
             do {
-                try archive.writeData(testFileData[x], filePath: testFilePaths[i],
-                                fileDate: testDates[x], compressionMethod: .Default, password: nil, progress: { (percentCompressed) -> Void in
+                try archive.write(testFileData[x], filePath: testFilePaths[i],
+                                  fileDate: testDates[x], compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
                                     #if DEBUG
                                         NSLog("Compressing data: %f%% complete", percentCompressed)
                                     #endif
-                                })
+                })
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePaths[x]) with data of " +
                     "file \(testFilePaths[i]): \(error)")
@@ -168,16 +168,16 @@ class WriteDataTests: UZKArchiveTestCase {
         
         var forwardIndex = 0
         
-        try! archive.performOnDataInArchive({ (fileInfo, fileData, stop) -> Void in
+        try! archive.performOnData(inArchive: { (fileInfo, fileData, stop) -> Void in
             XCTAssertEqual(fileInfo.filename, testFilePaths[forwardIndex], "Incorrect filename in archive");
             
             let reverseIndex = testFilePaths.count - 1 - forwardIndex
             
             let expectedData = testFileData[reverseIndex]
-            let expectedCRC = crc32(0, UnsafePointer<Bytef>(expectedData.bytes), uInt(expectedData.length))
+            let expectedCRC = crc32(0, (expectedData as NSData).bytes.bindMemory(to: Bytef.self, capacity: expectedData.count), uInt(expectedData.count))
             
             XCTAssertEqual(fileInfo.timestamp, testDates[reverseIndex]!, "Incorrect timestamp in archive")
-            XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
+            XCTAssertEqual(fileInfo.crc, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
             forwardIndex += 1;
@@ -187,27 +187,27 @@ class WriteDataTests: UZKArchiveTestCase {
     }
     
     func testWriteData_Overwrite_Unicode() {
-        let testFilePaths = [String](nonZipUnicodeFilePaths as! Set<String>).sort(<)
+        let testFilePaths = [String](nonZipUnicodeFilePaths as! Set<String>).sorted(by: <)
         let testDates = [
-            UZKArchiveTestCase.dateFormatter().dateFromString("12/20/2014 9:35 AM"),
-            UZKArchiveTestCase.dateFormatter().dateFromString("12/21/2014 10:00 AM"),
-            UZKArchiveTestCase.dateFormatter().dateFromString("12/22/2014 11:54 PM")]
-        var testFileData = [NSData]()
+            UZKArchiveTestCase.dateFormatter().date(from: "12/20/2014 9:35 AM"),
+            UZKArchiveTestCase.dateFormatter().date(from: "12/21/2014 10:00 AM"),
+            UZKArchiveTestCase.dateFormatter().date(from: "12/22/2014 11:54 PM")]
+        var testFileData = [Data]()
         
-        let testArchiveURL = tempDirectory.URLByAppendingPathComponent("RewriteDataTest.zip")
-        let archive = try! UZKArchive(URL: testArchiveURL)
+        let testArchiveURL = tempDirectory.appendingPathComponent("RewriteDataTest.zip")
+        let archive = try! UZKArchive(url: testArchiveURL)
         
-        for (index, testFilePath) in testFilePaths.enumerate() {
-            let fileData = NSData(contentsOfURL: unicodeFileURLs[testFilePath] as! NSURL)
+        for (index, testFilePath) in testFilePaths.enumerated() {
+            let fileData = try? Data(contentsOf: unicodeFileURLs[testFilePath] as! URL)
             testFileData.append(fileData!)
             
             do {
-                try archive.writeData(fileData!, filePath: testFilePath, fileDate: testDates[index],
-                                compressionMethod: .Default, password: nil, progress: { (percentCompressed) -> Void in
+                try archive.write(fileData!, filePath: testFilePath, fileDate: testDates[index],
+                                  compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
                                     #if DEBUG
                                         NSLog("Compressing data: %f%% complete", percentCompressed)
                                     #endif
-                                })
+                })
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePath): \(error)")
             }
@@ -215,13 +215,13 @@ class WriteDataTests: UZKArchiveTestCase {
         
         var index = 0
         
-        try! archive.performOnDataInArchive({ (fileInfo, fileData, stop) -> Void in
+        try! archive.performOnData(inArchive: { (fileInfo, fileData, stop) -> Void in
             let expectedData = testFileData[index]
-            let expectedCRC = crc32(0, UnsafePointer<Bytef>(expectedData.bytes), uInt(expectedData.length))
+            let expectedCRC = crc32(0, (expectedData as NSData).bytes.bindMemory(to: Bytef.self, capacity: expectedData.count), uInt(expectedData.count))
             
             XCTAssertEqual(fileInfo.filename, testFilePaths[index], "Incorrect filename in archive")
             XCTAssertEqual(fileInfo.timestamp, testDates[index]!, "Incorrect timestamp in archive")
-            XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
+            XCTAssertEqual(fileInfo.crc, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
             index += 1;
@@ -236,8 +236,8 @@ class WriteDataTests: UZKArchiveTestCase {
             let x = testFilePaths.count - 1 - i
             
             do {
-                try archive.writeData(testFileData[x], filePath: testFilePaths[i],
-                                fileDate: testDates[x], compressionMethod: .Default, password: nil, progress: { (percentCompressed) -> Void in
+                try archive.write(testFileData[x], filePath: testFilePaths[i],
+                                fileDate: testDates[x], compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
                                     #if DEBUG
                                         NSLog("Compressing data: %f%% complete", percentCompressed)
                                     #endif
@@ -250,16 +250,16 @@ class WriteDataTests: UZKArchiveTestCase {
         
         var forwardIndex = 0
         
-        try! archive.performOnDataInArchive({ (fileInfo, fileData, stop) -> Void in
+        try! archive.performOnData(inArchive: { (fileInfo, fileData, stop) -> Void in
             XCTAssertEqual(fileInfo.filename, testFilePaths[forwardIndex], "Incorrect filename in archive");
             
             let reverseIndex = testFilePaths.count - 1 - forwardIndex
             
             let expectedData = testFileData[reverseIndex]
-            let expectedCRC = crc32(0, UnsafePointer<Bytef>(expectedData.bytes), uInt(expectedData.length))
+            let expectedCRC = crc32(0, (expectedData as NSData).bytes.bindMemory(to: Bytef.self, capacity: expectedData.count), uInt(expectedData.count))
             
             XCTAssertEqual(fileInfo.timestamp, testDates[reverseIndex]!, "Incorrect timestamp in archive")
-            XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
+            XCTAssertEqual(fileInfo.crc, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
             forwardIndex += 1;
@@ -269,23 +269,23 @@ class WriteDataTests: UZKArchiveTestCase {
     }
     
     func testWriteData_NoOverwrite() {
-        let testFilePaths = [String](nonZipTestFilePaths as! Set<String>).sort(<)
+        let testFilePaths = [String](nonZipTestFilePaths as! Set<String>).sorted(by: <)
         let testDates = [
-            UZKArchiveTestCase.dateFormatter().dateFromString("12/20/2014 9:35 AM"),
-            UZKArchiveTestCase.dateFormatter().dateFromString("12/21/2014 10:00 AM"),
-            UZKArchiveTestCase.dateFormatter().dateFromString("12/22/2014 11:54 PM")]
-        var testFileData = [NSData]()
+            UZKArchiveTestCase.dateFormatter().date(from: "12/20/2014 9:35 AM"),
+            UZKArchiveTestCase.dateFormatter().date(from: "12/21/2014 10:00 AM"),
+            UZKArchiveTestCase.dateFormatter().date(from: "12/22/2014 11:54 PM")]
+        var testFileData = [Data]()
         
-        let testArchiveURL = tempDirectory.URLByAppendingPathComponent("RewriteDataTest.zip")
-        let archive = try! UZKArchive(URL: testArchiveURL)
+        let testArchiveURL = tempDirectory.appendingPathComponent("RewriteDataTest.zip")
+        let archive = try! UZKArchive(url: testArchiveURL)
         
-        for (index, testFilePath) in testFilePaths.enumerate() {
-            let fileData = NSData(contentsOfURL: testFileURLs[testFilePath] as! NSURL)
+        for (index, testFilePath) in testFilePaths.enumerated() {
+            let fileData = try? Data(contentsOf: testFileURLs[testFilePath] as! URL)
             testFileData.append(fileData!)
             
             do {
-                try archive.writeData(fileData!, filePath: testFilePath, fileDate: testDates[index],
-                                compressionMethod: .Default, password: nil, overwrite: false, progress: nil)
+                try archive.write(fileData!, filePath: testFilePath, fileDate: testDates[index],
+                                  compressionMethod: .default, password: nil, overwrite: false, progress: nil)
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePath): \(error)")
             }
@@ -293,13 +293,13 @@ class WriteDataTests: UZKArchiveTestCase {
         
         var index = 0
         
-        try! archive.performOnDataInArchive({ (fileInfo, fileData, stop) -> Void in
+        try! archive.performOnData(inArchive: { (fileInfo, fileData, stop) -> Void in
             let expectedData = testFileData[index]
-            let expectedCRC = crc32(0, UnsafePointer<Bytef>(expectedData.bytes), uInt(expectedData.length))
+            let expectedCRC = crc32(0, (expectedData as NSData).bytes.bindMemory(to: Bytef.self, capacity: expectedData.count), uInt(expectedData.count))
             
             XCTAssertEqual(fileInfo.filename, testFilePaths[index], "Incorrect filename in archive")
             XCTAssertEqual(fileInfo.timestamp, testDates[index]!, "Incorrect timestamp in archive")
-            XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
+            XCTAssertEqual(fileInfo.crc, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
             index += 1;
@@ -313,13 +313,13 @@ class WriteDataTests: UZKArchiveTestCase {
             let x = testFilePaths.count - 1 - i
             
             do {
-                try archive.writeData(testFileData[x], filePath: testFilePaths[i],
-                                fileDate: testDates[x], compressionMethod: .Default, password: nil, overwrite: false,
-                                progress: { (percentCompressed) -> Void in
+                try archive.write(testFileData[x], filePath: testFilePaths[i],
+                                  fileDate: testDates[x], compressionMethod: .default, password: nil, overwrite: false,
+                                  progress: { (percentCompressed) -> Void in
                                     #if DEBUG
                                         NSLog("Compressing data: %f%% complete", percentCompressed)
                                     #endif
-                                })
+                })
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePaths[x]) with data of " +
                     "file \(testFilePaths[i]): \(error)")
@@ -333,51 +333,51 @@ class WriteDataTests: UZKArchiveTestCase {
     }
     
     func testWriteData_MultipleWrites() {
-        let testArchiveURL = tempDirectory.URLByAppendingPathComponent("MultipleDataWriteTest.zip")
+        let testArchiveURL = tempDirectory.appendingPathComponent("MultipleDataWriteTest.zip")
         let testFilename = nonZipTestFilePaths.first as! String
-        let testFileURL = testFileURLs[testFilename] as! NSURL
-        let testFileData = NSData(contentsOfURL: testFileURL)!
+        let testFileURL = testFileURLs[testFilename] as! URL
+        let testFileData = try! Data(contentsOf: testFileURL)
         
-        let archive = try! UZKArchive(URL: testArchiveURL)
+        let archive = try! UZKArchive(url: testArchiveURL)
         
         var lastFileSize: UInt64 = 0
         
         for _ in 0..<100 {
             do {
-                try archive.writeData(testFileData, filePath: testFilename, fileDate: nil,
-                                compressionMethod: .Default, password: nil, progress: { (percentCompressed) -> Void in
+                try archive.write(testFileData, filePath: testFilename, fileDate: nil,
+                                  compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
                                     #if DEBUG
                                         NSLog("Compressing data: %f%% complete", percentCompressed)
                                     #endif
-                                })
+                })
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFileURL): \(error)")
             }
             
-            let fm = NSFileManager.defaultManager()
-            let fileAttributes = try! fm.attributesOfItemAtPath(testArchiveURL.path!) 
-            let fileSize = fileAttributes[NSFileSize] as! NSNumber
+            let fm = FileManager.default
+            let fileAttributes = try! fm.attributesOfItem(atPath: testArchiveURL.path) 
+            let fileSize = fileAttributes[FileAttributeKey.size] as! NSNumber
             
             if lastFileSize > 0 {
-                XCTAssertEqual(lastFileSize, fileSize.unsignedLongLongValue, "File changed size between writes")
+                XCTAssertEqual(lastFileSize, fileSize.uint64Value, "File changed size between writes")
             }
             
-            lastFileSize = fileSize.unsignedLongLongValue
+            lastFileSize = fileSize.uint64Value
         }
     }
     
     func testWriteData_ManyFiles_MemoryUsage_ForProfiling() {
-        let testArchiveURL = tempDirectory.URLByAppendingPathComponent("ManyFilesMemoryUsageTest.zip")
+        let testArchiveURL = tempDirectory.appendingPathComponent("ManyFilesMemoryUsageTest.zip")
         let testFilename = nonZipTestFilePaths.first as! String
-        let testFileURL = testFileURLs[testFilename] as! NSURL
-        let testFileData = NSData(contentsOfURL: testFileURL)!
+        let testFileURL = testFileURLs[testFilename] as! URL
+        let testFileData = try! Data(contentsOf: testFileURL)
         
-        let archive = try! UZKArchive(URL: testArchiveURL)
+        let archive = try! UZKArchive(url: testArchiveURL)
         
         for i in 1...1000 {
             do {
-                try archive.writeData(testFileData, filePath: "File \(i).txt", fileDate: nil,
-                                compressionMethod: .Default, password: nil, overwrite: true, progress: nil)
+                try archive.write(testFileData, filePath: "File \(i).txt", fileDate: nil,
+                                  compressionMethod: .default, password: nil, overwrite: true, progress: nil)
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFileURL): \(error)")
             }
@@ -385,20 +385,20 @@ class WriteDataTests: UZKArchiveTestCase {
     }
     
     func testWriteData_DefaultDate() {
-        let testArchiveURL = tempDirectory.URLByAppendingPathComponent("DefaultDateWriteTest.zip")
+        let testArchiveURL = tempDirectory.appendingPathComponent("DefaultDateWriteTest.zip")
         let testFilename = nonZipTestFilePaths.first as! String
-        let testFileURL = testFileURLs[testFilename] as! NSURL
-        let testFileData = NSData(contentsOfURL: testFileURL)!
+        let testFileURL = testFileURLs[testFilename] as! URL
+        let testFileData = try! Data(contentsOf: testFileURL)
         
-        let archive = try! UZKArchive(URL: testArchiveURL)
+        let archive = try! UZKArchive(url: testArchiveURL)
         
         do {
-            try archive.writeData(testFileData, filePath: testFilename, fileDate: nil,
-                        compressionMethod: .Default, password: nil, progress: { (percentCompressed) -> Void in
-                            #if DEBUG
-                                NSLog("Compressing data: %f%% complete", percentCompressed)
-                            #endif
-                        })
+            try archive.write(testFileData, filePath: testFilename, fileDate: nil,
+                              compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
+                                #if DEBUG
+                                    NSLog("Compressing data: %f%% complete", percentCompressed)
+                                #endif
+            })
         } catch let error as NSError {
             XCTFail("Error writing to file \(testFileURL): \(error)")
         }
@@ -406,7 +406,7 @@ class WriteDataTests: UZKArchiveTestCase {
         let fileList = try! archive.listFileInfo()
         let writtenFileInfo = fileList.first!
         
-        let expectedDate = NSDate().timeIntervalSinceReferenceDate
+        let expectedDate = Date().timeIntervalSinceReferenceDate
         let actualDate = writtenFileInfo.timestamp.timeIntervalSinceReferenceDate
         
         XCTAssertEqualWithAccuracy(actualDate, expectedDate, accuracy: 30, "Incorrect default date value written to file")
@@ -414,20 +414,20 @@ class WriteDataTests: UZKArchiveTestCase {
     
     #if os(OSX)
     func testWriteData_PasswordProtected() {
-        let testFilePaths = [String](nonZipTestFilePaths as! Set<String>).sort(<)
-        var testFileData = [NSData]()
+        let testFilePaths = [String](nonZipTestFilePaths as! Set<String>).sorted(by: <)
+        var testFileData = [Data]()
         
-        let testArchiveURL = tempDirectory.URLByAppendingPathComponent("SwiftWriteDataTest.zip")
+        let testArchiveURL = tempDirectory.appendingPathComponent("SwiftWriteDataTest.zip")
         let password = "111111"
         
-        let writeArchive = try! UZKArchive(path: testArchiveURL.path!, password: password)
+        let writeArchive = try! UZKArchive(path: testArchiveURL.path, password: password)
         
         for testFilePath in testFilePaths {
-            let fileData = NSData(contentsOfURL: testFileURLs[testFilePath] as! NSURL)
+            let fileData = try? Data(contentsOf: testFileURLs[testFilePath] as! URL)
             testFileData.append(fileData!)
             
             do {
-                try writeArchive.writeData(fileData!, filePath: testFilePath)
+                try writeArchive.write(fileData!, filePath: testFilePath)
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePath): \(error)")
             }
@@ -435,17 +435,17 @@ class WriteDataTests: UZKArchiveTestCase {
         
         // Read with UnzipKit
         
-        let readArchive = try! UZKArchive(path: testArchiveURL.path!, password: password)
+        let readArchive = try! UZKArchive(path: testArchiveURL.path, password: password)
         XCTAssertTrue(readArchive.isPasswordProtected(), "Archive is not marked as password-protected")
         
         var index = 0
         
-        try! readArchive.performOnDataInArchive({ (fileInfo, fileData, stop) -> Void in
+        try! readArchive.performOnData(inArchive: { (fileInfo, fileData, stop) -> Void in
             let expectedData = testFileData[index]
-            let expectedCRC = crc32(0, UnsafePointer<Bytef>(expectedData.bytes), uInt(expectedData.length))
+            let expectedCRC = crc32(0, (expectedData as NSData).bytes.bindMemory(to: Bytef.self, capacity: expectedData.count), uInt(expectedData.count))
             
             XCTAssertEqual(fileInfo.filename, testFilePaths[index], "Incorrect filename in archive")
-            XCTAssertEqual(fileInfo.CRC, expectedCRC, "CRC of extracted data doesn't match what was written")
+            XCTAssertEqual(fileInfo.crc, expectedCRC, "CRC of extracted data doesn't match what was written")
             XCTAssertEqual(fileData, expectedData, "Data extracted doesn't match what was written")
             
             index += 1;
@@ -460,34 +460,34 @@ class WriteDataTests: UZKArchiveTestCase {
     
     func testWriteData_ExternalVolume() {
         // Create a simple zip file
-        let tempDirURL = NSURL(fileURLWithPath: self.randomDirectoryName())
+        let tempDirURL = URL(fileURLWithPath: self.randomDirectoryName())
         let textFileName = "testWriteData_ExternalVolume.txt"
-        let textFileURL = tempDirURL.URLByAppendingPathComponent(textFileName)
-        try! NSFileManager.defaultManager().createDirectoryAtURL(tempDirURL, withIntermediateDirectories: true, attributes: [:])
-        try! "This is the original text".writeToURL(textFileURL, atomically: false, encoding: NSUTF8StringEncoding)
-        let tempZipFileURL = self.archiveWithFiles([textFileURL])
-        NSLog("Original ZIP file: \(tempZipFileURL.path!)")
+        let textFileURL = tempDirURL.appendingPathComponent(textFileName)
+        try! FileManager.default.createDirectory(at: tempDirURL, withIntermediateDirectories: true, attributes: [:])
+        try! "This is the original text".write(to: textFileURL, atomically: false, encoding: String.Encoding.utf8)
+        let tempZipFileURL = self.archive(withFiles: [textFileURL])
+        NSLog("Original ZIP file: \(tempZipFileURL?.path)")
         
         // Write that zip file to contents of a DMG and mount it
-        let dmgSourceFolderURL = tempDirURL.URLByAppendingPathComponent("DMGSource")
-        try! NSFileManager.defaultManager().createDirectoryAtURL(dmgSourceFolderURL, withIntermediateDirectories: true, attributes: [:])
-        try! NSFileManager.defaultManager().copyItemAtURL(tempZipFileURL, toURL: dmgSourceFolderURL.URLByAppendingPathComponent(tempZipFileURL.lastPathComponent!))
-        let dmgURL = tempDirURL.URLByAppendingPathComponent("testWriteData_ExternalVolume.dmg")
+        let dmgSourceFolderURL = tempDirURL.appendingPathComponent("DMGSource")
+        try! FileManager.default.createDirectory(at: dmgSourceFolderURL, withIntermediateDirectories: true, attributes: [:])
+        try! FileManager.default.copyItem(at: tempZipFileURL!, to: dmgSourceFolderURL.appendingPathComponent(tempZipFileURL!.lastPathComponent))
+        let dmgURL = tempDirURL.appendingPathComponent("testWriteData_ExternalVolume.dmg")
         let mountPoint = createAndMountDMG(path: dmgURL, source: dmgSourceFolderURL)!
-        NSLog("Disk image: \(dmgURL.path!)")
+        NSLog("Disk image: \(dmgURL.path)")
         defer {
             unmountDMG(mountPoint)
         }
 
         // Update a file from the archive with overwrite=YES
-        let externalVolumeZipURL = NSURL(fileURLWithPath: mountPoint).URLByAppendingPathComponent(tempZipFileURL.lastPathComponent!)
-        let archive = try! UZKArchive(URL: externalVolumeZipURL)
+        let externalVolumeZipURL = URL(fileURLWithPath: mountPoint).appendingPathComponent(tempZipFileURL!.lastPathComponent)
+        let archive = try! UZKArchive(url: externalVolumeZipURL)
         let newText = "This is the new text"
-        let newTextData = newText.dataUsingEncoding(NSUTF8StringEncoding)
+        let newTextData = newText.data(using: String.Encoding.utf8)
         var writeSuccessful = true
         do {
-            try archive.writeData(newTextData!, filePath: textFileName, fileDate: nil,
-                                  compressionMethod: UZKCompressionMethod.Default, password: nil,
+            try archive.write(newTextData!, filePath: textFileName, fileDate: nil,
+                                  compressionMethod: UZKCompressionMethod.default, password: nil,
                                   overwrite: true, progress: nil)
         } catch let error {
             NSLog("Error writing data to archive on external volume: \(error)")
@@ -496,42 +496,43 @@ class WriteDataTests: UZKArchiveTestCase {
         
         XCTAssertTrue(writeSuccessful, "Failed to update archive on external volume")
         
-        let archivedFileData = try! archive.extractDataFromFile(textFileName, progress: nil)
+        let archivedFileData = try! archive.extractData(fromFile: textFileName, progress: nil)
         XCTAssertNotNil(archivedFileData, "No data extracted from file in archive on external volume")
         
-        let archivedText = NSString(data: archivedFileData, encoding: NSUTF8StringEncoding)!
-        XCTAssertEqual(archivedText, newText, "Incorrect text extracted from archive on external volume")
+        let archivedText = NSString(data: archivedFileData, encoding: String.Encoding.utf8.rawValue)!
+        XCTAssertEqual(archivedText as String, newText, "Incorrect text extracted from archive on external volume")
     }
     
-    func createAndMountDMG(path dmgURL: NSURL, source: NSURL) -> String? {
-        let task = NSTask()
+    func createAndMountDMG(path dmgURL: URL, source: URL) -> String? {
+        let task = Process()
         task.launchPath = "/usr/bin/hdiutil"
         task.arguments = ["create",
                           "-fs", "HFS+",
                           "-format", "UDRW",
-                          "-volname", dmgURL.URLByDeletingPathExtension!.lastPathComponent!,
-                          "-srcfolder", source.path!,
+                          "-volname", dmgURL.deletingPathExtension().lastPathComponent,
+                          "-srcfolder", source.path,
                           "-attach", "-plist",
-                          dmgURL.path!]
+                          dmgURL.path]
         
-        let outputPipe = NSPipe()
+        let outputPipe = Pipe()
         task.standardOutput = outputPipe
 
         task.launch()
         task.waitUntilExit()
         
         if task.terminationStatus != 0 {
-            NSLog("Failed to create and mount DMG: \(dmgURL.path!)");
+            NSLog("Failed to create and mount DMG: \(dmgURL.path)");
             return nil
         }
         
         let readHandle = outputPipe.fileHandleForReading
         let outputData = readHandle.readDataToEndOfFile()
-        let outputPlist = try! NSPropertyListSerialization.propertyListWithData(outputData,
-                                                                                options: .Immutable,
-                                                                                format: nil)
+        let outputPlist = try! PropertyListSerialization.propertyList(from: outputData,
+                                                                      options: [],
+                                                                      format: nil)
+            as! [String: Any]
         
-        let entities = outputPlist["system-entities"] as AnyObject as! [[String:AnyObject]]
+        let entities = outputPlist["system-entities"] as! [[String:AnyObject]]
         let hfsEntry = entities.filter{ $0["content-hint"] as! String == "Apple_HFS" }.first!
         let mountPoint = hfsEntry["mount-point"] as! String
         
@@ -539,8 +540,8 @@ class WriteDataTests: UZKArchiveTestCase {
     }
     //TODO: Make the volume read/write
     
-    func unmountDMG(mountPoint: String) {
-        let task = NSTask()
+    func unmountDMG(_ mountPoint: String) {
+        let task = Process()
         task.launchPath = "/usr/bin/hdiutil"
         task.arguments = ["detach", mountPoint]
         
