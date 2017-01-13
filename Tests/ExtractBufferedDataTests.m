@@ -18,7 +18,7 @@ enum SignPostCode: uint {   // Use to reference in Instruments (http://stackover
     SignPostCodeExtractData = 2,
 };
 
-enum SignPostColor: uint {    // standard color scheme for signposts in Instruments
+enum SignPostColor: uint {  // standard color scheme for signposts in Instruments
     SignPostColorBlue = 0,
     SignPostColorGreen = 1,
     SignPostColorPurple = 2,
