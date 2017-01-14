@@ -18,7 +18,7 @@ matrix:
     - script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release analyze test -skip-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_LargeFile -skip-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1 | xcpretty
       env: Name=Mac
 
-    - script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit-iOS -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.2' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 | xcpretty
+    - script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit-iOS -destination 'platform=iOS Simulator,name=iPhone 7,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 | xcpretty
       env: Name=iOS
 
     - script: ./Scripts/install-demo-libs.sh && xcodebuild -workspace UnzipKitDemo/UnzipKitDemo.xcworkspace -scheme UnzipKitDemo -sdk iphonesimulator -configuration Release analyze | xcpretty
