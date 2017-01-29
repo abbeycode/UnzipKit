@@ -23,13 +23,13 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    @IBAction func listFiles(sender: AnyObject) {
-        let fileURL = NSBundle.mainBundle().URLForResource("Test Data/Test Archive", withExtension: "zip")!
+    @IBAction func listFiles(_ sender: AnyObject) {
+        let fileURL = Bundle.main.url(forResource: "Test Data/Test Archive", withExtension: "zip")!
         
         do {
-            let archive = try! UZKArchive(URL: fileURL)
+            let archive = try! UZKArchive(url: fileURL)
             let filesList = try archive.listFilenames()
-            self.textView.text = filesList.joinWithSeparator("\n")
+            self.textView.text = filesList.joined(separator: "\n")
         } catch let error as NSError {
             self.textView.text = error.localizedDescription
         }

@@ -120,12 +120,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 969E2FFE1AD573F100E19F7A /* Build configuration list for PBXNativeTarget "UnzipKitDemo" */;
 			buildPhases = (
-				88CB68ACC79A76D8F3E28208 /* 📦 Check Pods Manifest.lock */,
+				88CB68ACC79A76D8F3E28208 /* [CP] Check Pods Manifest.lock */,
 				969E2FDB1AD573F100E19F7A /* Sources */,
 				969E2FDC1AD573F100E19F7A /* Frameworks */,
 				969E2FDD1AD573F100E19F7A /* Resources */,
-				31000EBFB04FE7EAAF8B1F5F /* 📦 Copy Pods Resources */,
-				A96D1C77158E5E2C72CE58C7 /* 📦 Embed Pods Frameworks */,
+				31000EBFB04FE7EAAF8B1F5F /* [CP] Copy Pods Resources */,
+				A96D1C77158E5E2C72CE58C7 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -148,6 +148,7 @@
 				TargetAttributes = {
 					969E2FDE1AD573F100E19F7A = {
 						CreatedOnToolsVersion = 6.3;
+						LastSwiftMigration = 0820;
 					};
 				};
 			};
@@ -184,14 +185,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		31000EBFB04FE7EAAF8B1F5F /* 📦 Copy Pods Resources */ = {
+		31000EBFB04FE7EAAF8B1F5F /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -199,29 +200,29 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		88CB68ACC79A76D8F3E28208 /* 📦 Check Pods Manifest.lock */ = {
+		88CB68ACC79A76D8F3E28208 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		A96D1C77158E5E2C72CE58C7 /* 📦 Embed Pods Frameworks */ = {
+		A96D1C77158E5E2C72CE58C7 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -305,6 +306,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -342,6 +344,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -361,6 +364,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "UnzipKitDemo-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -377,6 +381,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "UnzipKitDemo-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
