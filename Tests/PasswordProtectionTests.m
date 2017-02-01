@@ -106,5 +106,19 @@
     XCTAssertTrue(archive.validatePassword, @"validatePassword = NO when password supplied");
 }
 
+- (void)testValidatePassword_Issue51
+{
+    NSError *error = nil;
+    
+    NSURL *archiveURL = self.testFileURLs[@"Test Archive (Password).zip"];
+    
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:archiveURL error:&error];
+    
+    if (![archive validatePassword]) {
+        // Do nothing. test passes
+    } else {
+        XCTAssert(NO, @"Password validation fails");
+    }
+}
 
 @end
