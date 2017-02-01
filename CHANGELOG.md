@@ -1,5 +1,10 @@
 # UnzipKit CHANGELOG
 
+## 1.8.4
+
+* Updated to Xcode 8 (Issue #50)
+* Fixed issues with localization (again) (Issue #42). Thanks, @ConfusedVorlon and @tomjpsun
+
 ## 1.8.3
 
 * Fixed bug in iOS framework target causing a framework bundle not to be produced (Issue #48 – Thanks, @amosavian!)
