@@ -15,13 +15,16 @@ matrix:
     - script: travis_wait 30 xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
       env: Name=Mac-Tests-Zip64Many
 
-    - script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release analyze test -skip-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_LargeFile -skip-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
+      # The CLANG arguments and find command fail the build on analyzer errors
+    - script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release analyze test -skip-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_LargeFile -skip-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
       env: Name=Mac
 
-    - script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit-iOS -destination 'platform=iOS Simulator,id=E40727B3-41FB-4D6E-B4CB-BFA87109EB12,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1
+      # The CLANG arguments and find command fail the build on analyzer errors
+    - script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit-iOS -destination 'platform=iOS Simulator,id=E40727B3-41FB-4D6E-B4CB-BFA87109EB12,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
       env: Name=iOS
 
-    - script: ./Scripts/install-demo-libs.sh && xcodebuild -workspace UnzipKitDemo/UnzipKitDemo.xcworkspace -scheme UnzipKitDemo -sdk iphonesimulator -configuration Release analyze
+      # The CLANG arguments and find command fail the build on analyzer errors
+    - script: ./Scripts/install-demo-libs.sh && xcodebuild -workspace UnzipKitDemo/UnzipKitDemo.xcworkspace -scheme UnzipKitDemo -sdk iphonesimulator -configuration Release analyze CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
       env: Name=DemoAppBuild
 
     - script: ./Scripts/cocoapod-validate.sh
