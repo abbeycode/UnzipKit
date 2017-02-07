@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.8.5
+
+* Fixed issues with localization (again, again) (Issue #42). Thanks, @stevenp!
+
 ## 1.8.4
 
 * Updated to Xcode 8 (Issue #50)
