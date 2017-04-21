@@ -18,6 +18,9 @@ _Delete from this line up_
 ### What actually happened:
 
 
+### (_Optional_) A stack trace or crash report, if you have one:
+
+
 ## Option B
 
 ### Brief summary of issue:
