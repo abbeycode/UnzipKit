@@ -26,7 +26,7 @@ class ExtractDataTests_Swift: UZKArchiveTestCase {
             
             XCTAssertNotNil(thrownError, "No error thrown for archive \(testArchiveName)")
 
-            guard let thrownNSError = thrownError as? NSError else {
+            guard let thrownNSError = thrownError as NSError? else {
                 XCTFail("Error returned is not an NSError (\(testArchiveName))")
                 continue
             }
@@ -52,7 +52,7 @@ class ExtractDataTests_Swift: UZKArchiveTestCase {
             
             XCTAssertNotNil(thrownError, "No error thrown for archive \(testArchiveName)")
             
-            guard let thrownNSError = thrownError as? NSError else {
+            guard let thrownNSError = thrownError as NSError? else {
                 XCTFail("Error returned is not an NSError (\(testArchiveName))")
                 continue
             }
