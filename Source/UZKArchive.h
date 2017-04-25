@@ -672,6 +672,27 @@ compressionMethod:(UZKCompressionMethod)method
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
 
 /**
+ *  Creates the given eempty folder in the archive
+ *
+ *  @param folderPath The folder path in the archive you wish to create
+ *  @param error      Contains an NSError object when there was an error writing to the archive
+ *
+ *  @return YES if the file was successfully deleted, NO otherwise
+ */
+- (BOOL)createFolderWithPath:(NSString *)folderPath error:(NSError * __autoreleasing*)error;
+
+/**
+ *  Creates the given eempty folder in the archive
+ *
+ *  @param folderPath The folder path in the archive you wish to create
+ *  @param folderDate The timestamp of the folder in the archive. Uses the current time if nil
+ *  @param error      Contains an NSError object when there was an error writing to the archive
+ *
+ *  @return YES if the file was successfully deleted, NO otherwise
+ */
+- (BOOL)createFolderWithPath:(NSString *)folderPath folderDate:(nullable NSDate *)fileDate error:(NSError * __autoreleasing*)error;
+
+/**
  *  Removes the given file from the archive
  *
  *  @param filePath The file in the archive you wish to delete
