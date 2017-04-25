@@ -994,6 +994,17 @@ compressionMethod:(UZKCompressionMethod)method
     return success;
 }
 
+- (BOOL)createFolderWithPath:(NSString *)folderPath error:(NSError * __autoreleasing*)error
+{
+    return [self createFolderWithPath:folderPath folderDate:nil error:error];
+}
+
+- (BOOL)createFolderWithPath:(NSString *)folderPath folderDate:(nullable NSDate *)fileDate error:(NSError * __autoreleasing*)error
+{
+    NSString *correctedPath = [[folderPath stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]] stringByAppendingString:@"/"];
+    return [self writeData:[NSData data] filePath:correctedPath fileDate:folderDate compressionMethod:UZKCompressionMethodNone password:nil overwrite:NO progress:nil error:error];
+}
+
 - (BOOL)deleteFile:(NSString *)filePath error:(NSError * __autoreleasing*)error
 {
     // Thanks to Ivan A. Krestinin for much of the code below: http://www.winimage.com/zLibDll/del.cpp
