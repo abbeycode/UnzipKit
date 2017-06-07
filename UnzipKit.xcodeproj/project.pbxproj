@@ -12,6 +12,10 @@
 		962F9DA81D5D288B00205BEC /* UnzipKitResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 962F9D9E1D5D281E00205BEC /* UnzipKitResources.bundle */; };
 		9630C0381C6D27A4000693EE /* ExtractDataTests_Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9630C0371C6D27A4000693EE /* ExtractDataTests_Swift.swift */; };
 		9630C0391C6D27A4000693EE /* ExtractDataTests_Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9630C0371C6D27A4000693EE /* ExtractDataTests_Swift.swift */; };
+		963386B51EE89A26006B16BF /* FileSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963386B41EE89A26006B16BF /* FileSystemTests.swift */; };
+		963386B61EE89A26006B16BF /* FileSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963386B41EE89A26006B16BF /* FileSystemTests.swift */; };
+		963386B91EE89A51006B16BF /* UtilityMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963386B71EE89A49006B16BF /* UtilityMethods.swift */; };
+		963386BA1EE89A51006B16BF /* UtilityMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963386B71EE89A49006B16BF /* UtilityMethods.swift */; };
 		963603531BFB815600BF0C4F /* UZKFileInfo_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 963603521BFB7F6500BF0C4F /* UZKFileInfo_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		965CF00A1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 965CF0081D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h */; };
 		965CF00C1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 965CF0091D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m */; };
@@ -115,6 +119,8 @@
 		962F9D9E1D5D281E00205BEC /* UnzipKitResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnzipKitResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		962F9DA01D5D281E00205BEC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9630C0371C6D27A4000693EE /* ExtractDataTests_Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtractDataTests_Swift.swift; sourceTree = "<group>"; };
+		963386B41EE89A26006B16BF /* FileSystemTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileSystemTests.swift; sourceTree = "<group>"; };
+		963386B71EE89A49006B16BF /* UtilityMethods.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityMethods.swift; sourceTree = "<group>"; };
 		963603521BFB7F6500BF0C4F /* UZKFileInfo_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZKFileInfo_Private.h; sourceTree = "<group>"; };
 		965CF0081D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+UnzipKitExtensions.h"; sourceTree = "<group>"; };
 		965CF0091D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+UnzipKitExtensions.m"; sourceTree = "<group>"; };
@@ -282,6 +288,7 @@
 				96EA65BF1A40BF1A00685B6D /* Test Data */,
 				961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */,
 				96FCC8401B306CDD00726AC7 /* UZKArchiveTestCase.m */,
+				963386B71EE89A49006B16BF /* UtilityMethods.swift */,
 				968C40DB1B586401004C128E /* CommentsTests.m */,
 				968C40D51B586380004C128E /* DeleteFileTests.m */,
 				968C40D71B5863A9004C128E /* ErrorHandlingTests.m */,
@@ -290,6 +297,7 @@
 				9630C0371C6D27A4000693EE /* ExtractDataTests_Swift.swift */,
 				968C40C71B5861F4004C128E /* ExtractFilesTests.m */,
 				968C40D91B5863D9004C128E /* FileDescriptorUsageTests.m */,
+				963386B41EE89A26006B16BF /* FileSystemTests.swift */,
 				968C40C31B58619C004C128E /* ListFilenamesTests.m */,
 				968C40C51B5861C3004C128E /* ListFileInfoTests.m */,
 				968C40BF1B585FDE004C128E /* ModesTests.m */,
@@ -499,6 +507,7 @@
 					};
 					96EA659D1A40AEAE00685B6D = {
 						CreatedOnToolsVersion = 6.1.1;
+						LastSwiftMigration = 0830;
 					};
 					96EA65A81A40AEAE00685B6D = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -592,8 +601,10 @@
 				96DC15CB1C5FFEFE00B71F19 /* WriteBufferedDataTests.m in Sources */,
 				96DC15C71C5FFE8C00B71F19 /* PasswordProtectionTests.m in Sources */,
 				96B10B361C5FF8F4003A692C /* ExtractBufferedDataTests.m in Sources */,
+				963386B61EE89A26006B16BF /* FileSystemTests.swift in Sources */,
 				96DC15CD1C60008400B71F19 /* ZipFileDetectionTests.m in Sources */,
 				96DC15C31C5FFC7600B71F19 /* ListFilenamesTests.m in Sources */,
+				963386BA1EE89A51006B16BF /* UtilityMethods.swift in Sources */,
 				96DC15C51C5FFC8A00B71F19 /* ModesTests.m in Sources */,
 				96DC15CC1C5FFF2300B71F19 /* WriteDataTests.swift in Sources */,
 				9630C0391C6D27A4000693EE /* ExtractDataTests_Swift.swift in Sources */,
@@ -640,8 +651,10 @@
 				968C40E01B586490004C128E /* PropertyTests.m in Sources */,
 				968C40DC1B586401004C128E /* CommentsTests.m in Sources */,
 				968C40D21B586310004C128E /* PasswordProtectionTests.m in Sources */,
+				963386B91EE89A51006B16BF /* UtilityMethods.swift in Sources */,
 				968C40C81B5861F4004C128E /* ExtractFilesTests.m in Sources */,
 				968C40D01B5862A0004C128E /* ExtractBufferedDataTests.m in Sources */,
+				963386B51EE89A26006B16BF /* FileSystemTests.swift in Sources */,
 				968C40CE1B586277004C128E /* PerformOnDataTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -888,6 +901,7 @@
 		96EA65B51A40AEAE00685B6D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -900,12 +914,15 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		96EA65B61A40AEAE00685B6D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -918,6 +935,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

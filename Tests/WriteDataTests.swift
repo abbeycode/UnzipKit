@@ -473,14 +473,14 @@ class WriteDataTests: UZKArchiveTestCase {
         try! FileManager.default.createDirectory(at: dmgSourceFolderURL, withIntermediateDirectories: true, attributes: [:])
         try! FileManager.default.copyItem(at: tempZipFileURL!, to: dmgSourceFolderURL.appendingPathComponent(tempZipFileURL!.lastPathComponent))
         let dmgURL = tempDirURL.appendingPathComponent("testWriteData_ExternalVolume.dmg")
-        let mountPoint = createAndMountDMG(path: dmgURL, source: dmgSourceFolderURL)!
+        let mountPoint = createAndMountDMG(path: dmgURL, source: dmgSourceFolderURL, fileSystem: .HFS)!
         NSLog("Disk image: \(dmgURL.path)")
         defer {
-            unmountDMG(mountPoint)
+            unmountDMG(URL: mountPoint)
         }
 
         // Update a file from the archive with overwrite=YES
-        let externalVolumeZipURL = URL(fileURLWithPath: mountPoint).appendingPathComponent(tempZipFileURL!.lastPathComponent)
+        let externalVolumeZipURL = mountPoint.appendingPathComponent(tempZipFileURL!.lastPathComponent)
         let archive = try! UZKArchive(url: externalVolumeZipURL)
         let newText = "This is the new text"
         let newTextData = newText.data(using: String.Encoding.utf8)
