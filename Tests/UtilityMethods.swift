@@ -8,6 +8,7 @@
 
 import Foundation
 
+#if os(OSX)
 
 public enum FileSystem: String {
     case HFS  = "HFS+"
@@ -113,3 +114,5 @@ public func unmountDMG(URL mountPoint: URL) {
         NSLog("Failed to unmount DMG: \(mountPoint)");
     }
 }
+
+#endif

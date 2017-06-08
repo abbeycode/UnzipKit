@@ -21,6 +21,8 @@ class FileSystemTests: UZKArchiveTestCase {
         super.tearDown()
     }
     
+    #if os(OSX)
+
     func testTypicalFilename_APFS() {
         guard #available(macOS 10.12, *) else {
             NSLog("Skipping test on OS version without APFS")
@@ -98,5 +100,7 @@ class FileSystemTests: UZKArchiveTestCase {
             XCTFail()
         }
     }
+    
+    #endif
 
 }
