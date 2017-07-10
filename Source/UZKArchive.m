@@ -135,6 +135,8 @@ NS_DESIGNATED_INITIALIZER
 - (instancetype)initWithFile:(NSURL *)fileURL password:(NSString*)password error:(NSError * __autoreleasing*)error
 {
     if ((self = [super init])) {
+                
+        
         if ([fileURL checkResourceIsReachableAndReturnError:NULL]) {
             NSError *bookmarkError = nil;
             if (![self storeFileBookmark:fileURL error:&bookmarkError]) {
@@ -168,8 +170,10 @@ NS_DESIGNATED_INITIALIZER
 
 - (NSURL *)fileURL
 {
+    NSError *checkExistsError = nil;
+
     if (!self.fileBookmark
-        || (self.fallbackURL && [self.fallbackURL checkResourceIsReachableAndReturnError:NULL]))
+        || (self.fallbackURL && [self.fallbackURL checkResourceIsReachableAndReturnError:&checkExistsError]))
     {
         return self.fallbackURL;
     }
@@ -1008,9 +1012,9 @@ compressionMethod:(UZKCompressionMethod)method
     NSString *randomString = [NSString stringWithFormat:@"%@.zip", [[NSProcessInfo processInfo] globallyUniqueString]];
     NSURL *temporaryURL = [[NSURL fileURLWithPath:NSTemporaryDirectory()] URLByAppendingPathComponent:randomString];
     
-    const char *originalFilename = self.filename.UTF8String;
-    const char *del_file = filePath.UTF8String;
-    const char *tempFilename = temporaryURL.path.UTF8String;
+    const char *originalFilename = self.fileURL.fileSystemRepresentation;
+    const char *del_file = filePath.fileSystemRepresentation;
+    const char *tempFilename = temporaryURL.fileSystemRepresentation;
     
     // Open source and destination files
     
@@ -1339,10 +1343,9 @@ compressionMethod:(UZKCompressionMethod)method
         NSError *actionError = nil;
         
         @try {
-            if (![self openFile:self.filename
-                         inMode:mode
-                   withPassword:self.password
-                          error:&openError])
+            if (![self openFileInMode:mode
+                         withPassword:self.password
+                                error:&openError])
             {
                 if (error) {
                     *error = openError;
@@ -1423,7 +1426,7 @@ compressionMethod:(UZKCompressionMethod)method
         }
         
         int err = zipOpenNewFileInZip3(self.zipFile,
-                                       filePath.UTF8String,
+                                       filePath.fileSystemRepresentation,
                                        &zi,
                                        NULL, 0, NULL, 0, NULL,
                                        (method != UZKCompressionMethodNone) ? Z_DEFLATED : 0,
@@ -1462,10 +1465,9 @@ compressionMethod:(UZKCompressionMethod)method
     return success;
 }
 
-- (BOOL)openFile:(NSString *)zipFile
-          inMode:(UZKFileMode)mode
-    withPassword:(NSString *)aPassword
-           error:(NSError * __autoreleasing*)error
+- (BOOL)openFileInMode:(UZKFileMode)mode
+          withPassword:(NSString *)aPassword
+                 error:(NSError * __autoreleasing*)error
 {
     if (error) {
         *error = nil;
@@ -1488,6 +1490,13 @@ compressionMethod:(UZKCompressionMethod)method
                           detail:NSLocalizedStringFromTableInBundle(@"Attempted to write to the archive while another write operation is already in progress", @"UnzipKit", _resources, @"Detailed error string")];
     }
     
+    if (!self.fileURL) {
+        return [self assignError:error code:UZKErrorCodeInvalidArchiveLocation
+                          detail:NSLocalizedStringFromTableInBundle(@"Nil URL found when attempting to open archive", @"UnzipKit", _resources, @"Detailed error string")];
+    }
+    
+    NSURL *_Nonnull url = (NSURL *_Nonnull)self.fileURL;
+    
     // Always initialize comment, so it can be read when the file is closed
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdirect-ivar-access"
@@ -1503,22 +1512,20 @@ compressionMethod:(UZKCompressionMethod)method
     
     self.mode = mode;
     
-    NSFileManager *fm = [NSFileManager defaultManager];
-    
     switch (mode) {
         case UZKFileModeUnzip: {
-            if (![fm fileExistsAtPath:zipFile]) {
+            if (![url checkResourceIsReachableAndReturnError:NULL]) {
                 [self assignError:error code:UZKErrorCodeArchiveNotFound
                            detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"No file found at path %@", @"UnzipKit", _resources, @"Detailed error string"),
-                                   zipFile]];
+                                   url.path]];
                 return NO;
             }
             
-            self.unzFile = unzOpen(self.filename.UTF8String);
+            self.unzFile = unzOpen(self.fileURL.fileSystemRepresentation);
             if (self.unzFile == NULL) {
                 [self assignError:error code:UZKErrorCodeBadZipFile
                            detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening zip file %@", @"UnzipKit", _resources, @"Detailed error string"),
-                                   zipFile]];
+                                   url.path]];
                 return NO;
             }
             
@@ -1555,10 +1562,10 @@ compressionMethod:(UZKCompressionMethod)method
         }
         case UZKFileModeCreate:
         case UZKFileModeAppend:
-            if (![fm fileExistsAtPath:zipFile]) {
+            if (![url checkResourceIsReachableAndReturnError:NULL]) {
                 NSError *createFileError = nil;
                 
-                if (![[NSData data] writeToFile:zipFile options:NSDataWritingAtomic error:&createFileError]) {
+                if (![[NSData data] writeToURL:url options:NSDataWritingAtomic error:&createFileError]) {
                     return [self assignError:error code:UZKErrorCodeFileOpenForWrite
                                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to create new file for archive: %@", @"UnzipKit", _resources, @"Detailed error string"),
                                               createFileError.localizedDescription]
@@ -1566,9 +1573,7 @@ compressionMethod:(UZKCompressionMethod)method
                 }
                 
                 NSError *bookmarkError = nil;
-                if (![self storeFileBookmark:[NSURL fileURLWithPath:zipFile]
-                                       error:&bookmarkError])
-                {
+                if (![self storeFileBookmark:url error:&bookmarkError]) {
                     return [self assignError:error code:UZKErrorCodeFileOpenForWrite
                                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error creating bookmark to new archive file: %@", @"UnzipKit", _resources, @"Detailed error string"),
                                               bookmarkError.localizedDescription]
@@ -1578,17 +1583,17 @@ compressionMethod:(UZKCompressionMethod)method
             
             int appendStatus = mode == UZKFileModeCreate ? APPEND_STATUS_CREATE : APPEND_STATUS_ADDINZIP;
             
-            self.zipFile = zipOpen(self.filename.UTF8String, appendStatus);
+            self.zipFile = zipOpen(url.fileSystemRepresentation, appendStatus);
             if (self.zipFile == NULL) {
                 [self assignError:error code:UZKErrorCodeArchiveNotFound
                            detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening zip file for write: %@", @"UnzipKit", _resources, @"Detailed error string"),
-                                   zipFile]];
+                                   url.path]];
                 return NO;
             }
             break;
             
         case UZKFileModeUnassigned:
-            NSAssert(NO, @"Cannot call -openFile:inMode:withPassword:error: with a mode of UZKFileModeUnassigned (%lu)", (unsigned long)mode);
+            NSAssert(NO, @"Cannot call -openFileInMode:withPassword:error: with a mode of UZKFileModeUnassigned (%lu)", (unsigned long)mode);
             break;
     }
     
