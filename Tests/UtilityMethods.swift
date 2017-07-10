@@ -87,7 +87,7 @@ public func createAndMountDMG(path dmgURL: URL, source: URL, fileSystem: FileSys
         let mountPointPath = mountPointEntry["mount-point"] as! String
         mountPoint = URL(fileURLWithPath: mountPointPath)
         
-        // Need to copy the folder's contents in, since -srcfolder doesn't work
+        // Need to copy the folder's contents in, since -srcfolder doesn't work. Reportedly fixed in 10.13
         let folderContents = try! FileManager.default.contentsOfDirectory(at: source, includingPropertiesForKeys: nil, options: FileManager.DirectoryEnumerationOptions(rawValue: 0))
         for sourceItemURL in folderContents {
             let sourceItemPathRelativeToSource = sourceItemURL.path.replacingOccurrences(of: source.path, with: "")
