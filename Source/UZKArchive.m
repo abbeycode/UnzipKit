@@ -10,6 +10,7 @@
 
 #import "UZKFileInfo.h"
 #import "UZKFileInfo_Private.h"
+#import "UnzipKitMacros.h"
 #import "NSURL+UnzipKitExtensions.h"
 
 
@@ -27,6 +28,12 @@ typedef NS_ENUM(NSUInteger, UZKFileMode) {
 
 static NSBundle *_resources = nil;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundef"
+#if UNIFIED_LOGGING_SUPPORTED
+os_log_t unzipkit_log;
+#endif
+#pragma clang diagnostic pop
 
 
 @interface UZKArchive ()
@@ -94,9 +101,11 @@ NS_DESIGNATED_INITIALIZER
         NSBundle *mainBundle = [NSBundle mainBundle];
         NSURL *resourcesURL = [mainBundle URLForResource:@"UnzipKitResources" withExtension:@"bundle"];
         
-            _resources = (resourcesURL
-                          ? [NSBundle bundleWithURL:resourcesURL]
-                          : mainBundle);
+        _resources = (resourcesURL
+                      ? [NSBundle bundleWithURL:resourcesURL]
+                      : mainBundle);
+        
+        UZKLogInit();
     });
 }
 
@@ -138,7 +147,7 @@ NS_DESIGNATED_INITIALIZER
         if ([fileURL checkResourceIsReachableAndReturnError:NULL]) {
             NSError *bookmarkError = nil;
             if (![self storeFileBookmark:fileURL error:&bookmarkError]) {
-                NSLog(@"Error creating bookmark to ZIP archive: %@", bookmarkError);
+                UZKLogFault("Error creating bookmark to ZIP archive: %{public}@", bookmarkError);
                 
                 if (error) {
                     *error = bookmarkError;
@@ -184,7 +193,7 @@ NS_DESIGNATED_INITIALIZER
                                                 error:&error];
     
     if (error) {
-        NSLog(@"Error resolving bookmark to ZIP archive: %@", error);
+        UZKLogError("Error resolving bookmark to ZIP archive: %{public}@", error);
         return nil;
     }
     
@@ -193,7 +202,7 @@ NS_DESIGNATED_INITIALIZER
         
         if (![self storeFileBookmark:result
                                error:&error]) {
-            NSLog(@"Error creating fresh bookmark to ZIP archive: %@", error);
+            UZKLogFault("Error creating fresh bookmark to ZIP archive: %{public}@", error);
         }
     }
     
@@ -232,7 +241,7 @@ NS_DESIGNATED_INITIALIZER
                                                 error:&error];
 
     if (!success) {
-        NSLog(@"Failed to write comment to archive: %@", error);
+        UZKLogError("Failed to write comment to archive: %{public}@", error);
     }
 }
 
@@ -393,7 +402,7 @@ NS_DESIGNATED_INITIALIZER
     NSArray *fileInfo = [self listFileInfo:&listError];
     
     if (!fileInfo || listError) {
-        NSLog(@"Error listing contents of archive: %@", listError);
+        UZKLogError("Error listing contents of archive: %{public}@", listError);
         
         if (error) {
             *error = listError;
@@ -564,7 +573,7 @@ NS_DESIGNATED_INITIALIZER
     NSArray *fileInfo = [self listFileInfo:&listError];
     
     if (listError || !fileInfo) {
-        NSLog(@"Failed to list the files in the archive");
+        UZKLogError("Failed to list the files in the archive: %{public}@", listError);
         
         if (error) {
             *error = listError;
@@ -606,7 +615,7 @@ NS_DESIGNATED_INITIALIZER
                                     error:error];
         
         if (!fileData) {
-            NSLog(@"Error reading file %@ in archive", fileInfo.filename);
+            UZKLogError("Error reading file %{public}@ in archive", fileInfo.filename);
             return;
         }
         
@@ -631,7 +640,7 @@ NS_DESIGNATED_INITIALIZER
         UZKFileInfo *info = [self currentFileInZipInfo:innerError];
         
         if (!info) {
-            NSLog(@"Failed to locate file %@ in zip", filePath);
+            UZKLogError("Failed to locate file %{public}@ in zip", filePath);
             return;
         }
         
@@ -687,7 +696,7 @@ NS_DESIGNATED_INITIALIZER
     NSArray *fileInfos = [self listFileInfo:&error];
     
     if (error) {
-        NSLog(@"Error checking whether file is password protected: %@", error);
+        UZKLogError("Error checking whether file is password protected: %{public}@", error);
         return NO;
     }
     
@@ -710,12 +719,12 @@ NS_DESIGNATED_INITIALIZER
     NSArray *fileInfos = [self listFileInfo:&error];
     
     if (error) {
-        NSLog(@"Error checking whether file is password protected: %@", error);
+        UZKLogError("Error checking whether file is password protected: %{public}@", error);
         return NO;
     }
     
     if (!fileInfos || fileInfos.count == 0) {
-        NSLog(@"No files in archive");
+        UZKLogError("No files in archive");
         return NO;
     }
     
@@ -732,7 +741,7 @@ NS_DESIGNATED_INITIALIZER
                                        error:&error];
     
     if (error || !smallestData) {
-        NSLog(@"Error while checking password: %@", error);
+        UZKLogError("Error while checking password: %{public}@", error);
         return NO;
     }
     
@@ -1001,7 +1010,7 @@ compressionMethod:(UZKCompressionMethod)method
     NSFileManager *fm = [NSFileManager defaultManager];
     
     if (!self.filename || ![fm fileExistsAtPath:(NSString* _Nonnull)self.filename]) {
-        NSLog(@"No archive exists at path %@, when trying to delete %@", self.filename, filePath);
+        UZKLogError("No archive exists at path %{public}@, when trying to delete %{public}@", self.filename, filePath);
         return YES;
     }
     
@@ -1403,7 +1412,7 @@ compressionMethod:(UZKCompressionMethod)method
                                          }];
             
             if (matchingFiles.count > 0 && ![self deleteFile:filePath error:error]) {
-                NSLog(@"Failed to delete %@ before writing new data for it", filePath);
+                UZKLogError("Failed to delete %{public}@ before writing new data for it", filePath);
                 return NO;
             }
         }
@@ -2015,7 +2024,7 @@ compressionMethod:(UZKCompressionMethod)method
 {
     if (error) {
         NSString *errorName = [UZKArchive errorNameForErrorCode:errorCode];
-        NSLog(@"UnzipKit error...\nName: %@\nDetail: %@", errorName, errorDetail);
+        UZKLogError("UnzipKit error...\nName: %{public}@\nDetail: %{public}@", errorName, errorDetail);
         
         // If this error is being re-wrapped, include the original error
         if (!underlyingError && *error && [*error isKindOfClass:[NSError class]]) {

@@ -9,6 +9,7 @@
 @import UnzipKit;
 
 #import "UZKArchiveTestCase.h"
+#import "UnzipKitMacros.h"
 
 
 #import <sys/kdebug_signpost.h>
@@ -45,7 +46,7 @@ enum SignPostColor: uint {  // standard color scheme for signposts in Instrument
                                                  action:
                     ^(NSData *dataChunk, CGFloat percentDecompressed) {
 #if DEBUG
-                        NSLog(@"Decompressed: %f%%", percentDecompressed);
+                        UZKLogDebug("Decompressed: %f%%", percentDecompressed);
 #endif
                         [reconstructedFile appendBytes:dataChunk.bytes
                                                 length:dataChunk.length];
@@ -94,7 +95,7 @@ enum SignPostColor: uint {  // standard color scheme for signposts in Instrument
                                                  action:
                     ^(NSData *dataChunk, CGFloat percentDecompressed) {
 # if DEBUG
-                        NSLog(@"Decompressed: %f%%", percentDecompressed);
+                        UZKLogDebug("Decompressed: %f%%", percentDecompressed);
 # endif
                         [deflated writeData:dataChunk];
                     }];
