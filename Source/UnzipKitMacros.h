@@ -43,12 +43,23 @@ extern os_log_t unzipkit_log; // Declared in UZKArchive.m
 // No-op, as nothing needs to be initialized
 #define UZKLogInit() (void)0
 
+
+// Only used below
+#define _removeLogFormatTokens(format) [@format stringByReplacingOccurrencesOfString:@"{public}" withString:@""]
+#define _stringify(a) #a
+#define _nsLogWithoutWarnings(format, ...) \
+    _Pragma( _stringify( clang diagnostic push ) ) \
+    _Pragma( _stringify( clang diagnostic ignored "-Wformat-nonliteral" ) ) \
+    _Pragma( _stringify( clang diagnostic ignored "-Wformat-security" ) ) \
+    NSLog(_removeLogFormatTokens(format), ##__VA_ARGS__); \
+    _Pragma( _stringify( clang diagnostic pop ) )
+
 // All levels do the same thing
-#define UZKLog(format, ...) NSLog(@format, ##__VA_ARGS__);
-#define UZKLogInfo(format, ...) NSLog(@format, ##__VA_ARGS__);
-#define UZKLogDebug(format, ...) NSLog(@format, ##__VA_ARGS__);
-#define UZKLogError(format, ...) NSLog(@format, ##__VA_ARGS__);
-#define UZKLogFault(format, ...) NSLog(@format, ##__VA_ARGS__);
+#define UZKLog(format, ...)      _nsLogWithoutWarnings(format, ##__VA_ARGS__);
+#define UZKLogInfo(format, ...)  _nsLogWithoutWarnings(format, ##__VA_ARGS__);
+#define UZKLogDebug(format, ...) _nsLogWithoutWarnings(format, ##__VA_ARGS__);
+#define UZKLogError(format, ...) _nsLogWithoutWarnings(format, ##__VA_ARGS__);
+#define UZKLogFault(format, ...) _nsLogWithoutWarnings(format, ##__VA_ARGS__);
 #endif
 
 
