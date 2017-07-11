@@ -24,7 +24,7 @@ matrix:
       env: Name=iOS
 
       # The CLANG arguments and find command fail the build on analyzer errors
-    - script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit-iOS -destination 'platform=iOS Simulator,name=iPhone 5s,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+    - script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit-iOS -sdk iphonesimulator8.4 -destination 'platform=iOS Simulator,name=iPhone 5s,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
       env: Name=iOS (Legacy)
       osx_image: xcode6.4
 
