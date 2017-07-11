@@ -24,7 +24,7 @@
     [self getResourceValue:&result forKey:NSURLVolumeNameKey error:&error];
     
     if (!result && error) {
-        UZKLogError("Error retrieving volume name of %@: %@", self.path, error);
+        UZKLogError("Error retrieving volume name of %{public}@: %{public}@", self.path, error);
     }
     
     return result;
