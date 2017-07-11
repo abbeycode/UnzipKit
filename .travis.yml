@@ -20,13 +20,13 @@ matrix:
       env: Name=Mac
 
       # The CLANG arguments and find command fail the build on analyzer errors
-    - script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release analyze test -skip-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_LargeFile -skip-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
-      env: Name=Mac (Legacy)
-      osx_image: xcode6.4
-
-      # The CLANG arguments and find command fail the build on analyzer errors
     - script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit-iOS -destination 'platform=iOS Simulator,name=iPhone 7,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
       env: Name=iOS
+
+      # The CLANG arguments and find command fail the build on analyzer errors
+    - script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit-iOS -destination 'platform=iOS Simulator,name=iPhone 5s,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+      env: Name=iOS (Legacy)
+      osx_image: xcode6.4
 
       # The CLANG arguments and find command fail the build on analyzer errors
     - script: ./Scripts/install-demo-libs.sh && xcodebuild -workspace UnzipKitDemo/UnzipKitDemo.xcworkspace -scheme UnzipKitDemo -sdk iphonesimulator -configuration Release analyze CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
