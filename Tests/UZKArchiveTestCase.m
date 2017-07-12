@@ -46,7 +46,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
                            @"Spanned Archive.zip.001",
                            @"Test File A.txt",
                            @"Test File B.jpg",
-                           @"Test File C.m4a"];
+                           @"Test File C.m4a",
+                           @"NotAZip-PK-ContentsUnknown"];
     
     NSArray *unicodeFiles = @[@"Ⓣest Ⓐrchive.zip",
                               @"Test File Ⓐ.txt",
