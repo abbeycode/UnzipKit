@@ -1023,22 +1023,22 @@ compressionMethod:(UZKCompressionMethod)method
     NSString *randomString = [NSString stringWithFormat:@"%@.zip", [[NSProcessInfo processInfo] globallyUniqueString]];
     NSURL *temporaryURL = [[NSURL fileURLWithPath:NSTemporaryDirectory()] URLByAppendingPathComponent:randomString];
     
-    const char *originalFilename = self.filename.UTF8String;
+    const char *original_filename = self.filename.UTF8String;
     const char *del_file = filePath.UTF8String;
-    const char *tempFilename = temporaryURL.path.UTF8String;
+    const char *temp_filename = temporaryURL.path.UTF8String;
     
     // Open source and destination files
     
-    zipFile sourceZip = unzOpen(originalFilename);
-    if (sourceZip == NULL) {
+    zipFile source_zip = unzOpen(original_filename);
+    if (source_zip == NULL) {
         return [self assignError:error code:UZKErrorCodeDeleteFile
                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening the source file while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                   filePath]];
     }
     
-    zipFile destZip = zipOpen(tempFilename, APPEND_STATUS_CREATE);
-    if (destZip == NULL) {
-        unzClose(sourceZip);
+    zipFile dest_zip = zipOpen(temp_filename, APPEND_STATUS_CREATE);
+    if (dest_zip == NULL) {
+        unzClose(source_zip);
         return [self assignError:error code:UZKErrorCodeDeleteFile
                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening the destination file while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                   filePath]];
@@ -1046,11 +1046,11 @@ compressionMethod:(UZKCompressionMethod)method
     
     // Get global commentary
     
-    unz_global_info globalInfo;
-    int err = unzGetGlobalInfo(sourceZip, &globalInfo);
+    unz_global_info global_info;
+    int err = unzGetGlobalInfo(source_zip, &global_info);
     if (err != UNZ_OK) {
-        zipClose(destZip, NULL);
-        unzClose(sourceZip);
+        zipClose(dest_zip, NULL);
+        unzClose(source_zip);
         return [self assignError:error code:UZKErrorCodeDeleteFile
                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting the global info of the source file while deleting %@ (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                   filePath, err]];
@@ -1058,21 +1058,21 @@ compressionMethod:(UZKCompressionMethod)method
     
     char *global_comment = NULL;
     
-    if (globalInfo.size_comment > 0)
+    if (global_info.size_comment > 0)
     {
-        globalComment = (char*)malloc(globalInfo.size_comment+1);
-        if ((globalComment == NULL) && (globalInfo.size_comment != 0)) {
-            zipClose(destZip, NULL);
-            unzClose(sourceZip);
+        global_comment = (char*)malloc(global_info.size_comment+1);
+        if ((global_comment == NULL) && (global_info.size_comment != 0)) {
+            zipClose(dest_zip, NULL);
+            unzClose(source_zip);
             return [self assignError:error code:UZKErrorCodeDeleteFile
                               detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error reading the global comment of the source file while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                       filePath]];
         }
         
-        if ((unsigned int)unzGetGlobalComment(sourceZip, globalComment, globalInfo.size_comment + 1) != globalInfo.size_comment) {
-            zipClose(destZip, NULL);
-            unzClose(sourceZip);
-            free(globalComment);
+        if ((unsigned int)unzGetGlobalComment(source_zip, global_comment, global_info.size_comment + 1) != global_info.size_comment) {
+            zipClose(dest_zip, NULL);
+            unzClose(source_zip);
+            free(global_comment);
             return [self assignError:error code:UZKErrorCodeDeleteFile
                               detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error reading the global comment of the source file while deleting %@ (wrong size)", @"UnzipKit", _resources, @"Detailed error string"),
                                       filePath]];
@@ -1084,7 +1084,7 @@ compressionMethod:(UZKCompressionMethod)method
     
     NSString *filenameToDelete = [UZKArchive figureOutCString:del_file];
     
-    int nextFileReturnValue = unzGoToFirstFile(sourceZip);
+    int nextFileReturnValue = unzGoToFirstFile(source_zip);
     
     while (nextFileReturnValue == UNZ_OK)
     {
@@ -1092,8 +1092,11 @@ compressionMethod:(UZKCompressionMethod)method
         char filename_inzip[FILE_IN_ZIP_MAX_NAME_LENGTH];
         unz_file_info64 unzipInfo;
         
-        err = unzGetCurrentFileInfo64(sourceZip, &unzipInfo, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
+        err = unzGetCurrentFileInfo64(source_zip, &unzipInfo, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
         if (err != UNZ_OK) {
+            zipClose(dest_zip, NULL);
+            unzClose(source_zip);
+            free(global_comment);
             return [self assignError:error code:UZKErrorCodeDeleteFile
                               detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting file info of file while deleting %@ (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                       filePath, err]];
@@ -1106,8 +1109,11 @@ compressionMethod:(UZKCompressionMethod)method
             noFilesDeleted = NO;
         else
         {
-            char *extrafield = (char*)malloc(unzipInfo.size_file_extra);
-            if ((extrafield == NULL) && (unzipInfo.size_file_extra != 0)) {
+            char *extra_field = (char*)malloc(unzipInfo.size_file_extra);
+            if ((extra_field == NULL) && (unzipInfo.size_file_extra != 0)) {
+                zipClose(dest_zip, NULL);
+                unzClose(source_zip);
+                free(global_comment);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
                                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error allocating extrafield info of %@ while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath]];
@@ -1115,15 +1121,21 @@ compressionMethod:(UZKCompressionMethod)method
             
             char *commentary = (char*)malloc(unzipInfo.size_file_comment);
             if ((commentary == NULL) && (unzipInfo.size_file_comment != 0)) {
-                free(extrafield);
+                zipClose(dest_zip, NULL);
+                unzClose(source_zip);
+                free(global_comment);
+                free(extra_field);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
                                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error allocating commentary info of %@ while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath]];
             }
             
-            err = unzGetCurrentFileInfo64(sourceZip, &unzipInfo, filename_inzip, FILE_IN_ZIP_MAX_NAME_LENGTH, extrafield, unzipInfo.size_file_extra, commentary, unzipInfo.size_file_comment);
+            err = unzGetCurrentFileInfo64(source_zip, &unzipInfo, filename_inzip, FILE_IN_ZIP_MAX_NAME_LENGTH, extra_field, unzipInfo.size_file_extra, commentary, unzipInfo.size_file_comment);
             if (err != UNZ_OK) {
-                free(extrafield);
+                zipClose(dest_zip, NULL);
+                unzClose(source_zip);
+                free(global_comment);
+                free(extra_field);
                 free(commentary);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
                                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error reading extrafield and commentary info of %@ while deleting %@ (%d)", @"UnzipKit", _resources, @"Detailed error string"),
@@ -1134,18 +1146,24 @@ compressionMethod:(UZKCompressionMethod)method
             
             int method;
             int level;
-            err = unzOpenCurrentFile2(sourceZip, &method, &level, 1);
+            err = unzOpenCurrentFile2(source_zip, &method, &level, 1);
             if (err != UNZ_OK) {
-                free(extrafield);
+                zipClose(dest_zip, NULL);
+                unzClose(source_zip);
+                free(global_comment);
+                free(extra_field);
                 free(commentary);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
                                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening %@ for raw reading while deleting %@ (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath, err]];
             }
             
-            int size_local_extra = unzGetLocalExtrafield(sourceZip, NULL, 0);
+            int size_local_extra = unzGetLocalExtrafield(source_zip, NULL, 0);
             if (size_local_extra < 0) {
-                free(extrafield);
+                zipClose(dest_zip, NULL);
+                unzClose(source_zip);
+                free(global_comment);
+                free(extra_field);
                 free(commentary);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
                                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting size_local_extra for file while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
@@ -1154,15 +1172,21 @@ compressionMethod:(UZKCompressionMethod)method
             
             void *local_extra = malloc(size_local_extra);
             if ((local_extra == NULL) && (size_local_extra != 0)) {
-                free(extrafield);
+                zipClose(dest_zip, NULL);
+                unzClose(source_zip);
+                free(global_comment);
+                free(extra_field);
                 free(commentary);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
                                   detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error allocating local_extra for file %@ while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                           currentFileName, filePath]];
             }
             
-            if (unzGetLocalExtrafield(sourceZip, local_extra, size_local_extra) < 0) {
-                free(extrafield);
+            if (unzGetLocalExtrafield(source_zip, local_extra, size_local_extra) < 0) {
+                zipClose(dest_zip, NULL);
+                unzClose(source_zip);
+                free(global_comment);
+                free(extra_field);
                 free(commentary);
                 free(local_extra);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
@@ -1173,7 +1197,10 @@ compressionMethod:(UZKCompressionMethod)method
             // This malloc may fail if the file is very large
             void *buf = malloc((unsigned long)unzipInfo.compressed_size);
             if ((buf == NULL) && (unzipInfo.compressed_size != 0)) {
-                free(extrafield);
+                zipClose(dest_zip, NULL);
+                unzClose(source_zip);
+                free(global_comment);
+                free(extra_field);
                 free(commentary);
                 free(local_extra);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
@@ -1182,9 +1209,12 @@ compressionMethod:(UZKCompressionMethod)method
             }
             
             // Read file
-            int size = unzReadCurrentFile(sourceZip, buf, (uInt)unzipInfo.compressed_size);
+            int size = unzReadCurrentFile(source_zip, buf, (uInt)unzipInfo.compressed_size);
             if ((unsigned int)size != unzipInfo.compressed_size) {
-                free(extrafield);
+                zipClose(dest_zip, NULL);
+                unzClose(source_zip);
+                free(global_comment);
+                free(extra_field);
                 free(commentary);
                 free(local_extra);
                 free(buf);
@@ -1201,11 +1231,14 @@ compressionMethod:(UZKCompressionMethod)method
             zipInfo.internal_fa = unzipInfo.internal_fa;
             zipInfo.external_fa = unzipInfo.external_fa;
             
-            err = zipOpenNewFileInZip2(destZip, filename_inzip, &zipInfo,
-                                       local_extra, size_local_extra, extrafield, (uInt)unzipInfo.size_file_extra, commentary,
+            err = zipOpenNewFileInZip2(dest_zip, filename_inzip, &zipInfo,
+                                       local_extra, size_local_extra, extra_field, (uInt)unzipInfo.size_file_extra, commentary,
                                        method, level, 1);
             if (err != UNZ_OK) {
-                free(extrafield);
+                zipClose(dest_zip, NULL);
+                unzClose(source_zip);
+                free(global_comment);
+                free(extra_field);
                 free(commentary);
                 free(local_extra);
                 free(buf);
@@ -1215,9 +1248,12 @@ compressionMethod:(UZKCompressionMethod)method
             }
             
             // Write file
-            err = zipWriteInFileInZip(destZip, buf, (uInt)unzipInfo.compressed_size);
+            err = zipWriteInFileInZip(dest_zip, buf, (uInt)unzipInfo.compressed_size);
             if (err != UNZ_OK) {
-                free(extrafield);
+                zipClose(dest_zip, NULL);
+                unzClose(source_zip);
+                free(global_comment);
+                free(extra_field);
                 free(commentary);
                 free(local_extra);
                 free(buf);
@@ -1227,9 +1263,12 @@ compressionMethod:(UZKCompressionMethod)method
             }
             
             // Close destination archive
-            err = zipCloseFileInZipRaw64(destZip, unzipInfo.uncompressed_size, unzipInfo.crc);
+            err = zipCloseFileInZipRaw64(dest_zip, unzipInfo.uncompressed_size, unzipInfo.crc);
             if (err != UNZ_OK) {
-                free(extrafield);
+                zipClose(dest_zip, NULL);
+                unzClose(source_zip);
+                free(global_comment);
+                free(extra_field);
                 free(commentary);
                 free(local_extra);
                 free(buf);
@@ -1239,9 +1278,12 @@ compressionMethod:(UZKCompressionMethod)method
             }
             
             // Close source archive
-            err = unzCloseCurrentFile(sourceZip);
+            err = unzCloseCurrentFile(source_zip);
             if (err != UNZ_OK) {
-                free(extrafield);
+                zipClose(dest_zip, NULL);
+                unzClose(source_zip);
+                free(global_comment);
+                free(extra_field);
                 free(commentary);
                 free(local_extra);
                 free(buf);
@@ -1250,19 +1292,22 @@ compressionMethod:(UZKCompressionMethod)method
                                           currentFileName, filePath, err]];
             }
             
+            free(extra_field);
             free(commentary);
+            free(local_extra);
             free(buf);
-            free(extrafield);
+            free(extra_field);
             free(local_extra);
             
             ++filesCopied;
         }
         
-        nextFileReturnValue = unzGoToNextFile(sourceZip);
+        nextFileReturnValue = unzGoToNextFile(source_zip);
     }
     
-    zipClose(destZip, globalComment);
-    unzClose(sourceZip);
+    zipClose(dest_zip, global_comment);
+    unzClose(source_zip);
+    free(global_comment);
     
     // Don't change the files around
     if (noFilesDeleted) {
@@ -1272,7 +1317,7 @@ compressionMethod:(UZKCompressionMethod)method
     // Failure
     if (nextFileReturnValue != UNZ_END_OF_LIST_OF_FILE)
     {
-        remove(tempFilename);
+        remove(temp_filename);
         return [self assignError:error code:UZKErrorCodeDeleteFile
                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to seek to the next file, while deleting %@ from the archive", @"UnzipKit", _resources, @"Detailed error string"),
                                   filenameToDelete]];
@@ -1803,8 +1848,8 @@ compressionMethod:(UZKCompressionMethod)method
     NSError *error = nil;
     
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
-        unz_global_info globalInfo;
-        int err = unzGetGlobalInfo(welf.unzFile, &globalInfo);
+        unz_global_info global_info;
+        int err = unzGetGlobalInfo(welf.unzFile, &global_info);
         if (err != UNZ_OK) {
             unzClose(welf.unzFile);
             
@@ -1813,27 +1858,28 @@ compressionMethod:(UZKCompressionMethod)method
             return;
         }
         
-        char *globalComment = NULL;
+        char *global_comment = NULL;
         
-        if (globalInfo.size_comment > 0)
+        if (global_info.size_comment > 0)
         {
-            globalComment = (char*)malloc(globalInfo.size_comment+1);
-            if ((globalComment == NULL) && (globalInfo.size_comment != 0)) {
+            global_comment = (char*)malloc(global_info.size_comment+1);
+            if ((global_comment == NULL) && (global_info.size_comment != 0)) {
                 unzClose(welf.unzFile);
                 
                 [welf assignError:innerError code:UZKErrorCodeReadComment detail:@"Error allocating the global comment during comment read"];
                 return;
             }
             
-            if ((unsigned int)unzGetGlobalComment(welf.unzFile, globalComment, globalInfo.size_comment + 1) != globalInfo.size_comment) {
+            if ((unsigned int)unzGetGlobalComment(welf.unzFile, global_comment, global_info.size_comment + 1) != global_info.size_comment) {
                 unzClose(welf.unzFile);
-                free(globalComment);
+                free(global_comment);
                 
                 [welf assignError:innerError code:UZKErrorCodeReadComment detail:@"Error reading the comment (readGlobalComment)"];
                 return;
             }
             
-            comment = [UZKArchive figureOutCString:globalComment];
+            comment = [UZKArchive figureOutCString:global_comment];
+            free(global_comment);
         }
     } inMode:UZKFileModeUnzip error:&error];
     
