@@ -632,7 +632,7 @@ NS_DESIGNATED_INITIALIZER
                              action:(void (^)(NSData *, CGFloat))action
 {
     __weak UZKArchive *welf = self;
-    NSUInteger bufferSize = 4096; //Arbitrary
+    const NSUInteger bufferSize = 4096; //Arbitrary
     
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         if (![welf locateFileInZip:filePath error:innerError]) {
@@ -830,7 +830,7 @@ compressionMethod:(UZKCompressionMethod)method
          progress:(void (^)(CGFloat percentCompressed))progress
             error:(NSError * __autoreleasing*)error
 {
-    NSUInteger bufferSize = 4096; //Arbitrary
+    const NSUInteger bufferSize = 4096; //Arbitrary
     const void *bytes = data.bytes;
     
     if (progress) {
