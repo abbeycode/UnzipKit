@@ -1688,6 +1688,7 @@ compressionMethod:(UZKCompressionMethod)method
             break;
 
         case UZKFileModeCreate:
+        case UZKFileModeAppend:
             if (!self.zipFile) {
                 break;
             }
@@ -1695,21 +1696,7 @@ compressionMethod:(UZKCompressionMethod)method
             err = zipClose(self.zipFile, cmt);
             if (err != ZIP_OK) {
                 [self assignError:error code:UZKErrorCodeZLibError
-                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error closing file in archive after create (%d)", @"UnzipKit", _resources, @"Detailed error string"),
-                                   err]];
-                closeSucceeded = NO;
-            }
-            break;
-
-        case UZKFileModeAppend:
-            if (!self.zipFile) {
-                break;
-            }
-            cmt = self.comment.UTF8String;
-            err= zipClose(self.zipFile, cmt);
-            if (err != ZIP_OK) {
-                [self assignError:error code:UZKErrorCodeZLibError
-                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error closing file in archive after append (%d)", @"UnzipKit", _resources, @"Detailed error string"),
+                           detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error closing file in archive in write mode %lu (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                    err]];
                 closeSucceeded = NO;
             }
