@@ -967,14 +967,12 @@ compressionMethod:(UZKCompressionMethod)method
     __weak UZKArchive *welf = self;
 
     BOOL success = [self performWriteAction:^int(uLong *crc, NSError * __autoreleasing*innerError) {
-        __block int writeErr;
-        
         if (!action) {
             return ZIP_OK;
         }
         
         BOOL result = action(^BOOL(const void *bytes, unsigned int length){
-            writeErr = zipWriteInFileInZip(self.zipFile, bytes, length);
+            int writeErr = zipWriteInFileInZip(self.zipFile, bytes, length);
             if (writeErr != ZIP_OK) {
                 return NO;
             }
@@ -982,7 +980,7 @@ compressionMethod:(UZKCompressionMethod)method
             NSAssert(crc, @"No CRC reference passed", nil);
             
             uLong oldCRC = *crc;
-            *crc = crc32(oldCRC, bytes, (uInt)length);;
+            *crc = crc32(oldCRC, bytes, (uInt)length);
             
             return YES;
         }, innerError);
@@ -1058,7 +1056,7 @@ compressionMethod:(UZKCompressionMethod)method
                                   filePath, err]];
     }
     
-    char *globalComment = NULL;
+    char *global_comment = NULL;
     
     if (globalInfo.size_comment > 0)
     {
