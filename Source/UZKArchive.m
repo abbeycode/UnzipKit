@@ -837,6 +837,7 @@ compressionMethod:(UZKCompressionMethod)method
         progress(0);
     }
 
+    __weak UZKArchive *welf = self;
     uLong calculatedCRC = crc32(0, data.bytes, (uInt)data.length);
     
     BOOL success = [self performWriteAction:^int(uLong *crc, NSError * __autoreleasing*innerError) {
@@ -846,7 +847,7 @@ compressionMethod:(UZKCompressionMethod)method
         for (NSUInteger i = 0; i <= data.length; i += bufferSize) {
             unsigned int dataRemaining = (unsigned int)(data.length - i);
             unsigned int size = (unsigned int)(dataRemaining < bufferSize ? dataRemaining : bufferSize);
-            int err = zipWriteInFileInZip(self.zipFile, (const char *)bytes + i, size);
+            int err = zipWriteInFileInZip(welf.zipFile, (const char *)bytes + i, size);
             
             if (err != ZIP_OK) {
                 return err;
