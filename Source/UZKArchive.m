@@ -1296,8 +1296,6 @@ compressionMethod:(UZKCompressionMethod)method
             free(commentary);
             free(local_extra);
             free(buf);
-            free(extra_field);
-            free(local_extra);
             
             ++filesCopied;
         }
