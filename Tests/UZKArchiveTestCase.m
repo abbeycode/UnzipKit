@@ -106,11 +106,11 @@ static NSDateFormatter *testFileInfoDateFormatter;
     }
     
     self.nonZipTestFilePaths = [self.testFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return [key rangeOfString:@"zip"].location == NSNotFound;
+        return [key.lowercaseString rangeOfString:@"zip"].location == NSNotFound;
     }];
     
     self.nonZipUnicodeFilePaths = [self.unicodeFileURLs keysOfEntriesPassingTest:^BOOL(NSString *key, id obj, BOOL *stop) {
-        return [key rangeOfString:@"zip"].location == NSNotFound;
+        return [key.lowercaseString rangeOfString:@"zip"].location == NSNotFound;
     }];
     
     // Make a "corrupt" zip file
