@@ -146,8 +146,7 @@ NS_DESIGNATED_INITIALIZER
 - (instancetype)initWithFile:(NSURL *)fileURL password:(NSString*)password error:(NSError * __autoreleasing*)error
 {
     if ((self = [super init])) {
-        os_activity_t activity = os_activity_create("Init Archive", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-        os_activity_scope(activity);
+        UZKCreateActivity("Init Archive");
         
         UZKLog("Initializing archive with URL %{public}@, path %{public}@, password %{public}@", fileURL, fileURL.path, [password length] != 0 ? @"given" : @"not given");
         
@@ -188,8 +187,7 @@ NS_DESIGNATED_INITIALIZER
 
 - (NSURL *)fileURL
 {
-    os_activity_t activity = os_activity_create("Read Archive URL", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Read Archive URL");
 
     if (!self.fileBookmark
         || (self.fallbackURL && [self.fallbackURL checkResourceIsReachableAndReturnError:NULL]))
@@ -232,8 +230,7 @@ NS_DESIGNATED_INITIALIZER
 
 - (NSString *)filename
 {
-    os_activity_t activity = os_activity_create("Read Archive Filename", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Read Archive Filename");
     
     NSURL *url = self.fileURL;
     
@@ -246,8 +243,7 @@ NS_DESIGNATED_INITIALIZER
 
 - (NSString *)comment
 {
-    os_activity_t activity = os_activity_create("Read Archive Comment", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Read Archive Comment");
     
     if (self.commentRetrieved) {
         UZKLogDebug("Returning cached comment");
@@ -260,8 +256,7 @@ NS_DESIGNATED_INITIALIZER
 
 - (void)setComment:(NSString *)comment
 {
-    os_activity_t activity = os_activity_create("Write Archive Comment", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Write Archive Comment");
     
     _comment = comment;
     self.commentRetrieved = YES;
@@ -285,8 +280,7 @@ NS_DESIGNATED_INITIALIZER
 
 + (BOOL)pathIsAZip:(NSString *)filePath
 {
-    os_activity_t activity = os_activity_create("Determining File Type (Path)", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Determining File Type (Path)");
     
     NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:filePath];
     
@@ -342,8 +336,7 @@ NS_DESIGNATED_INITIALIZER
 
 + (BOOL)urlIsAZip:(NSURL *)fileURL
 {
-    os_activity_t activity = os_activity_create("Determining File Type (URL)", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Determining File Type (URL)");
     
     if (!fileURL || !fileURL.path) {
         UZKLogDebug("File is not a ZIP: nil URL or path");
@@ -360,8 +353,7 @@ NS_DESIGNATED_INITIALIZER
 
 - (NSArray<NSString*> *)listFilenames:(NSError * __autoreleasing*)error
 {
-    os_activity_t activity = os_activity_create("Listing Filenames", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Listing Filenames");
     
     NSArray *zipInfos = [self listFileInfo:error];
     
@@ -375,8 +367,7 @@ NS_DESIGNATED_INITIALIZER
 
 - (NSArray<UZKFileInfo*> *)listFileInfo:(NSError * __autoreleasing*)error
 {
-    os_activity_t activity = os_activity_create("Listing File Info", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Listing File Info");
     
     if (error) {
         *error = nil;
@@ -394,8 +385,7 @@ NS_DESIGNATED_INITIALIZER
     NSMutableArray *zipInfos = [NSMutableArray array];
     
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
-        os_activity_t findFileInfoItemsActivity = os_activity_create("Finding File Info Items", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-        os_activity_scope(findFileInfoItemsActivity);
+        UZKCreateActivity("Finding File Info Items");
         
         UZKLogInfo("Getting global info");
         unzGoToNextFile(welf.unzFile);
@@ -472,8 +462,7 @@ NS_DESIGNATED_INITIALIZER
               progress:(void (^)(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed))progress
                  error:(NSError * __autoreleasing*)error
 {
-    os_activity_t activity = os_activity_create("Extracting Files to Directory", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Extracting Files to Directory");
     
     NSError *listError = nil;
     NSArray *fileInfo = [self listFileInfo:&listError];
@@ -498,8 +487,7 @@ NS_DESIGNATED_INITIALIZER
     NSError *extractError = nil;
     
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
-        os_activity_t extractFilesActivity = os_activity_create("Performing Extraction", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-        os_activity_scope(extractFilesActivity);
+        UZKCreateActivity("Performing Extraction");
         
         NSError *strongError = nil;
         
@@ -646,8 +634,7 @@ NS_DESIGNATED_INITIALIZER
                                 progress:(void (^)(CGFloat))progress
                                    error:(NSError * __autoreleasing*)error
 {
-    os_activity_t activity = os_activity_create("Extracting Data from File", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Extracting Data from File");
     
     NSMutableData *result = [NSMutableData data];
     
@@ -687,8 +674,7 @@ NS_DESIGNATED_INITIALIZER
 - (BOOL)performOnFilesInArchive:(void (^)(UZKFileInfo *, BOOL *))action
                           error:(NSError * __autoreleasing*)error
 {
-    os_activity_t activity = os_activity_create("Performing Action on Each File", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Performing Action on Each File");
     
     UZKLogInfo("Listing file info");
     
@@ -710,8 +696,7 @@ NS_DESIGNATED_INITIALIZER
     NSArray *sortedFileInfo = [fileInfo sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"filename" ascending:YES]]];
     
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
-        os_activity_t iterationActivity = os_activity_create("Iterating Each File Info", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-        os_activity_scope(iterationActivity);
+        UZKCreateActivity("Iterating Each File Info");
         
         BOOL stop = NO;
 
@@ -732,8 +717,7 @@ NS_DESIGNATED_INITIALIZER
 - (BOOL)performOnDataInArchive:(void (^)(UZKFileInfo *, NSData *, BOOL *))action
                          error:(NSError * __autoreleasing*)error
 {
-    os_activity_t activity = os_activity_create("Performing Action on Each File's Data", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Performing Action on Each File's Data");
     
     __weak UZKArchive *welf = self;
 
@@ -769,8 +753,7 @@ NS_DESIGNATED_INITIALIZER
                               error:(NSError * __autoreleasing*)error
                              action:(void (^)(NSData *, CGFloat))action
 {
-    os_activity_t activity = os_activity_create("Extracting Data into Buffer", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Extracting Data into Buffer");
     
     __weak UZKArchive *welf = self;
     const NSUInteger bufferSize = 4096; //Arbitrary
@@ -853,8 +836,7 @@ NS_DESIGNATED_INITIALIZER
 
 - (BOOL)isPasswordProtected
 {
-    os_activity_t activity = os_activity_create("Checking Password Protection", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Checking Password Protection");
     
     NSError *error = nil;
     NSArray *fileInfos = [self listFileInfo:&error];
@@ -878,8 +860,7 @@ NS_DESIGNATED_INITIALIZER
 
 - (BOOL)validatePassword
 {
-    os_activity_t activity = os_activity_create("Validating Password", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Validating Password");
     
     if (!self.isPasswordProtected) {
         UZKLogInfo("Archive is not password protected. There is no password to validate");
@@ -998,8 +979,7 @@ compressionMethod:(UZKCompressionMethod)method
          progress:(void (^)(CGFloat percentCompressed))progress
             error:(NSError * __autoreleasing*)error
 {
-    os_activity_t activity = os_activity_create("Writing Data", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Writing Data");
     
     UZKLogInfo("Writing data to archive. filePath: %{public}@, fileDate: %{time_t}ld, compressionMethod: %ld, password: %{public}@, "
                "overwrite: %{public}@, progress block specified: %{public}@, error pointer specified: %{public}@",
@@ -1019,8 +999,7 @@ compressionMethod:(UZKCompressionMethod)method
     UZKLogDebug("Calculated CRC: %010lu", calculatedCRC);
     
     BOOL success = [self performWriteAction:^int(uLong *crc, NSError * __autoreleasing*innerError) {
-        os_activity_t performWriteActivity = os_activity_create("Performing File Write", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-        os_activity_scope(performWriteActivity);
+        UZKCreateActivity("Performing File Write");
         
         NSAssert(crc, @"No CRC reference passed", nil);
         *crc = calculatedCRC;
@@ -1148,8 +1127,7 @@ compressionMethod:(UZKCompressionMethod)method
                   error:(NSError *__autoreleasing *)error
                   block:(BOOL (^)(BOOL (^)(const void *, unsigned int), NSError *__autoreleasing *))action
 {
-    os_activity_t activity = os_activity_create("Writing Into Buffer", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Writing Into Buffer");
     
     UZKLogInfo("Writing data into buffer. filePath: %{public}@, fileDate: %{time_t}ld, compressionMethod: %ld, "
                "overwrite: %{public}@, CRC: %010lu, password: %{public}@, error pointer specified: %{public}@",
@@ -1163,8 +1141,7 @@ compressionMethod:(UZKCompressionMethod)method
     __weak UZKArchive *welf = self;
 
     BOOL success = [self performWriteAction:^int(uLong *crc, NSError * __autoreleasing*innerError) {
-        os_activity_t performWriteActivity = os_activity_create("Performing File Write", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-        os_activity_scope(performWriteActivity);
+        UZKCreateActivity("Performing File Write");
         
         NSAssert(crc, @"No CRC reference passed", nil);
         
@@ -1215,8 +1192,7 @@ compressionMethod:(UZKCompressionMethod)method
 
 - (BOOL)deleteFile:(NSString *)filePath error:(NSError * __autoreleasing*)error
 {
-    os_activity_t activity = os_activity_create("Deleting File", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Deleting File");
     
     // Thanks to Ivan A. Krestinin for much of the code below: http://www.winimage.com/zLibDll/del.cpp
     
@@ -1693,8 +1669,7 @@ compressionMethod:(UZKCompressionMethod)method
                               inMode:(UZKFileMode)mode
                                error:(NSError * __autoreleasing*)error
 {
-    os_activity_t activity = os_activity_create("Performing Action With Archive Open", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Performing Action With Archive Open");
     
     @synchronized(self.threadLock) {
         if (error) {
@@ -1754,8 +1729,7 @@ compressionMethod:(UZKCompressionMethod)method
                        CRC:(uLong)crc
                      error:(NSError * __autoreleasing*)error
 {
-    os_activity_t activity = os_activity_create("Performing Write", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Performing Write");
     
     if (overwrite) {
         UZKLogInfo("Overwriting %{public}@ if it already exists. Will look for existing file to delete", filePath);
@@ -1795,8 +1769,7 @@ compressionMethod:(UZKCompressionMethod)method
     __weak UZKArchive *welf = self;
 
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
-        os_activity_t performActionActivity = os_activity_create("Performing Write Action", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-        os_activity_scope(performActionActivity);
+        UZKCreateActivity("Performing Write Action");
         
         UZKLogDebug("Making zip_fileinfo struct for date %{time_t}ld", lrint(fileDate.timeIntervalSince1970));
         zip_fileinfo zi = [UZKArchive zipFileInfoForDate:fileDate];
@@ -1862,8 +1835,7 @@ compressionMethod:(UZKCompressionMethod)method
     withPassword:(NSString *)aPassword
            error:(NSError * __autoreleasing*)error
 {
-    os_activity_t activity = os_activity_create("Opening File", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Opening File");
     
     UZKLogDebug("Opening file in mode %lu", (unsigned long)mode);
     
@@ -2026,8 +1998,7 @@ compressionMethod:(UZKCompressionMethod)method
 - (BOOL)closeFile:(NSError * __autoreleasing*)error
            inMode:(UZKFileMode)mode
 {
-    os_activity_t activity = os_activity_create("Closing File", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("Closing File");
     
     if (mode != self.mode) {
         UZKLogInfo("Closing archive for mode %lu, but archive is currently in mode %lu", (unsigned long)mode, (unsigned long)self.mode);
@@ -2102,8 +2073,7 @@ compressionMethod:(UZKCompressionMethod)method
 
 
 - (UZKFileInfo *)currentFileInZipInfo:(NSError * __autoreleasing*)error {
-    os_activity_t activity = os_activity_create("currentFileInZipInfo", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("currentFileInZipInfo");
     
     char filename_inzip[FILE_IN_ZIP_MAX_NAME_LENGTH];
     unz_file_info64 file_info;
@@ -2124,8 +2094,7 @@ compressionMethod:(UZKCompressionMethod)method
 }
 
 - (BOOL)locateFileInZip:(NSString *)fileNameInZip error:(NSError * __autoreleasing*)error {
-    os_activity_t activity = os_activity_create("locateFileInZip", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("locateFileInZip");
     
     UZKLogDebug("Looking up file position");
     NSValue *filePosValue = self.archiveContents[fileNameInZip.decomposedStringWithCanonicalMapping];
@@ -2170,8 +2139,7 @@ compressionMethod:(UZKCompressionMethod)method
 
 - (BOOL)openFile:(NSError * __autoreleasing*)error
 {
-    os_activity_t activity = os_activity_create("openFile", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("openFile");
     
     char filename_inzip[FILE_IN_ZIP_MAX_NAME_LENGTH];
     unz_file_info64 file_info;
@@ -2215,8 +2183,7 @@ compressionMethod:(UZKCompressionMethod)method
 
 
 - (NSData *)readFile:(NSString *)filePath length:(unsigned long long int)length error:(NSError * __autoreleasing*)error {
-    os_activity_t activity = os_activity_create("readFile", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("readFile");
     
     UZKLogDebug("Opening file");
     if (![self openFile:error]) {
@@ -2242,8 +2209,7 @@ compressionMethod:(UZKCompressionMethod)method
 }
 
 - (NSString *)readGlobalComment {
-    os_activity_t activity = os_activity_create("readGlobalComment", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("readGlobalComment");
     
     UZKLogDebug("Checking archive exists");
 
@@ -2258,8 +2224,7 @@ compressionMethod:(UZKCompressionMethod)method
     NSError *error = nil;
     
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
-        os_activity_t performActionActivity = os_activity_create("Perform Action", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-        os_activity_scope(performActionActivity);
+        UZKCreateActivity("Perform Action");
         
         UZKLogDebug("Getting global info...");
         unz_global_info global_info;
@@ -2325,8 +2290,7 @@ compressionMethod:(UZKCompressionMethod)method
 
 - (BOOL)storeFileBookmark:(NSURL *)fileURL error:(NSError * __autoreleasing*)error
 {
-    os_activity_t activity = os_activity_create("storeFileBookmark", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("storeFileBookmark");
 
     UZKLogDebug("Creating bookmark");
     NSError *bookmarkError = nil;
@@ -2348,8 +2312,7 @@ compressionMethod:(UZKCompressionMethod)method
 
 + (NSString *)figureOutCString:(const char *)filenameBytes
 {
-    os_activity_t activity = os_activity_create("figureOutCString", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("figureOutCString");
     
     UZKLogDebug("Trying out UTF-8");
     NSString *stringValue = [NSString stringWithUTF8String:filenameBytes];
@@ -2548,8 +2511,7 @@ compressionMethod:(UZKCompressionMethod)method
 
 - (BOOL)isDeflate64:(unz_file_info64)file_info
 {
-    os_activity_t activity = os_activity_create("isDeflate64", OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT);
-    os_activity_scope(activity);
+    UZKCreateActivity("isDeflate64");
     
     UZKLogDebug("Compression method: %lu", file_info.compression_method);
     return file_info.compression_method == 9;

@@ -38,6 +38,11 @@ extern os_log_t unzipkit_log; // Declared in UZKArchive.m
 #define UZKLogError(format, ...) os_log_error(unzipkit_log, format, ##__VA_ARGS__);
 #define UZKLogFault(format, ...) os_log_fault(unzipkit_log, format, ##__VA_ARGS__);
 
+#define UZKCreateActivity(name) \
+    os_activity_t activity = os_activity_create(name, OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT); \
+    os_activity_scope(activity);
+
+
 #else // Fall back to regular NSLog
 
 // No-op, as nothing needs to be initialized
@@ -60,6 +65,10 @@ extern os_log_t unzipkit_log; // Declared in UZKArchive.m
 #define UZKLogDebug(format, ...) _nsLogWithoutWarnings(format, ##__VA_ARGS__);
 #define UZKLogError(format, ...) _nsLogWithoutWarnings(format, ##__VA_ARGS__);
 #define UZKLogFault(format, ...) _nsLogWithoutWarnings(format, ##__VA_ARGS__);
+
+// No-op, as no equivalent to Activities exists
+#define UZKCreateActivity(name) (void)0
+
 #endif
 
 
