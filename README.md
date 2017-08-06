@@ -143,6 +143,12 @@ For all OS versions from 2016 onward (macOS 10.12, iOS 10, tvOS 10, watchOS 3), 
 
 As a fallback, regular `NSLog` is used on older OSes, with all messages logged at the same level.
 
+When debugging your own code, if you'd like to decrease the verbosity of the UnzipKit framework, you can run the following command:
+
+    sudo log config --mode "level:default" --subsystem com.abbey-code.UnzipKit
+
+The available levels, in order of increasing verbosity, are `default`, `info`, `debug`, with `debug` being the default.
+
 ## Logging guidelines
 
 These are the general rules governing the particulars of how activities and log messages are classified and written. They were written after the initial round of log messages were, so there may be some inconsistencies (such as an incorrect log level). If you think you spot one, open an issue or a pull request!
