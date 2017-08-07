@@ -160,20 +160,21 @@ Log messages should follow these conventions.
 1. Log messages don't have final punctuation (like these list items)
 1. Messages that note a C function is about to be called, rather than a higher level UnzipKit or Cocoa method, end with "...", since it's not expected for them to log any details of their own
 
-#### Unmarked (default) log level
+#### Default log level
 
-These are rare – such as an archive being initialized (along with its arguments), and a file being deleted from an archive – that would be generally useful to anyone looking at logs, whether something went wrong or not
+There should be no messages at this level, so that it's possible for a consumer of the API to turn off _all_ diagnostic logging from it, as detailed above. It's only possible to `log config --mode "level:off"` for a process, not a subsystem.
 
-#### Info
+#### Info log level
 
 Info level log statements serve the following specific purposes.
 
+1. Major action is taken, such as initializing an archive object, or deleting a file from an archive
 1. Noting each public method has been called, and the arguments with which it was called
 1. Signposting the major actions a public method takes
 1. Notifying that an atypical condition has occurred (such as an action causing an early stop in a block or a NO return value)
 1. Noting that a loop is about to occur, which will contain debug-level messages for each iteration
 
-#### Debug
+#### Debug log level
 
 Most messages fall into this category, making it extremely verbose. All non-error messages that don't fall into either of the other two categories should be debug-level, with some examples of specific cases below.
 
@@ -182,14 +183,14 @@ Most messages fall into this category, making it extremely verbose. All non-erro
 1. Indicating that everything is working as expected
 1. Indicating what happens during each iteration of a loop (or documenting that an iteration has happened at all)
 
-#### Error
+#### Error log level
 
 1. Every `NSError` generated should get logged with the same detail message as the `NSError` object itself
 1. `NSError` log messages should contain the string of the error code's enumeration value (e.g. `"UZKErrorCodeArchiveNotFound"`) when it is known at design time
 1. Errors should reported everywhere they're encountered, making it easier to trace their flows through the call stack
 1. Early exits that result in desired work not being performed
 
-#### Fault
+#### Fault log level
 
 So far, there is only one case that gets logged at Fault-level: when a Cocoa framework methods that come back with an error
 

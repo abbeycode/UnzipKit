@@ -148,7 +148,7 @@ NS_DESIGNATED_INITIALIZER
     if ((self = [super init])) {
         UZKCreateActivity("Init Archive");
         
-        UZKLog("Initializing archive with URL %{public}@, path %{public}@, password %{public}@", fileURL, fileURL.path, [password length] != 0 ? @"given" : @"not given");
+        UZKLogInfo("Initializing archive with URL %{public}@, path %{public}@, password %{public}@", fileURL, fileURL.path, [password length] != 0 ? @"given" : @"not given");
         
         if ([fileURL checkResourceIsReachableAndReturnError:NULL]) {
             NSError *bookmarkError = nil;
@@ -1196,7 +1196,7 @@ compressionMethod:(UZKCompressionMethod)method
     
     // Thanks to Ivan A. Krestinin for much of the code below: http://www.winimage.com/zLibDll/del.cpp
     
-    UZKLog("Deleting file %{public}@ from archive", filePath);
+    UZKLogInfo("Deleting file %{public}@ from archive", filePath);
     
     NSFileManager *fm = [NSFileManager defaultManager];
     
