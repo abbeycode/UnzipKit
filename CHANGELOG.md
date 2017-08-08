@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 1.9
+
+* Added detailed logging using new unified logging framework. See [the readme](README.md) for more details (Issue #47)
+
 ## 1.8.5
 
 * Fixed issues with localization (again, again) (Issue #42). Thanks, @stevenp!
