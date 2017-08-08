@@ -8,6 +8,7 @@
 
 #import "UZKArchiveTestCase.h"
 @import UnzipKit;
+#import "UnzipKitMacros.h"
 
 @interface ExtractFilesTests : UZKArchiveTestCase
 @end
@@ -41,7 +42,7 @@
                                      overwrite:NO
                                       progress:^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
 #if DEBUG
-                                          NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
+                                          UZKLogDebug("Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
 #endif
                                       }
                                          error:&error];
@@ -96,7 +97,7 @@
                                  overwrite:NO
                                   progress:^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
 #if DEBUG
-                                      NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
+                                      UZKLogDebug("Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
 #endif
                                   }
                                      error:&error];
@@ -143,7 +144,7 @@
                                  overwrite:NO
                                   progress:^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
 #if DEBUG
-                                      NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
+                                      UZKLogDebug("Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
 #endif
                                   }
                                      error:&error];
@@ -170,7 +171,7 @@
                                  overwrite:NO
                                   progress:^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
 #if DEBUG
-                                      NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
+                                      UZKLogDebug("Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
 #endif
                                   }
                                      error:&error];
@@ -195,7 +196,7 @@
                                  overwrite:NO
                                   progress:^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
 #if DEBUG
-                                      NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
+                                      UZKLogDebug("Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
 #endif
                                   }
                                      error:&error];
@@ -257,7 +258,7 @@
                                   progress:
 # if DEBUG
                     ^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
-                        NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
+                        UZKLogDebug("Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
                     }
 # else
                     nil
@@ -307,7 +308,7 @@
                                   progress:
 # if DEBUG
                     ^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
-                        NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
+                        UZKLogDebug("Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
                     }
 # else
                     nil

@@ -8,6 +8,7 @@
 
 #import "UZKArchiveTestCase.h"
 @import UnzipKit;
+#import "UnzipKitMacros.h"
 
 @interface ExtractDataTests : UZKArchiveTestCase
 @end
@@ -42,7 +43,7 @@
             NSData *extractedData = [archive extractDataFromFile:expectedFilename
                                                         progress:^(CGFloat percentDecompressed) {
 #if DEBUG
-                                                            NSLog(@"Extracting, %f%% complete", percentDecompressed);
+                                                            UZKLogDebug("Extracting, %f%% complete", percentDecompressed);
 #endif
                                                         }
                                                            error:&error];
@@ -58,7 +59,7 @@
             NSData *dataFromFileInfo = [archive extractData:fileInfos[i]
                                                    progress:^(CGFloat percentDecompressed) {
 #if DEBUG
-                                                       NSLog(@"Extracting from file info, %f%% complete", percentDecompressed);
+                                                       UZKLogDebug("Extracting from file info, %f%% complete", percentDecompressed);
 #endif
                                                    }
                                                       error:&error];
@@ -87,7 +88,7 @@
         NSData *extractedData = [archive extractDataFromFile:expectedFilename
                                                     progress:^(CGFloat percentDecompressed) {
 #if DEBUG
-                                                        NSLog(@"Extracting, %f%% complete", percentDecompressed);
+                                                        UZKLogDebug("Extracting, %f%% complete", percentDecompressed);
 #endif
                                                     }
                                                        error:&error];
@@ -103,7 +104,7 @@
         NSData *dataFromFileInfo = [archive extractData:fileInfos[i]
                                                progress:^(CGFloat percentDecompressed) {
 #if DEBUG
-                                                   NSLog(@"Extracting from file info, %f%% complete", percentDecompressed);
+                                                   UZKLogDebug("Extracting from file info, %f%% complete", percentDecompressed);
 #endif
                                                }
                                                   error:&error];
@@ -123,7 +124,7 @@
         NSData *data = [archive extractDataFromFile:@"Test File A.txt"
                                            progress:^(CGFloat percentDecompressed) {
 #if DEBUG
-                                               NSLog(@"Extracting, %f%% complete", percentDecompressed);
+                                               UZKLogDebug("Extracting, %f%% complete", percentDecompressed);
 #endif
                                            }
                                               error:&error];
@@ -142,7 +143,7 @@
     NSData *data = [archive extractDataFromFile:@"Any file.txt"
                                        progress:^(CGFloat percentDecompressed) {
 #if DEBUG
-                                           NSLog(@"Extracting, %f%% complete", percentDecompressed);
+                                           UZKLogDebug("Extracting, %f%% complete", percentDecompressed);
 #endif
                                        }
                                           error:&error];
