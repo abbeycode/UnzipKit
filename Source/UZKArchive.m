@@ -13,8 +13,6 @@
 #import "UnzipKitMacros.h"
 #import "NSURL+UnzipKitExtensions.h"
 
-#import <os/activity.h>
-
 
 NSString *UZKErrorDomain = @"UZKErrorDomain";
 
