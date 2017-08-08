@@ -48,6 +48,14 @@
     XCTAssertFalse(pathIsZip, @"JPG file is reported as a zip");
 }
 
+- (void)testPathIsAZip_NotAZip_FirstBytesPK
+{
+    NSURL *url = self.testFileURLs[@"NotAZip-PK-ContentsUnknown"];
+    NSString *path = url.path;
+    BOOL pathIsZip = [UZKArchive pathIsAZip:path];
+    XCTAssertFalse(pathIsZip, @"JPG file is reported as a zip");
+}
+
 - (void)testPathIsAZip_SmallFile
 {
     NSURL *url = [self emptyTextFileOfLength:1];

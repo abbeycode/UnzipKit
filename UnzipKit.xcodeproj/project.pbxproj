@@ -20,6 +20,8 @@
 		966A971E1A4A234C003597AA /* mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C61A40C44300685B6D /* mztools.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		966A971F1A4A2351003597AA /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C41A40C44300685B6D /* ioapi.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		966A97201A4A2354003597AA /* crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA66031A435D8200685B6D /* crypt.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9677858E1F1405F000A8D6B2 /* UnzipKitMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 9677858D1F1405DB00A8D6B2 /* UnzipKitMacros.h */; };
+		9677858F1F1405FC00A8D6B2 /* UnzipKitMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 9677858D1F1405DB00A8D6B2 /* UnzipKitMacros.h */; };
 		968C40C01B585FDE004C128E /* ModesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40BF1B585FDE004C128E /* ModesTests.m */; };
 		968C40C21B586132004C128E /* ZipFileDetectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40C11B586132004C128E /* ZipFileDetectionTests.m */; };
 		968C40C41B58619C004C128E /* ListFilenamesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40C31B58619C004C128E /* ListFilenamesTests.m */; };
@@ -114,11 +116,12 @@
 		961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZKArchiveTestCase.h; sourceTree = "<group>"; };
 		962F9D9E1D5D281E00205BEC /* UnzipKitResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnzipKitResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		962F9DA01D5D281E00205BEC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		962F9DA51D5D286B00205BEC /* base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = base; path = base.lproj/UnzipKit.strings; sourceTree = "<group>"; };
 		9630C0371C6D27A4000693EE /* ExtractDataTests_Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtractDataTests_Swift.swift; sourceTree = "<group>"; };
 		963603521BFB7F6500BF0C4F /* UZKFileInfo_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZKFileInfo_Private.h; sourceTree = "<group>"; };
 		965CF0081D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+UnzipKitExtensions.h"; sourceTree = "<group>"; };
 		965CF0091D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+UnzipKitExtensions.m"; sourceTree = "<group>"; };
+		9677858D1F1405DB00A8D6B2 /* UnzipKitMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnzipKitMacros.h; sourceTree = "<group>"; };
+		96889EED1E4A09EC0031A322 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UnzipKit.strings; sourceTree = "<group>"; };
 		968C40BF1B585FDE004C128E /* ModesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ModesTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		968C40C11B586132004C128E /* ZipFileDetectionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZipFileDetectionTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		968C40C31B58619C004C128E /* ListFilenamesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ListFilenamesTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -257,6 +260,7 @@
 			children = (
 				965CF0071D241A0100C80A88 /* Extensions */,
 				96EA65A31A40AEAE00685B6D /* UnzipKit.h */,
+				9677858D1F1405DB00A8D6B2 /* UnzipKitMacros.h */,
 				96EA65BA1A40B2EC00685B6D /* UZKArchive.h */,
 				96EA65BB1A40B2EC00685B6D /* UZKArchive.m */,
 				96EA65FF1A40E31900685B6D /* UZKFileInfo.h */,
@@ -366,6 +370,7 @@
 				966A97201A4A2354003597AA /* crypt.h in Headers */,
 				966A971E1A4A234C003597AA /* mztools.h in Headers */,
 				966A971D1A4A2348003597AA /* zip.h in Headers */,
+				9677858E1F1405F000A8D6B2 /* UnzipKitMacros.h in Headers */,
 				965CF00A1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -383,6 +388,7 @@
 				96FFB40C1E1EC71800CCA47B /* crypt.h in Headers */,
 				96FFB40E1E1EC71800CCA47B /* mztools.h in Headers */,
 				96FFB4101E1EC71800CCA47B /* zip.h in Headers */,
+				9677858F1F1405FC00A8D6B2 /* UnzipKitMacros.h in Headers */,
 				96FFB4111E1EC72F00CCA47B /* NSURL+UnzipKitExtensions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -679,7 +685,7 @@
 		962F9DA41D5D286B00205BEC /* UnzipKit.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				962F9DA51D5D286B00205BEC /* base */,
+				96889EED1E4A09EC0031A322 /* en */,
 			);
 			name = UnzipKit.strings;
 			sourceTree = "<group>";
@@ -697,7 +703,6 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.UnzipKitResources";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -715,7 +720,6 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.UnzipKitResources";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -734,9 +738,7 @@
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.UnzipKitTests-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -766,9 +768,7 @@
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.UnzipKitTests-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -803,7 +803,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.8.3;
+				CURRENT_PROJECT_VERSION = 1.8.5;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -821,8 +821,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -856,7 +856,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 1.8.3;
+				CURRENT_PROJECT_VERSION = 1.8.5;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -869,8 +869,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -891,7 +891,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1.8.3;
+				DYLIB_CURRENT_VERSION = 1.8.5;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = Source/Info.plist;
@@ -909,7 +909,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1.8.3;
+				DYLIB_CURRENT_VERSION = 1.8.5;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = Source/Info.plist;
@@ -936,7 +936,6 @@
 				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/UnzipKitTests-Bridging-Header.h";
@@ -965,7 +964,6 @@
 				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/UnzipKitTests-Bridging-Header.h";
@@ -983,7 +981,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1.8.3;
+				DYLIB_CURRENT_VERSION = 1.8.5;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1002,7 +1000,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1.8.3;
+				DYLIB_CURRENT_VERSION = 1.8.5;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

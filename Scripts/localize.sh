@@ -4,11 +4,11 @@
 find -E . -iregex '.*\.(m|h|mm)$' \
     -not -path "./UnzipKitTests*" \
     -print0 \
-| xargs -0 genstrings -o Resources/base.lproj
+| xargs -0 genstrings -o Resources/en.lproj
 
 # Define file and temp file
-LOCALIZE=./Resources/base.lproj/UnzipKit.strings
-UTF8=./Resources/base.lproj/UnzipKitUTF8.txt
+LOCALIZE=./Resources/en.lproj/UnzipKit.strings
+UTF8=./Resources/en.lproj/UnzipKitUTF8.txt
 
 # Convert file encoding from UTF-16 to UTF-8
 iconv -f UTF-16LE -t UTF-8 $LOCALIZE >$UTF8

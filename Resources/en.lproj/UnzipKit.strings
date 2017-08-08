@@ -23,13 +23,22 @@
 "Error allocating buffer for file %@ while deleting %@" = "Error allocating buffer for file %1$@ while deleting %2$@";
 
 /* Detailed error string */
+"Error allocating buffer for file %@ while deleting %@. Is it too large?" = "Error allocating buffer for file %1$@ while deleting %2$@. Is it too large?";
+
+/* Detailed error string */
 "Error allocating commentary info of %@ while deleting %@" = "Error allocating commentary info of %1$@ while deleting %2$@";
+
+/* Detailed error string */
+"Error allocating extra_field info of %@ while deleting %@" = "Error allocating extra_field info of %1$@ while deleting %2$@";
 
 /* Detailed error string */
 "Error allocating extrafield info of %@ while deleting %@" = "Error allocating extrafield info of %1$@ while deleting %2$@";
 
 /* Detailed error string */
 "Error allocating local_extra for file %@ while deleting %@" = "Error allocating local_extra for file %1$@ while deleting %2$@";
+
+/* Detailed error string */
+"Error allocating the global comment during comment read" = "Error allocating the global comment during comment read";
 
 /* UZKErrorCodeFileCloseWriting */
 "Error clonsing a file in the archive after writing it" = "Error clonsing a file in the archive after writing it";
@@ -56,6 +65,9 @@
 "Error closing file in archive after read (%d)" = "Error closing file in archive after read (%d)";
 
 /* Detailed error string */
+"Error closing file in archive in write mode %lu (%d)" = "Error closing file in archive in write mode %1$lu (%2$d)";
+
+/* Detailed error string */
 "Error creating bookmark to new archive file: %@" = "Error creating bookmark to new archive file: %@";
 
 /* Detailed error string */
@@ -78,6 +90,9 @@
 
 /* Detailed error string */
 "Error getting global info (%d)" = "Error getting global info (%d)";
+
+/* Detailed error string */
+"Error getting global info of archive during comment read: %d" = "Error getting global info of archive during comment read: %d";
 
 /* Detailed error string */
 "Error getting local_extra for file %@ while deleting %@" = "Error getting local_extra for file %1$@ while deleting %2$@";
@@ -137,7 +152,13 @@
 "Error reading data from '%@' in archive" = "Error reading data from '%@' in archive";
 
 /* Detailed error string */
+"Error reading extra_field and commentary info of %@ while deleting %@ (%d)" = "Error reading extra_field and commentary info of %1$@ while deleting %2$@ (%3$d)";
+
+/* Detailed error string */
 "Error reading extrafield and commentary info of %@ while deleting %@ (%d)" = "Error reading extrafield and commentary info of %1$@ while deleting %2$@ (%3$d)";
+
+/* Detailed error string */
+"Error reading the comment (readGlobalComment)" = "Error reading the comment (readGlobalComment)";
 
 /* Detailed error string */
 "Error reading the global comment of the source file while deleting %@" = "Error reading the global comment of the source file while deleting %@";
@@ -170,6 +191,9 @@
 "Failed to copy archive to external volume '%@', after deleting '%@' from it" = "Failed to copy archive to external volume '%1$@', after deleting '%2$@' from it";
 
 /* Detailed error string */
+"Failed to copy archive to external volume '%@', after deleting '%@' from it (%@)" = "Failed to copy archive to external volume '%1$@', after deleting '%2$@' from it (%3$@)";
+
+/* Detailed error string */
 "Failed to create destination directory: %@" = "Failed to create destination directory: %@";
 
 /* Detailed error string */
@@ -188,7 +212,13 @@
 "Failed to remove archive from external volume '%@', after deleting '%@' from a new version to replace it" = "Failed to remove archive from external volume '%1$@', after deleting '%2$@' from a new version to replace it";
 
 /* Detailed error string */
+"Failed to remove original archive from external volume '%@', after deleting '%@' from a new version to replace it (%@)" = "Failed to remove original archive from external volume '%1$@', after deleting '%2$@' from a new version to replace it (%3$@)";
+
+/* Detailed error string */
 "Failed to replace the old archive with the new one, after deleting '%@' from it" = "Failed to replace the old archive with the new one, after deleting '%@' from it";
+
+/* Detailed error string */
+"Failed to replace the old archive with the new one, after deleting '%@' from it (%@)" = "Failed to replace the old archive with the new one, after deleting '%1$@' from it (%2$@)";
 
 /* Detailed error string */
 "Failed to seek to the next file, while deleting %@ from the archive" = "Failed to seek to the next file, while deleting %@ from the archive";

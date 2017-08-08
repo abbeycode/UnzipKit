@@ -1,5 +1,18 @@
 # UnzipKit CHANGELOG
 
+## 1.9
+
+* Added detailed logging using new unified logging framework. See [the readme](README.md) for more details (Issue #47)
+
+## 1.8.5
+
+* Fixed issues with localization (again, again) (Issue #42). Thanks, @stevenp!
+
+## 1.8.4
+
+* Updated to Xcode 8 (Issue #50)
+* Fixed issues with localization (again) (Issue #42). Thanks, @ConfusedVorlon and @tomjpsun!
+
 ## 1.8.3
 
 * Fixed bug in iOS framework target causing a framework bundle not to be produced (Issue #48 – Thanks, @amosavian!)

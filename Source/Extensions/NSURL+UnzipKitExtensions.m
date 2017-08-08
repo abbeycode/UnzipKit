@@ -8,6 +8,8 @@
 
 #import "NSURL+UnzipKitExtensions.h"
 
+#import "UnzipKitMacros.h"
+
 @implementation NSURL (UnzipKitExtensions)
 
 - (NSString *)volumeName {
@@ -22,7 +24,7 @@
     [self getResourceValue:&result forKey:NSURLVolumeNameKey error:&error];
     
     if (!result && error) {
-        NSLog(@"Error retrieving volume name of %@: %@", self.path, error);
+        UZKLogError("Error retrieving volume name of %{public}@: %{public}@", self.path, error);
     }
     
     return result;

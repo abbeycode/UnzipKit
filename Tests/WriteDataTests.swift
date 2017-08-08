@@ -466,7 +466,7 @@ class WriteDataTests: UZKArchiveTestCase {
         try! FileManager.default.createDirectory(at: tempDirURL, withIntermediateDirectories: true, attributes: [:])
         try! "This is the original text".write(to: textFileURL, atomically: false, encoding: String.Encoding.utf8)
         let tempZipFileURL = self.archive(withFiles: [textFileURL])
-        NSLog("Original ZIP file: \(tempZipFileURL?.path)")
+        NSLog("Original ZIP file: \(String(describing: tempZipFileURL?.path))")
         
         // Write that zip file to contents of a DMG and mount it
         let dmgSourceFolderURL = tempDirURL.appendingPathComponent("DMGSource")
