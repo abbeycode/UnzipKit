@@ -3,7 +3,7 @@ language:
 
 osx_image: xcode8.3
 
-before_install:
+before_script:
     # Make log level less verbose. Temporarily undo if more info is needed
     - sudo log config --mode "level:default" --subsystem com.abbey-code.UnzipKit
 
