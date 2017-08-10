@@ -26,6 +26,7 @@
 
 #if UNIFIED_LOGGING_SUPPORTED
 @import os.log;
+@import os.activity;
 
 // Called from +[UnzipKit initialize] and +[UZKArchiveTestCase setUp]
 extern os_log_t unzipkit_log; // Declared in UZKArchive.m
