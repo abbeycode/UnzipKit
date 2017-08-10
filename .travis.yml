@@ -3,41 +3,45 @@ language:
 
 osx_image: xcode8.3
 
-before_install:
-    # Used to allow pushing to CocoaPods only after all matrixed builds have succeeded
-    - npm install --save-dev travis-after-all
-
+before_script:
     # Make log level less verbose. Temporarily undo if more info is needed
     - sudo log config --mode "level:default" --subsystem com.abbey-code.UnzipKit
 
 matrix:
   include:
-    - script: travis_wait 20 xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_LargeFile ENABLE_NS_ASSERTIONS=1
+    - stage: Test
+      script: travis_wait 20 xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_LargeFile ENABLE_NS_ASSERTIONS=1
       env: Name=Mac-Tests-Zip64Large
 
-    - script: travis_wait 30 xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
+    - stage: Test
+      script: travis_wait 30 xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
       env: Name=Mac-Tests-Zip64Many
 
+    - stage: Test
       # The CLANG arguments and find command fail the build on analyzer errors
-    - script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release analyze test -skip-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_LargeFile -skip-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+      script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release analyze test -skip-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_LargeFile -skip-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
       env: Name=Mac
 
+    - stage: Test
       # The CLANG arguments and find command fail the build on analyzer errors
-    - script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit-iOS -destination 'platform=iOS Simulator,name=iPhone 7,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+      script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit-iOS -destination 'platform=iOS Simulator,name=iPhone 7,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
       env: Name=iOS
 
+    - stage: Test
       # The CLANG arguments and find command fail the build on analyzer errors
-    - script: ./Scripts/install-demo-libs.sh && xcodebuild -workspace UnzipKitDemo/UnzipKitDemo.xcworkspace -scheme UnzipKitDemo -sdk iphonesimulator -configuration Release analyze CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+      script: ./Scripts/install-demo-libs.sh && xcodebuild -workspace UnzipKitDemo/UnzipKitDemo.xcworkspace -scheme UnzipKitDemo -sdk iphonesimulator -configuration Release analyze CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
       env: Name=DemoAppBuild
 
-    - script: ./Scripts/cocoapod-validate.sh
+    - stage: Validate
+      script: ./Scripts/cocoapod-validate.sh
       env: Name=CocoaPods
 
-    - script: ./Scripts/carthage-validate.sh
+    - stage: Validate
+      script: ./Scripts/carthage-validate.sh
       env: Name=Carthage
 
-after_script:
-  - ./Scripts/push-output.sh
+    - stage: Release
+      script: ./Scripts/push-output.sh
 
 # Turn on Docker, container-based infrastructure
 sudo: false
