@@ -13,8 +13,6 @@
 #import "UnzipKitMacros.h"
 #import "NSURL+UnzipKitExtensions.h"
 
-#import <os/activity.h>
-
 
 NSString *UZKErrorDomain = @"UZKErrorDomain";
 
@@ -285,6 +283,7 @@ NS_DESIGNATED_INITIALIZER
     NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:filePath];
     
     if (!handle) {
+        UZKLogError("No file handle returned for path: %{public}@", filePath);
         return NO;
     }
     
@@ -387,7 +386,7 @@ NS_DESIGNATED_INITIALIZER
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         UZKCreateActivity("Finding File Info Items");
         
-        UZKLogInfo("Getting global info");
+        UZKLogInfo("Getting global info...");
         unzGoToNextFile(welf.unzFile);
         
         unz_global_info gi;
