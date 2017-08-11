@@ -11,11 +11,6 @@ import UnzipKit
 
 class FileSystemTests: UZKArchiveTestCase {
     
-    let allFileSystems = [
-        FileSystem.HFS,
-        FileSystem.APFS,
-    ]
-
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -28,6 +23,11 @@ class FileSystemTests: UZKArchiveTestCase {
     
     #if os(OSX)
 
+    let allFileSystems = [
+        FileSystem.HFS,
+        FileSystem.APFS,
+    ]
+    
     func testTypicalFilename() {
         guard #available(macOS 10.12, *) else {
             NSLog("Skipping test on OS version without APFS")
