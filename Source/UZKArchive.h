@@ -120,11 +120,6 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
      *  The zip is compressed using Deflate64 (compression method 9), which isn't supported
      */
     UZKErrorCodeDeflate64 = 115,
-    
-    /**
-     *  The URL of the archive evaluates to nil
-     */
-    UZKErrorCodeInvalidArchiveLocation = 116,
 };
 
 /**
