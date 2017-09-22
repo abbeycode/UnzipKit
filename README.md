@@ -60,14 +60,14 @@ NSError *error = nil;
 You can use UnzipKit to perform these read-only operations:
 
 * List the contents of the archive
-
     ```Objective-C
-NSArray<NSString*> *filesInArchive = [archive listFilenames:&error];
+    NSArray<NSString*> *filesInArchive = [archive listFilenames:&error];
     ```
+    
 * Extract all files to disk
 
     ```Objective-C
-BOOL extractFilesSuccessful = [archive extractFilesTo:@"some/directory"
+    BOOL extractFilesSuccessful = [archive extractFilesTo:@"some/directory"
                                                 overWrite:NO
                                                  progress:
     ^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
@@ -79,9 +79,9 @@ BOOL extractFilesSuccessful = [archive extractFilesTo:@"some/directory"
 * Extract each archived file into memory
 
     ```Objective-C
-NSData *extractedData = [archive extractDataFromFile:@"a file in the archive.jpg"
+    NSData *extractedData = [archive extractDataFromFile:@"a file in the archive.jpg"
                                                 progress:^(CGFloat percentDecompressed) {
-                                                             NSLog(@"Extracting, %f%% complete", percentDecompressed);
+                                                    NSLog(@"Extracting, %f%% complete", percentDecompressed);
                                                 }
                                                    error:&error];
     ```
@@ -100,38 +100,38 @@ You can also modify Zip archives:
 * Write an in-memory `NSData` into the archive
 
     ```Objective-C
-BOOL success = [archive writeData:someFile
+    BOOL success = [archive writeData:someFile
                              filePath:@"dir/filename.jpg"
                                 error:&error];
     ```
 * Write data as a stream to the archive (from disk or over the network), using a block:
 
     ```Objective-C
-BOOL success = [archive writeIntoBuffer:@"dir/filename.png"
-                                  error:&error
-                                  block:
-                ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
-                    for (NSUInteger i = 0; i <= someFile.length; i += bufferSize) {
-                        const void *bytes = // some data
-                        unsigned int length = // length of data
+    BOOL success = [archive writeIntoBuffer:@"dir/filename.png"
+                                      error:&error
+                                      block:
+        ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
+            for (NSUInteger i = 0; i <= someFile.length; i += bufferSize) {
+                const void *bytes = // some data
+                unsigned int length = // length of data
 
-                        if (/* Some error occurred reading the data */) {
-                            *actionError = // Any error that was produced, or make your own
-                            return NO;
-                        }
+                if (/* Some error occurred reading the data */) {
+                    *actionError = // Any error that was produced, or make your own
+                    return NO;
+                }
 
-                        if (!writeData(&bytes, length)) {
-                            return NO;
-                        }
-                    }
+                if (!writeData(&bytes, length)) {
+                    return NO;
+                }
+            }
 
-                    return YES;
-                }];
+            return YES;
+        }];
     ```
 * Delete files from the archive
 
     ```Objective-C
-BOOL success = [archive deleteFile:@"No-good-file.txt" error:&error];
+    BOOL success = [archive deleteFile:@"No-good-file.txt" error:&error];
     ```
 # Documentation
 
