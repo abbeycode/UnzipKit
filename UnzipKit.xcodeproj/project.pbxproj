@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7ACC4CC01F7E7764001A07F6 /* UnzipKitResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 962F9D9E1D5D281E00205BEC /* UnzipKitResources.bundle */; };
 		961A9BB51B306881007C4C6B /* WriteDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961A9BB41B306881007C4C6B /* WriteDataTests.swift */; };
 		962F9DA61D5D286B00205BEC /* UnzipKit.strings in Resources */ = {isa = PBXBuildFile; fileRef = 962F9DA41D5D286B00205BEC /* UnzipKit.strings */; };
 		962F9DA81D5D288B00205BEC /* UnzipKitResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 962F9D9E1D5D281E00205BEC /* UnzipKitResources.bundle */; };
@@ -96,6 +97,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		7ACC4CBE1F7E775C001A07F6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 96EA65951A40AEAE00685B6D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 962F9D9D1D5D281E00205BEC;
+			remoteInfo = UnzipKitResources;
+		};
+		7ACC4CC11F7E7793001A07F6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 96EA65951A40AEAE00685B6D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 962F9D9D1D5D281E00205BEC;
+			remoteInfo = UnzipKitResources;
+		};
 		96EA65AB1A40AEAE00685B6D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 96EA65951A40AEAE00685B6D /* Project object */;
@@ -447,6 +462,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				7ACC4CC21F7E7793001A07F6 /* PBXTargetDependency */,
 			);
 			name = UnzipKit;
 			productName = UnzipKit;
@@ -483,6 +499,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				7ACC4CBF1F7E775C001A07F6 /* PBXTargetDependency */,
 			);
 			name = "UnzipKit-iOS";
 			productName = "UnzipKit-iOS";
@@ -579,6 +596,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7ACC4CC01F7E7764001A07F6 /* UnzipKitResources.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -676,6 +694,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		7ACC4CBF1F7E775C001A07F6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 962F9D9D1D5D281E00205BEC /* UnzipKitResources */;
+			targetProxy = 7ACC4CBE1F7E775C001A07F6 /* PBXContainerItemProxy */;
+		};
+		7ACC4CC21F7E7793001A07F6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 962F9D9D1D5D281E00205BEC /* UnzipKitResources */;
+			targetProxy = 7ACC4CC11F7E7793001A07F6 /* PBXContainerItemProxy */;
+		};
 		96EA65AC1A40AEAE00685B6D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 96EA659D1A40AEAE00685B6D /* UnzipKit */;
@@ -713,6 +741,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.UnzipKitResources";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
@@ -730,6 +759,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.UnzipKitResources";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
