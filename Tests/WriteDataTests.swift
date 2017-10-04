@@ -409,7 +409,7 @@ class WriteDataTests: UZKArchiveTestCase {
         let expectedDate = Date().timeIntervalSinceReferenceDate
         let actualDate = writtenFileInfo.timestamp.timeIntervalSinceReferenceDate
         
-        XCTAssertEqualWithAccuracy(actualDate, expectedDate, accuracy: 30, "Incorrect default date value written to file")
+        XCTAssertEqual(actualDate, expectedDate, accuracy: 30, "Incorrect default date value written to file")
     }
     
     #if os(OSX)
