@@ -16,6 +16,7 @@
 @implementation MultithreadingTests
 
 
+#if !TARGET_OS_IPHONE
 - (void)testMultithreading {
     UZKArchive *largeArchiveA = [[UZKArchive alloc] initWithURL:[self largeArchive] error:nil];
     UZKArchive *largeArchiveB = [[UZKArchive alloc] initWithURL:[self largeArchive] error:nil];
@@ -184,6 +185,7 @@
         }
     }];
 }
+#endif
 
 
 @end
