@@ -6,6 +6,7 @@ build
 *.swp
 **/*.xccheckout
 **/xcuserdata/*
+analyzer-output/**
 
 UnzipKitDemo/Pods/*
 UnzipKitDemo/Podfile.lock
