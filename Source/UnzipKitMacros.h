@@ -9,6 +9,8 @@
 #ifndef UnzipKitMacros_h
 #define UnzipKitMacros_h
 
+#import "TargetConditionals.h"
+
 //#import "Availability.h"
 //#import "AvailabilityInternal.h"
 
@@ -16,6 +18,14 @@
 #pragma clang diagnostic ignored "-Wundef"
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
 
+
+#if TARGET_OS_IPHONE
+#define SDK_10_13_MAJOR 11
+#define SDK_10_13_MINOR 0
+#else
+#define SDK_10_13_MAJOR 10
+#define SDK_10_13_MINOR 13
+#endif
 
 // iOS 10, macOS 10.12, tvOS 10.0, watchOS 3.0
 #define UNIFIED_LOGGING_SUPPORTED \
@@ -30,14 +40,29 @@
 
 // Called from +[UnzipKit initialize] and +[UZKArchiveTestCase setUp]
 extern os_log_t unzipkit_log; // Declared in UZKArchive.m
-#define UZKLogInit() unzipkit_log = os_log_create("com.abbey-code.UnzipKit", "General");
+extern BOOL isAtLeast10_13SDK; // Declared in UZKArchive.m
+#define UZKLogInit() unzipkit_log = os_log_create("com.abbey-code.UnzipKit", "General"); \
+    \
+    NSOperatingSystemVersion minVersion; \
+    minVersion.majorVersion = SDK_10_13_MAJOR; \
+    minVersion.minorVersion = SDK_10_13_MINOR; \
+    minVersion.patchVersion = 0; \
+    isAtLeast10_13SDK = [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:minVersion]; \
+    UZKLogDebug("Is >= 10.13 (or iOS 11): %@", isAtLeast10_13SDK ? @"YES" : @"NO");
 
 #define UZKLog(format, ...)      os_log(unzipkit_log, format, ##__VA_ARGS__);
 #define UZKLogInfo(format, ...)  os_log_info(unzipkit_log, format, ##__VA_ARGS__);
 #define UZKLogDebug(format, ...) os_log_debug(unzipkit_log, format, ##__VA_ARGS__);
 
-#define UZKLogError(format, ...) os_log_error(unzipkit_log, format, ##__VA_ARGS__);
-#define UZKLogFault(format, ...) os_log_fault(unzipkit_log, format, ##__VA_ARGS__);
+
+#define UZKLogError(format, ...) \
+    if (isAtLeast10_13SDK) os_log_error(unzipkit_log, format, ##__VA_ARGS__); \
+    else os_log_with_type(unzipkit_log, OS_LOG_TYPE_ERROR, format, ##__VA_ARGS__);
+
+#define UZKLogFault(format, ...) \
+    if (isAtLeast10_13SDK) os_log_fault(unzipkit_log, format, ##__VA_ARGS__); \
+    else os_log_with_type(unzipkit_log, OS_LOG_TYPE_FAULT, format, ##__VA_ARGS__);
+
 
 #define UZKCreateActivity(name) \
     os_activity_t activity = os_activity_create(name, OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT); \
