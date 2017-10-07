@@ -15,6 +15,7 @@
 @implementation FileDescriptorUsageTests
 
 
+#if !TARGET_OS_IPHONE
 - (void)testFileDescriptorUsage
 {
     NSInteger initialFileCount = [self numberOfOpenFileHandles];
@@ -165,6 +166,7 @@
     
     XCTAssertEqualWithAccuracy(initialFileCount, finalFileCount, 5, @"File descriptors were left open");
 }
+#endif
 
 
 @end

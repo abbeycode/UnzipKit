@@ -366,23 +366,23 @@ class WriteDataTests: UZKArchiveTestCase {
         }
     }
     
-    func testWriteData_ManyFiles_MemoryUsage_ForProfiling() {
-        let testArchiveURL = tempDirectory.appendingPathComponent("ManyFilesMemoryUsageTest.zip")
-        let testFilename = nonZipTestFilePaths.first as! String
-        let testFileURL = testFileURLs[testFilename] as! URL
-        let testFileData = try! Data(contentsOf: testFileURL)
-        
-        let archive = try! UZKArchive(url: testArchiveURL)
-        
-        for i in 1...1000 {
-            do {
-                try archive.write(testFileData, filePath: "File \(i).txt", fileDate: nil,
-                                  compressionMethod: .default, password: nil, overwrite: true, progress: nil)
-            } catch let error as NSError {
-                XCTFail("Error writing to file \(testFileURL): \(error)")
-            }
-        }
-    }
+//    func testWriteData_ManyFiles_MemoryUsage_ForProfiling() {
+//        let testArchiveURL = tempDirectory.appendingPathComponent("ManyFilesMemoryUsageTest.zip")
+//        let testFilename = nonZipTestFilePaths.first as! String
+//        let testFileURL = testFileURLs[testFilename] as! URL
+//        let testFileData = try! Data(contentsOf: testFileURL)
+//
+//        let archive = try! UZKArchive(url: testArchiveURL)
+//
+//        for i in 1...1000 {
+//            do {
+//                try archive.write(testFileData, filePath: "File \(i).txt", fileDate: nil,
+//                                  compressionMethod: .default, password: nil, overwrite: true, progress: nil)
+//            } catch let error as NSError {
+//                XCTFail("Error writing to file \(testFileURL): \(error)")
+//            }
+//        }
+//    }
     
     func testWriteData_DefaultDate() {
         let testArchiveURL = tempDirectory.appendingPathComponent("DefaultDateWriteTest.zip")
@@ -409,7 +409,7 @@ class WriteDataTests: UZKArchiveTestCase {
         let expectedDate = Date().timeIntervalSinceReferenceDate
         let actualDate = writtenFileInfo.timestamp.timeIntervalSinceReferenceDate
         
-        XCTAssertEqualWithAccuracy(actualDate, expectedDate, accuracy: 30, "Incorrect default date value written to file")
+        XCTAssertEqual(actualDate, expectedDate, accuracy: 30, "Incorrect default date value written to file")
     }
     
     #if os(OSX)

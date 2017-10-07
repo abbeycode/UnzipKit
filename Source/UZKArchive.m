@@ -32,6 +32,7 @@ static NSBundle *_resources = nil;
 #pragma clang diagnostic ignored "-Wundef"
 #if UNIFIED_LOGGING_SUPPORTED
 os_log_t unzipkit_log;
+BOOL isAtLeast10_13SDK;
 #endif
 #pragma clang diagnostic pop
 
@@ -646,7 +647,7 @@ NS_DESIGNATED_INITIALIZER
     BOOL success = [self extractBufferedDataFromFile:filePath
                                                error:&extractError
                                               action:^(NSData *dataChunk, CGFloat percentDecompressed) {
-                                                  UZKLogDebug("Appending data chunk of size %lu (%f%% complete)", (unsigned long)dataChunk.length, percentDecompressed);
+                                                  UZKLogDebug("Appending data chunk of size %lu (%f%% complete)", (unsigned long)dataChunk.length, (double)percentDecompressed);
 
                                                   if (progress) {
                                                       progress(percentDecompressed);
@@ -1021,7 +1022,7 @@ compressionMethod:(UZKCompressionMethod)method
             }
             
             if (progress) {
-                CGFloat percentComplete = i / (CGFloat)data.length;
+                double percentComplete = i / (double)data.length;
                 UZKLogDebug("Calling progress block at %f%%", percentComplete);
                 progress(percentComplete);
             }
