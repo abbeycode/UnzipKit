@@ -82,8 +82,10 @@
     
     UZKArchive *archive = [[UZKArchive alloc] initWithURL:largeArchiveURL error:nil];
     
+    dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [NSThread sleepForTimeInterval:1];
+        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
         
         NSURL *movedURL = [largeArchiveURL URLByAppendingPathExtension:@"unittest"];
         
@@ -94,6 +96,7 @@
     });
     
     __block NSUInteger fileCount = 0;
+    NSUInteger totalFileCount = 5;
     
     NSError *error = nil;
     BOOL success = [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
@@ -103,9 +106,13 @@
             fileCount++;
             XCTAssertGreaterThan(fileData.length, (NSUInteger)0, @"Extracted file is empty: %@", fileInfo.filename);
         }
+        
+        if (fileCount == 2) {
+            dispatch_semaphore_signal(sema);
+        }
     } error:&error];
     
-    XCTAssertEqual(fileCount, (NSUInteger)5, @"Not all files read");
+    XCTAssertEqual(fileCount, totalFileCount, @"Not all files read");
     XCTAssertTrue(success, @"Failed to read files");
     XCTAssertNil(error, @"Error reading files: %@", error);
 }
@@ -116,8 +123,10 @@
     
     UZKArchive *archive = [[UZKArchive alloc] initWithURL:largeArchiveURL error:nil];
     
+    dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [NSThread sleepForTimeInterval:1];
+        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
         
         NSError *removeError = nil;
         NSFileManager *fm = [NSFileManager defaultManager];
@@ -126,7 +135,8 @@
     });
     
     __block NSUInteger fileCount = 0;
-    
+    NSUInteger totalFileCount = 5;
+
     NSError *error = nil;
     BOOL success = [archive performOnDataInArchive:^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
         XCTAssertNotNil(fileData, @"Extracted file is nil: %@", fileInfo.filename);
@@ -135,8 +145,13 @@
             fileCount++;
             XCTAssertGreaterThan(fileData.length, (NSUInteger)0, @"Extracted file is empty: %@", fileInfo.filename);
         }
+        
+        if (fileCount == 2) {
+            dispatch_semaphore_signal(sema);
+        }
     } error:&error];
-    
+
+    XCTAssertEqual(fileCount, totalFileCount, @"Not all files read");
     XCTAssertTrue(success, @"Failed to read files");
     XCTAssertNil(error, @"Error reading files: %@", error);
 }
