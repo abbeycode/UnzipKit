@@ -3,7 +3,8 @@
 ## 1.9
 
 * Added detailed logging using new unified logging framework. See [the readme](README.md) for more details (Issue #47)
-* Upgraded project to Xcode 9 and to the macOS 10.13 and iOS 11 SDKs
+* Upgraded project to Xcode 9 and to the macOS 10.13 and iOS 11 SDKs (Issue #61)
+* Consolidated targets so they're shared between iOS and macOS (Issue #62)
 
 ## 1.8.5
 
