@@ -114,14 +114,34 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
      *  The zip is compressed using Deflate64 (compression method 9), which isn't supported
      */
     UZKErrorCodeDeflate64 = 115,
+    
+    /**
+     *  User cancelled the operation
+     */
+    UZKErrorCodeUserCancelled = 116,
 };
 
+
+typedef NSString *const UZKProgressInfoKey;
+
+/**
+ *  Defines the keys passed in `-[NSProgress userInfo]` for certain methods
+ */
+static UZKProgressInfoKey _Nonnull
+/**
+ *  For `extractFilesTo:overwrite:error:`, this key contains an instance of URKFileInfo with the file currently being extracted
+ */
+UZKProgressInfoKeyFileInfoExtracting = @"UZKProgressInfoKeyFileInfoExtracting";
 
 NS_ASSUME_NONNULL_BEGIN
 
 extern NSString *UZKErrorDomain;
 
 @interface UZKArchive : NSObject
+// Minimum of iOS 9, macOS 10.11 SDKs
+#if (defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED > 90000) || (defined(MAC_OS_X_VERSION_MIN_REQUIRED) && MAC_OS_X_VERSION_MIN_REQUIRED > 101100)
+<NSProgressReporting>
+#endif
 
 /**
  *  The URL of the archive. Returns nil if the URL becomes unreachable

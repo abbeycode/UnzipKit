@@ -462,7 +462,7 @@ NS_DESIGNATED_INITIALIZER
 
 - (BOOL)extractFilesTo:(NSString *)destinationDirectory
              overwrite:(BOOL)overwrite
-              progress:(void (^)(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed))progress
+              progress:(void (^)(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed))progressBlock
                  error:(NSError * __autoreleasing*)error
 {
     UZKCreateActivity("Extracting Files to Directory");
@@ -485,6 +485,10 @@ NS_DESIGNATED_INITIALIZER
     NSNumber *totalSize = [fileInfo valueForKeyPath:@"@sum.uncompressedSize"];
     UZKLogDebug("totalSize: %ld", totalSize.longValue);
     __block long long bytesDecompressed = 0;
+    __block NSInteger filesExtracted = 0;
+
+    NSProgress *progress = [self beginProgressOperation:totalSize.longLongValue];
+    progress.kind = NSProgressKindFile;
 
     __weak UZKArchive *welf = self;
     NSError *extractError = nil;
@@ -498,9 +502,18 @@ NS_DESIGNATED_INITIALIZER
             for (UZKFileInfo *info in fileInfo) {
                 UZKLogDebug("Extracting %{public}@ to disk", info.filename);
 
+                if (progress.isCancelled) {
+                    NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error locating file '%@' in archive", @"UnzipKit", _resources, @"Detailed error string"),
+                                        info.filename];
+                    UZKLogError("Halted file extraction due to user cancellation: %{public}@", detail);
+                    [welf assignError:&strongError code:UZKErrorCodeFileNotFoundInArchive
+                               detail:detail];
+                    return;
+                }
+                
                 @autoreleasepool {
-                    if (progress) {
-                        progress(info, bytesDecompressed / totalSize.doubleValue);
+                    if (progressBlock) {
+                        progressBlock(info, bytesDecompressed / totalSize.doubleValue);
                     }
                     
                     if (![self locateFileInZip:info.filename error:&strongError]) {
@@ -552,6 +565,10 @@ NS_DESIGNATED_INITIALIZER
                     
                     NSURL *deflatedDirectoryURL = [NSURL fileURLWithPath:destinationDirectory];
                     NSURL *deflatedFileURL = [deflatedDirectoryURL URLByAppendingPathComponent:info.filename];
+                    [progress setUserInfoObject:deflatedFileURL
+                                         forKey:NSProgressFileURLKey];
+                    [progress setUserInfoObject:info
+                                         forKey:UZKProgressInfoKeyFileInfoExtracting];
                     NSString *path = deflatedFileURL.path;
                     
                     UZKLogDebug("Creating empty file at path %{public}@", path);
@@ -590,8 +607,8 @@ NS_DESIGNATED_INITIALIZER
                                         UZKLogDebug("Writing data chunk of size %lu (%lld total so far)", (unsigned long)dataChunk.length, bytesDecompressed);
                                         bytesDecompressed += dataChunk.length;
                                         [deflatedFileHandle writeData:dataChunk];
-                                        if (progress) {
-                                            progress(info, bytesDecompressed / totalSize.doubleValue);
+                                        if (progressBlock) {
+                                            progressBlock(info, bytesDecompressed / totalSize.doubleValue);
                                         }
                                     }];
 
@@ -607,6 +624,12 @@ NS_DESIGNATED_INITIALIZER
                                       error:nil];
                         return;
                     }
+
+                    [progress setUserInfoObject:@(++filesExtracted)
+                                         forKey:NSProgressFileCompletedCountKey];
+                    [progress setUserInfoObject:@(fileInfo.count)
+                                         forKey:NSProgressFileTotalCountKey];
+                    progress.completedUnitCount += info.uncompressedSize;
                 }
             }
         }
@@ -634,7 +657,7 @@ NS_DESIGNATED_INITIALIZER
 }
 
 - (nullable NSData *)extractDataFromFile:(NSString *)filePath
-                                progress:(void (^)(CGFloat))progress
+                                progress:(void (^)(CGFloat))progressBlock
                                    error:(NSError * __autoreleasing*)error
 {
     UZKCreateActivity("Extracting Data from File");
@@ -649,16 +672,16 @@ NS_DESIGNATED_INITIALIZER
                                               action:^(NSData *dataChunk, CGFloat percentDecompressed) {
                                                   UZKLogDebug("Appending data chunk of size %lu (%f%% complete)", (unsigned long)dataChunk.length, (double)percentDecompressed);
 
-                                                  if (progress) {
-                                                      progress(percentDecompressed);
+                                                  if (progressBlock) {
+                                                      progressBlock(percentDecompressed);
                                                   }
                                                   
                                                   [result appendData:dataChunk];
                                               }];
     
-    if (progress) {
+    if (progressBlock) {
         UZKLogDebug("Declaring extraction progress as completed");
-        progress(1.0);
+        progressBlock(1.0);
     }
     
     if (success) {
@@ -758,6 +781,8 @@ NS_DESIGNATED_INITIALIZER
 {
     UZKCreateActivity("Extracting Data into Buffer");
     
+    NSProgress *progress = [self beginProgressOperation:0];
+    
     __weak UZKArchive *welf = self;
     const NSUInteger bufferSize = 4096; //Arbitrary
     
@@ -779,6 +804,8 @@ NS_DESIGNATED_INITIALIZER
             return;
         }
         
+        progress.totalUnitCount = info.uncompressedSize;
+
         UZKLogInfo("Opening file");
         if (![welf openFile:innerError]) {
             UZKLogError("Failed to open file %{public}@ in archive", filePath);
@@ -789,6 +816,11 @@ NS_DESIGNATED_INITIALIZER
         
         for (;;)
         {
+            if (progress.isCancelled) {
+                UZKLogInfo("Buffered data read cancelled");
+                return;
+            }
+            
             @autoreleasepool {
                 UZKLogDebug("Reading file data");
                 NSMutableData *data = [NSMutableData dataWithLength:bufferSize];
@@ -816,6 +848,8 @@ NS_DESIGNATED_INITIALIZER
                     UZKLogDebug("Performing action on chunk of data");
                     action([data copy], bytesDecompressed / (CGFloat)info.uncompressedSize);
                 }
+                
+                progress.completedUnitCount += bytesDecompressed;
             }
         }
         
@@ -833,6 +867,14 @@ NS_DESIGNATED_INITIALIZER
             return;
         }
     } inMode:UZKFileModeUnzip error:error];
+    
+    if (progress.isCancelled) {
+        UZKLogError("User cancelled data extraction");
+        NSString *detail = NSLocalizedStringFromTableInBundle(@"User cancelled data read", @"UnzipKit", _resources, @"Detailed error string");
+        [self assignError:error code:UZKErrorCodeUserCancelled
+                   detail:detail];
+        return NO;
+    }
     
     return success;
 }
@@ -979,7 +1021,7 @@ compressionMethod:(UZKCompressionMethod)method
 compressionMethod:(UZKCompressionMethod)method
          password:(NSString *)password
         overwrite:(BOOL)overwrite
-         progress:(void (^)(CGFloat percentCompressed))progress
+         progress:(void (^)(CGFloat percentCompressed))progressBlock
             error:(NSError * __autoreleasing*)error
 {
     UZKCreateActivity("Writing Data");
@@ -987,16 +1029,18 @@ compressionMethod:(UZKCompressionMethod)method
     UZKLogInfo("Writing data to archive. filePath: %{public}@, fileDate: %{time_t}ld, compressionMethod: %ld, password: %{public}@, "
                "overwrite: %{public}@, progress block specified: %{public}@, error pointer specified: %{public}@",
                filePath, lrint(fileDate.timeIntervalSince1970), (long)method, password != nil ? @"<specified>" : @"(null)", overwrite ? @"YES" : @"NO",
-               progress ? @"YES" : @"NO", error ? @"YES" : @"NO");
+               progressBlock ? @"YES" : @"NO", error ? @"YES" : @"NO");
     
     const NSUInteger bufferSize = 4096; //Arbitrary
     const void *bytes = data.bytes;
     
-    if (progress) {
+    NSProgress *progress = [self beginProgressOperation:data.length];
+    
+    if (progressBlock) {
         UZKLogDebug("Calling progress block with zero");
-        progress(0);
+        progressBlock(0);
     }
-
+    
     __weak UZKArchive *welf = self;
     uLong calculatedCRC = crc32(0, data.bytes, (uInt)data.length);
     UZKLogDebug("Calculated CRC: %010lu", calculatedCRC);
@@ -1021,10 +1065,12 @@ compressionMethod:(UZKCompressionMethod)method
                 return err;
             }
             
-            if (progress) {
+            progress.completedUnitCount += size;
+            
+            if (progressBlock) {
                 double percentComplete = i / (double)data.length;
                 UZKLogDebug("Calling progress block at %f%%", percentComplete);
-                progress(percentComplete);
+                progressBlock(percentComplete);
             }
         }
         
@@ -2518,6 +2564,27 @@ compressionMethod:(UZKCompressionMethod)method
     
     UZKLogDebug("Compression method: %lu", file_info.compression_method);
     return file_info.compression_method == 9;
+}
+
+- (NSProgress *)beginProgressOperation:(unsigned long long)totalUnitCount
+{
+    UZKCreateActivity("-beginProgressOperation:");
+    
+    NSProgress *progress;
+    progress = self.progress;
+    if (!progress) {
+        progress = [[NSProgress alloc] initWithParent:[NSProgress currentProgress]
+                                             userInfo:nil];
+    }
+    
+    if (totalUnitCount > 0) {
+        progress.totalUnitCount = totalUnitCount;
+    }
+    
+    progress.cancellable = YES;
+    progress.pausable = NO;
+    
+    return progress;
 }
 
 
