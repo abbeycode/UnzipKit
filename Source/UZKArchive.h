@@ -9,12 +9,6 @@
 
 #import "UZKFileInfo.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-extern NSString *UZKErrorDomain;
-
-@interface UZKArchive : NSObject
-
 /**
  *  Defines the various error codes that the listing and extraction methods return.
  *  These are returned in NSError's [code]([NSError code]) field.
@@ -122,6 +116,13 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
     UZKErrorCodeDeflate64 = 115,
 };
 
+
+NS_ASSUME_NONNULL_BEGIN
+
+extern NSString *UZKErrorDomain;
+
+@interface UZKArchive : NSObject
+
 /**
  *  The URL of the archive. Returns nil if the URL becomes unreachable
  */
@@ -143,6 +144,18 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
  *  Comments are written in UTF-8, and read in UTF-8 and Windows/CP-1252, falling back to defaultCStringEncoding
  */
 @property(atomic, nullable) NSString *comment;
+
+/**
+ *  Can be used for progress reporting, but it's not necessary. You can also use
+ *  implicit progress reporting. If you don't use it, one will still be created,
+ *  which will become a child progress of whichever one is the current NSProgress
+ *  instance.
+ *
+ *  To use this, assign it before beginning an operation that reports progress. Once
+ *  the method you're calling has a reference to it, it will nil it out. Please check
+ *  for nil before assigning it to avoid concurrency conflicts.
+ */
+@property(nullable, strong) NSProgress *progress;
 
 
 /**
