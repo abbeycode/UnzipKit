@@ -302,7 +302,24 @@ extern NSString *UZKErrorDomain;
 - (nullable NSArray<UZKFileInfo*> *)listFileInfo:(NSError **)error;
 
 /**
- *  Writes all files in the archive to the given path
+ *  Writes all files in the archive to the given path. Supports NSProgress for progress reporting, which also
+ *  allows cancellation in the middle of extraction. Use the progress property (as explained in the README) to
+ *  retrieve more detailed information, such as the current file being extracted, number of files extracted,
+ *  and the URKFileInfo instance being extracted
+ *
+ *  @param destinationDirectory  The destination path of the unarchived files
+ *  @param overwrite             YES to overwrite files in the destination directory, NO otherwise
+ *
+ *  @param error     Contains an NSError object when there was an error reading the archive
+ *
+ *  @return YES on successful extraction, NO if an error was encountered
+ */
+- (BOOL)extractFilesTo:(NSString *)destinationDirectory
+             overwrite:(BOOL)overwrite
+                 error:(NSError **)error;
+
+/**
+ *  **DEPRECATED:** Writes all files in the archive to the given path
  *
  *  @param destinationDirectory  The destination path of the unarchived files
  *  @param overwrite             YES to overwrite files in the destination directory, NO otherwise
@@ -318,10 +335,22 @@ extern NSString *UZKErrorDomain;
 - (BOOL)extractFilesTo:(NSString *)destinationDirectory
              overwrite:(BOOL)overwrite
               progress:(nullable void (^)(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed))progress
-                 error:(NSError **)error;
+                 error:(NSError **)error __deprecated_msg("Use -extractFilesTo:overwrite:error: instead, and if using the progress block, replace with NSProgress as described in the README");
 
 /**
- *  Unarchive a single file from the archive into memory
+ *  Unarchive a single file from the archive into memory. Supports NSProgress for progress reporting, which also
+ *  allows cancellation in the middle of extraction
+ *
+ *  @param fileInfo The info of the file within the archive to be expanded. Only the filename property is used
+ *  @param error    Contains an NSError object when there was an error reading the archive
+ *
+ *  @return An NSData object containing the bytes of the file, or nil if an error was encountered
+ */
+- (nullable NSData *)extractData:(UZKFileInfo *)fileInfo
+                           error:(NSError **)error;
+
+/**
+ *  **DEPRECATED:** Unarchive a single file from the archive into memory
  *
  *  @param fileInfo The info of the file within the archive to be expanded. Only the filename property is used
  *  @param progress Called every so often to report the progress of the extraction
@@ -334,10 +363,22 @@ extern NSString *UZKErrorDomain;
  */
 - (nullable NSData *)extractData:(UZKFileInfo *)fileInfo
                         progress:(nullable void (^)(CGFloat percentDecompressed))progress
-                           error:(NSError **)error;
+                           error:(NSError **)error __deprecated_msg("Use -extractData:error: instead, and if using the progress block, replace with NSProgress as described in the README");
 
 /**
- *  Unarchive a single file from the archive into memory
+ *  Unarchive a single file from the archive into memory. Supports NSProgress for progress reporting, which also
+ *  allows cancellation in the middle of extraction
+ *
+ *  @param filePath The path of the file within the archive to be expanded
+ *  @param error    Contains an NSError object when there was an error reading the archive
+ *
+ *  @return An NSData object containing the bytes of the file, or nil if an error was encountered
+ */
+- (nullable NSData *)extractDataFromFile:(NSString *)filePath
+                                   error:(NSError **)error;
+
+/**
+ *  **DEPRECATED:** Unarchive a single file from the archive into memory
  *
  *  @param filePath The path of the file within the archive to be expanded
  *  @param progress Called every so often to report the progress of the extraction
@@ -350,10 +391,12 @@ extern NSString *UZKErrorDomain;
  */
 - (nullable NSData *)extractDataFromFile:(NSString *)filePath
                                 progress:(nullable void (^)(CGFloat percentDecompressed))progress
-                                   error:(NSError **)error;
+                                   error:(NSError **)error __deprecated_msg("Use -extractDataFromFile:error: instead, and if using the progress block, replace with NSProgress as described in the README");
 
 /**
- *  Loops through each file in the archive into memory, allowing you to perform an action using its info
+ *  Loops through each file in the archive into memory, allowing you to perform an action
+ *  using its info. Supports NSProgress for progress reporting, which also
+ *  allows cancellation in the middle of the operation
  *
  *  @param action The action to perform using the data
  *
@@ -368,7 +411,9 @@ extern NSString *UZKErrorDomain;
                           error:(NSError **)error;
 
 /**
- *  Extracts each file in the archive into memory, allowing you to perform an action on it
+ *  Extracts each file in the archive into memory, allowing you to perform an action
+ *  on it. Supports NSProgress for progress reporting, which also allows cancellation
+ *  in the middle of the operation
  *
  *  @param action The action to perform using the data
  *
@@ -384,7 +429,8 @@ extern NSString *UZKErrorDomain;
                          error:(NSError **)error;
 
 /**
- *  Unarchive a single file from the archive into memory
+ *  Unarchive a single file from the archive into memory. Supports NSProgress for progress reporting, which also
+ *  allows cancellation in the middle of extraction
  *
  *  @param filePath   The path of the file within the archive to be expanded
  *  @param error      Contains an NSError object when there was an error reading the archive
@@ -417,7 +463,9 @@ extern NSString *UZKErrorDomain;
 
 
 /**
- *  Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
+ *  Writes the data to the zip file, overwriting it if a file of that name already exists
+ *  in the archive. Supports NSProgress for progress reporting, which DOES NOT allow cancellation
+ *  in the middle of writing
  *
  *  @param data     Data to write into the archive
  *  @param filePath The full path to the target file in the archive
@@ -430,7 +478,8 @@ extern NSString *UZKErrorDomain;
             error:(NSError **)error;
 
 /**
- *  Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
+ *  **DEPRECATED:** Writes the data to the zip file, overwriting it if a file of that name already exists in the
+ *  archive
  *
  *  @param data     Data to write into the archive
  *  @param filePath The full path to the target file in the archive
@@ -445,10 +494,25 @@ extern NSString *UZKErrorDomain;
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
          progress:(nullable void (^)(CGFloat percentCompressed))progress
-            error:(NSError **)error;
+            error:(NSError **)error __deprecated_msg("Use -writeData:filePath:error: instead, and if using the progress block, replace with NSProgress as described in the README");
 
 /**
  *  Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
+ *
+ *  @param data     Data to write into the archive
+ *  @param filePath The full path to the target file in the archive
+ *  @param fileDate The timestamp of the file in the archive. Uses the current time if nil
+ *  @param error    Contains an NSError object when there was an error writing to the archive
+ *
+ *  @return YES if successful, NO on error
+ */
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(nullable NSDate *)fileDate
+            error:(NSError **)error;
+
+/**
+ *  **DEPRECATED:** Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
  *
  *  @param data     Data to write into the archive
  *  @param filePath The full path to the target file in the archive
@@ -465,10 +529,29 @@ extern NSString *UZKErrorDomain;
          filePath:(NSString *)filePath
          fileDate:(nullable NSDate *)fileDate
          progress:(nullable void (^)(CGFloat percentCompressed))progress
-            error:(NSError **)error;
+            error:(NSError **)error __deprecated_msg("Use -writeData:filePath:fileDate:error: instead, and if using the progress block, replace with NSProgress as described in the README");
 
 /**
  *  Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
+ *
+ *  @param data     Data to write into the archive
+ *  @param filePath The full path to the target file in the archive
+ *  @param fileDate The timestamp of the file in the archive. Uses the current time if nil
+ *  @param method   The UZKCompressionMethod to use (Default, None, Fastest, Best)
+ *  @param password Override the password associated with the archive (not recommended)
+ *  @param error    Contains an NSError object when there was an error writing to the archive
+ *
+ *  @return YES if successful, NO on error
+ */
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(nullable NSDate *)fileDate
+compressionMethod:(UZKCompressionMethod)method
+         password:(nullable NSString *)password
+            error:(NSError **)error;
+
+/**
+ *  **DEPRECATED:** Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
  *
  *  @param data     Data to write into the archive
  *  @param filePath The full path to the target file in the archive
@@ -489,10 +572,36 @@ extern NSString *UZKErrorDomain;
 compressionMethod:(UZKCompressionMethod)method
          password:(nullable NSString *)password
          progress:(nullable void (^)(CGFloat percentCompressed))progress
-            error:(NSError **)error;
+            error:(NSError **)error __deprecated_msg("Use -writeData:filePath:fileDate:compressionMethod:password:error: instead, and if using the progress block, replace with NSProgress as described in the README");
 
 /**
  *  Writes the data to the zip file, overwriting only if specified with the overwrite flag. Overwriting
+ *  presents a tradeoff: the whole archive needs to be copied (minus the file to be overwritten) before
+ *  the write begins. For a large archive, this can be slow. On the other hand, when not overwriting,
+ *  the size of the archive will grow each time the file is written.
+ *
+ *  @param data      Data to write into the archive
+ *  @param filePath  The full path to the target file in the archive
+ *  @param fileDate  The timestamp of the file in the archive. Uses the current time if nil
+ *  @param method    The UZKCompressionMethod to use (Default, None, Fastest, Best)
+ *  @param password  Override the password associated with the archive (not recommended)
+ *  @param overwrite If YES, and the file exists, delete it before writing. If NO, append
+ *                   the data into the archive without removing it first (legacy Objective-Zip
+ *                   behavior)
+ *  @param error     Contains an NSError object when there was an error writing to the archive
+ *
+ *  @return YES if successful, NO on error
+ */
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(nullable NSDate *)fileDate
+compressionMethod:(UZKCompressionMethod)method
+         password:(nullable NSString *)password
+        overwrite:(BOOL)overwrite
+            error:(NSError **)error;
+
+/**
+ *  **DEPRECATED:** Writes the data to the zip file, overwriting only if specified with the overwrite flag. Overwriting
  *  presents a tradeoff: the whole archive needs to be copied (minus the file to be overwritten) before
  *  the write begins. For a large archive, this can be slow. On the other hand, when not overwriting,
  *  the size of the archive will grow each time the file is written.
@@ -520,7 +629,7 @@ compressionMethod:(UZKCompressionMethod)method
          password:(nullable NSString *)password
         overwrite:(BOOL)overwrite
          progress:(nullable void (^)(CGFloat percentCompressed))progress
-            error:(NSError **)error;
+            error:(NSError **)error __deprecated_msg("Use -writeData:filePath:fileDate:compressionMethod:password:overwrite:error: instead, and if using the progress block, replace with NSProgress as described in the README");
 
 /**
  *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents

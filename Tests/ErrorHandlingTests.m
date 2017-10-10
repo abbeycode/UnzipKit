@@ -22,7 +22,6 @@
     
     NSError *error = nil;
     NSData *extractedData = [archive extractDataFromFile:@"file-doesnt-exist.txt"
-                                                progress:nil
                                                    error:&error];
     
     XCTAssertNil(extractedData, @"Data returned when there was an error");

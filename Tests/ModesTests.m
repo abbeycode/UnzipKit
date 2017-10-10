@@ -47,7 +47,6 @@
         
         NSError *extractError = nil;
         NSData *extractedData = [archive extractDataFromFile:expectedFilename
-                                                    progress:nil
                                                        error:&extractError];
         
         XCTAssertNil(extractError, @"Error in extractData:error:");
@@ -59,7 +58,6 @@
         
         extractError = nil;
         NSData *dataFromFileInfo = [archive extractData:fileInfo
-                                               progress:nil
                                                   error:&extractError];
         XCTAssertNil(extractError, @"Error extracting data by file info");
         XCTAssertTrue([expectedFileData isEqualToData:dataFromFileInfo], @"Extracted data from file info doesn't match original file");

@@ -47,7 +47,6 @@
         
         for (NSString *fileName in fileList) {
             NSData *fileData = [archive extractDataFromFile:fileName
-                                                   progress:nil
                                                       error:&error];
             XCTAssertNotNil(fileData, @"No data returned");
             XCTAssertNil(error, @"Error extracting data");
@@ -88,7 +87,7 @@
         NSError *performOnFilesError = nil;
         BOOL performOnFilesResult =  [archive performOnFilesInArchive:^(UZKFileInfo *fileInfo, BOOL *stop) {
             NSError *extractError = nil;
-            NSData *fileData = [archive extractData:fileInfo progress:nil error:&extractError];
+            NSData *fileData = [archive extractData:fileInfo error:&extractError];
             XCTAssertNotNil(fileData, @"No data extracted");
             XCTAssertNil(extractError, @"Failed to extract file");
         } error:&performOnFilesError];
@@ -131,7 +130,6 @@
         
         for (NSString *fileName in fileList) {
             NSData *fileData = [archive extractDataFromFile:fileName
-                                                   progress:nil
                                                       error:&error];
             XCTAssertNotNil(fileData, @"No data extracted");
             XCTAssertNil(error, @"Error extracting data");
@@ -148,14 +146,12 @@
                                 compressionMethod:UZKCompressionMethodDefault
                                          password:nil
                                         overwrite:YES
-                                         progress:nil
                                             error:&writeError];
             XCTAssertTrue(writeResult, @"Failed to write to archive (attempt %d)", x);
             XCTAssertNil(writeError, @"Error writing to archive (attempt %d)", x);
             
             NSError *extractError = nil;
             NSData *extractedData = [archive extractDataFromFile:fileName
-                                                        progress:nil
                                                            error:&extractError];
             XCTAssertEqualObjects(extractedData, newFileData, @"Incorrect data written to file (attempt %d)", x);
             XCTAssertNil(extractError, @"Error extracting from archive (attempt %d)", x);

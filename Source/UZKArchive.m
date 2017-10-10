@@ -462,6 +462,19 @@ NS_DESIGNATED_INITIALIZER
 
 - (BOOL)extractFilesTo:(NSString *)destinationDirectory
              overwrite:(BOOL)overwrite
+                 error:(NSError * __autoreleasing*)error
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    return [self extractFilesTo:destinationDirectory
+                      overwrite:overwrite
+                       progress:nil
+                          error:error];
+#pragma clang diagnostic pop
+}
+
+- (BOOL)extractFilesTo:(NSString *)destinationDirectory
+             overwrite:(BOOL)overwrite
               progress:(void (^)(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed))progressBlock
                  error:(NSError * __autoreleasing*)error
 {
@@ -648,12 +661,30 @@ NS_DESIGNATED_INITIALIZER
 }
 
 - (nullable NSData *)extractData:(UZKFileInfo *)fileInfo
+                           error:(NSError * __autoreleasing*)error
+{
+    return [self extractDataFromFile:fileInfo.filename
+                               error:error];
+}
+
+- (nullable NSData *)extractData:(UZKFileInfo *)fileInfo
                         progress:(void (^)(CGFloat))progress
                            error:(NSError * __autoreleasing*)error
 {
     return [self extractDataFromFile:fileInfo.filename
                             progress:progress
                                error:error];
+}
+
+- (nullable NSData *)extractDataFromFile:(NSString *)filePath
+                                   error:(NSError * __autoreleasing *)error
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    return [self extractDataFromFile:filePath
+                            progress:nil
+                               error:error];
+#pragma clang diagnostic pop
 }
 
 - (nullable NSData *)extractDataFromFile:(NSString *)filePath
@@ -952,7 +983,6 @@ NS_DESIGNATED_INITIALIZER
     UZKLogDebug("Decrypting smallest file in archive: %{public}@", smallest.filename);
     
     NSData *smallestData = [self extractData:(UZKFileInfo* _Nonnull)smallest
-                                    progress:nil
                                        error:&error];
     
     if (error || !smallestData) {
@@ -978,7 +1008,6 @@ NS_DESIGNATED_INITIALIZER
          compressionMethod:UZKCompressionMethodDefault
                   password:nil
                  overwrite:YES
-                  progress:nil
                      error:error];
 }
 
@@ -1000,6 +1029,20 @@ NS_DESIGNATED_INITIALIZER
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
          fileDate:(NSDate *)fileDate
+            error:(NSError * __autoreleasing*)error
+{
+    return [self writeData:data
+                  filePath:filePath
+                  fileDate:fileDate
+         compressionMethod:UZKCompressionMethodDefault
+                  password:nil
+                 overwrite:YES
+                     error:error];
+}
+
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(NSDate *)fileDate
          progress:(void (^)(CGFloat percentCompressed))progress
             error:(NSError * __autoreleasing*)error
 {
@@ -1010,6 +1053,22 @@ NS_DESIGNATED_INITIALIZER
                   password:nil
                  overwrite:YES
                   progress:progress
+                     error:error];
+}
+
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(NSDate *)fileDate
+compressionMethod:(UZKCompressionMethod)method
+         password:(NSString *)password
+            error:(NSError * __autoreleasing*)error
+{
+    return [self writeData:data
+                  filePath:filePath
+                  fileDate:fileDate
+         compressionMethod:UZKCompressionMethodDefault
+                  password:password
+                 overwrite:YES
                      error:error];
 }
 
@@ -1037,6 +1096,27 @@ compressionMethod:(UZKCompressionMethod)method
 compressionMethod:(UZKCompressionMethod)method
          password:(NSString *)password
         overwrite:(BOOL)overwrite
+            error:(NSError * __autoreleasing*)error
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    return [self writeData:data
+                  filePath:filePath
+                  fileDate:fileDate
+         compressionMethod:UZKCompressionMethodDefault
+                  password:password
+                 overwrite:YES
+                  progress:nil
+                     error:error];
+#pragma clang diagnostic pop
+}
+
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(NSDate *)fileDate
+compressionMethod:(UZKCompressionMethod)method
+         password:(NSString *)password
+        overwrite:(BOOL)overwrite
          progress:(void (^)(CGFloat percentCompressed))progressBlock
             error:(NSError * __autoreleasing*)error
 {
@@ -1051,6 +1131,7 @@ compressionMethod:(UZKCompressionMethod)method
     const void *bytes = data.bytes;
     
     NSProgress *progress = [self beginProgressOperation:data.length];
+    progress.cancellable = NO;
     
     if (progressBlock) {
         UZKLogDebug("Calling progress block with zero");

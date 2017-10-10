@@ -62,7 +62,6 @@ static NSUInteger observerCallCount;
     NSError *extractError = nil;
     BOOL success = [archive extractFilesTo:extractURL.path
                                  overwrite:NO
-                                  progress:nil
                                      error:&extractError];
     
     XCTAssertNil(extractError, @"Error returned by extractFilesTo:overwrite:progress:error:");
@@ -112,7 +111,6 @@ static NSUInteger observerCallCount;
     NSError *extractError = nil;
     BOOL success = [archive extractFilesTo:extractURL.path
                                  overwrite:NO
-                                  progress:nil
                                      error:&extractError];
     
     XCTAssertNil(extractError, @"Error returned by extractFilesTo:overwrite:error:");
@@ -153,7 +151,6 @@ static NSUInteger observerCallCount;
     NSError *extractError = nil;
     BOOL success = [archive extractFilesTo:extractURL.path
                                  overwrite:NO
-                                  progress:nil
                                      error:&extractError];
     
     XCTAssertNil(extractError, @"Error returned by extractFilesTo:overwrite:error:");
@@ -195,7 +192,6 @@ static NSUInteger observerCallCount;
     NSError *extractError = nil;
     BOOL success = [archive extractFilesTo:extractURL.path
                                  overwrite:NO
-                                  progress:nil
                                      error:&extractError];
     
     XCTAssertNil(extractError, @"Error returned by extractFilesTo:overwrite:error:");
@@ -323,7 +319,6 @@ static NSUInteger observerCallCount;
     NSError *extractError = nil;
     BOOL success = [archive extractFilesTo:extractURL.path
                                  overwrite:NO
-                                  progress:nil
                                      error:&extractError];
     
     XCTAssertNotNil(extractError, @"Error not returned by extractFilesTo:overwrite:error:");
@@ -368,7 +363,7 @@ static NSUInteger observerCallCount;
                              context:OtherContext];
     
     NSError *extractError = nil;
-    NSData *data = [archive extractDataFromFile:firstFile progress:nil error:&extractError];
+    NSData *data = [archive extractDataFromFile:firstFile error:&extractError];
     
     XCTAssertNil(extractError, @"Error returned by extractDataFromFile:error:");
     XCTAssertNotNil(data, @"Archive failed to extract large archive");
@@ -462,7 +457,7 @@ static NSUInteger observerCallCount;
                              context:CancelContext];
     
     NSError *extractError = nil;
-    NSData *data = [archive extractDataFromFile:firstFile progress:nil error:&extractError];
+    NSData *data = [archive extractDataFromFile:firstFile error:&extractError];
     
     XCTAssertNotNil(extractError, @"No error returned by cancelled extractDataFromFile:error:");
     XCTAssertEqual(extractError.code, UZKErrorCodeUserCancelled, @"Incorrect error code returned from user cancellation");

@@ -33,11 +33,7 @@ class WriteDataTests: UZKArchiveTestCase {
             
             do {
                 try archive.write(fileData!, filePath: testFilePath, fileDate: testDates[index],
-                                  compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
-                                    #if DEBUG
-                                        NSLog("Compressing data: %f%% complete", percentCompressed)
-                                    #endif
-                })
+                                  compressionMethod: .default, password: nil)
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePath): \(error)")
             }
@@ -77,11 +73,7 @@ class WriteDataTests: UZKArchiveTestCase {
             
             do {
                 try archive.write(fileData!, filePath: testFilePath, fileDate: testDates[index],
-                                  compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
-                                    #if DEBUG
-                                        NSLog("Compressing data: %f%% complete", percentCompressed)
-                                    #endif
-                })
+                                  compressionMethod: .default, password: nil)
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePath): \(error)")
             }
@@ -121,11 +113,7 @@ class WriteDataTests: UZKArchiveTestCase {
             
             do {
                 try archive.write(fileData!, filePath: testFilePath, fileDate: testDates[index],
-                                  compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
-                                    #if DEBUG
-                                        NSLog("Compressing data: %f%% complete", percentCompressed)
-                                    #endif
-                })
+                                  compressionMethod: .default, password: nil)
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePath): \(error)")
             }
@@ -155,11 +143,7 @@ class WriteDataTests: UZKArchiveTestCase {
             
             do {
                 try archive.write(testFileData[x], filePath: testFilePaths[i],
-                                  fileDate: testDates[x], compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
-                                    #if DEBUG
-                                        NSLog("Compressing data: %f%% complete", percentCompressed)
-                                    #endif
-                })
+                                  fileDate: testDates[x], compressionMethod: .default, password: nil)
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePaths[x]) with data of " +
                     "file \(testFilePaths[i]): \(error)")
@@ -203,11 +187,7 @@ class WriteDataTests: UZKArchiveTestCase {
             
             do {
                 try archive.write(fileData!, filePath: testFilePath, fileDate: testDates[index],
-                                  compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
-                                    #if DEBUG
-                                        NSLog("Compressing data: %f%% complete", percentCompressed)
-                                    #endif
-                })
+                                  compressionMethod: .default, password: nil)
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePath): \(error)")
             }
@@ -237,11 +217,7 @@ class WriteDataTests: UZKArchiveTestCase {
             
             do {
                 try archive.write(testFileData[x], filePath: testFilePaths[i],
-                                fileDate: testDates[x], compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
-                                    #if DEBUG
-                                        NSLog("Compressing data: %f%% complete", percentCompressed)
-                                    #endif
-                                })
+                                fileDate: testDates[x], compressionMethod: .default, password: nil)
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePaths[x]) with data of " +
                     "file \(testFilePaths[i]): \(error)")
@@ -285,7 +261,7 @@ class WriteDataTests: UZKArchiveTestCase {
             
             do {
                 try archive.write(fileData!, filePath: testFilePath, fileDate: testDates[index],
-                                  compressionMethod: .default, password: nil, overwrite: false, progress: nil)
+                                  compressionMethod: .default, password: nil, overwrite: false)
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePath): \(error)")
             }
@@ -314,12 +290,7 @@ class WriteDataTests: UZKArchiveTestCase {
             
             do {
                 try archive.write(testFileData[x], filePath: testFilePaths[i],
-                                  fileDate: testDates[x], compressionMethod: .default, password: nil, overwrite: false,
-                                  progress: { (percentCompressed) -> Void in
-                                    #if DEBUG
-                                        NSLog("Compressing data: %f%% complete", percentCompressed)
-                                    #endif
-                })
+                                  fileDate: testDates[x], compressionMethod: .default, password: nil, overwrite: false)
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFilePaths[x]) with data of " +
                     "file \(testFilePaths[i]): \(error)")
@@ -345,11 +316,7 @@ class WriteDataTests: UZKArchiveTestCase {
         for _ in 0..<100 {
             do {
                 try archive.write(testFileData, filePath: testFilename, fileDate: nil,
-                                  compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
-                                    #if DEBUG
-                                        NSLog("Compressing data: %f%% complete", percentCompressed)
-                                    #endif
-                })
+                                  compressionMethod: .default, password: nil)
             } catch let error as NSError {
                 XCTFail("Error writing to file \(testFileURL): \(error)")
             }
@@ -394,11 +361,7 @@ class WriteDataTests: UZKArchiveTestCase {
         
         do {
             try archive.write(testFileData, filePath: testFilename, fileDate: nil,
-                              compressionMethod: .default, password: nil, progress: { (percentCompressed) -> Void in
-                                #if DEBUG
-                                    NSLog("Compressing data: %f%% complete", percentCompressed)
-                                #endif
-            })
+                              compressionMethod: .default, password: nil)
         } catch let error as NSError {
             XCTFail("Error writing to file \(testFileURL): \(error)")
         }
@@ -488,7 +451,7 @@ class WriteDataTests: UZKArchiveTestCase {
         do {
             try archive.write(newTextData!, filePath: textFileName, fileDate: nil,
                                   compressionMethod: UZKCompressionMethod.default, password: nil,
-                                  overwrite: true, progress: nil)
+                                  overwrite: true)
         } catch let error {
             NSLog("Error writing data to archive on external volume: \(error)")
             writeSuccessful = false
@@ -496,7 +459,7 @@ class WriteDataTests: UZKArchiveTestCase {
         
         XCTAssertTrue(writeSuccessful, "Failed to update archive on external volume")
         
-        let archivedFileData = try! archive.extractData(fromFile: textFileName, progress: nil)
+        let archivedFileData = try! archive.extractData(fromFile: textFileName)
         XCTAssertNotNil(archivedFileData, "No data extracted from file in archive on external volume")
         
         let archivedText = NSString(data: archivedFileData, encoding: String.Encoding.utf8.rawValue)!
