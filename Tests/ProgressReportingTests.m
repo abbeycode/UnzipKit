@@ -341,6 +341,53 @@ static NSUInteger observerCallCount;
     XCTAssertEqual(extractedFiles.count, (unsigned long)1, @"Cancellation didn't occur in as timely a fashion as expected");
 }
 
+- (void)testProgressReporting_WriteData {
+    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"WriteData.zip"];
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
+    
+//    NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"description" ascending:YES];
+//    NSArray<NSString *> *nonZipFiles = [self.nonZipTestFilePaths sortedArrayUsingDescriptors:@[sort]];
+//    NSString *firstFile = nonZipFiles.firstObject;
+    NSData *firstFileData = [NSData dataWithContentsOfURL:self.testFileURLs[@"Aces.zip"]];
+    
+    NSProgress *performProgress = [NSProgress progressWithTotalUnitCount:1];
+    [performProgress becomeCurrentWithPendingUnitCount:1];
+    
+    NSString *observedSelector = NSStringFromSelector(@selector(fractionCompleted));
+    
+    [performProgress addObserver:self
+                      forKeyPath:observedSelector
+                         options:NSKeyValueObservingOptionInitial
+                         context:OtherContext];
+    
+    NSError *writeError = nil;
+    BOOL success = [archive writeData:firstFileData
+                             filePath:@"First File.idk"
+                                error:&writeError];
+    
+    XCTAssertNil(writeError, @"Error returned by writeData:filePath:error:");
+    XCTAssertTrue(success, @"Failed to write data to archive");
+    
+    [performProgress resignCurrent];
+    [performProgress removeObserver:self forKeyPath:observedSelector];
+    
+    XCTAssertEqualWithAccuracy(performProgress.fractionCompleted, 1.00, 0.000001, @"Progress never reported as completed");
+    
+    NSUInteger expectedProgressUpdates = 4;
+    NSArray<NSNumber *> *expectedProgresses = @[@0,
+                                                @0.402872,
+                                                @0.805744,
+                                                @1.0];
+    
+    XCTAssertEqual(self.fractionsCompletedReported.count, expectedProgressUpdates, @"Incorrect number of progress updates");
+    for (NSUInteger i = 0; i < expectedProgressUpdates; i++) {
+        float expectedProgress = expectedProgresses[i].floatValue;
+        float actualProgress = self.fractionsCompletedReported[i].floatValue;
+        
+        XCTAssertEqualWithAccuracy(actualProgress, expectedProgress, 0.000001f, @"Incorrect progress reported at index %ld", (long)i);
+    }
+}
+
 
 #pragma mark - Mac-only tests
 
