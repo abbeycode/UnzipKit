@@ -483,7 +483,7 @@ NS_DESIGNATED_INITIALIZER
     NSFileManager *fm = [[NSFileManager alloc] init];
 
     NSNumber *totalSize = [fileInfo valueForKeyPath:@"@sum.uncompressedSize"];
-    UZKLogDebug("totalSize: %ld", totalSize.longValue);
+    UZKLogDebug("totalSize: %lld", totalSize.longLongValue);
     __block long long bytesDecompressed = 0;
     __block NSInteger filesExtracted = 0;
 
@@ -506,7 +506,7 @@ NS_DESIGNATED_INITIALIZER
                     NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error locating file '%@' in archive", @"UnzipKit", _resources, @"Detailed error string"),
                                         info.filename];
                     UZKLogError("Halted file extraction due to user cancellation: %{public}@", detail);
-                    [welf assignError:&strongError code:UZKErrorCodeFileNotFoundInArchive
+                    [welf assignError:&strongError code:UZKErrorCodeUserCancelled
                                detail:detail];
                     return;
                 }
@@ -629,7 +629,7 @@ NS_DESIGNATED_INITIALIZER
                                          forKey:NSProgressFileCompletedCountKey];
                     [progress setUserInfoObject:@(fileInfo.count)
                                          forKey:NSProgressFileTotalCountKey];
-                    progress.completedUnitCount += info.uncompressedSize;
+                    progress.completedUnitCount = bytesDecompressed;
                 }
             }
         }
@@ -717,6 +717,8 @@ NS_DESIGNATED_INITIALIZER
         return NO;
     }
     
+    NSProgress *progress = [self beginProgressOperation:fileInfo.count];
+    
     UZKLogInfo("Sorting file info by name/path");
 
     NSArray *sortedFileInfo = [fileInfo sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"filename" ascending:YES]]];
@@ -727,15 +729,29 @@ NS_DESIGNATED_INITIALIZER
         BOOL stop = NO;
 
         for (UZKFileInfo *info in sortedFileInfo) {
+            if (progress.isCancelled) {
+                UZKLogInfo("File info iteration was cancelled");
+                break;
+            }
             UZKLogDebug("Performing action on %{public}@", info.filename);
             action(info, &stop);
-            
+            progress.completedUnitCount += 1;
+
             if (stop) {
                 UZKLogInfo("Action dictated an early stop");
+                progress.completedUnitCount = progress.totalUnitCount;
                 break;
             }
         }
     } inMode:UZKFileModeUnzip error:error];
+    
+    if (progress.isCancelled) {
+        NSString *detail = NSLocalizedStringFromTableInBundle(@"User cancelled operation", @"UnzipKit", _resources, @"Detailed error string");
+        UZKLogError("UZKErrorCodeUserCancelled: %{public}@", detail);
+        [self assignError:error code:UZKErrorCodeUserCancelled
+                   detail:detail];
+        return NO;
+    }
     
     return success;
 }
@@ -849,7 +865,7 @@ NS_DESIGNATED_INITIALIZER
                     action([data copy], bytesDecompressed / (CGFloat)info.uncompressedSize);
                 }
                 
-                progress.completedUnitCount += bytesDecompressed;
+                progress.completedUnitCount = bytesDecompressed;
             }
         }
         
@@ -2572,6 +2588,8 @@ compressionMethod:(UZKCompressionMethod)method
     
     NSProgress *progress;
     progress = self.progress;
+    self.progress = nil;
+    
     if (!progress) {
         progress = [[NSProgress alloc] initWithParent:[NSProgress currentProgress]
                                              userInfo:nil];
