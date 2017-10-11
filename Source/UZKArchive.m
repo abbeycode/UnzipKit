@@ -1105,7 +1105,7 @@ compressionMethod:(UZKCompressionMethod)method
                   fileDate:fileDate
          compressionMethod:UZKCompressionMethodDefault
                   password:password
-                 overwrite:YES
+                 overwrite:overwrite
                   progress:nil
                      error:error];
 #pragma clang diagnostic pop
