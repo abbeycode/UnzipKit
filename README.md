@@ -203,6 +203,8 @@ If you don't have a hierarchy of `NSProgress` instances, or if you want to obser
 
 Using either method above, you can call `[progress cancel]` to stop the operation in progress. It will cause the operation to fail, returning `nil` or `NO` (depending on the return type, and give an error with error code `UZKErrorCodeUserCancelled`.
 
+Note: Cancellation is only supported on extraction methods, not write methods.
+
 
 # Documentation
 
