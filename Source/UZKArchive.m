@@ -861,6 +861,8 @@ NS_DESIGNATED_INITIALIZER
         
         long long bytesDecompressed = 0;
         
+        NSError *strongInnerError = nil;
+        
         for (;;)
         {
             if (progress.isCancelled) {
@@ -877,9 +879,9 @@ NS_DESIGNATED_INITIALIZER
                     NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to read file %@ in zip", @"UnzipKit", _resources, @"Detailed error string"),
                                         info.filename];
                     UZKLogError("Error reading data (code %d): %{public}@", bytesRead, detail);
-                    [welf assignError:innerError code:bytesRead
+                    [welf assignError:&strongInnerError code:bytesRead
                                detail:detail];
-                    return;
+                    break;
                 }
                 else if (bytesRead == 0) {
                     UZKLogDebug("Done reading file");
@@ -898,6 +900,11 @@ NS_DESIGNATED_INITIALIZER
                 
                 progress.completedUnitCount = bytesDecompressed;
             }
+        }
+        
+        if (strongInnerError) {
+            *innerError = strongInnerError;
+            return;
         }
         
         UZKLogInfo("Closing file...");
