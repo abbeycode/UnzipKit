@@ -375,6 +375,41 @@ class WriteDataTests: UZKArchiveTestCase {
         XCTAssertEqual(actualDate, expectedDate, accuracy: 30, "Incorrect default date value written to file")
     }
     
+    func testWriteData_DeleteEmptyDirectory() {
+        let testArchiveURL = tempDirectory.appendingPathComponent("DeleteEmptyDir.zip")
+        let archive = try! UZKArchive(url: testArchiveURL)
+        
+        let testFilename = nonZipTestFilePaths.first as! String
+        let testFileURL = testFileURLs[testFilename] as! URL
+        let testFileData = try! Data(contentsOf:testFileURL)
+        try! archive.write(testFileData, filePath: testFilename)
+        
+        let emptyDirPath = "EmptyDirectory"
+        try! archive.write(Data(), filePath: emptyDirPath)
+        
+        let initialFileList = try! archive.listFileInfo()
+        XCTAssertEqual(initialFileList.count, 2, "Expected a single directory")
+        
+        let initialLastFile = initialFileList.last!
+        XCTAssertEqual(initialLastFile.filename, emptyDirPath, "Unexpected file path")
+        
+        try! archive.deleteFile(emptyDirPath)
+        
+        let fileListAfterDeleteDir = try! archive.listFileInfo()
+        XCTAssertEqual(fileListAfterDeleteDir.count, 1, "Expected no files to be listed after deleting empty directory")
+        
+        let lastFileAfterDeleteDir = fileListAfterDeleteDir.last!
+        XCTAssertEqual(lastFileAfterDeleteDir.filename, testFilename, "Unexpected file path")
+  
+        try! archive.write(Data(), filePath: emptyDirPath)
+        
+        let fileListAfterWriteDirAgain = try! archive.listFileInfo()
+        XCTAssertEqual(fileListAfterWriteDirAgain.count, 2, "Expected a single directory")
+        
+        let lastFileAfterWriteDirAgain = fileListAfterWriteDirAgain.last!
+        XCTAssertEqual(lastFileAfterWriteDirAgain.filename, emptyDirPath, "Unexpected file path")
+  }
+    
     #if os(OSX)
     func testWriteData_PasswordProtected() {
         let testFilePaths = [String](nonZipTestFilePaths).sorted(by: <)
