@@ -19,7 +19,7 @@ class ExtractDataTests_Swift: UZKArchiveTestCase {
             
             do {
                 let archive = try UZKArchive(url: testFileURLs[testArchiveName]!)
-                try archive.extractData(fromFile: "Test File A.txt", progress: nil)
+                try archive.extractData(fromFile: "Test File A.txt")
             } catch let error {
                 thrownError = error
             }
@@ -45,7 +45,7 @@ class ExtractDataTests_Swift: UZKArchiveTestCase {
             
             do {
                 let archive = try UZKArchive(url: testFileURLs[testArchiveName]!)
-                try archive.extractData(fromFile: "Test File A.txt", progress: nil)
+                try archive.extractData(fromFile: "Test File A.txt")
             } catch let error {
                 thrownError = error
             }

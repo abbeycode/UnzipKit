@@ -40,11 +40,6 @@
         NSError *error = nil;
         BOOL success = [archive extractFilesTo:extractURL.path
                                      overwrite:NO
-                                      progress:^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
-#if DEBUG
-                                          UZKLogDebug("Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
-#endif
-                                      }
                                          error:&error];
         
         XCTAssertNil(error, @"Error returned by extractFilesTo:overWrite:error:");
@@ -95,11 +90,6 @@
     NSError *error = nil;
     BOOL success = [archive extractFilesTo:extractURL.path
                                  overwrite:NO
-                                  progress:^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
-#if DEBUG
-                                      UZKLogDebug("Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
-#endif
-                                  }
                                      error:&error];
     
     XCTAssertNil(error, @"Error returned by extractFilesTo:overWrite:error:");
@@ -142,11 +132,6 @@
     NSError *error = nil;
     BOOL success = [archive extractFilesTo:extractURL.path
                                  overwrite:NO
-                                  progress:^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
-#if DEBUG
-                                      UZKLogDebug("Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
-#endif
-                                  }
                                      error:&error];
     
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -169,11 +154,6 @@
     NSError *error = nil;
     BOOL success = [archive extractFilesTo:extractURL.path
                                  overwrite:NO
-                                  progress:^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
-#if DEBUG
-                                      UZKLogDebug("Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
-#endif
-                                  }
                                      error:&error];
     BOOL dirExists = [fm fileExistsAtPath:extractURL.path];
     
@@ -194,11 +174,6 @@
     NSError *error = nil;
     BOOL success = [archive extractFilesTo:extractURL.path
                                  overwrite:NO
-                                  progress:^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
-#if DEBUG
-                                      UZKLogDebug("Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
-#endif
-                                  }
                                      error:&error];
     
     XCTAssertTrue(success, @"Extract Aces archive failed");

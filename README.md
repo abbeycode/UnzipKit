@@ -9,7 +9,7 @@ It provides the following over Objective-Zip:
 
 * A simpler API, with only a handful of methods, and no incantations to remember
 * The ability to delete files in an archive, including overwriting an existing file
-* Pervasive use of blocks, making iteration and progress reporting simple to use
+* Pervasive use of blocks, making iteration simple
 * Full documentation for all methods
 * Pervasive use of `NSError`, instead of throwing exceptions
 
@@ -69,10 +69,6 @@ You can use UnzipKit to perform these read-only operations:
     ```Objective-C
     BOOL extractFilesSuccessful = [archive extractFilesTo:@"some/directory"
                                                 overWrite:NO
-                                                 progress:
-    ^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
-        NSLog(@"Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed);
-    }
                                                     error:&error];
     ```
 
@@ -80,9 +76,6 @@ You can use UnzipKit to perform these read-only operations:
 
     ```Objective-C
     NSData *extractedData = [archive extractDataFromFile:@"a file in the archive.jpg"
-                                                progress:^(CGFloat percentDecompressed) {
-                                                    NSLog(@"Extracting, %f%% complete", percentDecompressed);
-                                                }
                                                    error:&error];
     ```
 
@@ -133,6 +126,86 @@ You can also modify Zip archives:
     ```Objective-C
     BOOL success = [archive deleteFile:@"No-good-file.txt" error:&error];
     ```
+
+
+# Progress Reporting
+
+The following methods support `NSProgress` and `NSProgressReporting`:
+
+* `extractFilesTo:overwrite:error:`
+* `extractData:error:`
+* `extractDataFromFile:error:`
+* `performOnFilesInArchive:error:`
+* `performOnDataInArchive:error:`
+* `extractBufferedDataFromFile:error:action:`
+* `writeData:filePath:error:`*
+* `writeData:filePath:fileDate:error:`*
+* `writeData:filePath:fileDate:compressionMethod:password:error:`*
+* `writeData:filePath:fileDate:compressionMethod:password:overwrite:error:`*
+
+_* the `writeData...` methods don't support cancellation like the read-only methods do
+
+## Using implicit `NSProgress` hierarchy
+
+You can create your own instance of `NSProgress` and observe its `fractionCompleted` property with KVO to monitor progress like so:
+
+```Objective-C
+    static void *ExtractDataContext = &ExtractDataContext;
+
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:aFileURL error:nil];
+
+    NSProgress *extractDataProgress = [NSProgress progressWithTotalUnitCount:1];
+    [extractDataProgress becomeCurrentWithPendingUnitCount:1];
+    
+    NSString *observedSelector = NSStringFromSelector(@selector(fractionCompleted));
+    
+    [extractDataProgress addObserver:self
+                          forKeyPath:observedSelector
+                             options:NSKeyValueObservingOptionInitial
+                             context:ExtractDataContext];
+    
+    NSError *extractError = nil;
+    NSData *data = [archive extractDataFromFile:firstFile error:&extractError];
+
+    [extractDataProgress resignCurrent];
+    [extractDataProgress removeObserver:self forKeyPath:observedSelector];
+```
+
+## Using your own explicit `NSProgress` instance
+
+If you don't have a hierarchy of `NSProgress` instances, or if you want to observe more details during progress updates in `extractFilesTo:overwrite:error:`, you can create your own instance of `NSProgress` and set the `UZKArchive` instance's `progress` property, like so:
+
+```Objective-C
+    static void *ExtractFilesContext = &ExtractFilesContext;
+
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:aFileURL error:nil];
+    
+    NSProgress *extractFilesProgress = [NSProgress progressWithTotalUnitCount:1];
+    archive.progress = extractFilesProgress;
+    
+    NSString *observedSelector = NSStringFromSelector(@selector(localizedDescription));
+    
+    [self.descriptionsReported removeAllObjects];
+    [extractFilesProgress addObserver:self
+                           forKeyPath:observedSelector
+                              options:NSKeyValueObservingOptionInitial
+                              context:ExtractFilesContext];
+    
+    NSError *extractError = nil;
+    BOOL success = [archive extractFilesTo:extractURL.path
+                                 overwrite:NO
+                                     error:&extractError];
+    
+    [extractFilesProgress removeObserver:self forKeyPath:observedSelector];
+```
+
+## Cancellation with `NSProgress`
+
+Using either method above, you can call `[progress cancel]` to stop the operation in progress. It will cause the operation to fail, returning `nil` or `NO` (depending on the return type, and give an error with error code `UZKErrorCodeUserCancelled`.
+
+Note: Cancellation is only supported on extraction methods, not write methods.
+
+
 # Documentation
 
 Full documentation for the project is available on [CocoaDocs](http://cocoadocs.org/docsets/UnzipKit).
@@ -222,7 +295,7 @@ Before pushing a build, you must:
     1. Updates the various Info.plist files to indicate the new version number, and commits them
     2. Makes an annotated tag whose message contains the release notes entered in Step 1
 
-Once that's done, you can call `git push --follow-tags` [<sup id=a1>1</sup>](#f1), and let [Travis CI](https://travis-ci.org/abbeycode/UnrarKit/builds) take care of the rest.
+Once that's done, you can call `git push --follow-tags` [<sup id=a1>1</sup>](#f1), and let [Travis CI](https://travis-ci.org/abbeycode/UnzipKit/builds) take care of the rest.
 
 # License
 

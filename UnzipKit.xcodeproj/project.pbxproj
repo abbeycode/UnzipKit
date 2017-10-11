@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A5A97011F89808900BCA061 /* ProgressReportingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A5A97001F89808900BCA061 /* ProgressReportingTests.m */; };
 		961A9BB51B306881007C4C6B /* WriteDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961A9BB41B306881007C4C6B /* WriteDataTests.swift */; };
 		962F9DA61D5D286B00205BEC /* UnzipKit.strings in Resources */ = {isa = PBXBuildFile; fileRef = 962F9DA41D5D286B00205BEC /* UnzipKit.strings */; };
 		962F9DA81D5D288B00205BEC /* UnzipKitResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 962F9D9E1D5D281E00205BEC /* UnzipKitResources.bundle */; };
@@ -72,6 +73,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7A5A97001F89808900BCA061 /* ProgressReportingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProgressReportingTests.m; sourceTree = "<group>"; };
 		961A9BB31B306880007C4C6B /* UnzipKitTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "UnzipKitTests-Bridging-Header.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		961A9BB41B306881007C4C6B /* WriteDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WriteDataTests.swift; sourceTree = "<group>"; };
 		961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZKArchiveTestCase.h; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 				968C40C91B586227004C128E /* ExtractDataTests.m */,
 				9630C0371C6D27A4000693EE /* ExtractDataTests_Swift.swift */,
 				968C40C71B5861F4004C128E /* ExtractFilesTests.m */,
+				7A5A97001F89808900BCA061 /* ProgressReportingTests.m */,
 				968C40D91B5863D9004C128E /* FileDescriptorUsageTests.m */,
 				968C40C31B58619C004C128E /* ListFilenamesTests.m */,
 				968C40C51B5861C3004C128E /* ListFileInfoTests.m */,
@@ -475,6 +478,7 @@
 				968C40DE1B58642C004C128E /* MultithreadingTests.m in Sources */,
 				968C40D61B586380004C128E /* DeleteFileTests.m in Sources */,
 				96FCC8411B306CDD00726AC7 /* UZKArchiveTestCase.m in Sources */,
+				7A5A97011F89808900BCA061 /* ProgressReportingTests.m in Sources */,
 				968C40C21B586132004C128E /* ZipFileDetectionTests.m in Sources */,
 				968C40D41B586345004C128E /* WriteBufferedDataTests.m in Sources */,
 				968C40CC1B586253004C128E /* PerformOnFilesTests.m in Sources */,

@@ -52,6 +52,14 @@
                BlueprintName = "UnzipKitTests"
                ReferencedContainer = "container:UnzipKit.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "ExtractFilesTests/testExtractZip64_LargeFile">
+               </Test>
+               <Test
+                  Identifier = "ExtractFilesTests/testExtractZip64_ManyFiles">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
       <MacroExpansion>

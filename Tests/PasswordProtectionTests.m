@@ -54,7 +54,6 @@
                                      fileDate:nil
                             compressionMethod:UZKCompressionMethodDefault
                                      password:password
-                                     progress:nil
                                         error:&writeError];
         
         XCTAssertTrue(result, @"Error writing archive data");
