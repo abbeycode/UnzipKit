@@ -107,7 +107,7 @@
 }
 
 #if !TARGET_OS_IPHONE
-- (void)testValidatePassword_Issue51
+- (void)testValidatePassword_LargeFile
 {
     NSString *password = @"12345-luggage";
     
