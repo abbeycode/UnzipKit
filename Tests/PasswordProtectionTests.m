@@ -106,5 +106,23 @@
     XCTAssertTrue(archive.validatePassword, @"validatePassword = NO when password supplied");
 }
 
+#if !TARGET_OS_IPHONE
+- (void)testValidatePassword_LargeFile
+{
+    NSString *password = @"12345-luggage";
+    
+    NSArray<NSURL*> *urls = @[[self emptyTextFileOfLength:400000]];
+    NSURL *archiveURL = [self archiveWithFiles:urls password:password];
+
+    NSError *error = nil;
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:archiveURL error:&error];
+    
+    XCTAssertNotNil(archive, @"Archive not initialized");
+    XCTAssertNil(error, @"Error initializing archive: %@", error);
+    
+    BOOL passwordValidated = [archive validatePassword];
+    XCTAssertFalse(passwordValidated, @"Expected password to be reported as incorrect");
+}
+#endif
 
 @end

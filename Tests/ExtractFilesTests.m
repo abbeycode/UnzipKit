@@ -230,14 +230,6 @@
     
     BOOL success = [archive extractFilesTo:extractURL.path
                                  overwrite:NO
-                                  progress:
-# if DEBUG
-                    ^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
-                        UZKLogDebug("Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
-                    }
-# else
-                    nil
-# endif
                                      error:&error];
     
     XCTAssertTrue(success, @"Extract large Zip64 archive failed");
@@ -280,14 +272,6 @@
     
     BOOL success = [archive extractFilesTo:extractURL.path
                                  overwrite:NO
-                                  progress:
-# if DEBUG
-                    ^(UZKFileInfo *currentFile, CGFloat percentArchiveDecompressed) {
-                        UZKLogDebug("Extracting %@: %f%% complete", currentFile.filename, percentArchiveDecompressed * 100);
-                    }
-# else
-                    nil
-# endif
                                      error:&error];
     
     XCTAssertTrue(success, @"Extract numerous Zip64 archive failed");
