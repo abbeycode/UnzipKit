@@ -1033,7 +1033,7 @@ NS_DESIGNATED_INITIALIZER
 
          if (extractedCRC != fileInfo.CRC) {
              UZKLogError("CRC mismatch in '%{public}@': expected %010lu, found %010lu",
-                         fileInfo.filename, fileInfo.CRC, extractedCRC)
+                         fileInfo.filename, (unsigned long)fileInfo.CRC, extractedCRC)
              dataIsValid = NO;
          }
          
