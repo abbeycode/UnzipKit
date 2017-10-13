@@ -1012,7 +1012,7 @@ NS_DESIGNATED_INITIALIZER
 
 - (BOOL)checkDataIntegrityOfFile:(NSString *)filePath
 {
-    UZKCreateActivity("Checking data integrity")
+    UZKCreateActivity("Checking data integrity");
     
     UZKLogInfo("Checking integrity of %{public}@", filePath ? filePath : @"all files in archive");
     
