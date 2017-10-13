@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A5652241F90E01C006B782E /* CheckDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A5652231F90E01C006B782E /* CheckDataTests.m */; };
 		7A5A97011F89808900BCA061 /* ProgressReportingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A5A97001F89808900BCA061 /* ProgressReportingTests.m */; };
 		961A9BB51B306881007C4C6B /* WriteDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961A9BB41B306881007C4C6B /* WriteDataTests.swift */; };
 		962F9DA61D5D286B00205BEC /* UnzipKit.strings in Resources */ = {isa = PBXBuildFile; fileRef = 962F9DA41D5D286B00205BEC /* UnzipKit.strings */; };
@@ -73,6 +74,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7A5652231F90E01C006B782E /* CheckDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckDataTests.m; sourceTree = "<group>"; };
 		7A5A97001F89808900BCA061 /* ProgressReportingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProgressReportingTests.m; sourceTree = "<group>"; };
 		961A9BB31B306880007C4C6B /* UnzipKitTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "UnzipKitTests-Bridging-Header.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		961A9BB41B306881007C4C6B /* WriteDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WriteDataTests.swift; sourceTree = "<group>"; };
@@ -229,6 +231,7 @@
 				961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */,
 				96FCC8401B306CDD00726AC7 /* UZKArchiveTestCase.m */,
 				963386B71EE89A49006B16BF /* UtilityMethods.swift */,
+				7A5652231F90E01C006B782E /* CheckDataTests.m */,
 				968C40DB1B586401004C128E /* CommentsTests.m */,
 				968C40D51B586380004C128E /* DeleteFileTests.m */,
 				968C40D71B5863A9004C128E /* ErrorHandlingTests.m */,
@@ -486,6 +489,7 @@
 				9630C0381C6D27A4000693EE /* ExtractDataTests_Swift.swift in Sources */,
 				968C40C01B585FDE004C128E /* ModesTests.m in Sources */,
 				968C40DA1B5863D9004C128E /* FileDescriptorUsageTests.m in Sources */,
+				7A5652241F90E01C006B782E /* CheckDataTests.m in Sources */,
 				961A9BB51B306881007C4C6B /* WriteDataTests.swift in Sources */,
 				968C40C61B5861C3004C128E /* ListFileInfoTests.m in Sources */,
 				968C40E01B586490004C128E /* PropertyTests.m in Sources */,
