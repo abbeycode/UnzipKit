@@ -4,6 +4,7 @@
 
 * Added support for `NSProgress` and `NSProgressReporting` in all extraction and iteration methods (Issue #32)
 * Added detailed logging using new unified logging framework. See [the readme](README.md) for more details (Issue #47)
+* Added methods to check data integrity of an individual archived file, or the entire archive (Issue #63)
 * Fixed a crasher in `extractBufferedDataFromFile:error:action:`, which also manifested in other methods that use it, like `validatePassword` (Issue #51 - Thanks, [@amosavian](https://github.com/amosavian), [@monobono](https://github.com/monobono), and [@segunlee](https://github.com/segunlee)!)
 * Upgraded project to Xcode 9 and to the macOS 10.13 and iOS 11 SDKs (Issue #61)
 * Consolidated targets so they're shared between iOS and macOS (Issue #62)

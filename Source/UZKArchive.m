@@ -147,6 +147,11 @@ NS_DESIGNATED_INITIALIZER
     if ((self = [super init])) {
         UZKCreateActivity("Init Archive");
         
+        if (!fileURL) {
+            UZKLogError("Nil fileURL passed to UZKArchive initializer")
+            return nil;
+        }
+        
         UZKLogInfo("Initializing archive with URL %{public}@, path %{public}@, password %{public}@", fileURL, fileURL.path, [password length] != 0 ? @"given" : @"not given");
         
         if ([fileURL checkResourceIsReachableAndReturnError:NULL]) {
@@ -1000,6 +1005,50 @@ NS_DESIGNATED_INITIALIZER
     return YES;
 }
 
+- (BOOL)checkDataIntegrity
+{
+    return [self checkDataIntegrityOfFile:(NSString * _Nonnull)nil];
+}
+
+- (BOOL)checkDataIntegrityOfFile:(NSString *)filePath
+{
+    UZKCreateActivity("Checking data integrity");
+    
+    UZKLogInfo("Checking integrity of %{public}@", filePath ? filePath : @"all files in archive");
+    
+    NSError *performOnDataError = nil;
+    __block BOOL dataIsValid = NO;
+    
+    BOOL success = [self performOnDataInArchive:
+     ^(UZKFileInfo *fileInfo, NSData *fileData, BOOL *stop) {
+         // Only set this once we've reached this point, validating the archive's structures
+         dataIsValid = YES;
+         
+         if (filePath && ![filePath isEqualToString:fileInfo.filename]) {
+             UZKLogDebug("Skipping '%{public}@' != %{public}@", fileInfo.filename, filePath);
+             return;
+         }
+         
+         uLong extractedCRC = crc32(0, fileData.bytes, (uInt)fileData.length);
+
+         if (extractedCRC != fileInfo.CRC) {
+             UZKLogError("CRC mismatch in '%{public}@': expected %010lu, found %010lu",
+                         fileInfo.filename, (unsigned long)fileInfo.CRC, extractedCRC)
+             dataIsValid = NO;
+         }
+         
+         if (!dataIsValid || filePath) {
+             *stop = YES;
+         }
+    }
+                           error:&performOnDataError];
+    
+    if (!success) {
+        UZKLogError("Failed to iterate through data: %{public}@", performOnDataError);
+    }
+    
+    return success && dataIsValid;
+}
 
 
 #pragma mark - Write Methods
