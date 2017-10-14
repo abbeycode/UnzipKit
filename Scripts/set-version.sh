@@ -43,7 +43,7 @@ if [ "$THIS_FILE_CHANGED" -gt 0 ]; then
 fi
 
 echo -e "${GREEN}Committing updated plist...$COLOR_OFF"
-git commit -m "Updated version to v$1" Source Resources UnzipKit.xcodeproj
+git commit -m "Updated version to v$1" Source Resources
 
 # Revert changes to other plist files
 git checkout .
