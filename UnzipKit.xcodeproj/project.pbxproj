@@ -591,6 +591,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				WARNING_CFLAGS = "-Wno-error";
 			};
 			name = Debug;
 		};
@@ -609,6 +610,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				WARNING_CFLAGS = "-Wno-error";
 			};
 			name = Release;
 		};
@@ -700,8 +702,8 @@
 				SWIFT_VERSION = 4.0;
 				WARNING_CFLAGS = (
 					"-Weverything",
-					"-Wno-objc-missing-property-synthesis",
 					"-Wno-auto-import",
+					"-Wno-objc-missing-property-synthesis",
 				);
 			};
 			name = Debug;
@@ -752,11 +754,9 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 4.0;
 				WARNING_CFLAGS = (
-					"-Wno-error=unused-command-line-argument",
 					"-Weverything",
-					"-Wno-objc-missing-property-synthesis",
 					"-Wno-auto-import",
-					"-Wno-error=reserved-id-macro",
+					"-Wno-objc-missing-property-synthesis",
 				);
 			};
 			name = Release;
