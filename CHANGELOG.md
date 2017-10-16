@@ -8,6 +8,7 @@
 * Fixed a crasher in `extractBufferedDataFromFile:error:action:`, which also manifested in other methods that use it, like `validatePassword` (Issue #51 - Thanks, [@amosavian](https://github.com/amosavian), [@monobono](https://github.com/monobono), and [@segunlee](https://github.com/segunlee)!)
 * Upgraded project to Xcode 9 and to the macOS 10.13 and iOS 11 SDKs (Issue #61)
 * Consolidated targets so they're shared between iOS and macOS (Issue #62)
+* Improved the way warnings are ignored to be more consistent, and so they're only ignored in `minizip`, and not the UnzipKit sources (Issue #68)
 
 ## 1.8.5
 

@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A00291B1F93DB9200618503 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C31A40C44300685B6D /* ioapi.c */; };
+		7A00291C1F93DB9200618503 /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C51A40C44300685B6D /* mztools.c */; };
+		7A00291D1F93DB9200618503 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C71A40C44300685B6D /* unzip.c */; };
+		7A00291E1F93DB9200618503 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C91A40C44300685B6D /* zip.c */; };
+		7A00291F1F93DBC900618503 /* crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA66031A435D8200685B6D /* crypt.h */; };
+		7A0029201F93DBC900618503 /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C41A40C44300685B6D /* ioapi.h */; };
+		7A0029211F93DBC900618503 /* mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C61A40C44300685B6D /* mztools.h */; };
+		7A0029221F93DBC900618503 /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C81A40C44300685B6D /* unzip.h */; };
+		7A0029231F93DBC900618503 /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65CA1A40C44300685B6D /* zip.h */; };
+		7A0029241F93DBF000618503 /* libminizip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A0029171F93DB5800618503 /* libminizip.a */; };
 		7A5652241F90E01C006B782E /* CheckDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A5652231F90E01C006B782E /* CheckDataTests.m */; };
 		7A5A97011F89808900BCA061 /* ProgressReportingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A5A97001F89808900BCA061 /* ProgressReportingTests.m */; };
 		961A9BB51B306881007C4C6B /* WriteDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961A9BB41B306881007C4C6B /* WriteDataTests.swift */; };
@@ -17,11 +27,6 @@
 		963603531BFB815600BF0C4F /* UZKFileInfo_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 963603521BFB7F6500BF0C4F /* UZKFileInfo_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		965CF00A1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 965CF0081D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h */; };
 		965CF00C1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 965CF0091D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m */; };
-		966A971C1A4A1F2A003597AA /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C81A40C44300685B6D /* unzip.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		966A971D1A4A2348003597AA /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65CA1A40C44300685B6D /* zip.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		966A971E1A4A234C003597AA /* mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C61A40C44300685B6D /* mztools.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		966A971F1A4A2351003597AA /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C41A40C44300685B6D /* ioapi.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		966A97201A4A2354003597AA /* crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA66031A435D8200685B6D /* crypt.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9677858E1F1405F000A8D6B2 /* UnzipKitMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 9677858D1F1405DB00A8D6B2 /* UnzipKitMacros.h */; };
 		968C40C01B585FDE004C128E /* ModesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40BF1B585FDE004C128E /* ModesTests.m */; };
 		968C40C21B586132004C128E /* ZipFileDetectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 968C40C11B586132004C128E /* ZipFileDetectionTests.m */; };
@@ -47,10 +52,6 @@
 		96EA65BC1A40B2EC00685B6D /* UZKArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65BA1A40B2EC00685B6D /* UZKArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96EA65BD1A40B2EC00685B6D /* UZKArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65BB1A40B2EC00685B6D /* UZKArchive.m */; settings = {COMPILER_FLAGS = "-Wno-format-nonliteral"; }; };
 		96EA65C01A40BF1A00685B6D /* Test Data in Resources */ = {isa = PBXBuildFile; fileRef = 96EA65BF1A40BF1A00685B6D /* Test Data */; };
-		96EA65D81A40C44300685B6D /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C31A40C44300685B6D /* ioapi.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		96EA65DB1A40C44300685B6D /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C51A40C44300685B6D /* mztools.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		96EA65DE1A40C44300685B6D /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C71A40C44300685B6D /* unzip.c */; settings = {COMPILER_FLAGS = "-Xanalyzer -analyzer-disable-all-checks -Wno-everything"; }; };
-		96EA65E11A40C44300685B6D /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C91A40C44300685B6D /* zip.c */; settings = {COMPILER_FLAGS = "-Xanalyzer -analyzer-disable-all-checks -Wno-everything"; }; };
 		96EA66011A40E31900685B6D /* UZKFileInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65FF1A40E31900685B6D /* UZKFileInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96EA66021A40E31900685B6D /* UZKFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EA66001A40E31900685B6D /* UZKFileInfo.m */; };
 		96FCC8411B306CDD00726AC7 /* UZKArchiveTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 96FCC8401B306CDD00726AC7 /* UZKArchiveTestCase.m */; };
@@ -74,6 +75,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7A0029171F93DB5800618503 /* libminizip.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libminizip.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A5652231F90E01C006B782E /* CheckDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckDataTests.m; sourceTree = "<group>"; };
 		7A5A97001F89808900BCA061 /* ProgressReportingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProgressReportingTests.m; sourceTree = "<group>"; };
 		961A9BB31B306880007C4C6B /* UnzipKitTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "UnzipKitTests-Bridging-Header.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -131,6 +133,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		7A0029141F93DB5800618503 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		962F9D9B1D5D281E00205BEC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -142,6 +151,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A0029241F93DBF000618503 /* libminizip.a in Frameworks */,
 				969993971BE3BA9C003D18DA /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -180,10 +190,10 @@
 		96EA65941A40AEAE00685B6D = {
 			isa = PBXGroup;
 			children = (
-				96EA65C11A40C44300685B6D /* Lib */,
 				96EA65A01A40AEAE00685B6D /* UnzipKit */,
 				96EA65AD1A40AEAE00685B6D /* UnzipKitTests */,
 				962F9D9F1D5D281E00205BEC /* UnzipKitResources */,
+				96EA65C11A40C44300685B6D /* Lib */,
 				96EA65F61A40C86200685B6D /* Frameworks */,
 				96EA659F1A40AEAE00685B6D /* Products */,
 			);
@@ -195,6 +205,7 @@
 				96EA659E1A40AEAE00685B6D /* UnzipKit.framework */,
 				96EA65A91A40AEAE00685B6D /* UnzipKitTests.xctest */,
 				962F9D9E1D5D281E00205BEC /* UnzipKitResources.bundle */,
+				7A0029171F93DB5800618503 /* libminizip.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -304,6 +315,18 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		7A0029151F93DB5800618503 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A00291F1F93DBC900618503 /* crypt.h in Headers */,
+				7A0029201F93DBC900618503 /* ioapi.h in Headers */,
+				7A0029211F93DBC900618503 /* mztools.h in Headers */,
+				7A0029221F93DBC900618503 /* unzip.h in Headers */,
+				7A0029231F93DBC900618503 /* zip.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		96EA659B1A40AEAE00685B6D /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -312,11 +335,6 @@
 				96EA66011A40E31900685B6D /* UZKFileInfo.h in Headers */,
 				96EA65A41A40AEAE00685B6D /* UnzipKit.h in Headers */,
 				963603531BFB815600BF0C4F /* UZKFileInfo_Private.h in Headers */,
-				966A971C1A4A1F2A003597AA /* unzip.h in Headers */,
-				966A971F1A4A2351003597AA /* ioapi.h in Headers */,
-				966A97201A4A2354003597AA /* crypt.h in Headers */,
-				966A971E1A4A234C003597AA /* mztools.h in Headers */,
-				966A971D1A4A2348003597AA /* zip.h in Headers */,
 				9677858E1F1405F000A8D6B2 /* UnzipKitMacros.h in Headers */,
 				965CF00A1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h in Headers */,
 			);
@@ -325,6 +343,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		7A0029161F93DB5800618503 /* minizip */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A0029181F93DB5800618503 /* Build configuration list for PBXNativeTarget "minizip" */;
+			buildPhases = (
+				7A0029131F93DB5800618503 /* Sources */,
+				7A0029141F93DB5800618503 /* Frameworks */,
+				7A0029151F93DB5800618503 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = minizip;
+			productName = minizip;
+			productReference = 7A0029171F93DB5800618503 /* libminizip.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		962F9D9D1D5D281E00205BEC /* UnzipKitResources */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 962F9DA11D5D281E00205BEC /* Build configuration list for PBXNativeTarget "UnzipKitResources" */;
@@ -390,6 +425,10 @@
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Abbey Code";
 				TargetAttributes = {
+					7A0029161F93DB5800618503 = {
+						CreatedOnToolsVersion = 9.0;
+						ProvisioningStyle = Automatic;
+					};
 					962F9D9D1D5D281E00205BEC = {
 						CreatedOnToolsVersion = 7.3.1;
 					};
@@ -419,6 +458,7 @@
 				96EA659D1A40AEAE00685B6D /* UnzipKit */,
 				96EA65A81A40AEAE00685B6D /* UnzipKitTests */,
 				962F9D9D1D5D281E00205BEC /* UnzipKitResources */,
+				7A0029161F93DB5800618503 /* minizip */,
 			);
 		};
 /* End PBXProject section */
@@ -451,6 +491,17 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		7A0029131F93DB5800618503 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A00291B1F93DB9200618503 /* ioapi.c in Sources */,
+				7A00291D1F93DB9200618503 /* unzip.c in Sources */,
+				7A00291E1F93DB9200618503 /* zip.c in Sources */,
+				7A00291C1F93DB9200618503 /* mztools.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		962F9D9A1D5D281E00205BEC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -464,10 +515,6 @@
 			files = (
 				96EA65BD1A40B2EC00685B6D /* UZKArchive.m in Sources */,
 				96EA66021A40E31900685B6D /* UZKFileInfo.m in Sources */,
-				96EA65D81A40C44300685B6D /* ioapi.c in Sources */,
-				96EA65DE1A40C44300685B6D /* unzip.c in Sources */,
-				96EA65E11A40C44300685B6D /* zip.c in Sources */,
-				96EA65DB1A40C44300685B6D /* mztools.c in Sources */,
 				965CF00C1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -529,6 +576,58 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		7A0029191F93DB5800618503 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				OTHER_CFLAGS = (
+					"-Qunused-arguments",
+					"-Xanalyzer",
+					"-analyzer-disable-all-checks",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WARNING_CFLAGS = (
+					"-Wno-comma",
+					"-Wno-strict-prototypes",
+				);
+			};
+			name = Debug;
+		};
+		7A00291A1F93DB5800618503 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				OTHER_CFLAGS = (
+					"-Qunused-arguments",
+					"-Xanalyzer",
+					"-analyzer-disable-all-checks",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WARNING_CFLAGS = (
+					"-Wno-comma",
+					"-Wno-strict-prototypes",
+				);
+			};
+			name = Release;
+		};
 		962F9DA21D5D281E00205BEC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -617,8 +716,8 @@
 				SWIFT_VERSION = 4.0;
 				WARNING_CFLAGS = (
 					"-Weverything",
-					"-Wno-objc-missing-property-synthesis",
 					"-Wno-auto-import",
+					"-Wno-objc-missing-property-synthesis",
 				);
 			};
 			name = Debug;
@@ -669,11 +768,9 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 4.0;
 				WARNING_CFLAGS = (
-					"-Wno-error=unused-command-line-argument",
 					"-Weverything",
-					"-Wno-objc-missing-property-synthesis",
 					"-Wno-auto-import",
-					"-Wno-error=reserved-id-macro",
+					"-Wno-objc-missing-property-synthesis",
 				);
 			};
 			name = Release;
@@ -763,6 +860,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		7A0029181F93DB5800618503 /* Build configuration list for PBXNativeTarget "minizip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A0029191F93DB5800618503 /* Debug */,
+				7A00291A1F93DB5800618503 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		962F9DA11D5D281E00205BEC /* Build configuration list for PBXNativeTarget "UnzipKitResources" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
