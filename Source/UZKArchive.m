@@ -32,7 +32,7 @@ static NSBundle *_resources = nil;
 #pragma clang diagnostic ignored "-Wundef"
 #if UNIFIED_LOGGING_SUPPORTED
 os_log_t unzipkit_log;
-BOOL isAtLeast10_13SDK;
+BOOL unzipkitIsAtLeast10_13SDK;
 #endif
 #pragma clang diagnostic pop
 
