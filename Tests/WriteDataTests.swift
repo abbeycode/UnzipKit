@@ -384,14 +384,16 @@ class WriteDataTests: UZKArchiveTestCase {
         let testFileData = try! Data(contentsOf:testFileURL)
         try! archive.write(testFileData, filePath: testFilename)
         
-        let emptyDirPath = "EmptyDirectory"
+        let emptyDirPath = "EmptyDirectory/"
         try! archive.write(Data(), filePath: emptyDirPath)
         
         let initialFileList = try! archive.listFileInfo()
         XCTAssertEqual(initialFileList.count, 2, "Expected a single directory")
         
+        let trimmedEmptyDir = emptyDirPath.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        
         let initialLastFile = initialFileList.last!
-        XCTAssertEqual(initialLastFile.filename, emptyDirPath, "Unexpected file path")
+        XCTAssertEqual(initialLastFile.filename, trimmedEmptyDir, "Unexpected file path")
         
         try! archive.deleteFile(emptyDirPath)
         
@@ -407,7 +409,7 @@ class WriteDataTests: UZKArchiveTestCase {
         XCTAssertEqual(fileListAfterWriteDirAgain.count, 2, "Expected a single directory")
         
         let lastFileAfterWriteDirAgain = fileListAfterWriteDirAgain.last!
-        XCTAssertEqual(lastFileAfterWriteDirAgain.filename, emptyDirPath, "Unexpected file path")
+        XCTAssertEqual(lastFileAfterWriteDirAgain.filename, trimmedEmptyDir, "Unexpected file path")
   }
     
     #if os(OSX)
