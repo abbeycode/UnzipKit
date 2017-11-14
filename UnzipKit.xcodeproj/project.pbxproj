@@ -82,7 +82,7 @@
 		961A9BB41B306881007C4C6B /* WriteDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WriteDataTests.swift; sourceTree = "<group>"; };
 		961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZKArchiveTestCase.h; sourceTree = "<group>"; };
 		962F9D9E1D5D281E00205BEC /* UnzipKitResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnzipKitResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		962F9DA01D5D281E00205BEC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		962F9DA01D5D281E00205BEC /* UnzipKitResources-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UnzipKitResources-Info.plist"; sourceTree = "<group>"; };
 		9630C0371C6D27A4000693EE /* ExtractDataTests_Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtractDataTests_Swift.swift; sourceTree = "<group>"; };
 		963386B71EE89A49006B16BF /* UtilityMethods.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityMethods.swift; sourceTree = "<group>"; };
 		963603521BFB7F6500BF0C4F /* UZKFileInfo_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZKFileInfo_Private.h; sourceTree = "<group>"; };
@@ -172,7 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				962F9DA41D5D286B00205BEC /* UnzipKit.strings */,
-				962F9DA01D5D281E00205BEC /* Info.plist */,
+				962F9DA01D5D281E00205BEC /* UnzipKitResources-Info.plist */,
 			);
 			name = UnzipKitResources;
 			path = Resources;
@@ -638,7 +638,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = Resources/Info.plist;
+				INFOPLIST_FILE = "Resources/UnzipKitResources-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.UnzipKitResources";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -656,7 +656,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = Resources/Info.plist;
+				INFOPLIST_FILE = "Resources/UnzipKitResources-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.UnzipKitResources";
 				PRODUCT_NAME = "$(TARGET_NAME)";
