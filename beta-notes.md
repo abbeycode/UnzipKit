@@ -1,0 +1,1 @@
+Updated UnzipKitResources to use its own info.plist, removing the CFBundleExecutable key from it (#76 - Thanks, @brendand!)
