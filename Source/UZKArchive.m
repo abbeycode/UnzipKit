@@ -633,6 +633,9 @@ NS_DESIGNATED_INITIALIZER
                     UZKLogDebug("Closing file handle");
                     [deflatedFileHandle closeFile];
                     
+                    NSDictionary* attribs = [NSDictionary dictionaryWithObjectsAndKeys:info.timestamp, NSFileModificationDate, nil];
+                    [[NSFileManager defaultManager] setAttributes:attribs ofItemAtPath:path error:nil];
+                    
                     if (!extractSuccess) {
                         UZKLogError("Error extracting file (%ld): %{public}@", (long)strongError.code, strongError.localizedDescription);
                         
