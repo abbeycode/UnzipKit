@@ -495,6 +495,9 @@ NS_DESIGNATED_INITIALIZER
 
                     [deflatedFileHandle closeFile];
                     
+                    NSDictionary* attribs = [NSDictionary dictionaryWithObjectsAndKeys:info.timestamp, NSFileModificationDate, nil];
+                    [[NSFileManager defaultManager] setAttributes:attribs ofItemAtPath:path error:nil];
+                    
                     if (!extractSuccess) {
                         [self assignError:&strongError code:strongError.code
                                    detail:strongError.localizedDescription];
