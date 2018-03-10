@@ -432,6 +432,8 @@ NS_DESIGNATED_INITIALIZER
                     }
                     
                     if (info.isDirectory) {
+                        [fm createDirectoryAtPath:extractPath  withIntermediateDirectories:YES
+                                       attributes:nil error:error];
                         continue;
                     }
                     
@@ -489,7 +491,7 @@ NS_DESIGNATED_INITIALIZER
                                         bytesDecompressed += dataChunk.length;
                                         [deflatedFileHandle writeData:dataChunk];
                                         if (progress) {
-                                            progress(info, bytesDecompressed / totalSize.doubleValue);
+                                            progress(info, (double)bytesDecompressed / totalSize.doubleValue);
                                         }
                                     }];
 
@@ -621,7 +623,7 @@ NS_DESIGNATED_INITIALIZER
                               error:(NSError * __autoreleasing*)error
                              action:(void (^)(NSData *, CGFloat))action
 {
-    NSUInteger bufferSize = 4096; //Arbitrary
+    NSUInteger bufferSize = 4096 * 64; //Arbitrary
     
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         if (![self locateFileInZip:filePath error:innerError]) {
@@ -644,19 +646,16 @@ NS_DESIGNATED_INITIALIZER
         
         long long bytesDecompressed = 0;
         
+        int innerErr = 0;
+        
         for (;;)
         {
             @autoreleasepool {
                 NSMutableData *data = [NSMutableData dataWithLength:bufferSize];
                 int bytesRead = unzReadCurrentFile(self.unzFile, data.mutableBytes, (unsigned)bufferSize);
                 
-                if (bytesRead < 0) {
-                    [self assignError:innerError code:bytesRead
-                               detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to read file %@ in zip", @"UnzipKit", _resources, @"Detailed error string"),
-                                       info.filename]];
-                    return;
-                }
-                else if (bytesRead == 0) {
+                if (bytesRead <= 0) {
+                    innerErr = bytesRead;
                     break;
                 }
                 
@@ -669,6 +668,12 @@ NS_DESIGNATED_INITIALIZER
             }
         }
         
+        if (innerErr < 0) {
+            [self assignError:innerError code:innerErr
+                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to read file %@ in zip", @"UnzipKit", _resources, @"Detailed error string"),
+                               info.filename]];
+        }
+        
         int err = unzCloseCurrentFile(self.unzFile);
         if (err != UNZ_OK) {
             if (err == UZKErrorCodeCRCError) {
@@ -677,8 +682,8 @@ NS_DESIGNATED_INITIALIZER
             
             [self assignError:innerError code:err
                        detail:NSLocalizedStringFromTableInBundle(@"Error closing current file during buffered read", @"UnzipKit", _resources, @"Detailed error string")];
-            return;
         }
+        return;
     } inMode:UZKFileModeUnzip error:error];
     
     return success;
