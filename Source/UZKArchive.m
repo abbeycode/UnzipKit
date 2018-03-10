@@ -551,7 +551,8 @@ NS_DESIGNATED_INITIALIZER
                     }
                     
                     if (info.isDirectory) {
-                        UZKLogDebug("File is a directory. Skipping");
+                        [fm createDirectoryAtPath:extractPath withIntermediateDirectories:YES
+                                       attributes:nil error:error];
                         continue;
                     }
                     
@@ -626,7 +627,7 @@ NS_DESIGNATED_INITIALIZER
                                         bytesDecompressed += dataChunk.length;
                                         [deflatedFileHandle writeData:dataChunk];
                                         if (progressBlock) {
-                                            progressBlock(info, bytesDecompressed / totalSize.doubleValue);
+                                            progressBlock(info, (double)bytesDecompressed / totalSize.doubleValue);
                                         }
                                     }];
 
@@ -839,7 +840,7 @@ NS_DESIGNATED_INITIALIZER
     NSProgress *progress = [self beginProgressOperation:0];
     
     __weak UZKArchive *welf = self;
-    const NSUInteger bufferSize = 4096; //Arbitrary
+    NSUInteger bufferSize = 4096 * 64; //Arbitrary
     
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         if (![welf locateFileInZip:filePath error:innerError]) {
@@ -869,7 +870,7 @@ NS_DESIGNATED_INITIALIZER
         
         long long bytesDecompressed = 0;
         
-        NSError *strongInnerError = nil;
+        int innerErr = 0;
         
         for (;;)
         {
@@ -883,16 +884,8 @@ NS_DESIGNATED_INITIALIZER
                 NSMutableData *data = [NSMutableData dataWithLength:bufferSize];
                 int bytesRead = unzReadCurrentFile(welf.unzFile, data.mutableBytes, (unsigned)bufferSize);
                 
-                if (bytesRead < 0) {
-                    NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to read file %@ in zip", @"UnzipKit", _resources, @"Detailed error string"),
-                                        info.filename];
-                    UZKLogError("Error reading data (code %d): %{public}@", bytesRead, detail);
-                    [welf assignError:&strongInnerError code:bytesRead
-                               detail:detail];
-                    break;
-                }
-                else if (bytesRead == 0) {
-                    UZKLogDebug("Done reading file");
+                if (bytesRead <= 0) {
+                    innerErr = bytesRead;
                     break;
                 }
                 
@@ -910,9 +903,10 @@ NS_DESIGNATED_INITIALIZER
             }
         }
         
-        if (strongInnerError) {
-            *innerError = strongInnerError;
-            return;
+        if (innerErr < 0) {
+            [self assignError:innerError code:innerErr
+                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to read file %@ in zip", @"UnzipKit", _resources, @"Detailed error string"),
+                               info.filename]];
         }
         
         UZKLogInfo("Closing file...");
@@ -926,8 +920,9 @@ NS_DESIGNATED_INITIALIZER
             UZKLogError("Error closing file (code %d): %{public}@", err, detail);
             [welf assignError:innerError code:err
                        detail:detail];
-            return;
         }
+        
+        return;
     } inMode:UZKFileModeUnzip error:error];
     
     if (progress.isCancelled) {
