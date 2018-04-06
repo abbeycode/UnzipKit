@@ -46,8 +46,9 @@
         XCTAssertTrue(success, @"Failed to extract %@ to %@", testArchiveName, extractURL);
         
         error = nil;
-        NSArray *extractedFiles = [fm contentsOfDirectoryAtPath:extractURL.path
-                                                          error:&error];
+        NSArray *extractedFiles = [[fm contentsOfDirectoryAtPath:extractURL.path
+                                                           error:&error]
+                                   sortedArrayUsingSelector:@selector(compare:)];
         
         XCTAssertNil(error, @"Failed to list contents of extract directory: %@", extractURL);
         
@@ -96,9 +97,10 @@
     XCTAssertTrue(success, @"Failed to extract %@ to %@", testArchiveName, extractURL);
     
     error = nil;
-    NSArray *extractedFiles = [fm contentsOfDirectoryAtPath:extractURL.path
-                                                      error:&error];
-    
+    NSArray *extractedFiles = [[fm contentsOfDirectoryAtPath:extractURL.path
+                                                       error:&error]
+                               sortedArrayUsingSelector:@selector(compare:)];
+
     XCTAssertNil(error, @"Failed to list contents of extract directory: %@", extractURL);
     
     XCTAssertNotNil(extractedFiles, @"No list of files returned");
@@ -190,21 +192,25 @@
                                                    return NO;
 #pragma clang diagnostic pop
                                                }];
+    NSArray<NSURL*> *extractedURLs = [[enumerator allObjects]
+                                      sortedArrayUsingComparator:^NSComparisonResult(NSURL  * _Nonnull obj1, NSURL  * _Nonnull obj2) {
+                                          return [obj1.path compare:obj2.path];
+                                      }];
     
     NSArray *expectedFiles = @[
                                @"aces-dev-1.0",
                                @"aces-dev-1.0/CHANGELOG.md",
+                               @"aces-dev-1.0/LICENSE.md",
+                               @"aces-dev-1.0/README.md",
                                @"aces-dev-1.0/documents",
                                @"aces-dev-1.0/documents/README.md",
                                @"aces-dev-1.0/images",
                                @"aces-dev-1.0/images/README.md",
-                               @"aces-dev-1.0/LICENSE.md",
-                               @"aces-dev-1.0/README.md",
                                ];
     
     NSUInteger i = 0;
     
-    for (NSURL *extractedURL in enumerator) {
+    for (NSURL *extractedURL in extractedURLs) {
         NSString *actualPath = extractedURL.path;
         NSString *expectedPath = expectedFiles[i++];
         XCTAssertTrue([actualPath hasSuffix:expectedPath], @"Unexpected file extracted: %@", actualPath);
