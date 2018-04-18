@@ -42,7 +42,7 @@ matrix:
 
    - stage: Release
      if: tag IS present
-     before_install: brew upgrade python
+     before_install: brew upgrade python # Needs Python 3
      script: ./Scripts/push-output.sh
 
 # Turn on Docker, container-based infrastructure
