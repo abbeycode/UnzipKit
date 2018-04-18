@@ -17,7 +17,7 @@ else
 fi
 
 echo -e "\nLinting podspec..."
-pod spec lint --fail-fast --verbose
+pod spec lint --fail-fast
 
 if [ $? -ne 0 ]; then
     echo -e "\nPodspec failed lint. Run again with --verbose to troubleshoot"
