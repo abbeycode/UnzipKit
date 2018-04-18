@@ -17,7 +17,7 @@ else
 fi
 
 echo -e "\nLinting podspec..."
-pod spec lint --fail-fast
+pod spec lint --fail-fast --verbose
 
 if [ $? -ne 0 ]; then
     echo -e "\nPodspec failed lint. Run again with --verbose to troubleshoot"
@@ -29,7 +29,7 @@ echo -e "\nExporting Carthage archive...\n"
 source ./Scripts/archive-carthage.sh
 
 echo -e "\nPushing to CocoaPods...\n"
-pod trunk push --verbose
+pod trunk push
 
 # If push is successful, add release to GitHub
 if [ $? -ne 0 ]; then
