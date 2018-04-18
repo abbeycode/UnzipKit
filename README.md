@@ -268,7 +268,7 @@ Most messages fall into this category, making it extremely verbose. All non-erro
 So far, there is only one case that gets logged at Fault-level: when a Cocoa framework methods that come back with an error
 
 ### Activities
-1. Public methods have an English names with spaces, and are title-case
+1. Public methods have English activity names with spaces, and are title-case
 1. Private methods each have an activity with the method's name
 1. Sub-activities are created for significant scope changes, such as when inside an action block, but not if no significant work is done before entering that action
 1. Top-level activities within a method have variables named `activity`, with more specific labels given to sub-activities
