@@ -29,7 +29,7 @@ echo -e "\nExporting Carthage archive...\n"
 source ./Scripts/archive-carthage.sh
 
 echo -e "\nPushing to CocoaPods...\n"
-pod trunk push
+pod trunk push --verbose
 
 # If push is successful, add release to GitHub
 if [ $? -ne 0 ]; then
