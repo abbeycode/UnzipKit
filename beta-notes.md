@@ -1,1 +1,1 @@
-Updated UnzipKitResources to use its own info.plist, removing the CFBundleExecutable key from it (#76 - Thanks, @brendand!)
+Added CocoaPods test spec (Issue #59, [more info here](http://blog.cocoapods.org/CocoaPods-1.3.0/))
