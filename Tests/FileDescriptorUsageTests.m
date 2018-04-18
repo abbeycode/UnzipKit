@@ -108,6 +108,9 @@
     NSFileManager *fm = [NSFileManager defaultManager];
     
     for (NSInteger i = 0; i < 100; i++) {
+        // Keep this test from stalling out the build
+        printf("testFileDescriptorUsage_WriteIntoArchive: Iteration %ld/100\n", (long)i);
+        
         NSString *tempDir = [self randomDirectoryName];
         NSURL *tempDirURL = [self.tempDirectory URLByAppendingPathComponent:tempDir];
         NSURL *testArchiveCopyURL = [tempDirURL URLByAppendingPathComponent:testArchiveName];

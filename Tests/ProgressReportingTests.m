@@ -12,10 +12,10 @@
 
 @interface ProgressReportingTests : UZKArchiveTestCase
 
-@property NSMutableArray<NSNumber*> *fractionsCompletedReported;
-@property NSMutableArray<NSString*> *descriptionsReported;
-@property NSMutableArray<NSString*> *additionalDescriptionsReported;
-@property NSMutableArray<UZKFileInfo*> *fileInfosReported;
+@property (retain) NSMutableArray<NSNumber*> *fractionsCompletedReported;
+@property (retain) NSMutableArray<NSString*> *descriptionsReported;
+@property (retain) NSMutableArray<NSString*> *additionalDescriptionsReported;
+@property (retain) NSMutableArray<UZKFileInfo*> *fileInfosReported;
 
 @end
 
@@ -571,6 +571,8 @@ static NSUInteger observerCallCount;
     if ([object isKindOfClass:[NSProgress class]]) {
         progress = object;
         [self.fractionsCompletedReported addObject:@(progress.fractionCompleted)];
+    } else {
+        return;
     }
     
     if (context == ExtractFilesContext) {

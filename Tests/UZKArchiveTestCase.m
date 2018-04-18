@@ -12,9 +12,14 @@
 #import "UnzipKitMacros.h"
 
 static NSDateFormatter *testFileInfoDateFormatter;
-os_log_t unzipkit_log;
-BOOL isAtLeast10_13SDK;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundef"
+#if UNIFIED_LOGGING_SUPPORTED
+os_log_t unzipkit_log;
+BOOL unzipkitIsAtLeast10_13SDK;
+#endif
+#pragma clang diagnostic pop
 
 
 @implementation UZKArchiveTestCase

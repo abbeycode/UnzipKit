@@ -21,12 +21,12 @@
 
 @property BOOL testFailed;
 
-@property NSURL *tempDirectory;
-@property NSMutableDictionary<NSString*, NSURL*> *testFileURLs;
-@property NSMutableDictionary *unicodeFileURLs;
-@property NSSet *nonZipTestFilePaths;
-@property NSSet *nonZipUnicodeFilePaths;
-@property NSURL *corruptArchive;
+@property (retain) NSURL *tempDirectory;
+@property (retain) NSMutableDictionary<NSString*, NSURL*> *testFileURLs;
+@property (retain) NSMutableDictionary *unicodeFileURLs;
+@property (retain) NSSet *nonZipTestFilePaths;
+@property (retain) NSSet *nonZipUnicodeFilePaths;
+@property (retain) NSURL *corruptArchive;
 
 
 // Helper Methods

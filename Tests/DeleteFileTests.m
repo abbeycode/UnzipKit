@@ -34,7 +34,7 @@
                               : nil);
         UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
         
-        NSError *deleteError;
+        NSError *deleteError = nil;
         BOOL result = [archive deleteFile:fileToDelete error:&deleteError];
         XCTAssertTrue(result, @"Failed to delete %@ from %@", fileToDelete, testArchiveName);
         XCTAssertNil(deleteError, @"Error deleting %@ from %@", fileToDelete, testArchiveName);
@@ -78,7 +78,7 @@
                               : nil);
         UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
         
-        NSError *deleteError;
+        NSError *deleteError = nil;
         BOOL result = [archive deleteFile:fileToDelete error:&deleteError];
         XCTAssertTrue(result, @"Failed to delete %@ from %@", fileToDelete, testArchiveName);
         XCTAssertNil(deleteError, @"Error deleting %@ from %@", fileToDelete, testArchiveName);
@@ -122,7 +122,7 @@
                               : nil);
         UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
         
-        NSError *deleteError;
+        NSError *deleteError = nil;
         BOOL result = [archive deleteFile:fileToDelete error:&deleteError];
         XCTAssertTrue(result, @"Failed to delete %@ from %@", fileToDelete, testArchiveName);
         XCTAssertNil(deleteError, @"Error deleting %@ from %@", fileToDelete, testArchiveName);

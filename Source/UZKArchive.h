@@ -163,7 +163,7 @@ extern NSString *UZKErrorDomain;
  *
  *  Comments are written in UTF-8, and read in UTF-8 and Windows/CP-1252, falling back to defaultCStringEncoding
  */
-@property(atomic, nullable) NSString *comment;
+@property(retain, atomic, nullable) NSString *comment;
 
 /**
  *  Can be used for progress reporting, but it's not necessary. You can also use
