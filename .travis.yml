@@ -11,11 +11,11 @@ matrix:
   include:
    - stage: Test
      env: Name=Mac-Tests-Zip64Large
-     script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_LargeFile ENABLE_NS_ASSERTIONS=1
+     script: travis_wait 20 xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_LargeFile ENABLE_NS_ASSERTIONS=1
 
    - stage: Test
      env: Name=Mac-Tests-Zip64Many
-     script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
+     script: travis_wait 30 xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release test -only-testing:UnzipKitTests/ExtractFilesTests/testExtractZip64_ManyFiles ENABLE_NS_ASSERTIONS=1
 
    - stage: Test
      env: Name=Mac
@@ -30,7 +30,7 @@ matrix:
    - stage: Test
      env: Name=DemoAppBuild
      # The CLANG arguments and find command fail the build on analyzer errors
-     script: ./Scripts/install-demo-libs.sh && xcodebuild -workspace UnzipKitDemo/UnzipKitDemo.xcworkspace -scheme UnzipKitDemo -sdk iphonesimulator -configuration Release analyze test CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+     script: ./Scripts/install-demo-libs.sh && xcodebuild -workspace UnzipKitDemo/UnzipKitDemo.xcworkspace -scheme UnzipKitDemo -destination 'platform=iOS Simulator,name=iPhone 7,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
 
    - stage: Validate
      env: Name=CocoaPods
