@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4342B505A1E29CF4940AF08D /* libPods-UnzipKitDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 646C8BFCFD13F5CC2090B1B1 /* libPods-UnzipKitDemo.a */; };
 		9693812B1D209CFA001B2ED8 /* libUnzipKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9693812A1D209CFA001B2ED8 /* libUnzipKit.a */; };
 		969E2FE51AD573F100E19F7A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969E2FE41AD573F100E19F7A /* AppDelegate.swift */; };
 		969E2FE71AD573F100E19F7A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969E2FE61AD573F100E19F7A /* ViewController.swift */; };
@@ -15,12 +14,12 @@
 		969E2FEC1AD573F100E19F7A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 969E2FEB1AD573F100E19F7A /* Images.xcassets */; };
 		969E2FEF1AD573F100E19F7A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 969E2FED1AD573F100E19F7A /* LaunchScreen.xib */; };
 		969E30091AD57BD000E19F7A /* Test Data in Resources */ = {isa = PBXBuildFile; fileRef = 969E30081AD57BD000E19F7A /* Test Data */; };
+		D058D1B1EDCAA17D37F1EEC5 /* libPods-UnzipKitDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 836C8D3D2EBCC1B567DEBA7E /* libPods-UnzipKitDemo.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		646C8BFCFD13F5CC2090B1B1 /* libPods-UnzipKitDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-UnzipKitDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6DE1C20894315AC5973E9318 /* Pods-UnzipKitDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnzipKitDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo.release.xcconfig"; sourceTree = "<group>"; };
-		90C0BC5398A18895F3E99565 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		2F87D9A1D0DCA68C622CCE05 /* Pods-UnzipKitDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnzipKitDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		836C8D3D2EBCC1B567DEBA7E /* libPods-UnzipKitDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-UnzipKitDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		969381281D209CF5001B2ED8 /* libPods-UnzipKitDemo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-UnzipKitDemo.a"; path = "../../../Library/Developer/Xcode/DerivedData/UnzipKitDemo-hdmwkglyskhqhncppjlrcqmehjld/Build/Products/Debug-iphonesimulator/libPods-UnzipKitDemo.a"; sourceTree = "<group>"; };
 		9693812A1D209CFA001B2ED8 /* libUnzipKit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUnzipKit.a; path = "../../../Library/Developer/Xcode/DerivedData/UnzipKitDemo-hdmwkglyskhqhncppjlrcqmehjld/Build/Products/Debug-iphonesimulator/UnzipKit/libUnzipKit.a"; sourceTree = "<group>"; };
 		969E2FDF1AD573F100E19F7A /* UnzipKitDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UnzipKitDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -32,9 +31,7 @@
 		969E2FEE1AD573F100E19F7A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		969E30041AD5798D00E19F7A /* UnzipKitDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UnzipKitDemo-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
 		969E30081AD57BD000E19F7A /* Test Data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Test Data"; path = "../../Tests/Test Data"; sourceTree = "<group>"; };
-		9E584137C47E168A8EA16F37 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		A3286DC9EF5D9C818708B250 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
-		F80DF9E765269238295E123E /* Pods-UnzipKitDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnzipKitDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		D07031CAE5D79F16E6A159A8 /* Pods-UnzipKitDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnzipKitDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,20 +40,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				9693812B1D209CFA001B2ED8 /* libUnzipKit.a in Frameworks */,
-				4342B505A1E29CF4940AF08D /* libPods-UnzipKitDemo.a in Frameworks */,
+				D058D1B1EDCAA17D37F1EEC5 /* libPods-UnzipKitDemo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		11FBF2BE09A55AC8F2F375BC /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				2F87D9A1D0DCA68C622CCE05 /* Pods-UnzipKitDemo.debug.xcconfig */,
+				D07031CAE5D79F16E6A159A8 /* Pods-UnzipKitDemo.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		969E2FD61AD573F100E19F7A = {
 			isa = PBXGroup;
 			children = (
 				969E2FE11AD573F100E19F7A /* UnzipKitDemo */,
 				969E2FE01AD573F100E19F7A /* Products */,
-				D80E0A8FC984CC97E60045C5 /* Pods */,
 				BCCBCB74C65B47019CC35EFC /* Frameworks */,
+				11FBF2BE09A55AC8F2F375BC /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -96,21 +102,9 @@
 			children = (
 				9693812A1D209CFA001B2ED8 /* libUnzipKit.a */,
 				969381281D209CF5001B2ED8 /* libPods-UnzipKitDemo.a */,
-				9E584137C47E168A8EA16F37 /* libPods.a */,
-				646C8BFCFD13F5CC2090B1B1 /* libPods-UnzipKitDemo.a */,
+				836C8D3D2EBCC1B567DEBA7E /* libPods-UnzipKitDemo.a */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		D80E0A8FC984CC97E60045C5 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				A3286DC9EF5D9C818708B250 /* Pods.debug.xcconfig */,
-				90C0BC5398A18895F3E99565 /* Pods.release.xcconfig */,
-				F80DF9E765269238295E123E /* Pods-UnzipKitDemo.debug.xcconfig */,
-				6DE1C20894315AC5973E9318 /* Pods-UnzipKitDemo.release.xcconfig */,
-			);
-			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -120,12 +114,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 969E2FFE1AD573F100E19F7A /* Build configuration list for PBXNativeTarget "UnzipKitDemo" */;
 			buildPhases = (
-				88CB68ACC79A76D8F3E28208 /* [CP] Check Pods Manifest.lock */,
+				B139D6CA2A478F810C88A74D /* [CP] Check Pods Manifest.lock */,
 				969E2FDB1AD573F100E19F7A /* Sources */,
 				969E2FDC1AD573F100E19F7A /* Frameworks */,
 				969E2FDD1AD573F100E19F7A /* Resources */,
-				31000EBFB04FE7EAAF8B1F5F /* [CP] Copy Pods Resources */,
-				A96D1C77158E5E2C72CE58C7 /* [CP] Embed Pods Frameworks */,
+				FFBBDB5F70B02F25F7B1C9FA /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -143,7 +136,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Abbey Code";
 				TargetAttributes = {
 					969E2FDE1AD573F100E19F7A = {
@@ -185,26 +178,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		31000EBFB04FE7EAAF8B1F5F /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo-resources.sh",
-				"${PODS_ROOT}/../../Tests/Test Data",
-				$PODS_CONFIGURATION_BUILD_DIR/UnzipKit/UnzipKitResources.bundle,
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		88CB68ACC79A76D8F3E28208 /* [CP] Check Pods Manifest.lock */ = {
+		B139D6CA2A478F810C88A74D /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -222,19 +196,22 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A96D1C77158E5E2C72CE58C7 /* [CP] Embed Pods Frameworks */ = {
+		FFBBDB5F70B02F25F7B1C9FA /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/UnzipKit/UnzipKitResources.bundle",
 			);
-			name = "[CP] Embed Pods Frameworks";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/UnzipKitResources.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -279,13 +256,23 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -308,7 +295,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -326,13 +313,23 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -348,9 +345,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -359,13 +357,12 @@
 		};
 		969E2FFF1AD573F100E19F7A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F80DF9E765269238295E123E /* Pods-UnzipKitDemo.debug.xcconfig */;
+			baseConfigurationReference = 2F87D9A1D0DCA68C622CCE05 /* Pods-UnzipKitDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = UnzipKitDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -377,13 +374,12 @@
 		};
 		969E30001AD573F100E19F7A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6DE1C20894315AC5973E9318 /* Pods-UnzipKitDemo.release.xcconfig */;
+			baseConfigurationReference = D07031CAE5D79F16E6A159A8 /* Pods-UnzipKitDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = UnzipKitDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";

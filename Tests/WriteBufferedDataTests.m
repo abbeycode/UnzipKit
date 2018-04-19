@@ -8,7 +8,7 @@
 
 #import "UZKArchiveTestCase.h"
 #import "zip.h"
-@import UnzipKit;
+#import "UnzipKit.h"
 
 @interface WriteBufferedDataTests : UZKArchiveTestCase
 @end

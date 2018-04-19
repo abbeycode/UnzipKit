@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "0930"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -32,7 +32,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "C9919ABB62FFD4F3996C93B1EF7F5345"
+               BlueprintIdentifier = "758FE04BD0C12D68539B57AE64B1AFBE"
                BuildableName = "UnzipKit-Unit-Tests.xctest"
                BlueprintName = "UnzipKit-Unit-Tests"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
