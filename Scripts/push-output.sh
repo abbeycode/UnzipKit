@@ -17,7 +17,9 @@ else
 fi
 
 echo -e "\nLinting podspec..."
-pod spec lint --fail-fast
+# Using sed to remove logging from output until CocoaPods issue #7577 is implemented and I can use the
+# OS_ACTIVITY_MODE = disable environment variable from the test spec scheme
+pod spec lint --fail-fast --verbose | sed -l '/xctest\[/d; /^$/d'
 
 if [ $? -ne 0 ]; then
     echo -e "\nPodspec failed lint. Run again with --verbose to troubleshoot"
