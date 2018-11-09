@@ -800,7 +800,7 @@ compressionMethod:(UZKCompressionMethod)method
     return [self writeData:data
                   filePath:filePath
                   fileDate:fileDate
-         compressionMethod:UZKCompressionMethodDefault
+         compressionMethod:method
                   password:password
                  overwrite:YES
                   progress:progress
