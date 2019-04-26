@@ -870,7 +870,7 @@ NS_DESIGNATED_INITIALIZER
         
         long long bytesDecompressed = 0;
         
-        int innerErr = 0;
+        NSError *strongInnerError = nil;
         
         for (;;)
         {
@@ -884,8 +884,16 @@ NS_DESIGNATED_INITIALIZER
                 NSMutableData *data = [NSMutableData dataWithLength:bufferSize];
                 int bytesRead = unzReadCurrentFile(welf.unzFile, data.mutableBytes, (unsigned)bufferSize);
                 
-                if (bytesRead <= 0) {
-                    innerErr = bytesRead;
+                if (bytesRead < 0) {
+                    NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to read file %@ in zip", @"UnzipKit", _resources, @"Detailed error string"),
+                                        info.filename];
+                    UZKLogError("Error reading data (code %d): %{public}@", bytesRead, detail);
+                    [welf assignError:&strongInnerError code:bytesRead
+                               detail:detail];
+                    break;
+                }
+                else if (bytesRead == 0) {
+                    UZKLogDebug("Done reading file");
                     break;
                 }
                 
@@ -903,10 +911,9 @@ NS_DESIGNATED_INITIALIZER
             }
         }
         
-        if (innerErr < 0) {
-            [self assignError:innerError code:innerErr
-                       detail:[NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to read file %@ in zip", @"UnzipKit", _resources, @"Detailed error string"),
-                               info.filename]];
+        if (strongInnerError) {
+            *innerError = strongInnerError;
+            return;
         }
         
         UZKLogInfo("Closing file...");
@@ -920,9 +927,9 @@ NS_DESIGNATED_INITIALIZER
             UZKLogError("Error closing file (code %d): %{public}@", err, detail);
             [welf assignError:innerError code:err
                        detail:detail];
+            return;
         }
         
-        return;
     } inMode:UZKFileModeUnzip error:error];
     
     if (progress.isCancelled) {
