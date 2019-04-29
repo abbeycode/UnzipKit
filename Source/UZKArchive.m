@@ -550,14 +550,9 @@ NS_DESIGNATED_INITIALIZER
                         return;
                     }
                     
-                    if (info.isDirectory) {
-                        [fm createDirectoryAtPath:extractPath withIntermediateDirectories:YES
-                                       attributes:nil error:error];
-                        continue;
-                    }
-                    
-                    BOOL isDirectory = YES;
-                    NSString *extractDir = extractPath.stringByDeletingLastPathComponent;
+                    NSString *extractDir = (info.isDirectory
+                                            ? extractPath
+                                            : extractPath.stringByDeletingLastPathComponent);
                     if (![fm fileExistsAtPath:extractDir]) {
                         UZKLogDebug("Creating directories for path %{public}@", extractDir);
                         BOOL directoriesCreated = [fm createDirectoryAtPath:extractDir
@@ -572,7 +567,7 @@ NS_DESIGNATED_INITIALIZER
                                        detail:detail];
                             return;
                         }
-                    } else if (!isDirectory) {
+                    } else if (!info.isDirectory) {
                         NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Extract path exists, but is not a directory: %@", @"UnzipKit", _resources, @"Detailed error string"),
                                             extractDir];
                         UZKLogError("UZKErrorCodeOutputErrorPathIsAFile: %{public}@", detail);
