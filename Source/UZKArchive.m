@@ -840,7 +840,7 @@ NS_DESIGNATED_INITIALIZER
     NSProgress *progress = [self beginProgressOperation:0];
     
     __weak UZKArchive *welf = self;
-    NSUInteger bufferSize = 4096 * 64; //Arbitrary
+    NSUInteger bufferSize = 1024 * 256; // 256 kb, arbitrary
     
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         if (![welf locateFileInZip:filePath error:innerError]) {
