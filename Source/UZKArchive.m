@@ -567,15 +567,12 @@ NS_DESIGNATED_INITIALIZER
                                        detail:detail];
                             return;
                         }
-                    } else if (!info.isDirectory) {
-                        NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Extract path exists, but is not a directory: %@", @"UnzipKit", _resources, @"Detailed error string"),
-                                            extractDir];
-                        UZKLogError("UZKErrorCodeOutputErrorPathIsAFile: %{public}@", detail);
-                        [welf assignError:&strongError code:UZKErrorCodeOutputErrorPathIsAFile
-                                   detail:detail];
-                        return;
                     }
-
+                    
+                    if (info.isDirectory) {
+                        UZKLogDebug("Created empty directory")
+                        continue;
+                    }
                     
                     NSURL *deflatedDirectoryURL = [NSURL fileURLWithPath:destinationDirectory];
                     NSURL *deflatedFileURL = [deflatedDirectoryURL URLByAppendingPathComponent:info.filename];
