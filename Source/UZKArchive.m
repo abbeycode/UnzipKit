@@ -550,13 +550,9 @@ NS_DESIGNATED_INITIALIZER
                         return;
                     }
                     
-                    if (info.isDirectory) {
-                        UZKLogDebug("File is a directory. Skipping");
-                        continue;
-                    }
-                    
-                    BOOL isDirectory = YES;
-                    NSString *extractDir = extractPath.stringByDeletingLastPathComponent;
+                    NSString *extractDir = (info.isDirectory
+                                            ? extractPath
+                                            : extractPath.stringByDeletingLastPathComponent);
                     if (![fm fileExistsAtPath:extractDir]) {
                         UZKLogDebug("Creating directories for path %{public}@", extractDir);
                         BOOL directoriesCreated = [fm createDirectoryAtPath:extractDir
@@ -571,15 +567,12 @@ NS_DESIGNATED_INITIALIZER
                                        detail:detail];
                             return;
                         }
-                    } else if (!isDirectory) {
-                        NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Extract path exists, but is not a directory: %@", @"UnzipKit", _resources, @"Detailed error string"),
-                                            extractDir];
-                        UZKLogError("UZKErrorCodeOutputErrorPathIsAFile: %{public}@", detail);
-                        [welf assignError:&strongError code:UZKErrorCodeOutputErrorPathIsAFile
-                                   detail:detail];
-                        return;
                     }
-
+                    
+                    if (info.isDirectory) {
+                        UZKLogDebug("Created empty directory")
+                        continue;
+                    }
                     
                     NSURL *deflatedDirectoryURL = [NSURL fileURLWithPath:destinationDirectory];
                     NSURL *deflatedFileURL = [deflatedDirectoryURL URLByAppendingPathComponent:info.filename];
@@ -626,12 +619,15 @@ NS_DESIGNATED_INITIALIZER
                                         bytesDecompressed += dataChunk.length;
                                         [deflatedFileHandle writeData:dataChunk];
                                         if (progressBlock) {
-                                            progressBlock(info, bytesDecompressed / totalSize.doubleValue);
+                                            progressBlock(info, (double)bytesDecompressed / totalSize.doubleValue);
                                         }
                                     }];
 
                     UZKLogDebug("Closing file handle");
                     [deflatedFileHandle closeFile];
+                    
+                    NSDictionary* attribs = [NSDictionary dictionaryWithObjectsAndKeys:info.timestamp, NSFileModificationDate, nil];
+                    [[NSFileManager defaultManager] setAttributes:attribs ofItemAtPath:path error:nil];
                     
                     if (!extractSuccess) {
                         UZKLogError("Error extracting file (%ld): %{public}@", (long)strongError.code, strongError.localizedDescription);
@@ -836,7 +832,7 @@ NS_DESIGNATED_INITIALIZER
     NSProgress *progress = [self beginProgressOperation:0];
     
     __weak UZKArchive *welf = self;
-    const NSUInteger bufferSize = 4096; //Arbitrary
+    NSUInteger bufferSize = 1024 * 256; // 256 kb, arbitrary
     
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         if (![welf locateFileInZip:filePath error:innerError]) {
@@ -925,6 +921,7 @@ NS_DESIGNATED_INITIALIZER
                        detail:detail];
             return;
         }
+        
     } inMode:UZKFileModeUnzip error:error];
     
     if (progress.isCancelled) {

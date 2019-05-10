@@ -61,12 +61,12 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
     UZKErrorCodeOutputError = 104,
     
     /**
-     *  The destination directory is a file
+     *  The destination directory is a file. Not used anymore
      */
     UZKErrorCodeOutputErrorPathIsAFile = 105,
     
     /**
-     *  The destination directory is a file
+     *  Password given doesn't decrypt the archive
      */
     UZKErrorCodeInvalidPassword = 106,
     

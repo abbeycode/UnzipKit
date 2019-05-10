@@ -420,13 +420,14 @@ static NSUInteger observerCallCount;
     
     XCTAssertEqualWithAccuracy(extractFileProgress.fractionCompleted, 1.00, 0.000001, @"Progress never reported as completed");
 
-    NSUInteger expectedProgressUpdates = 4884;
+    NSUInteger expectedProgressUpdates = 78;
     NSDictionary<NSNumber *, NSNumber *> *expectedProgresses = @{
-                                                                 @0: @0,
-                                                                 @1000: @0.204800,
-                                                                 @2000: @0.409600,
-                                                                 @3000: @0.614400,
-                                                                 @4882: @0.999834,
+                                                                 @00: @0,
+                                                                 @20: @0.262144,
+                                                                 @35: @0.458752,
+                                                                 @60: @0.786432,
+                                                                 @76: @0.996147,
+                                                                 @77: @1,
                                                                  };
     
     XCTAssertEqual(self.fractionsCompletedReported.count, expectedProgressUpdates, @"Incorrect number of progress updates");
@@ -468,13 +469,14 @@ static NSUInteger observerCallCount;
     
     XCTAssertEqualWithAccuracy(extractFileProgress.fractionCompleted, 1.00, 0.000001, @"Progress never reported as completed");
 
-    NSUInteger expectedProgressUpdates = 4884;
+    NSUInteger expectedProgressUpdates = 78;
     NSDictionary<NSNumber *, NSNumber *> *expectedProgresses = @{
-                                                                 @0: @0,
-                                                                 @1000: @0.204800,
-                                                                 @2000: @0.409600,
-                                                                 @3000: @0.614400,
-                                                                 @4882: @0.999834,
+                                                                 @00: @0,
+                                                                 @20: @0.262144,
+                                                                 @35: @0.458752,
+                                                                 @60: @0.786432,
+                                                                 @76: @0.996147,
+                                                                 @77: @1,
                                                                  };
     
     XCTAssertEqual(self.fractionsCompletedReported.count, expectedProgressUpdates, @"Incorrect number of progress updates");
