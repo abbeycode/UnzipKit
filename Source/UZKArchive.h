@@ -619,6 +619,32 @@ compressionMethod:(UZKCompressionMethod)method
             error:(NSError **)error;
 
 /**
+ Writes the data to the zip file, overwriting only if specified with the overwrite flag. Overwriting
+ presents a tradeoff: the whole archive needs to be copied (minus the file to be overwritten) before
+ the write begins. For a large archive, this can be slow. On the other hand, when not overwriting,
+ the size of the archive will grow each time the file is written.
+ 
+ @param data Data to write into the archive
+ @param filePath The full path to the target file in the archive
+ @param fileDate The timestamp of the file in the archive. Uses the current time if nil
+ @param posixPermissions the source posix permissions of the file in the archive
+ @param method The UZKCompressionMethod to use (Default, None, Fastest, Best)
+ @param password Override the password associated with the archive (not recommended)
+ @param overwrite If YES, and the file exists, delete it before writing. If NO,
+ append the data into the archive without removing it first (legacy Objective-Zip behavior)
+ @param error Contains an NSError object when there was an error writing to the archive
+ @return YES if successful, NO on error
+ */
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(nullable NSDate *)fileDate
+ posixPermissions:(unsigned long)posixPermissions
+compressionMethod:(UZKCompressionMethod)method
+         password:(nullable NSString *)password
+        overwrite:(BOOL)overwrite
+            error:(NSError **)error;
+
+/**
  *  **DEPRECATED:** Writes the data to the zip file, overwriting only if specified with the overwrite flag. Overwriting
  *  presents a tradeoff: the whole archive needs to be copied (minus the file to be overwritten) before
  *  the write begins. For a large archive, this can be slow. On the other hand, when not overwriting,
@@ -830,6 +856,72 @@ compressionMethod:(UZKCompressionMethod)method
                password:(nullable NSString *)password
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
+
+/**
+ *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
+ *  don't need to reside in memory at once. It overwrites an existing file with the same name, only if
+ *  specified with the overwrite flag. Overwriting presents a tradeoff: the whole archive needs to be
+ *  copied (minus the file to be overwritten) before the write begins. For a large archive, this can
+ *  be slow. On the other hand, when not overwriting, the size of the archive will grow each time
+ *  the file is written.
+ *
+ *  @param filePath         The full path to the target file in the archive
+ *  @param fileDate         The timestamp of the file in the archive. Uses the current time if nil
+ *  @param posixPermissions the source posix permissions of the file in the archive
+ *  @param method           The UZKCompressionMethod to use (Default, None, Fastest, Best)
+ *  @param overwrite        If YES, and the file exists, delete it before writing. If NO, append
+ *                          the data into the archive without removing it first (legacy Objective-Zip
+ *                          behavior)
+ *  @param preCRC           The CRC-32 for the data being sent. Only necessary if encrypting the file.
+ Pass 0 otherwise
+ *  @param password         Override the password associated with the archive (not recommended)
+ *  @param error            Contains an NSError object when there was an error writing to the archive
+ *  @param action           Contains your code to loop through the source bytes and write them to the
+ *                          archive. Each time a chunk of data is ready to be written, call writeData,
+ *                          passing in a pointer to the bytes and their length. Return YES if successful,
+ *                          or NO on error (in which case, you should assign the actionError parameter
+ *
+ *       - *writeData*   Call this block to write some bytes into the archive. It returns NO if the
+ *                       write failed. If this happens, you should return from the action block, and
+ *                       handle the NSError returned into the error reference
+ *       - *actionError* Assign to an NSError instance before returning NO
+ *
+ *  @return YES if successful, NO on error
+ */
+- (BOOL)writeIntoBuffer:(NSString *)filePath
+               fileDate:(nullable NSDate *)fileDate
+       posixPermissions:(unsigned long)posixPermissions
+      compressionMethod:(UZKCompressionMethod)method
+              overwrite:(BOOL)overwrite
+                    CRC:(unsigned long)preCRC
+               password:(nullable NSString *)password
+                  error:(NSError **)error
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
+
+/**
+ Writes file to the zip file in pieces, allowing you to stream the write, so the entire contents
+ don't need to reside in memory at once. It overwrites an existing file with the same name, only if
+ specified with the overwrite flag. Overwriting presents a tradeoff: the whole archive needs to be
+ copied (minus the file to be overwritten) before the write begins. For a large archive, this can
+ be slow. On the other hand, when not overwriting, the size of the archive will grow each time
+ the file is written.
+ 
+ @param file        The full path on local
+ @param zipPath    The full path to the target file in the archive
+ @param method      The UZKCompressionMethod to use (Default, None, Fastest, Best)
+ @param password    Override the password associated with the archive (not recommended)
+ @param overwrite   If YES, and the file exists, delete it before writing. If NO, append
+ *                   the data into the archive without removing it first (legacy Objective-Zip
+ *                   behavior)
+ @param error       Assign to an NSError instance before returning NO
+ @return YES if successful, NO on error
+ */
+- (BOOL)writeFile:(NSString *)file
+         zipPath:(NSString *)zipPath
+compressionMethod:(UZKCompressionMethod)method
+         password:(nullable NSString *)password
+        overwrite:(BOOL)overwrite
+            error:(NSError **)error;
 
 /**
  *  Removes the given file from the archive

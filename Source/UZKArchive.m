@@ -626,7 +626,10 @@ NS_DESIGNATED_INITIALIZER
                     UZKLogDebug("Closing file handle");
                     [deflatedFileHandle closeFile];
                     
-                    NSDictionary* attribs = [NSDictionary dictionaryWithObjectsAndKeys:info.timestamp, NSFileModificationDate, nil];
+                    // Retain the permission attribute of a file
+                    NSDictionary* attribs = @{NSFileModificationDate: info.timestamp,
+                                              NSFilePosixPermissions: info.posixPermissions};
+                    
                     [[NSFileManager defaultManager] setAttributes:attribs ofItemAtPath:path error:nil];
                     
                     if (!extractSuccess) {
@@ -1166,7 +1169,50 @@ compressionMethod:(UZKCompressionMethod)method
 
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
+         fileDate:(nullable NSDate *)fileDate
+ posixPermissions:(unsigned long)posixPermissions
+compressionMethod:(UZKCompressionMethod)method
+         password:(nullable NSString *)password
+        overwrite:(BOOL)overwrite
+            error:(NSError *__autoreleasing*)error
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    return [self writeData:data
+                  filePath:filePath
+                  fileDate:fileDate
+            posixPermissions:posixPermissions
+         compressionMethod:UZKCompressionMethodDefault
+                  password:password
+                 overwrite:overwrite
+                  progress:nil
+                     error:error];
+#pragma clang diagnostic pop
+}
+
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
          fileDate:(NSDate *)fileDate
+compressionMethod:(UZKCompressionMethod)method
+         password:(NSString *)password
+        overwrite:(BOOL)overwrite
+         progress:(void (^)(CGFloat percentCompressed))progressBlock
+            error:(NSError * __autoreleasing*)error
+{
+    return [self writeData:data
+                  filePath:filePath
+                  fileDate:fileDate
+          posixPermissions:0
+         compressionMethod:UZKCompressionMethodDefault
+                  password:password
+                 overwrite:overwrite
+                     error:error];
+}
+
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(NSDate *)fileDate
+ posixPermissions:(unsigned long)posixPermissions
 compressionMethod:(UZKCompressionMethod)method
          password:(NSString *)password
         overwrite:(BOOL)overwrite
@@ -1228,6 +1274,7 @@ compressionMethod:(UZKCompressionMethod)method
     }
                                    filePath:filePath
                                    fileDate:fileDate
+                           posixPermissions:posixPermissions
                           compressionMethod:method
                                    password:password
                                   overwrite:overwrite
@@ -1326,6 +1373,27 @@ compressionMethod:(UZKCompressionMethod)method
                   error:(NSError *__autoreleasing *)error
                   block:(BOOL (^)(BOOL (^)(const void *, unsigned int), NSError *__autoreleasing *))action
 {
+    return [self writeIntoBuffer:filePath
+                        fileDate:fileDate
+                posixPermissions:0
+               compressionMethod:method
+                       overwrite:overwrite
+                             CRC:preCRC
+                        password:password
+                           error:error
+                           block:action];
+}
+
+- (BOOL)writeIntoBuffer:(NSString *)filePath
+               fileDate:(NSDate *)fileDate
+       posixPermissions:(unsigned long)posixPermissions
+      compressionMethod:(UZKCompressionMethod)method
+              overwrite:(BOOL)overwrite
+                    CRC:(uLong)preCRC
+               password:(NSString *)password
+                  error:(NSError *__autoreleasing *)error
+                  block:(BOOL (^)(BOOL (^)(const void *, unsigned int), NSError *__autoreleasing *))action
+{
     UZKCreateActivity("Writing Into Buffer");
     
     UZKLogInfo("Writing data into buffer. filePath: %{public}@, fileDate: %{time_t}ld, compressionMethod: %ld, "
@@ -1380,6 +1448,7 @@ compressionMethod:(UZKCompressionMethod)method
     }
                                    filePath:filePath
                                    fileDate:fileDate
+                           posixPermissions:posixPermissions
                           compressionMethod:method
                                    password:password
                                   overwrite:overwrite
@@ -1387,6 +1456,60 @@ compressionMethod:(UZKCompressionMethod)method
                                       error:error];
     
     return success;
+}
+
+- (BOOL)writeFile:(NSString *)file
+         zipPath:(NSString *)zipPath
+compressionMethod:(UZKCompressionMethod)method
+         password:(NSString *)password
+        overwrite:(BOOL)overwrite
+            error:(NSError * _Nullable __autoreleasing *)error {
+    
+    BOOL isDir = NO;
+    if ([[NSFileManager defaultManager] fileExistsAtPath:file isDirectory:&isDir] && !isDir) {
+        
+        NSError *attributeError = nil;
+        unsigned long posixPermissions = 0;
+        NSDictionary *attributeDict = [[NSFileManager defaultManager] attributesOfItemAtPath:file error:&attributeError];
+        if ([attributeDict objectForKey:NSFilePosixPermissions]) {
+            
+            posixPermissions = attributeDict.filePosixPermissions;
+        }
+        
+        int blockSize = 10*10240;
+        return [self writeIntoBuffer:zipPath
+                            fileDate:nil
+                    posixPermissions:posixPermissions
+                   compressionMethod:UZKCompressionMethodDefault
+                           overwrite:YES
+                                 CRC:0
+                            password:nil
+                               error:error
+                               block:^BOOL(BOOL (^ _Nonnull writeData)(const void * _Nonnull, unsigned int), NSError * _Nullable __autoreleasing * _Nullable actionError) {
+                                   
+                                   NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingAtPath:file];
+                                   while (true) {
+                                       
+                                       @autoreleasepool {
+                                           
+                                           NSData *data = [fileHandle readDataOfLength:blockSize];
+                                           if (data.length == 0) {
+                                               
+                                               break;
+                                           }
+                                           const void *bytes = data.bytes;
+                                           unsigned int length = (unsigned int)data.length;
+                                           if (!writeData(bytes, length)) {
+                                               
+                                               return NO;
+                                           }
+                                       }
+                                   }
+                                   [fileHandle closeFile];
+                                   return YES;
+                               }];
+    }
+    return NO;
 }
 
 - (BOOL)deleteFile:(NSString *)filePath error:(NSError * __autoreleasing*)error
@@ -1922,6 +2045,7 @@ compressionMethod:(UZKCompressionMethod)method
 - (BOOL)performWriteAction:(int(^)(uLong *crc, NSError * __autoreleasing*innerError))write
                   filePath:(NSString *)filePath
                   fileDate:(NSDate *)fileDate
+          posixPermissions:(unsigned long)posixPermissions
          compressionMethod:(UZKCompressionMethod)method
                   password:(NSString *)password
                  overwrite:(BOOL)overwrite
@@ -1972,6 +2096,12 @@ compressionMethod:(UZKCompressionMethod)method
         
         UZKLogDebug("Making zip_fileinfo struct for date %{time_t}ld", lrint(fileDate.timeIntervalSince1970));
         zip_fileinfo zi = [UZKArchive zipFileInfoForDate:fileDate];
+        
+        if (posixPermissions > 0) {
+            
+            // Revert the value of NSFilePosixPermissions to zip external_fa raw data
+            zi.external_fa = (posixPermissions + 32768) << 16;
+        }
         
         const char *passwordStr = NULL;
         
@@ -2653,6 +2783,7 @@ compressionMethod:(UZKCompressionMethod)method
     zi.tmz_date.tm_year = (uInt)date.year;
     zi.internal_fa = 0;
     zi.external_fa = 0;
+//    zi.external_fa = 2175008768;             // default posixPermissions value on zip: 2175008768 (0644U)
     zi.dosDate = 0;
     
     return zi;
