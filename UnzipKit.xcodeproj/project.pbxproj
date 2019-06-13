@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5B82326A22B1E6060049B931 /* TestKeppPrmissions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B82326922B1E6060049B931 /* TestKeppPrmissions.m */; };
 		7A00291B1F93DB9200618503 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C31A40C44300685B6D /* ioapi.c */; };
 		7A00291C1F93DB9200618503 /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C51A40C44300685B6D /* mztools.c */; };
 		7A00291D1F93DB9200618503 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C71A40C44300685B6D /* unzip.c */; };
@@ -75,6 +76,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5B82326922B1E6060049B931 /* TestKeppPrmissions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestKeppPrmissions.m; sourceTree = "<group>"; };
 		7A0029171F93DB5800618503 /* libminizip.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libminizip.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A5652231F90E01C006B782E /* CheckDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckDataTests.m; sourceTree = "<group>"; };
 		7A5A97001F89808900BCA061 /* ProgressReportingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProgressReportingTests.m; sourceTree = "<group>"; };
@@ -263,6 +265,7 @@
 				968C40D31B586345004C128E /* WriteBufferedDataTests.m */,
 				961A9BB41B306881007C4C6B /* WriteDataTests.swift */,
 				968C40C11B586132004C128E /* ZipFileDetectionTests.m */,
+				5B82326922B1E6060049B931 /* TestKeppPrmissions.m */,
 				96EA65AE1A40AEAE00685B6D /* Supporting Files */,
 			);
 			name = UnzipKitTests;
@@ -447,6 +450,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				base,
 			);
@@ -529,6 +533,7 @@
 				968C40D61B586380004C128E /* DeleteFileTests.m in Sources */,
 				96FCC8411B306CDD00726AC7 /* UZKArchiveTestCase.m in Sources */,
 				7A5A97011F89808900BCA061 /* ProgressReportingTests.m in Sources */,
+				5B82326A22B1E6060049B931 /* TestKeppPrmissions.m in Sources */,
 				968C40C21B586132004C128E /* ZipFileDetectionTests.m in Sources */,
 				968C40D41B586345004C128E /* WriteBufferedDataTests.m in Sources */,
 				968C40CC1B586253004C128E /* PerformOnFilesTests.m in Sources */,
