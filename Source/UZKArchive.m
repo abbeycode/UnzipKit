@@ -1119,7 +1119,7 @@ compressionMethod:(UZKCompressionMethod)method
     return [self writeData:data
                   filePath:filePath
                   fileDate:fileDate
-         compressionMethod:UZKCompressionMethodDefault
+         compressionMethod:method
                   password:password
                  overwrite:YES
                      error:error];
@@ -1156,7 +1156,7 @@ compressionMethod:(UZKCompressionMethod)method
     return [self writeData:data
                   filePath:filePath
                   fileDate:fileDate
-         compressionMethod:UZKCompressionMethodDefault
+         compressionMethod:method
                   password:password
                  overwrite:overwrite
                   progress:nil
