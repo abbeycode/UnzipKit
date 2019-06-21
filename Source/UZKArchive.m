@@ -1192,7 +1192,50 @@ compressionMethod:(UZKCompressionMethod)method
 
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
+         fileDate:(nullable NSDate *)fileDate
+ posixPermissions:(unsigned long)posixPermissions
+compressionMethod:(UZKCompressionMethod)method
+         password:(nullable NSString *)password
+        overwrite:(BOOL)overwrite
+            error:(NSError *__autoreleasing*)error
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    return [self writeData:data
+                  filePath:filePath
+                  fileDate:fileDate
+            posixPermissions:posixPermissions
+         compressionMethod:UZKCompressionMethodDefault
+                  password:password
+                 overwrite:overwrite
+                  progress:nil
+                     error:error];
+#pragma clang diagnostic pop
+}
+
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
          fileDate:(NSDate *)fileDate
+compressionMethod:(UZKCompressionMethod)method
+         password:(NSString *)password
+        overwrite:(BOOL)overwrite
+         progress:(void (^)(CGFloat percentCompressed))progressBlock
+            error:(NSError * __autoreleasing*)error
+{
+    return [self writeData:data
+                  filePath:filePath
+                  fileDate:fileDate
+          posixPermissions:0
+         compressionMethod:UZKCompressionMethodDefault
+                  password:password
+                 overwrite:overwrite
+                     error:error];
+}
+
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(NSDate *)fileDate
+ posixPermissions:(unsigned long)posixPermissions
 compressionMethod:(UZKCompressionMethod)method
          password:(NSString *)password
         overwrite:(BOOL)overwrite
