@@ -35,14 +35,18 @@
         _zipTMUDate = fileInfo->tmu_date;
         _CRC = fileInfo->crc;
         _isEncryptedWithPassword = (fileInfo->flag & 1) != 0;
-        _isDirectory = [filename hasSuffix:@"/"];
+//        _isDirectory = [filename hasSuffix:@"/"];
+        _isDirectory = [self isDirectoryWith:fileInfo];
+        _isSymLink = [self isSymLinkWith:fileInfo->external_fa];
         
         if (_isDirectory) {
             _filename = [_filename substringToIndex:_filename.length - 1];
         }
         
+        _isResourceFork = [[filename pathComponents].firstObject isEqualToString:@"__MACOSX"];
         _compressionMethod = [self readCompressionMethod:fileInfo->compression_method
                                                     flag:fileInfo->flag];
+        _posixPermissions = @((fileInfo->external_fa >> 16) ? (fileInfo->external_fa >> 16) : 0755U);
     }
     return self;
 }
@@ -100,6 +104,22 @@
     NSCalendar *calendar = [NSCalendar currentCalendar];
     
     return [calendar dateFromComponents:components];
+}
+
+- (BOOL)isDirectoryWith:(unz_file_info64 *)fileInfo {
+//    NSLog(@"ISDIR__ %@", S_ISDIR(fileInfo->external_fa)?@"YES":@"NO");
+    uLong type = fileInfo->external_fa >> 0x1D & 0x1F;
+    if (0 == (fileInfo->version >> 8)) {    //is DOS-archive
+        type = fileInfo->external_fa >> 4;
+        return (type == 0x01) && ![self isSymLinkWith:fileInfo->external_fa];
+    }
+    return (0x02 == type)  && ![self isSymLinkWith:fileInfo->external_fa];
+}
+
+- (BOOL)isSymLinkWith:(uLong)externalFileAttributes {
+    
+    uLong type = externalFileAttributes >> 0x1D & 0x1F;
+    return 0x05 == type;
 }
 
 @end
