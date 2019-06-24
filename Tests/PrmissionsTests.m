@@ -35,14 +35,10 @@
     // show zip file posixPermissions value
     NSArray *archiveItems = [archive listFileInfo:nil];
     for (UZKFileInfo *item in archiveItems) {
-        
-        if (![item isDirectory] && ![item isResourceFork]) {
-        
-            NSLog(@"zip file %@ : posixPermissions_%ld", item.filename, [item.posixPermissions unsignedLongValue] - 32768);
-        }
+        NSLog(@"zip file %@ : posixPermissions_%ld", item.filename, [item.posixPermissions unsignedLongValue] - 32768);
     }
     
-    printf("=====================");
+    NSLog(@"=====================");
     
     NSError *extractError = nil;
     BOOL success = [archive extractFilesTo:extractDirectory overwrite:NO error:&extractError];
