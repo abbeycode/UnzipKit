@@ -1,19 +1,19 @@
 //
-//  PrmissionsTests.m
+//  PermissionsTests.m
 //  UnzipKitTests
 //
-//  Created by MartinLau on 2019/6/24.
+//  Created by Martin Lau on 6/24/19
 //  Copyright © 2019 Abbey Code. All rights reserved.
 //
 
 #import "UnzipKit.h"
 #import "UZKArchiveTestCase.h"
 
-@interface PrmissionsTests : UZKArchiveTestCase
+@interface PermissionsTests : UZKArchiveTestCase
 
 @end
 
-@implementation PrmissionsTests
+@implementation PermissionsTests
 
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.

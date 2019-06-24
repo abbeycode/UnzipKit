@@ -79,8 +79,11 @@ typedef NS_ENUM(NSInteger, UZKCompressionMethod) {
 @property (readonly) UZKCompressionMethod compressionMethod;
 
 /**
- @brief posixPermissions (posixPermissions of the file,The value from the file attributes - NSFilePosixPermissions)
+ The POSIX permissions of the file, like you would get by retrieving the `NSFilePosixPermissions`
+ key from the attributes NSFileManager returns. The value is a short integer
  */
 @property (nonatomic, readonly) NSNumber *posixPermissions;
+
+
 
 @end

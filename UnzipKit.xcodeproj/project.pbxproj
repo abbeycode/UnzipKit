@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5B5A9B9522C0B0CB00CD64D1 /* PrmissionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5A9B9422C0B0CB00CD64D1 /* PrmissionsTests.m */; };
 		7A00291B1F93DB9200618503 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C31A40C44300685B6D /* ioapi.c */; };
 		7A00291C1F93DB9200618503 /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C51A40C44300685B6D /* mztools.c */; };
 		7A00291D1F93DB9200618503 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EA65C71A40C44300685B6D /* unzip.c */; };
@@ -20,6 +19,7 @@
 		7A0029241F93DBF000618503 /* libminizip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A0029171F93DB5800618503 /* libminizip.a */; };
 		7A5652241F90E01C006B782E /* CheckDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A5652231F90E01C006B782E /* CheckDataTests.m */; };
 		7A5A97011F89808900BCA061 /* ProgressReportingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A5A97001F89808900BCA061 /* ProgressReportingTests.m */; };
+		7AFD5C3722C0FA910066CC92 /* PermissionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5A9B9422C0B0CB00CD64D1 /* PermissionsTests.m */; };
 		961A9BB51B306881007C4C6B /* WriteDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961A9BB41B306881007C4C6B /* WriteDataTests.swift */; };
 		962F9DA61D5D286B00205BEC /* UnzipKit.strings in Resources */ = {isa = PBXBuildFile; fileRef = 962F9DA41D5D286B00205BEC /* UnzipKit.strings */; };
 		962F9DA81D5D288B00205BEC /* UnzipKitResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 962F9D9E1D5D281E00205BEC /* UnzipKitResources.bundle */; };
@@ -76,7 +76,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5B5A9B9422C0B0CB00CD64D1 /* PrmissionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrmissionsTests.m; sourceTree = "<group>"; };
 		7A0029171F93DB5800618503 /* libminizip.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libminizip.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A5652231F90E01C006B782E /* CheckDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckDataTests.m; sourceTree = "<group>"; };
 		7A5A97001F89808900BCA061 /* ProgressReportingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProgressReportingTests.m; sourceTree = "<group>"; };
@@ -109,6 +108,7 @@
 		968C40DB1B586401004C128E /* CommentsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CommentsTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		968C40DD1B58642C004C128E /* MultithreadingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MultithreadingTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		968C40DF1B586490004C128E /* PropertyTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = PropertyTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B5A9B9422C0B0CB00CD64D1 /* PermissionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PermissionsTests.m; sourceTree = "<group>"; };
 		969993951BE3BA89003D18DA /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		96DC15C01C5FFAA800B71F19 /* DTPerformanceSession.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DTPerformanceSession.framework; path = Library/Frameworks/DTPerformanceSession.framework; sourceTree = DEVELOPER_DIR; };
 		96EA659E1A40AEAE00685B6D /* UnzipKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = UnzipKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -242,30 +242,30 @@
 			children = (
 				96EA65BF1A40BF1A00685B6D /* Test Data */,
 				961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */,
+				96FCC8401B306CDD00726AC7 /* UZKArchiveTestCase.m */,
+				963386B71EE89A49006B16BF /* UtilityMethods.swift */,
 				7A5652231F90E01C006B782E /* CheckDataTests.m */,
 				968C40DB1B586401004C128E /* CommentsTests.m */,
 				968C40D51B586380004C128E /* DeleteFileTests.m */,
 				968C40D71B5863A9004C128E /* ErrorHandlingTests.m */,
 				968C40CF1B5862A0004C128E /* ExtractBufferedDataTests.m */,
 				968C40C91B586227004C128E /* ExtractDataTests.m */,
+				9630C0371C6D27A4000693EE /* ExtractDataTests_Swift.swift */,
 				968C40C71B5861F4004C128E /* ExtractFilesTests.m */,
+				7A5A97001F89808900BCA061 /* ProgressReportingTests.m */,
 				968C40D91B5863D9004C128E /* FileDescriptorUsageTests.m */,
-				968C40C51B5861C3004C128E /* ListFileInfoTests.m */,
 				968C40C31B58619C004C128E /* ListFilenamesTests.m */,
+				968C40C51B5861C3004C128E /* ListFileInfoTests.m */,
 				968C40BF1B585FDE004C128E /* ModesTests.m */,
 				968C40DD1B58642C004C128E /* MultithreadingTests.m */,
 				968C40D11B586310004C128E /* PasswordProtectionTests.m */,
 				968C40CD1B586277004C128E /* PerformOnDataTests.m */,
 				968C40CB1B586253004C128E /* PerformOnFilesTests.m */,
-				5B5A9B9422C0B0CB00CD64D1 /* PrmissionsTests.m */,
-				7A5A97001F89808900BCA061 /* ProgressReportingTests.m */,
+				5B5A9B9422C0B0CB00CD64D1 /* PermissionsTests.m */,
 				968C40DF1B586490004C128E /* PropertyTests.m */,
-				96FCC8401B306CDD00726AC7 /* UZKArchiveTestCase.m */,
 				968C40D31B586345004C128E /* WriteBufferedDataTests.m */,
-				968C40C11B586132004C128E /* ZipFileDetectionTests.m */,
-				9630C0371C6D27A4000693EE /* ExtractDataTests_Swift.swift */,
-				963386B71EE89A49006B16BF /* UtilityMethods.swift */,
 				961A9BB41B306881007C4C6B /* WriteDataTests.swift */,
+				968C40C11B586132004C128E /* ZipFileDetectionTests.m */,
 				96EA65AE1A40AEAE00685B6D /* Supporting Files */,
 			);
 			name = UnzipKitTests;
@@ -518,7 +518,6 @@
 			files = (
 				96EA65BD1A40B2EC00685B6D /* UZKArchive.m in Sources */,
 				96EA66021A40E31900685B6D /* UZKFileInfo.m in Sources */,
-				5B5A9B9522C0B0CB00CD64D1 /* PrmissionsTests.m in Sources */,
 				965CF00C1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -549,6 +548,7 @@
 				963386B91EE89A51006B16BF /* UtilityMethods.swift in Sources */,
 				968C40C81B5861F4004C128E /* ExtractFilesTests.m in Sources */,
 				968C40D01B5862A0004C128E /* ExtractBufferedDataTests.m in Sources */,
+				7AFD5C3722C0FA910066CC92 /* PermissionsTests.m in Sources */,
 				968C40CE1B586277004C128E /* PerformOnDataTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
