@@ -146,6 +146,7 @@
             BOOL writeResult = [archive writeData:newFileData
                                          filePath:fileName
                                          fileDate:[NSDate date]
+                                 posixPermissions:0
                                 compressionMethod:UZKCompressionMethodDefault
                                          password:nil
                                         overwrite:YES
