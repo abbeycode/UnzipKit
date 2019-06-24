@@ -1186,6 +1186,28 @@ compressionMethod:(UZKCompressionMethod)method
                      error:error];
 }
 
+- (BOOL)writeData:(NSData *)data
+         filePath:(NSString *)filePath
+         fileDate:(nullable NSDate *)fileDate
+ posixPermissions:(unsigned long)permissions
+compressionMethod:(UZKCompressionMethod)method
+         password:(nullable NSString *)password
+        overwrite:(BOOL)overwrite
+            error:(NSError * __autoreleasing*)error
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    return [self writeData:data
+                  filePath:filePath
+                  fileDate:fileDate
+          posixPermissions:permissions
+         compressionMethod:method
+                  password:password
+                 overwrite:overwrite
+                  progress:nil
+                     error:error];
+#pragma clang diagnostic pop
+}
 
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
