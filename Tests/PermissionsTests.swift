@@ -9,25 +9,49 @@
 import XCTest
 
 class PermissionsTests: UZKArchiveTestCase {
-
+    
+    #if os(OSX)
     func testReadFileInfo() {
-        let archive = try! UZKArchive(url: self.testFileURLs!.value(forKey: "Test Permissions Archive.zip") as! URL)
+        let permissionLevelsToTest: [Int16] = [
+            0o777,
+            0o707,
+            0o770,
+            0o477,
+            0o666,
+            0o606,
+            0o660,
+            0o466,
+        ]
+        
+        let fileURLs: [URL] = permissionLevelsToTest.map {
+            let textFile = self.emptyTextFile(ofLength: 20)!
+            try! FileManager.default.setAttributes([.posixPermissions: $0],
+                                                   ofItemAtPath: textFile.path)
+            return textFile
+        }
+        
+        let archiveURL = self.archive(withFiles: fileURLs)!
+        
+        let archive = try! UZKArchive(url: archiveURL)
         
         let fileInfo = try! archive.listFileInfo()
         
-        let expectedPermissions: [String: Int16] = [
-            "test/1.txt": 0o700,
-            "test/paging.m4a": 0o664
-        ]
+        let expectedPermissions = zip(
+            fileURLs.map { $0.lastPathComponent },
+            permissionLevelsToTest
+            )
+            .reduce(into: [String:Int16]()) { result, pair in
+                result[pair.0] = pair.1
+        }
         let actualPermissions = fileInfo.reduce([String: Int16]()) {
             var resultDict = $0
             resultDict[$1.filename] = $1.posixPermissions.int16Value
             return resultDict
             }
-            .filter { expectedPermissions.keys.contains($0.key) }
         
         XCTAssertEqual(actualPermissions, expectedPermissions)
     }
+    #endif
     
     func testExtraction() {
         let archive = try! UZKArchive(url: self.testFileURLs!.value(forKey: "Test Permissions Archive.zip") as! URL)
