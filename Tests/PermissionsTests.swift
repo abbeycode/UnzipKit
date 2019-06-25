@@ -56,7 +56,7 @@ class PermissionsTests: UZKArchiveTestCase {
 
         let writeArchive = try! UZKArchive(url: testArchiveURL)
 
-        let expectedPermissions: Int16 = 0o700
+        let expectedPermissions: Int16 = 0o742
 
         try! writeArchive.write(testFileData, filePath: testFilename, fileDate: nil, posixPermissions: UInt(expectedPermissions),
                            compressionMethod: .default, password: nil, overwrite: true)
