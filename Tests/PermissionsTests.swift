@@ -44,7 +44,7 @@ class PermissionsTests: UZKArchiveTestCase {
         }
         let actualPermissions = fileInfo.reduce([String: Int16]()) {
             var resultDict = $0
-            resultDict[$1.filename] = $1.posixPermissions.int16Value
+            resultDict[$1.filename] = $1.posixPermissions
             return resultDict
             }
         
@@ -106,7 +106,7 @@ class PermissionsTests: UZKArchiveTestCase {
         let fileList = try! readArchive.listFileInfo()
         
         let writtenFileInfo = fileList.first { $0.filename == testFilename }
-        let actualPermissions = writtenFileInfo!.posixPermissions.int16Value
+        let actualPermissions = writtenFileInfo!.posixPermissions
         
         XCTAssertEqual(actualPermissions, 0o644)
     }
@@ -128,7 +128,7 @@ class PermissionsTests: UZKArchiveTestCase {
         let fileList = try! readArchive.listFileInfo()
         
         let writtenFileInfo = fileList.first { $0.filename == testFilename }
-        let actualPermissions = writtenFileInfo!.posixPermissions.int16Value
+        let actualPermissions = writtenFileInfo!.posixPermissions
         
         XCTAssertEqual(actualPermissions, expectedPermissions)
     }

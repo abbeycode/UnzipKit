@@ -45,7 +45,7 @@
                                                     flag:fileInfo->flag];
         
         uLong permissions = (fileInfo->external_fa >> 16) & 0777U;
-        _posixPermissions = @(permissions ? permissions : 0644U);
+        _posixPermissions = permissions ? permissions : 0644U;
     }
     return self;
 }

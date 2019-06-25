@@ -628,7 +628,7 @@ NS_DESIGNATED_INITIALIZER
                     
                     // Restore the timestamp and permission attributes of the file
                     NSDictionary* attribs = @{NSFileModificationDate: info.timestamp,
-                                              NSFilePosixPermissions: info.posixPermissions};
+                                              NSFilePosixPermissions: @(info.posixPermissions)};
                     [[NSFileManager defaultManager] setAttributes:attribs ofItemAtPath:path error:nil];
                     
                     if (!extractSuccess) {
