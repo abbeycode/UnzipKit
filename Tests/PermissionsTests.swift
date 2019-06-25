@@ -48,25 +48,45 @@ class PermissionsTests: UZKArchiveTestCase {
         XCTAssertEqual(file664Permissions.int16Value, 0o664)
     }
     
-    func testWriteData_NonDefault() {
+    func testWriteData_Default() {
         let testArchiveURL = tempDirectory.appendingPathComponent("PermissionsTestWriteData.zip")
         let testFilename = nonZipTestFilePaths.first as! String
         let testFileURL = testFileURLs[testFilename] as! URL
         let testFileData = try! Data(contentsOf: testFileURL)
-
+        
         let writeArchive = try! UZKArchive(url: testArchiveURL)
-
-        let expectedPermissions: Int16 = 0o742
-
-        try! writeArchive.write(testFileData, filePath: testFilename, fileDate: nil, posixPermissions: UInt(expectedPermissions),
-                           compressionMethod: .default, password: nil, overwrite: true)
-
+        
+        try! writeArchive.write(testFileData, filePath: testFilename, fileDate: nil,
+                                compressionMethod: .default, password: nil, overwrite: true)
+        
         let readArchive = try! UZKArchive(url: testArchiveURL)
         let fileList = try! readArchive.listFileInfo()
         
         let writtenFileInfo = fileList.first { $0.filename == testFilename }
         let actualPermissions = writtenFileInfo!.posixPermissions.int16Value
-
+        
+        XCTAssertEqual(actualPermissions, 0o644)
+    }
+    
+    func testWriteData_NonDefault() {
+        let testArchiveURL = tempDirectory.appendingPathComponent("PermissionsTestWriteData.zip")
+        let testFilename = nonZipTestFilePaths.first as! String
+        let testFileURL = testFileURLs[testFilename] as! URL
+        let testFileData = try! Data(contentsOf: testFileURL)
+        
+        let writeArchive = try! UZKArchive(url: testArchiveURL)
+        
+        let expectedPermissions: Int16 = 0o742
+        
+        try! writeArchive.write(testFileData, filePath: testFilename, fileDate: nil, posixPermissions: UInt(expectedPermissions),
+                                compressionMethod: .default, password: nil, overwrite: true)
+        
+        let readArchive = try! UZKArchive(url: testArchiveURL)
+        let fileList = try! readArchive.listFileInfo()
+        
+        let writtenFileInfo = fileList.first { $0.filename == testFilename }
+        let actualPermissions = writtenFileInfo!.posixPermissions.int16Value
+        
         XCTAssertEqual(actualPermissions, expectedPermissions)
     }
 

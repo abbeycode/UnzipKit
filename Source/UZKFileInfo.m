@@ -43,7 +43,9 @@
         
         _compressionMethod = [self readCompressionMethod:fileInfo->compression_method
                                                     flag:fileInfo->flag];
-        _posixPermissions = @((fileInfo->external_fa >> 16) & 0777U);
+        
+        uLong permissions = (fileInfo->external_fa >> 16) & 0777U;
+        _posixPermissions = @(permissions ? permissions : 0644U);
     }
     return self;
 }
