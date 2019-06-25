@@ -99,8 +99,7 @@ class PermissionsTests: UZKArchiveTestCase {
         
         let writeArchive = try! UZKArchive(url: testArchiveURL)
         
-        try! writeArchive.write(testFileData, filePath: testFilename, fileDate: nil,
-                                compressionMethod: .default, password: nil, overwrite: true)
+        try! writeArchive.write(testFileData, filePath: testFilename)
         
         let readArchive = try! UZKArchive(url: testArchiveURL)
         let fileList = try! readArchive.listFileInfo()
@@ -121,8 +120,56 @@ class PermissionsTests: UZKArchiveTestCase {
         
         let expectedPermissions: Int16 = 0o742
         
-        try! writeArchive.write(testFileData, filePath: testFilename, fileDate: nil, posixPermissions: UInt(expectedPermissions),
+        try! writeArchive.write(testFileData, filePath: testFilename, fileDate: nil, posixPermissions: expectedPermissions,
                                 compressionMethod: .default, password: nil, overwrite: true)
+        
+        let readArchive = try! UZKArchive(url: testArchiveURL)
+        let fileList = try! readArchive.listFileInfo()
+        
+        let writtenFileInfo = fileList.first { $0.filename == testFilename }
+        let actualPermissions = writtenFileInfo!.posixPermissions
+        
+        XCTAssertEqual(actualPermissions, expectedPermissions)
+    }
+
+    func testWriteIntoBuffer_Default() {
+        let testArchiveURL = tempDirectory.appendingPathComponent("PermissionsTestWriteBufferedData.zip")
+        let testFilename = nonZipTestFilePaths.first as! String
+        let testFileURL = testFileURLs[testFilename] as! URL
+        let testFileData = try! Data(contentsOf: testFileURL)
+        
+        let writeArchive = try! UZKArchive(url: testArchiveURL)
+        try! writeArchive.write(intoBuffer: testFilename) { (writeDataHandler, error) in
+            testFileData.withUnsafeBytes({ buffer in
+                writeDataHandler(buffer, UInt32(testFileData.count))
+            })
+        }
+        
+        let readArchive = try! UZKArchive(url: testArchiveURL)
+        let fileList = try! readArchive.listFileInfo()
+        
+        let writtenFileInfo = fileList.first { $0.filename == testFilename }
+        let actualPermissions = writtenFileInfo!.posixPermissions
+        
+        XCTAssertEqual(actualPermissions, 0o644)
+    }
+
+    func testWriteIntoBuffer_NonDefault() {
+        let testArchiveURL = tempDirectory.appendingPathComponent("PermissionsTestWriteBufferedData_CustomPermissions.zip")
+        let testFilename = nonZipTestFilePaths.first as! String
+        let testFileURL = testFileURLs[testFilename] as! URL
+        let testFileData = try! Data(contentsOf: testFileURL)
+        
+        let expectedPermissions: Int16 = 0o764
+        
+        let writeArchive = try! UZKArchive(url: testArchiveURL)
+        try! writeArchive.write(intoBuffer: testFilename, fileDate: nil, posixPermissions: expectedPermissions,
+                                compressionMethod: .default, overwrite: false, crc: 0, password: nil)
+        { (writeDataHandler, error) in
+            testFileData.withUnsafeBytes({ buffer in
+                writeDataHandler(buffer, UInt32(testFileData.count))
+            })
+        }
         
         let readArchive = try! UZKArchive(url: testArchiveURL)
         let fileList = try! readArchive.listFileInfo()

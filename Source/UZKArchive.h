@@ -640,7 +640,7 @@ compressionMethod:(UZKCompressionMethod)method
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
          fileDate:(nullable NSDate *)fileDate
- posixPermissions:(unsigned long)permissions
+ posixPermissions:(short)permissions
 compressionMethod:(UZKCompressionMethod)method
          password:(nullable NSString *)password
         overwrite:(BOOL)overwrite
@@ -703,7 +703,7 @@ compressionMethod:(UZKCompressionMethod)method
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
          fileDate:(nullable NSDate *)fileDate
- posixPermissions:(unsigned long)permissions
+ posixPermissions:(short)permissions
 compressionMethod:(UZKCompressionMethod)method
          password:(nullable NSString *)password
         overwrite:(BOOL)overwrite
@@ -926,7 +926,7 @@ compressionMethod:(UZKCompressionMethod)method
  */
 - (BOOL)writeIntoBuffer:(NSString *)filePath
                fileDate:(nullable NSDate *)fileDate
-       posixPermissions:(unsigned long)permissions
+       posixPermissions:(short)permissions
       compressionMethod:(UZKCompressionMethod)method
               overwrite:(BOOL)overwrite
                     CRC:(unsigned long)preCRC

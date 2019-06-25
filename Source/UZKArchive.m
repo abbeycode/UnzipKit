@@ -1189,7 +1189,7 @@ compressionMethod:(UZKCompressionMethod)method
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
          fileDate:(nullable NSDate *)fileDate
- posixPermissions:(unsigned long)permissions
+ posixPermissions:(short)permissions
 compressionMethod:(UZKCompressionMethod)method
          password:(nullable NSString *)password
         overwrite:(BOOL)overwrite
@@ -1212,7 +1212,7 @@ compressionMethod:(UZKCompressionMethod)method
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
          fileDate:(NSDate *)fileDate
- posixPermissions:(unsigned long)permissions
+ posixPermissions:(short)permissions
 compressionMethod:(UZKCompressionMethod)method
          password:(NSString *)password
         overwrite:(BOOL)overwrite
@@ -1391,7 +1391,7 @@ compressionMethod:(UZKCompressionMethod)method
 
 - (BOOL)writeIntoBuffer:(NSString *)filePath
                fileDate:(NSDate *)fileDate
-       posixPermissions:(unsigned long)permissions
+       posixPermissions:(short)permissions
       compressionMethod:(UZKCompressionMethod)method
               overwrite:(BOOL)overwrite
                     CRC:(uLong)preCRC
@@ -1996,7 +1996,7 @@ compressionMethod:(UZKCompressionMethod)method
 - (BOOL)performWriteAction:(int(^)(uLong *crc, NSError * __autoreleasing*innerError))write
                   filePath:(NSString *)filePath
                   fileDate:(NSDate *)fileDate
-          posixPermissions:(unsigned long)permissions
+          posixPermissions:(short)permissions
          compressionMethod:(UZKCompressionMethod)method
                   password:(NSString *)password
                  overwrite:(BOOL)overwrite
@@ -2046,13 +2046,8 @@ compressionMethod:(UZKCompressionMethod)method
         UZKCreateActivity("Performing Write Action");
         
         UZKLogDebug("Making zip_fileinfo struct for date %{time_t}ld", lrint(fileDate.timeIntervalSince1970));
-        zip_fileinfo zi = [UZKArchive zipFileInfoForDate:fileDate];
-        
-        if (permissions > 0) {
-            
-            // Revert the value of NSFilePosixPermissions to zip external_fa raw data
-            zi.external_fa = (permissions + 32768) << 16;
-        }
+        zip_fileinfo zi = [UZKArchive zipFileInfoForDate:fileDate
+                                        posixPermissions:permissions];
         
         const char *passwordStr = NULL;
         
@@ -2704,6 +2699,7 @@ compressionMethod:(UZKCompressionMethod)method
 }
 
 + (zip_fileinfo)zipFileInfoForDate:(NSDate *)fileDate
+                  posixPermissions:(short)permissions
 {
     NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
     
@@ -2736,6 +2732,11 @@ compressionMethod:(UZKCompressionMethod)method
     zi.external_fa = 0;
     zi.dosDate = 0;
     
+    if (permissions > 0) {
+        unsigned long permissionsMask = (permissions & 0777) << 16;
+        zi.external_fa |= permissionsMask;
+    }
+
     return zi;
 }
 
