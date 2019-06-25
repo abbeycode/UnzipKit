@@ -42,8 +42,8 @@
 
 #if !TARGET_OS_IPHONE
 - (NSInteger)numberOfOpenFileHandles;
-- (NSURL *)archiveWithFiles:(NSArray *)fileURLs;
-- (NSURL *)archiveWithFiles:(NSArray *)fileURLs password:(NSString *)password;
+- (NSURL *)archiveWithFiles:(NSArray<NSURL*> *)fileURLs;
+- (NSURL *)archiveWithFiles:(NSArray<NSURL*> *)fileURLs password:(NSString *)password;
 - (BOOL)extractArchive:(NSURL *)url password:(NSString *)password;
 - (NSURL *)largeArchive;
 #endif
