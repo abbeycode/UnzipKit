@@ -19,6 +19,7 @@
 		7A0029241F93DBF000618503 /* libminizip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A0029171F93DB5800618503 /* libminizip.a */; };
 		7A5652241F90E01C006B782E /* CheckDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A5652231F90E01C006B782E /* CheckDataTests.m */; };
 		7A5A97011F89808900BCA061 /* ProgressReportingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A5A97001F89808900BCA061 /* ProgressReportingTests.m */; };
+		7AA77FC822C16CF600121052 /* PermissionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA77FC722C16CF600121052 /* PermissionsTests.swift */; };
 		961A9BB51B306881007C4C6B /* WriteDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961A9BB41B306881007C4C6B /* WriteDataTests.swift */; };
 		962F9DA61D5D286B00205BEC /* UnzipKit.strings in Resources */ = {isa = PBXBuildFile; fileRef = 962F9DA41D5D286B00205BEC /* UnzipKit.strings */; };
 		962F9DA81D5D288B00205BEC /* UnzipKitResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 962F9D9E1D5D281E00205BEC /* UnzipKitResources.bundle */; };
@@ -78,6 +79,7 @@
 		7A0029171F93DB5800618503 /* libminizip.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libminizip.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A5652231F90E01C006B782E /* CheckDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckDataTests.m; sourceTree = "<group>"; };
 		7A5A97001F89808900BCA061 /* ProgressReportingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProgressReportingTests.m; sourceTree = "<group>"; };
+		7AA77FC722C16CF600121052 /* PermissionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsTests.swift; sourceTree = "<group>"; };
 		961A9BB31B306880007C4C6B /* UnzipKitTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "UnzipKitTests-Bridging-Header.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		961A9BB41B306881007C4C6B /* WriteDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WriteDataTests.swift; sourceTree = "<group>"; };
 		961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZKArchiveTestCase.h; sourceTree = "<group>"; };
@@ -259,6 +261,7 @@
 				968C40D11B586310004C128E /* PasswordProtectionTests.m */,
 				968C40CD1B586277004C128E /* PerformOnDataTests.m */,
 				968C40CB1B586253004C128E /* PerformOnFilesTests.m */,
+				7AA77FC722C16CF600121052 /* PermissionsTests.swift */,
 				968C40DF1B586490004C128E /* PropertyTests.m */,
 				968C40D31B586345004C128E /* WriteBufferedDataTests.m */,
 				961A9BB41B306881007C4C6B /* WriteDataTests.swift */,
@@ -543,6 +546,7 @@
 				968C40DC1B586401004C128E /* CommentsTests.m in Sources */,
 				968C40D21B586310004C128E /* PasswordProtectionTests.m in Sources */,
 				963386B91EE89A51006B16BF /* UtilityMethods.swift in Sources */,
+				7AA77FC822C16CF600121052 /* PermissionsTests.swift in Sources */,
 				968C40C81B5861F4004C128E /* ExtractFilesTests.m in Sources */,
 				968C40D01B5862A0004C128E /* ExtractBufferedDataTests.m in Sources */,
 				968C40CE1B586277004C128E /* PerformOnDataTests.m in Sources */,

@@ -50,7 +50,8 @@ BOOL unzipkitIsAtLeast10_13SDK;
     NSString *uniqueName = [self randomDirectoryName];
     NSError *error = nil;
     
-    NSArray *testFiles = @[@"Test Archive.zip",
+    NSArray *testFiles = @[
+                           @"Test Archive.zip",
                            @"Test Archive (Password).zip",
                            @"L'incertain.zip",
                            @"Aces.zip",
@@ -61,12 +62,15 @@ BOOL unzipkitIsAtLeast10_13SDK;
                            @"Test File B.jpg",
                            @"Test File C.m4a",
                            @"NotAZip-PK-ContentsUnknown",
-                           @"Modified CRC Archive.zip"];
+                           @"Modified CRC Archive.zip",
+                           ];
     
-    NSArray *unicodeFiles = @[@"Ⓣest Ⓐrchive.zip",
+    NSArray *unicodeFiles = @[
+                              @"Ⓣest Ⓐrchive.zip",
                               @"Test File Ⓐ.txt",
                               @"Test File Ⓑ.jpg",
-                              @"Test File Ⓒ.m4a"];
+                              @"Test File Ⓒ.m4a",
+                              ];
     
     NSString *tempDirSubtree = [@"UnzipKitTest" stringByAppendingPathComponent:uniqueName];
     
