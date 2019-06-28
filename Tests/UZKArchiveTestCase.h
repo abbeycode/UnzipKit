@@ -23,9 +23,9 @@
 
 @property (retain) NSURL *tempDirectory;
 @property (retain) NSMutableDictionary<NSString*, NSURL*> *testFileURLs;
-@property (retain) NSMutableDictionary *unicodeFileURLs;
-@property (retain) NSSet *nonZipTestFilePaths;
-@property (retain) NSSet *nonZipUnicodeFilePaths;
+@property (retain) NSMutableDictionary<NSString*, NSURL*> *unicodeFileURLs;
+@property (retain) NSSet<NSString*> *nonZipTestFilePaths;
+@property (retain) NSSet<NSString*> *nonZipUnicodeFilePaths;
 @property (retain) NSURL *corruptArchive;
 
 

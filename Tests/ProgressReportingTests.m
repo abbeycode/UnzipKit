@@ -7,7 +7,7 @@
 //
 
 #import "UZKArchiveTestCase.h"
-#import "UnzipKit.h"
+#import <UnzipKit/UnzipKit.h>
 #import "UnzipKitMacros.h"
 
 @interface ProgressReportingTests : UZKArchiveTestCase
@@ -568,10 +568,9 @@ static NSUInteger observerCallCount;
 {
     observerCallCount++;
     
-    NSProgress *progress;
+    NSProgress *progress = object;
     
-    if ([object isKindOfClass:[NSProgress class]]) {
-        progress = object;
+    if ([progress isKindOfClass:[NSProgress class]]) {
         [self.fractionsCompletedReported addObject:@(progress.fractionCompleted)];
     } else {
         return;

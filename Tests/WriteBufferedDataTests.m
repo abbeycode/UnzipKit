@@ -18,11 +18,11 @@
 
 - (void)testWriteInfoBuffer
 {
-    NSArray *testFiles = [self.nonZipTestFilePaths.allObjects sortedArrayUsingSelector:@selector(compare:)];
-    NSArray *testDates = @[[[UZKArchiveTestCase dateFormatter] dateFromString:@"12/20/2014 9:35 AM"],
-                           [[UZKArchiveTestCase dateFormatter] dateFromString:@"12/21/2014 10:00 AM"],
-                           [[UZKArchiveTestCase dateFormatter] dateFromString:@"12/22/2014 11:54 PM"]];
-    NSMutableArray *testFileData = [NSMutableArray arrayWithCapacity:testFiles.count];
+    NSArray<NSString*> *testFiles = [self.nonZipTestFilePaths.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSArray<NSDate*> *testDates = @[[[UZKArchiveTestCase dateFormatter] dateFromString:@"12/20/2014 9:35 AM"],
+                                    [[UZKArchiveTestCase dateFormatter] dateFromString:@"12/21/2014 10:00 AM"],
+                                    [[UZKArchiveTestCase dateFormatter] dateFromString:@"12/22/2014 11:54 PM"]];
+    NSMutableArray<NSData*> *testFileData = [NSMutableArray arrayWithCapacity:testFiles.count];
     
     NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"WriteIntoBufferTest.zip"];
     

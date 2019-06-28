@@ -108,11 +108,11 @@
     NSArray *testArchives = @[@"Test Archive.zip",
                               @"Test Archive (Password).zip"];
     
-    NSSet *expectedFileSet = self.nonZipTestFilePaths;
-    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSSet<NSString*> *expectedFileSet = self.nonZipTestFilePaths;
+    NSArray<NSString*> *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     NSString *fileToDelete = expectedFiles[2];
     
-    NSMutableArray *newFileList = [NSMutableArray arrayWithArray:expectedFiles];
+    NSMutableArray<NSString*> *newFileList = [NSMutableArray arrayWithArray:expectedFiles];
     [newFileList removeObject:fileToDelete];
     
     for (NSString *testArchiveName in testArchives) {

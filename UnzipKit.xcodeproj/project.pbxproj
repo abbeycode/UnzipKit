@@ -848,6 +848,7 @@
 					"-Wno-pointer-arith",
 					"-Wno-cast-qual",
 					"-Wno-undef",
+					"-Wno-objc-messaging-id",
 				);
 			};
 			name = Debug;

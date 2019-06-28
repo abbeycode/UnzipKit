@@ -21,7 +21,7 @@
                               @"Test Archive (Password).zip"];
     
     NSSet *expectedFileSet = self.nonZipTestFilePaths;
-    NSArray *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSArray<NSString*> *expectedFiles = [expectedFileSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
     
     for (NSString *testArchiveName in testArchives) {
         NSURL *testArchiveURL = self.testFileURLs[testArchiveName];

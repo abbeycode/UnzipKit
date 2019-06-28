@@ -17,7 +17,7 @@ import UnzipKit
 class WriteDataTests: UZKArchiveTestCase {
 
     func testWriteData() {
-        let testFilePaths = [String](nonZipTestFilePaths as! Set<String>).sorted(by: <)
+        let testFilePaths = [String](nonZipTestFilePaths).sorted(by: <)
         let testDates = [
             UZKArchiveTestCase.dateFormatter().date(from: "12/20/2014 9:35 AM"),
             UZKArchiveTestCase.dateFormatter().date(from: "12/21/2014 10:00 AM"),
@@ -57,7 +57,7 @@ class WriteDataTests: UZKArchiveTestCase {
     }
     
     func testWriteData_Unicode() {
-        let testFilePaths = [String](nonZipUnicodeFilePaths as! Set<String>).sorted(by: <)
+        let testFilePaths = [String](nonZipUnicodeFilePaths).sorted(by: <)
         let testDates = [
             UZKArchiveTestCase.dateFormatter().date(from: "12/20/2014 9:35 AM"),
             UZKArchiveTestCase.dateFormatter().date(from: "12/21/2014 10:00 AM"),
@@ -97,7 +97,7 @@ class WriteDataTests: UZKArchiveTestCase {
     }
     
     func testWriteData_Overwrite() {
-        let testFilePaths = [String](nonZipTestFilePaths as! Set<String>).sorted(by: <)
+        let testFilePaths = [String](nonZipTestFilePaths).sorted(by: <)
         let testDates = [
             UZKArchiveTestCase.dateFormatter().date(from: "12/20/2014 9:35 AM"),
             UZKArchiveTestCase.dateFormatter().date(from: "12/21/2014 10:00 AM"),
@@ -171,7 +171,7 @@ class WriteDataTests: UZKArchiveTestCase {
     }
     
     func testWriteData_Overwrite_Unicode() {
-        let testFilePaths = [String](nonZipUnicodeFilePaths as! Set<String>).sorted(by: <)
+        let testFilePaths = [String](nonZipUnicodeFilePaths).sorted(by: <)
         let testDates = [
             UZKArchiveTestCase.dateFormatter().date(from: "12/20/2014 9:35 AM"),
             UZKArchiveTestCase.dateFormatter().date(from: "12/21/2014 10:00 AM"),
@@ -245,7 +245,7 @@ class WriteDataTests: UZKArchiveTestCase {
     }
     
     func testWriteData_NoOverwrite() {
-        let testFilePaths = [String](nonZipTestFilePaths as! Set<String>).sorted(by: <)
+        let testFilePaths = [String](nonZipTestFilePaths).sorted(by: <)
         let testDates = [
             UZKArchiveTestCase.dateFormatter().date(from: "12/20/2014 9:35 AM"),
             UZKArchiveTestCase.dateFormatter().date(from: "12/21/2014 10:00 AM"),
@@ -305,7 +305,7 @@ class WriteDataTests: UZKArchiveTestCase {
     
     func testWriteData_MultipleWrites() {
         let testArchiveURL = tempDirectory.appendingPathComponent("MultipleDataWriteTest.zip")
-        let testFilename = nonZipTestFilePaths.first as! String
+        let testFilename = nonZipTestFilePaths.first!
         let testFileURL = testFileURLs[testFilename] as! URL
         let testFileData = try! Data(contentsOf: testFileURL)
         
@@ -353,7 +353,7 @@ class WriteDataTests: UZKArchiveTestCase {
     
     func testWriteData_DefaultDate() {
         let testArchiveURL = tempDirectory.appendingPathComponent("DefaultDateWriteTest.zip")
-        let testFilename = nonZipTestFilePaths.first as! String
+        let testFilename = nonZipTestFilePaths.first!
         let testFileURL = testFileURLs[testFilename] as! URL
         let testFileData = try! Data(contentsOf: testFileURL)
         
@@ -377,7 +377,7 @@ class WriteDataTests: UZKArchiveTestCase {
     
     #if os(OSX)
     func testWriteData_PasswordProtected() {
-        let testFilePaths = [String](nonZipTestFilePaths as! Set<String>).sorted(by: <)
+        let testFilePaths = [String](nonZipTestFilePaths).sorted(by: <)
         var testFileData = [Data]()
         
         let testArchiveURL = tempDirectory.appendingPathComponent("SwiftWriteDataTest.zip")
