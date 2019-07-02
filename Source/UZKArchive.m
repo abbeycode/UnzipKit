@@ -69,31 +69,6 @@ NS_DESIGNATED_INITIALIZER
 @synthesize comment = _comment;
 
 
-#pragma mark - Deprecated Convenience Methods
-
-
-+ (UZKArchive *)zipArchiveAtPath:(NSString *)filePath
-{
-    return [[UZKArchive alloc] initWithPath:filePath error:nil];
-}
-
-+ (UZKArchive *)zipArchiveAtURL:(NSURL *)fileURL
-{
-    return [[UZKArchive alloc] initWithURL:fileURL error:nil];
-}
-
-+ (UZKArchive *)zipArchiveAtPath:(NSString *)filePath password:(NSString *)password
-{
-    return [[UZKArchive alloc] initWithPath:filePath password:password error:nil];
-}
-
-+ (UZKArchive *)zipArchiveAtURL:(NSURL *)fileURL password:(NSString *)password
-{
-    return [[UZKArchive alloc] initWithURL:fileURL password:password error:nil];
-}
-
-
-
 #pragma mark - Initializers
 
 + (void)initialize {

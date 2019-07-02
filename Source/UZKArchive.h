@@ -179,45 +179,6 @@ extern NSString *UZKErrorDomain;
 
 
 /**
- *  DEPRECATED: Creates and returns an archive at the given path
- *
- *  @param filePath A path to the archive file
- *
- *  @return Returns a UZKArchive object, or nil if the path isn't reachable
- */
-+ (nullable instancetype)zipArchiveAtPath:(NSString *)filePath __deprecated_msg("Use -initWithPath:error: instead");
-
-/**
- *  DEPRECATED: Creates and returns an archive at the given URL
- *
- *  @param fileURL The URL of the archive file
- *
- *  @return Returns a UZKArchive object, or nil if the URL isn't reachable
- */
-+ (nullable instancetype)zipArchiveAtURL:(NSURL *)fileURL __deprecated_msg("Use -initWithURL:error: instead");
-
-/**
- *  DEPRECATED: Creates and returns an archive at the given path, with a given password
- *
- *  @param filePath A path to the archive file
- *  @param password The password of the given archive
- *
- *  @return Returns a UZKArchive object, or nil if the path isn't reachable
- */
-+ (nullable instancetype)zipArchiveAtPath:(NSString *)filePath password:(nullable NSString *)password __deprecated_msg("Use -initWithPath:password:error: instead");
-
-/**
- *  DEPRECATED: Creates and returns an archive at the given URL, with a given password
- *
- *  @param fileURL  The URL of the archive file
- *  @param password The password of the given archive
- *
- *  @return Returns a UZKArchive object, or nil if the URL isn't reachable
- */
-+ (nullable instancetype)zipArchiveAtURL:(NSURL *)fileURL password:(nullable NSString *)password __deprecated_msg("Use -initWithURL:password:error: instead");;
-
-
-/**
  *  Creates and returns an archive at the given path
  *
  *  @param filePath A path to the archive file
