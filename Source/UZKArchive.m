@@ -1030,6 +1030,7 @@ compressionMethod:(UZKCompressionMethod)method
     return [self writeData:data
                   filePath:filePath
                   fileDate:fileDate
+          posixPermissions:0
          compressionMethod:method
                   password:password
                  overwrite:overwrite
