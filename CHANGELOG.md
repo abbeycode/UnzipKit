@@ -1,5 +1,9 @@
 # UnzipKit CHANGELOG
 
+## 2.0
+
+* Removed methods deprecated in v1.9 (Issue #90, PR #92)
+
 ## 1.9
 
 * Added support for `NSProgress` and `NSProgressReporting` in all extraction and iteration methods (Issue #32)
