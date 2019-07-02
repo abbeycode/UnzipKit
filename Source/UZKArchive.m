@@ -1025,6 +1025,16 @@ compressionMethod:(UZKCompressionMethod)method
 compressionMethod:(UZKCompressionMethod)method
          password:(NSString *)password
         overwrite:(BOOL)overwrite
+            error:(NSError * __autoreleasing*)error
+{
+    return [self writeData:data
+                  filePath:filePath
+                  fileDate:fileDate
+          posixPermissions:0
+         compressionMethod:method
+                  password:password
+                 overwrite:overwrite
+                     error:error];
 }
 
 - (BOOL)writeData:(NSData *)data
