@@ -87,6 +87,111 @@ static NSUInteger observerCallCount;
     }
 }
 
+#if !TARGET_OS_IPHONE
+- (void)testProgressReporting_ExtractFiles_FractionCompleted_LargeFile
+{
+    NSURL *largeTextFile = [self emptyTextFileOfLength:1000000];
+    NSURL *testArchiveURL = [self archiveWithFiles:@[largeTextFile]];
+
+    NSString *extractDirectory = [self randomDirectoryWithPrefix:@"LargeFileProgress"];
+    NSURL *extractURL = [self.tempDirectory URLByAppendingPathComponent:extractDirectory];
+    
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
+    
+    NSProgress *extractFilesProgress = [NSProgress progressWithTotalUnitCount:1];
+    [extractFilesProgress becomeCurrentWithPendingUnitCount:1];
+    
+    NSString *observedSelector = NSStringFromSelector(@selector(fractionCompleted));
+    
+    [extractFilesProgress addObserver:self
+                           forKeyPath:observedSelector
+                              options:NSKeyValueObservingOptionInitial
+                              context:ExtractFilesContext];
+    
+    NSError *extractError = nil;
+    BOOL success = [archive extractFilesTo:extractURL.path
+                                 overwrite:NO
+                                     error:&extractError];
+    
+    XCTAssertNil(extractError, @"Error returned by extractFilesTo:overwrite:progress:error:");
+    XCTAssertTrue(success, @"Archive failed to extract large file to %@", extractURL);
+    
+    [extractFilesProgress resignCurrent];
+    [extractFilesProgress removeObserver:self forKeyPath:observedSelector];
+    
+    XCTAssertEqualWithAccuracy(extractFilesProgress.fractionCompleted, 1.00, .0000000001, @"Progress never reported as completed");
+    
+    NSUInteger expectedProgressUpdates = 5;
+    NSArray<NSNumber *> *expectedProgresses = @[@0,
+                                                @0.262144,
+                                                @0.524287,
+                                                @0.786431,
+                                                @1.0];
+    
+    XCTAssertEqual(self.fractionsCompletedReported.count, expectedProgressUpdates, @"Incorrect number of progress updates");
+    for (NSUInteger i = 0; i < expectedProgressUpdates; i++) {
+        float expectedProgress = expectedProgresses[i].floatValue;
+        float actualProgress = self.fractionsCompletedReported[i].floatValue;
+        
+        XCTAssertEqualWithAccuracy(actualProgress, expectedProgress, 0.00001f, @"Incorrect progress reported at index %ld", (long)i);
+    }
+}
+
+- (void)testProgressReporting_ExtractFiles_FractionCompleted_TwoLargeFiles
+{
+    NSArray<NSURL*> *largeTextFiles = @[
+                                        [self emptyTextFileOfLength:1000000],
+                                        [self emptyTextFileOfLength:500000],
+                                        ];
+    NSURL *testArchiveURL = [self archiveWithFiles:largeTextFiles];
+    
+    NSString *extractDirectory = [self randomDirectoryWithPrefix:@"TwoLargeFilesProgress"];
+    NSURL *extractURL = [self.tempDirectory URLByAppendingPathComponent:extractDirectory];
+    
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
+    
+    NSProgress *extractFilesProgress = [NSProgress progressWithTotalUnitCount:1];
+    [extractFilesProgress becomeCurrentWithPendingUnitCount:1];
+    
+    NSString *observedSelector = NSStringFromSelector(@selector(fractionCompleted));
+    
+    [extractFilesProgress addObserver:self
+                           forKeyPath:observedSelector
+                              options:NSKeyValueObservingOptionInitial
+                              context:ExtractFilesContext];
+    
+    NSError *extractError = nil;
+    BOOL success = [archive extractFilesTo:extractURL.path
+                                 overwrite:NO
+                                     error:&extractError];
+    
+    XCTAssertNil(extractError, @"Error returned by extractFilesTo:overwrite:progress:error:");
+    XCTAssertTrue(success, @"Archive failed to extract large file to %@", extractURL);
+    
+    [extractFilesProgress resignCurrent];
+    [extractFilesProgress removeObserver:self forKeyPath:observedSelector];
+    
+    XCTAssertEqualWithAccuracy(extractFilesProgress.fractionCompleted, 1.00, .0000000001, @"Progress never reported as completed");
+    
+    NSUInteger expectedProgressUpdates = 7;
+    NSArray<NSNumber *> *expectedProgresses = @[@0,
+                                                @0.174762,
+                                                @0.349525,
+                                                @0.524287,
+                                                @0.666667,
+                                                @0.841429,
+                                                @1.0];
+    
+    XCTAssertEqual(self.fractionsCompletedReported.count, expectedProgressUpdates, @"Incorrect number of progress updates");
+    for (NSUInteger i = 0; i < expectedProgressUpdates; i++) {
+        float expectedProgress = expectedProgresses[i].floatValue;
+        float actualProgress = self.fractionsCompletedReported[i].floatValue;
+        
+        XCTAssertEqualWithAccuracy(actualProgress, expectedProgress, 0.00001f, @"Incorrect progress reported at index %ld", (long)i);
+    }
+}
+#endif
+
 - (void)testProgressReporting_ExtractFiles_Description
 {
     NSString *testArchiveName = @"Test Archive.zip";

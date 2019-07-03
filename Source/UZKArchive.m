@@ -567,6 +567,8 @@ NS_DESIGNATED_INITIALIZER
                         return;
                     }
                     
+                    [progress becomeCurrentWithPendingUnitCount:info.uncompressedSize];
+                    
                     UZKLogDebug("Extracting buffered data");
                     BOOL extractSuccess = [welf extractBufferedDataFromFile:info.filename
                                                                   error:&strongError
@@ -576,6 +578,8 @@ NS_DESIGNATED_INITIALIZER
                                         bytesDecompressed += dataChunk.length;
                                         [deflatedFileHandle writeData:dataChunk];
                                     }];
+                    
+                    [progress resignCurrent];
 
                     UZKLogDebug("Closing file handle");
                     [deflatedFileHandle closeFile];
@@ -599,7 +603,6 @@ NS_DESIGNATED_INITIALIZER
                                          forKey:NSProgressFileCompletedCountKey];
                     [progress setUserInfoObject:@(fileInfo.count)
                                          forKey:NSProgressFileTotalCountKey];
-                    progress.completedUnitCount = bytesDecompressed;
                 }
             }
         }
