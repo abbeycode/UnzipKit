@@ -383,7 +383,7 @@ class WriteDataTests: UZKArchiveTestCase {
         let testArchiveURL = tempDirectory.appendingPathComponent("SwiftWriteDataTest.zip")
         let password = "111111"
         
-        let writeArchive = try! UZKArchive(path: testArchiveURL.path, password: password)
+        let writeArchive = try! UZKArchive(url: testArchiveURL, password: password)
         
         for testFilePath in testFilePaths {
             let fileData = try? Data(contentsOf: testFileURLs[testFilePath] as! URL)
@@ -398,7 +398,7 @@ class WriteDataTests: UZKArchiveTestCase {
         
         // Read with UnzipKit
         
-        let readArchive = try! UZKArchive(path: testArchiveURL.path, password: password)
+        let readArchive = try! UZKArchive(url: testArchiveURL, password: password)
         XCTAssertTrue(readArchive.isPasswordProtected(), "Archive is not marked as password-protected")
         
         var index = 0
