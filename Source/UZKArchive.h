@@ -179,14 +179,14 @@ extern NSString *UZKErrorDomain;
 
 
 /**
- *  Creates and returns an archive at the given path
+ *  DEPRECATED: Creates and returns an archive at the given path
  *
  *  @param filePath A path to the archive file
  *  @param error    Returns an error code if the object can't be initialized
  *
  *  @return Returns a UZKArchive object, or nil if the path isn't reachable
  */
-- (nullable instancetype)initWithPath:(NSString *)filePath error:(NSError **)error;
+- (nullable instancetype)initWithPath:(NSString *)filePath error:(NSError **)error __deprecated_msg("Use -initWithURL:error: instead");
 
 /**
  *  Creates and returns an archive at the given URL
@@ -199,7 +199,7 @@ extern NSString *UZKErrorDomain;
 - (nullable instancetype)initWithURL:(NSURL *)fileURL error:(NSError **)error;
 
 /**
- *  Creates and returns an archive at the given path, with a given password
+ *  DEPRECATED: Creates and returns an archive at the given path, with a given password
  *
  *  @param filePath A path to the archive file
  *  @param password The password of the given archive
@@ -207,7 +207,7 @@ extern NSString *UZKErrorDomain;
  *
  *  @return Returns a UZKArchive object, or nil if the path isn't reachable
  */
-- (nullable instancetype)initWithPath:(NSString *)filePath password:(nullable NSString *)password error:(NSError **)error;
+- (nullable instancetype)initWithPath:(NSString *)filePath password:(nullable NSString *)password error:(NSError **)error __deprecated_msg("Use -initWithURL:password:error: instead");
 
 /**
  *  Creates and returns an archive at the given URL, with a given password
