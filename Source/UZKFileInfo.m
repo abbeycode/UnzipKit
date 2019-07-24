@@ -14,7 +14,6 @@
  *    https://www.pkware.com/documents/casestudies/APPNOTE.TXT 4.4.2.1
  */
 typedef NS_ENUM(NSUInteger, UZKZipOS) {
-    
     UZKZipOSMSDOS = 0,
     UZKZipOSAmiga = 1,
     UZKZipOSOpenVMS = 2,
