@@ -7,6 +7,37 @@
 #import "UZKFileInfo.h"
 #import "unzip.h"
 
+/**
+ *  Define the file storage system in zip according to "version made by"
+ *  - Currently defined are two general two version field,
+ *    more version field references are available from
+ *    https://www.pkware.com/documents/casestudies/APPNOTE.TXT 4.4.2.1
+ */
+typedef NS_ENUM(NSUInteger, UZKZipOS) {
+    
+    UZKZipOSMSDOS = 0,
+    UZKZipOSAmiga = 1,
+    UZKZipOSOpenVMS = 2,
+    UZKZipOSUnix = 3,
+    UZKZipOSVMCMS = 4,
+    UZKZipOSAtariST = 5,
+    UZKZipOSOS2 = 6,
+    UZKZipOSClassicMac = 7,
+    UZKZipOSZSystem = 8,
+    UZKZipOSCPM = 9,
+    UZKZipOSWindowsNT = 10,
+    UZKZipOSMVS = 11,
+    UZKZipOSVSE = 12,
+    UZKZipOSAcorn = 13,
+    UZKZipOSVFAT = 14,
+    UZKZipOSAlternateMVS = 15,
+    UZKZipOSBeOS = 16,
+    UZKZipOSTandem = 17,
+    UZKZipOSOS400 = 18,
+    UZKZipOSDarwin = 19
+};
+
+
 @interface UZKFileInfo ()
 
 @property (readwrite) tm_unz zipTMUDate;
@@ -35,7 +66,8 @@
         _zipTMUDate = fileInfo->tmu_date;
         _CRC = fileInfo->crc;
         _isEncryptedWithPassword = (fileInfo->flag & 1) != 0;
-        _isDirectory = [filename hasSuffix:@"/"];
+        _isDirectory = [UZKFileInfo itemIsDirectory:fileInfo];
+        _isSymbolicLink = [UZKFileInfo itemIsSymbolicLink:fileInfo];
         
         if (_isDirectory) {
             _filename = [_filename substringToIndex:_filename.length - 1];
@@ -51,6 +83,22 @@
 }
 
 
+#pragma mark - Private Class Methods
+
+
++ (BOOL)itemIsDirectory:(unz_file_info64 *)fileInfo {
+    UZKZipOS zipOSClassMapping = fileInfo->version >> 8;
+    if (zipOSClassMapping == UZKZipOSMSDOS || zipOSClassMapping == UZKZipOSWindowsNT) {
+        return 0x01 == (fileInfo->external_fa >> 4) && ![UZKFileInfo itemIsSymbolicLink:fileInfo];
+    }
+    
+    return S_IFDIR == (S_IFMT & fileInfo->external_fa >> 16) && ![UZKFileInfo itemIsSymbolicLink:fileInfo];
+}
+
++ (BOOL)itemIsSymbolicLink:(unz_file_info64 *)fileInfo {
+    return S_IFLNK == (S_IFMT & fileInfo->external_fa >> 16);
+}
+
 
 #pragma mark - Properties
 
@@ -62,7 +110,6 @@
     
     return _timestamp;
 }
-
 
 
 #pragma mark - Private Methods

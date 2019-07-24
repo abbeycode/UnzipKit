@@ -74,6 +74,16 @@ typedef NS_ENUM(NSInteger, UZKCompressionMethod) {
 @property (readonly) BOOL isDirectory;
 
 /**
+ *  YES if the file is a symbolic link
+ */
+@property (readonly) BOOL isSymbolicLink;
+
+/**
+ *  YES if the item is a macOS resource fork
+ */
+@property (readonly) BOOL isMacResourceFork;
+
+/**
  *  The type of compression
  */
 @property (readonly) UZKCompressionMethod compressionMethod;
