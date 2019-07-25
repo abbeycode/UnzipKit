@@ -61,7 +61,7 @@
         XCTAssertEqual(fileInfo.uncompressedSize, expectedFileSize, @"Incorrect uncompressed file size");
         
         // Test Compression method
-        UZKCompressionMethod expectedCompressionMethod = ((NSNumber *)expectedCompressionMethods[fileInfo.filename]).integerValue;
+        UZKCompressionMethod expectedCompressionMethod = ((NSNumber *)expectedCompressionMethods[fileInfo.filename]).intValue;
         XCTAssertEqual(fileInfo.compressionMethod, expectedCompressionMethod, @"Incorrect compression method");
     }
 }
