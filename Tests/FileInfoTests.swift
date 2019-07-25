@@ -58,15 +58,22 @@ class FileInfoTests: UZKArchiveTestCase {
     }
     
     func testIsSymbolicLink_ContainsSymLinks() {
-        let testArchiveName = "Test Archive (Symlinks).zip"
-        let testFileURL = self.testFileURLs[testArchiveName] as! URL
-        let archive = try! UZKArchive(url: testFileURL)
+        let textFileURL = self.emptyTextFile(ofLength: 20)!
+        let symLinkURL = textFileURL.deletingLastPathComponent()
+            .appendingPathComponent(textFileURL
+                .lastPathComponent
+                .replacingOccurrences(of: ".txt", with: "-Link.txt"))
+        
+        try! FileManager.default.createSymbolicLink(at: symLinkURL, withDestinationURL: textFileURL)
+        
+        let archiveURL = self.archive(withFiles: [textFileURL, symLinkURL], zipOptions: ["--symlinks"])!
+        let archive = try! UZKArchive(url: archiveURL)
         
         let fileInfo = try! archive.listFileInfo()
         
         let expected = [
-            "Test File A.txt": false,
-            "Test File A Link.txt": true,
+            textFileURL.lastPathComponent: false,
+            symLinkURL.lastPathComponent: true,
         ]
         let actual = fileInfo.reduce(into: Dictionary<String, Bool>()) {
             $0[$1.filename] = $1.isDirectory
