@@ -52,6 +52,7 @@ BOOL unzipkitIsAtLeast10_13SDK;
     
     NSArray *testFiles = @[
                            @"Test Archive.zip",
+                           @"Test Archive (Directories).zip",
                            @"Test Archive (Password).zip",
                            @"L'incertain.zip",
                            @"Aces.zip",

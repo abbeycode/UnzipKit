@@ -33,9 +33,9 @@ class FileInfoTests: UZKArchiveTestCase {
         let expected = [
             "Folder A": true,
             "Folder A/Test File A.txt": false,
-            "Test File B.jpg": false,
+            "Test File B.txt": false,
             "X Folder": true,
-            "X Folder/Test File C.m4a": false
+            "X Folder/Test File C.txt": false
         ]
         let actual = fileInfo.reduce(into: Dictionary<String, Bool>()) {
             $0[$1.filename] = $1.isDirectory
