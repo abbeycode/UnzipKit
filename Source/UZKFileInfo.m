@@ -33,7 +33,7 @@ typedef NS_ENUM(NSUInteger, UZKZipOS) {
     UZKZipOSBeOS = 16,
     UZKZipOSTandem = 17,
     UZKZipOSOS400 = 18,
-    UZKZipOSDarwin = 19
+    UZKZipOSDarwinOSX = 19
 };
 
 
@@ -47,6 +47,7 @@ typedef NS_ENUM(NSUInteger, UZKZipOS) {
 @implementation UZKFileInfo
 
 @synthesize timestamp = _timestamp;
+
 
 
 #pragma mark - Initialization
@@ -82,6 +83,20 @@ typedef NS_ENUM(NSUInteger, UZKZipOS) {
 }
 
 
+
+#pragma mark - Properties
+
+
+- (NSDate *)timestamp {
+    if (!_timestamp) {
+        _timestamp = [self readDate:self.zipTMUDate];
+    }
+    
+    return _timestamp;
+}
+
+
+
 #pragma mark - Private Class Methods
 
 
@@ -95,20 +110,9 @@ typedef NS_ENUM(NSUInteger, UZKZipOS) {
 }
 
 + (BOOL)itemIsSymbolicLink:(unz_file_info64 *)fileInfo {
-    return S_IFLNK == (S_IFMT & fileInfo->external_fa >> 16);
+    return S_IFLNK == (S_IFMT &fileInfo->external_fa >> 16);
 }
 
-
-#pragma mark - Properties
-
-
-- (NSDate *)timestamp {
-    if (!_timestamp) {
-        _timestamp = [self readDate:self.zipTMUDate];
-    }
-    
-    return _timestamp;
-}
 
 
 #pragma mark - Private Methods
