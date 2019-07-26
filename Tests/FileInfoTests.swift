@@ -57,6 +57,7 @@ class FileInfoTests: UZKArchiveTestCase {
         XCTAssertEqual(actual, expected)
     }
     
+    #if os(OSX)
     func testIsSymbolicLink_ContainsSymLinks() {
         let textFileURL = self.emptyTextFile(ofLength: 20)!
         let symLinkURL = textFileURL.deletingLastPathComponent()
@@ -81,5 +82,6 @@ class FileInfoTests: UZKArchiveTestCase {
 
         XCTAssertEqual(actual, expected)
     }
+    #endif
 
 }
