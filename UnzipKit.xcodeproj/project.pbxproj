@@ -17,9 +17,9 @@
 		7A0029221F93DBC900618503 /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65C81A40C44300685B6D /* unzip.h */; };
 		7A0029231F93DBC900618503 /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EA65CA1A40C44300685B6D /* zip.h */; };
 		7A0029241F93DBF000618503 /* libminizip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A0029171F93DB5800618503 /* libminizip.a */; };
+		7A27405422EAA3A500E23E75 /* FileInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A27405322EAA3A500E23E75 /* FileInfoTests.swift */; };
 		7A5652241F90E01C006B782E /* CheckDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A5652231F90E01C006B782E /* CheckDataTests.m */; };
 		7A5A97011F89808900BCA061 /* ProgressReportingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A5A97001F89808900BCA061 /* ProgressReportingTests.m */; };
-		7A64A12A22E9E35C009AC6A0 /* FileInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A64A12922E9E35C009AC6A0 /* FileInfoTests.swift */; };
 		7AA77FC822C16CF600121052 /* PermissionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA77FC722C16CF600121052 /* PermissionsTests.swift */; };
 		961A9BB51B306881007C4C6B /* WriteDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961A9BB41B306881007C4C6B /* WriteDataTests.swift */; };
 		962F9DA61D5D286B00205BEC /* UnzipKit.strings in Resources */ = {isa = PBXBuildFile; fileRef = 962F9DA41D5D286B00205BEC /* UnzipKit.strings */; };
@@ -78,9 +78,9 @@
 
 /* Begin PBXFileReference section */
 		7A0029171F93DB5800618503 /* libminizip.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libminizip.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A27405322EAA3A500E23E75 /* FileInfoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileInfoTests.swift; sourceTree = "<group>"; };
 		7A5652231F90E01C006B782E /* CheckDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckDataTests.m; sourceTree = "<group>"; };
 		7A5A97001F89808900BCA061 /* ProgressReportingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProgressReportingTests.m; sourceTree = "<group>"; };
-		7A64A12922E9E35C009AC6A0 /* FileInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FileInfoTests.swift; path = "../../../../../System/Volumes/Data/Users/dfrankel/Source Code/UnzipKit/Tests/FileInfoTests.swift"; sourceTree = "<group>"; };
 		7AA77FC722C16CF600121052 /* PermissionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsTests.swift; sourceTree = "<group>"; };
 		961A9BB31B306880007C4C6B /* UnzipKitTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "UnzipKitTests-Bridging-Header.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		961A9BB41B306881007C4C6B /* WriteDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WriteDataTests.swift; sourceTree = "<group>"; };
@@ -254,9 +254,9 @@
 				968C40C91B586227004C128E /* ExtractDataTests.m */,
 				9630C0371C6D27A4000693EE /* ExtractDataTests_Swift.swift */,
 				968C40C71B5861F4004C128E /* ExtractFilesTests.m */,
+				7A27405322EAA3A500E23E75 /* FileInfoTests.swift */,
 				7A5A97001F89808900BCA061 /* ProgressReportingTests.m */,
 				968C40D91B5863D9004C128E /* FileDescriptorUsageTests.m */,
-				7A64A12922E9E35C009AC6A0 /* FileInfoTests.swift */,
 				968C40C31B58619C004C128E /* ListFilenamesTests.m */,
 				968C40C51B5861C3004C128E /* ListFileInfoTests.m */,
 				968C40BF1B585FDE004C128E /* ModesTests.m */,
@@ -548,7 +548,7 @@
 				968C40E01B586490004C128E /* PropertyTests.m in Sources */,
 				968C40DC1B586401004C128E /* CommentsTests.m in Sources */,
 				968C40D21B586310004C128E /* PasswordProtectionTests.m in Sources */,
-				7A64A12A22E9E35C009AC6A0 /* FileInfoTests.swift in Sources */,
+				7A27405422EAA3A500E23E75 /* FileInfoTests.swift in Sources */,
 				963386B91EE89A51006B16BF /* UtilityMethods.swift in Sources */,
 				7AA77FC822C16CF600121052 /* PermissionsTests.swift in Sources */,
 				968C40C81B5861F4004C128E /* ExtractFilesTests.m in Sources */,
