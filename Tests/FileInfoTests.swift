@@ -77,7 +77,7 @@ class FileInfoTests: UZKArchiveTestCase {
             symLinkURL.lastPathComponent: true,
         ]
         let actual = fileInfo.reduce(into: Dictionary<String, Bool>()) {
-            $0[$1.filename] = $1.isDirectory
+            $0[$1.filename] = $1.isSymbolicLink
         }
 
         XCTAssertEqual(actual, expected)
