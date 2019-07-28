@@ -100,17 +100,27 @@ typedef NS_ENUM(NSUInteger, UZKZipOS) {
 #pragma mark - Private Class Methods
 
 
++ (UZKZipOS)itemOS:(unz_file_info64 *)fileInfo {
+    return fileInfo->version >> 8;
+}
+
++ (mode_t)itemFileMode:(unz_file_info64 *)fileInfo {
+    return fileInfo->external_fa >> 16;
+}
+
 + (BOOL)itemIsDirectory:(unz_file_info64 *)fileInfo {
-    UZKZipOS zipOSClassMapping = fileInfo->version >> 8;
-    if (zipOSClassMapping == UZKZipOSMSDOS || zipOSClassMapping == UZKZipOSWindowsNT) {
-        return 0x01 == (fileInfo->external_fa >> 4) && ![UZKFileInfo itemIsSymbolicLink:fileInfo];
+    UZKZipOS itemOS = [UZKFileInfo itemOS:fileInfo];
+    if (itemOS == UZKZipOSMSDOS || itemOS == UZKZipOSWindowsNT) {
+        return 0x01 == (fileInfo->external_fa >> 4);
     }
     
-    return S_IFDIR == (S_IFMT & fileInfo->external_fa >> 16) && ![UZKFileInfo itemIsSymbolicLink:fileInfo];
+    mode_t filemode = [UZKFileInfo itemFileMode:fileInfo];
+    return S_IFDIR == (S_IFMT & filemode) && ![UZKFileInfo itemIsSymbolicLink:fileInfo];
 }
 
 + (BOOL)itemIsSymbolicLink:(unz_file_info64 *)fileInfo {
-    return S_IFLNK == (S_IFMT &fileInfo->external_fa >> 16);
+    mode_t filemode = [UZKFileInfo itemFileMode:fileInfo];
+    return S_IFLNK == (S_IFMT & filemode);
 }
 
 
