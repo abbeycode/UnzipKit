@@ -44,6 +44,27 @@ class FileInfoTests: UZKArchiveTestCase {
         XCTAssertEqual(actual, expected)
     }
     
+    func testIsDirectory_ContainsDirectories_DOS() {
+        let testArchiveName = "Test Archive (DOS Directories).zip"
+        let testFileURL = self.testFileURLs[testArchiveName] as! URL
+        let archive = try! UZKArchive(url: testFileURL)
+        
+        let fileInfo = try! archive.listFileInfo()
+        
+        let expected = [
+            "FOLDERA": true,
+            "FOLDERA/TESTFILE.TXT": false,
+            "TESTFILE.TXT": false,
+            "XFOLDER": true,
+            "XFOLDER/TESTFILE.TXT": false
+        ]
+        let actual = fileInfo.reduce(into: Dictionary<String, Bool>()) {
+            $0[$1.filename] = $1.isDirectory
+        }
+        
+        XCTAssertEqual(actual, expected)
+    }
+
     func testIsSymbolicLink_NoSymLinks() {
         let testArchiveName = "Test Archive.zip"
         let testFileURL = self.testFileURLs[testArchiveName] as! URL
@@ -58,7 +79,7 @@ class FileInfoTests: UZKArchiveTestCase {
     }
     
     #if os(OSX)
-    func testIsSymbolicLink_ContainsSymLinks() {
+    func testIsSymbolicLink_ContainsSymLinkFile() {
         let textFileURL = self.emptyTextFile(ofLength: 20)!
         let symLinkURL = textFileURL.deletingLastPathComponent()
             .appendingPathComponent(textFileURL
@@ -67,7 +88,8 @@ class FileInfoTests: UZKArchiveTestCase {
         
         try! FileManager.default.createSymbolicLink(at: symLinkURL, withDestinationURL: textFileURL)
         
-        let archiveURL = self.archive(withFiles: [textFileURL, symLinkURL], zipOptions: ["--symlinks"])!
+        let archiveURL = self.archive(withFiles: [textFileURL, symLinkURL],
+                                      zipOptions: ["--junk-paths", "--symlinks"])!
         let archive = try! UZKArchive(url: archiveURL)
         
         let fileInfo = try! archive.listFileInfo()
