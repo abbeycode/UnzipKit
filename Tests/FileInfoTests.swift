@@ -104,6 +104,40 @@ class FileInfoTests: UZKArchiveTestCase {
 
         XCTAssertEqual(actual, expected)
     }
+    
+    func testIsDirectory_ContainsSymLinkFileAndDir() {
+        struct FileInfo: Equatable, CustomStringConvertible {
+            var description: String {
+                return "FileInfo(isLink: \(isLink), isDir: \(isDir))"
+            }
+            
+            let isLink: Bool
+            let isDir: Bool
+            
+            static func == (lhs: FileInfo, rhs: FileInfo) -> Bool {
+                return lhs.isLink == rhs.isLink && lhs.isLink == rhs.isLink
+            }
+        }
+        
+        let testArchiveName = "Test Archive (SymLink Directory).zip"
+        let testFileURL = self.testFileURLs[testArchiveName] as! URL
+        let archive = try! UZKArchive(url: testFileURL)
+        
+        let fileInfo = try! archive.listFileInfo()
+        
+        let expected: Dictionary<String, FileInfo> = [
+            "testDir": FileInfo(isLink: false, isDir: true),
+            "testDir/testFile2.md": FileInfo(isLink: false, isDir: false),
+            "testDirLink": FileInfo(isLink: true, isDir: false),
+            "testFile.md": FileInfo(isLink: false, isDir: false),
+            "testFileLink.md": FileInfo(isLink: true, isDir: false)
+        ]
+        let actual = fileInfo.reduce(into: Dictionary<String, FileInfo>()) {
+            $0[$1.filename!] = FileInfo(isLink: $1.isSymbolicLink, isDir: $1.isDirectory)
+        }
+
+        XCTAssertEqual(actual, expected)
+    }
     #endif
 
 }
