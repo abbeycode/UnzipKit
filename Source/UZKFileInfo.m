@@ -9,9 +9,9 @@
 
 /**
  *  Define the file storage system in zip according to "version made by"
- *  - Currently defined are two general two version field,
- *    more version field references are available from
- *    https://www.pkware.com/documents/casestudies/APPNOTE.TXT 4.4.2.1
+ *  These values are taken from the PKWARE zip zpec, section 4.4.2.1
+ *
+ *  https://www.pkware.com/documents/casestudies/APPNOTE.TXT)
  */
 typedef NS_ENUM(NSUInteger, UZKZipOS) {
     UZKZipOSMSDOS = 0,
@@ -34,6 +34,20 @@ typedef NS_ENUM(NSUInteger, UZKZipOS) {
     UZKZipOSTandem = 17,
     UZKZipOSOS400 = 18,
     UZKZipOSDarwinOSX = 19
+};
+
+/**
+ * These are the UNIX file types, as defined in system headers. These values are reused by the ZIP
+ * format's external file attributes (see especially Directory, Regular, SymLink)
+ */
+typedef NS_ENUM(ushort, UZKFileType) {
+    UZKFileTypeNamedPipe = S_IFIFO,
+    UZKFileTypeCharacterSpecial = S_IFCHR,
+    UZKFileTypeDirectory = S_IFDIR,
+    UZKFileTypeBlockSpecial = S_IFBLK,
+    UZKFileTypeRegular = S_IFREG,
+    UZKFileTypeSymLink = S_IFLNK,
+    UZKFileTypeSocket = S_IFSOCK
 };
 
 
@@ -76,7 +90,7 @@ typedef NS_ENUM(NSUInteger, UZKZipOS) {
         _compressionMethod = [self readCompressionMethod:fileInfo->compression_method
                                                     flag:fileInfo->flag];
         
-        uLong permissions = (fileInfo->external_fa >> 16) & 0777U;
+        uLong permissions = [UZKFileInfo itemPermissions:fileInfo];
         _posixPermissions = permissions ? permissions : 0644U;
     }
     return self;
@@ -104,23 +118,30 @@ typedef NS_ENUM(NSUInteger, UZKZipOS) {
     return fileInfo->version >> 8;
 }
 
-+ (mode_t)itemFileMode:(unz_file_info64 *)fileInfo {
-    return fileInfo->external_fa >> 16;
++ (UZKFileType)itemFileType:(unz_file_info64 *)fileInfo {
+    return S_IFMT & (fileInfo->external_fa >> 16);
+}
+
++ (uLong)itemPermissions:(unz_file_info64 *)fileInfo {
+    uLong permissionsMask = S_IRWXU | S_IRWXG | S_IRWXO;
+    return permissionsMask & (fileInfo->external_fa >> 16);
+}
+
++ (BOOL)itemIsDOSDirectory:(unz_file_info64 *)fileInfo {
+    return 0x01 & (fileInfo->external_fa >> 4);
 }
 
 + (BOOL)itemIsDirectory:(unz_file_info64 *)fileInfo {
     UZKZipOS itemOS = [UZKFileInfo itemOS:fileInfo];
     if (itemOS == UZKZipOSMSDOS || itemOS == UZKZipOSWindowsNT) {
-        return 0x01 == (fileInfo->external_fa >> 4);
+        return [UZKFileInfo itemIsDOSDirectory:fileInfo];
     }
     
-    mode_t filemode = [UZKFileInfo itemFileMode:fileInfo];
-    return S_IFDIR == (S_IFMT & filemode) && ![UZKFileInfo itemIsSymbolicLink:fileInfo];
+    return [UZKFileInfo itemFileType:fileInfo] == UZKFileTypeDirectory;
 }
 
 + (BOOL)itemIsSymbolicLink:(unz_file_info64 *)fileInfo {
-    mode_t filemode = [UZKFileInfo itemFileMode:fileInfo];
-    return S_IFLNK == (S_IFMT & filemode);
+    return [UZKFileInfo itemFileType:fileInfo] == UZKFileTypeSymLink;
 }
 
 
