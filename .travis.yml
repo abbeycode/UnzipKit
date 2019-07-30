@@ -4,6 +4,8 @@ language:
 osx_image: xcode10.2
 
 before_script:
+    # Only until CocoaPods 1.8.0 beta 1 is released. Then remove this and the Gemfile
+    - bundle config github.https true && bundle install
     # Make log level less verbose. Temporarily undo if more info is needed
     - sudo log config --mode "level:default"
 
