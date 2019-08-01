@@ -236,25 +236,34 @@ BOOL unzipkitIsAtLeast10_13SDK;
     return result;
 }
 
-- (NSURL *)archiveWithFiles:(NSArray *)fileURLs
+- (NSURL *)archiveWithFiles:(NSArray<NSURL*> *)fileURLs
 {
-    return [self archiveWithFiles:fileURLs password:nil];
+    return [self archiveWithFiles:fileURLs name:nil zipOptions:nil];
+}
+
+- (NSURL *)archiveWithFiles:(NSArray<NSURL*> *)fileURLs password:(NSString *)password
+{
+    return [self archiveWithFiles:fileURLs password:password name:nil];
 }
 
 - (NSURL *)archiveWithFiles:(NSArray<NSURL*> *)fileURLs zipOptions:(NSArray<NSString*> *)zipOpts
 {
-    return [self archiveWithFiles:fileURLs password:nil name:nil zipOptions:zipOpts];
+    return [self archiveWithFiles:fileURLs name:nil zipOptions:zipOpts];
 }
 
-- (NSURL *)archiveWithFiles:(NSArray *)fileURLs password:(NSString *)password
+- (NSURL *)archiveWithFiles:(NSArray<NSURL*> *)fileURLs password:(NSString *)password name:(NSString *)name
 {
-    return [self archiveWithFiles:fileURLs password:password name:nil zipOptions:@[]];
+    return [self archiveWithFiles:fileURLs name:name zipOptions:@[@"--junk-paths", @"--password", password]];
 }
 
-- (NSURL *)archiveWithFiles:(NSArray *)fileURLs password:(NSString *)password name:(NSString *)name zipOptions:(NSArray<NSString*> *)zipOpts
+- (NSURL *)archiveWithFiles:(NSArray<NSURL*> *)fileURLs name:(NSString *)name zipOptions:(NSArray<NSString*> *)zipOpts;
 {
     if (![name length]) {
         name = [[NSProcessInfo processInfo] globallyUniqueString];
+    }
+    
+    if (!zipOpts) {
+        zipOpts = @[@"--junk-paths"];
     }
     
     NSURL *archiveURL = [[self.tempDirectory URLByAppendingPathComponent:name]
@@ -281,11 +290,7 @@ BOOL unzipkitIsAtLeast10_13SDK;
     while (startIndex < filePaths.count) {
         @autoreleasepool {
             NSMutableArray<NSString*> *zipArgs = [NSMutableArray arrayWithArray:zipOpts];
-            [zipArgs addObjectsFromArray:@[@"--junk-paths", archiveURL.path]];
-            
-            if (password) {
-                [zipArgs addObjectsFromArray:@[@"--password", password]];
-            }
+            [zipArgs addObject:archiveURL.path];
             
             NSRange currentRange = NSMakeRange(startIndex, MIN(pathsRemaining, maxFilesPerCall));
             NSArray *pathArrayChunk = [filePaths subarrayWithRange:currentRange];
@@ -357,9 +362,8 @@ BOOL unzipkitIsAtLeast10_13SDK;
     
     static NSInteger archiveNumber = 1;
     NSURL *largeArchiveURL = [self archiveWithFiles:emptyFiles
-                                           password:nil
                                                name:[NSString stringWithFormat:@"Large Archive %ld", archiveNumber++]
-                                         zipOptions:@[]];
+                                         zipOptions:nil];
     return largeArchiveURL;
 }
 
