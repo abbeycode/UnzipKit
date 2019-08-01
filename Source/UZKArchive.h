@@ -9,6 +9,8 @@
 
 #import "UZKFileInfo.h"
 
+@class ZipWriteArgs;
+
 /**
  *  Defines the various error codes that the listing and extraction methods return.
  *  These are returned in NSError's [code]([NSError code]) field.
@@ -406,7 +408,22 @@ extern NSString *UZKErrorDomain;
             error:(NSError **)error;
 
 /**
- *  Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
+ *  Writes the data to the zip file, overwriting it if a file of that name already exists
+ *  in the archive. Supports NSProgress for progress reporting, which DOES NOT allow cancellation
+ *  in the middle of writing
+ *
+ *  @param data  Data to write into the archive
+ *  @param args  Specifies the properties of the file being archived
+ *  @param error Contains an NSError object when there was an error writing to the archive
+ *
+ *  @return YES if successful, NO on error
+ */
+- (BOOL)writeData:(NSData *)data
+             args:(ZipWriteArgs *)args
+            error:(NSError **)error;
+
+/**
+ *  DEPRECATED: Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
  *
  *  @param data     Data to write into the archive
  *  @param filePath The full path to the target file in the archive
@@ -418,10 +435,11 @@ extern NSString *UZKErrorDomain;
 - (BOOL)writeData:(NSData *)data
          filePath:(NSString *)filePath
          fileDate:(nullable NSDate *)fileDate
-            error:(NSError **)error;
+            error:(NSError **)error
+__deprecated_msg("Use -writeData:args:error: instead");
 
 /**
- *  Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
+ *  DEPRECATED: Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
  *
  *  @param data     Data to write into the archive
  *  @param filePath The full path to the target file in the archive
@@ -437,10 +455,11 @@ extern NSString *UZKErrorDomain;
          fileDate:(nullable NSDate *)fileDate
 compressionMethod:(UZKCompressionMethod)method
          password:(nullable NSString *)password
-            error:(NSError **)error;
+            error:(NSError **)error
+__deprecated_msg("Use -writeData:args:error: instead");
 
 /**
- *  Writes the data to the zip file, overwriting only if specified with the overwrite flag. Overwriting
+ *  DEPRECATED: Writes the data to the zip file, overwriting only if specified with the overwrite flag. Overwriting
  *  presents a tradeoff: the whole archive needs to be copied (minus the file to be overwritten) before
  *  the write begins. For a large archive, this can be slow. On the other hand, when not overwriting,
  *  the size of the archive will grow each time the file is written.
@@ -463,10 +482,11 @@ compressionMethod:(UZKCompressionMethod)method
 compressionMethod:(UZKCompressionMethod)method
          password:(nullable NSString *)password
         overwrite:(BOOL)overwrite
-            error:(NSError **)error;
+            error:(NSError **)error
+__deprecated_msg("Use -writeData:args:error: instead");
 
 /**
- *  Writes the data to the zip file, overwriting only if specified with the overwrite flag. Overwriting
+ *  DEPRECATED: Writes the data to the zip file, overwriting only if specified with the overwrite flag. Overwriting
  *  presents a tradeoff: the whole archive needs to be copied (minus the file to be overwritten) before
  *  the write begins. For a large archive, this can be slow. On the other hand, when not overwriting,
  *  the size of the archive will grow each time the file is written.
@@ -491,7 +511,8 @@ compressionMethod:(UZKCompressionMethod)method
 compressionMethod:(UZKCompressionMethod)method
          password:(nullable NSString *)password
         overwrite:(BOOL)overwrite
-            error:(NSError **)error;
+            error:(NSError **)error
+__deprecated_msg("Use -writeData:args:error: instead");
 
 /**
  *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
@@ -511,12 +532,34 @@ compressionMethod:(UZKCompressionMethod)method
  *
  *  @return YES if successful, NO on error
  */
-- (BOOL)writeIntoBuffer:(NSString *)filePath
+- (BOOL)writeIntoBufferAtPath:(NSString *)filePath
+                        error:(NSError **)error
+                        block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
+
+/**
+ *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
+ *  don't need to reside in memory at once. It overwrites an existing file with the same name.
+ *
+ *  @param args   Specifies the properties of the file being archived
+ *  @param error  Contains an NSError object when there was an error writing to the archive
+ *  @param action Contains your code to loop through the source bytes and write them to the
+ *                archive. Each time a chunk of data is ready to be written, call writeData,
+ *                passing in a pointer to the bytes and their length. Return YES if successful,
+ *                or NO on error (in which case, you should assign the actionError parameter
+ *
+ *       - *writeData*   Call this block to write some bytes into the archive. It returns NO if the
+ *                       write failed. If this happens, you should return from the action block, and
+ *                       handle the NSError returned into the error reference
+ *       - *actionError* Assign to an NSError instance before returning NO
+ *
+ *  @return YES if successful, NO on error
+ */
+- (BOOL)writeIntoBuffer:(ZipWriteArgs *)args
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
 
 /**
- *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
+ *  DEPRECATED: Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
  *  don't need to reside in memory at once. It overwrites an existing file with the same name.
  *
  *  @param filePath The full path to the target file in the archive
@@ -537,10 +580,11 @@ compressionMethod:(UZKCompressionMethod)method
 - (BOOL)writeIntoBuffer:(NSString *)filePath
                fileDate:(nullable NSDate *)fileDate
                   error:(NSError **)error
-                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action
+__deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
 
 /**
- *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
+ *  DEPRECATED: Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
  *  don't need to reside in memory at once. It overwrites an existing file with the same name.
  *
  *  @param filePath The full path to the target file in the archive
@@ -563,10 +607,11 @@ compressionMethod:(UZKCompressionMethod)method
                fileDate:(nullable NSDate *)fileDate
       compressionMethod:(UZKCompressionMethod)method
                   error:(NSError **)error
-                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action
+__deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
 
 /**
- *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
+ *  DEPRECATED: Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
  *  don't need to reside in memory at once. It overwrites an existing file with the same name, only if
  *  specified with the overwrite flag. Overwriting presents a tradeoff: the whole archive needs to be
  *  copied (minus the file to be overwritten) before the write begins. For a large archive, this can
@@ -597,10 +642,11 @@ compressionMethod:(UZKCompressionMethod)method
       compressionMethod:(UZKCompressionMethod)method
               overwrite:(BOOL)overwrite
                   error:(NSError **)error
-                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action
+__deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
 
 /**
- *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
+ *  DEPRECATED: Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
  *  don't need to reside in memory at once. It overwrites an existing file with the same name, only if
  *  specified with the overwrite flag. Overwriting presents a tradeoff: the whole archive needs to be
  *  copied (minus the file to be overwritten) before the write begins. For a large archive, this can
@@ -634,10 +680,11 @@ compressionMethod:(UZKCompressionMethod)method
               overwrite:(BOOL)overwrite
                     CRC:(unsigned long)preCRC
                   error:(NSError **)error
-                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action
+__deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
 
 /**
- *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
+ *  DEPRECATED: Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
  *  don't need to reside in memory at once. It overwrites an existing file with the same name, only if
  *  specified with the overwrite flag. Overwriting presents a tradeoff: the whole archive needs to be
  *  copied (minus the file to be overwritten) before the write begins. For a large archive, this can
@@ -673,11 +720,12 @@ compressionMethod:(UZKCompressionMethod)method
                     CRC:(unsigned long)preCRC
                password:(nullable NSString *)password
                   error:(NSError **)error
-                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action
+__deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
 
 
 /**
- *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
+ *  DEPRECATED: Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
  *  don't need to reside in memory at once. It overwrites an existing file with the same name, only if
  *  specified with the overwrite flag. Overwriting presents a tradeoff: the whole archive needs to be
  *  copied (minus the file to be overwritten) before the write begins. For a large archive, this can
@@ -715,7 +763,8 @@ compressionMethod:(UZKCompressionMethod)method
                     CRC:(unsigned long)preCRC
                password:(nullable NSString *)password
                   error:(NSError **)error
-                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
+                  block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action
+__deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
 
 /**
  *  Removes the given file from the archive

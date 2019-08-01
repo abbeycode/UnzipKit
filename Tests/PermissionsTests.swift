@@ -139,7 +139,7 @@ class PermissionsTests: UZKArchiveTestCase {
         let testFileData = try! Data(contentsOf: testFileURL)
         
         let writeArchive = try! UZKArchive(url: testArchiveURL)
-        try! writeArchive.write(intoBuffer: testFilename) { (writeDataHandler, error) in
+        try! writeArchive.writeIntoBuffer(atPath: testFilename) { (writeDataHandler, error) in
             let buffer = testFileData.withUnsafeBytes {
                 $0.baseAddress?.assumingMemoryBound(to: UInt32.self)
             }
