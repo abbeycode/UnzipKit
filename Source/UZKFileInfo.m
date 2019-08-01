@@ -7,6 +7,50 @@
 #import "UZKFileInfo.h"
 #import "unzip.h"
 
+/**
+ *  Define the file storage system in zip according to "version made by"
+ *  These values are taken from the PKWARE zip zpec, section 4.4.2.1
+ *
+ *  https://www.pkware.com/documents/casestudies/APPNOTE.TXT)
+ */
+typedef NS_ENUM(NSUInteger, UZKZipOS) {
+    UZKZipOSMSDOS = 0,
+    UZKZipOSAmiga = 1,
+    UZKZipOSOpenVMS = 2,
+    UZKZipOSUnix = 3,
+    UZKZipOSVMCMS = 4,
+    UZKZipOSAtariST = 5,
+    UZKZipOSOS2 = 6,
+    UZKZipOSClassicMac = 7,
+    UZKZipOSZSystem = 8,
+    UZKZipOSCPM = 9,
+    UZKZipOSWindowsNT = 10,
+    UZKZipOSMVS = 11,
+    UZKZipOSVSE = 12,
+    UZKZipOSAcorn = 13,
+    UZKZipOSVFAT = 14,
+    UZKZipOSAlternateMVS = 15,
+    UZKZipOSBeOS = 16,
+    UZKZipOSTandem = 17,
+    UZKZipOSOS400 = 18,
+    UZKZipOSDarwinOSX = 19
+};
+
+/**
+ * These are the UNIX file types, as defined in system headers. These values are reused by the ZIP
+ * format's external file attributes (see especially Directory, Regular, SymLink)
+ */
+typedef NS_ENUM(ushort, UZKFileType) {
+    UZKFileTypeNamedPipe = S_IFIFO,
+    UZKFileTypeCharacterSpecial = S_IFCHR,
+    UZKFileTypeDirectory = S_IFDIR,
+    UZKFileTypeBlockSpecial = S_IFBLK,
+    UZKFileTypeRegular = S_IFREG,
+    UZKFileTypeSymLink = S_IFLNK,
+    UZKFileTypeSocket = S_IFSOCK
+};
+
+
 @interface UZKFileInfo ()
 
 @property (readwrite) tm_unz zipTMUDate;
@@ -17,6 +61,7 @@
 @implementation UZKFileInfo
 
 @synthesize timestamp = _timestamp;
+
 
 
 #pragma mark - Initialization
@@ -35,7 +80,8 @@
         _zipTMUDate = fileInfo->tmu_date;
         _CRC = fileInfo->crc;
         _isEncryptedWithPassword = (fileInfo->flag & 1) != 0;
-        _isDirectory = [filename hasSuffix:@"/"];
+        _isDirectory = [UZKFileInfo itemIsDirectory:fileInfo];
+        _isSymbolicLink = [UZKFileInfo itemIsSymbolicLink:fileInfo];
         
         if (_isDirectory) {
             _filename = [_filename substringToIndex:_filename.length - 1];
@@ -44,7 +90,7 @@
         _compressionMethod = [self readCompressionMethod:fileInfo->compression_method
                                                     flag:fileInfo->flag];
         
-        uLong permissions = (fileInfo->external_fa >> 16) & 0777U;
+        uLong permissions = [UZKFileInfo itemPermissions:fileInfo];
         _posixPermissions = permissions ? permissions : 0644U;
     }
     return self;
@@ -61,6 +107,41 @@
     }
     
     return _timestamp;
+}
+
+
+
+#pragma mark - Private Class Methods
+
+
++ (UZKZipOS)itemOS:(unz_file_info64 *)fileInfo {
+    return fileInfo->version >> 8;
+}
+
++ (UZKFileType)itemFileType:(unz_file_info64 *)fileInfo {
+    return S_IFMT & (fileInfo->external_fa >> 16);
+}
+
++ (uLong)itemPermissions:(unz_file_info64 *)fileInfo {
+    uLong permissionsMask = S_IRWXU | S_IRWXG | S_IRWXO;
+    return permissionsMask & (fileInfo->external_fa >> 16);
+}
+
++ (BOOL)itemIsDOSDirectory:(unz_file_info64 *)fileInfo {
+    return 0x01 & (fileInfo->external_fa >> 4);
+}
+
++ (BOOL)itemIsDirectory:(unz_file_info64 *)fileInfo {
+    UZKZipOS itemOS = [UZKFileInfo itemOS:fileInfo];
+    if (itemOS == UZKZipOSMSDOS || itemOS == UZKZipOSWindowsNT) {
+        return [UZKFileInfo itemIsDOSDirectory:fileInfo];
+    }
+    
+    return [UZKFileInfo itemFileType:fileInfo] == UZKFileTypeDirectory;
+}
+
++ (BOOL)itemIsSymbolicLink:(unz_file_info64 *)fileInfo {
+    return [UZKFileInfo itemFileType:fileInfo] == UZKFileTypeSymLink;
 }
 
 

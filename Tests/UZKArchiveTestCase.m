@@ -52,7 +52,10 @@ BOOL unzipkitIsAtLeast10_13SDK;
     
     NSArray *testFiles = @[
                            @"Test Archive.zip",
+                           @"Test Archive (DOS Directories).zip",
+                           @"Test Archive (Directories).zip",
                            @"Test Archive (Password).zip",
+                           @"Test Archive (SymLink Directory).zip",
                            @"L'incertain.zip",
                            @"Aces.zip",
                            @"Comments Archive.zip",
@@ -238,14 +241,22 @@ BOOL unzipkitIsAtLeast10_13SDK;
     return [self archiveWithFiles:fileURLs password:nil];
 }
 
-- (NSURL *)archiveWithFiles:(NSArray *)fileURLs password:(NSString *)password
+- (NSURL *)archiveWithFiles:(NSArray<NSURL*> *)fileURLs zipOptions:(NSArray<NSString*> *)zipOpts
 {
-    NSString *uniqueString = [[NSProcessInfo processInfo] globallyUniqueString];
-    return [self archiveWithFiles:fileURLs password:password name:uniqueString];
+    return [self archiveWithFiles:fileURLs password:nil name:nil zipOptions:zipOpts];
 }
 
-- (NSURL *)archiveWithFiles:(NSArray *)fileURLs password:(NSString *)password name:(NSString *)name
+- (NSURL *)archiveWithFiles:(NSArray *)fileURLs password:(NSString *)password
 {
+    return [self archiveWithFiles:fileURLs password:password name:nil zipOptions:@[]];
+}
+
+- (NSURL *)archiveWithFiles:(NSArray *)fileURLs password:(NSString *)password name:(NSString *)name zipOptions:(NSArray<NSString*> *)zipOpts
+{
+    if (![name length]) {
+        name = [[NSProcessInfo processInfo] globallyUniqueString];
+    }
+    
     NSURL *archiveURL = [[self.tempDirectory URLByAppendingPathComponent:name]
                          URLByAppendingPathExtension:@"zip"];
     NSFileHandle *consoleOutputHandle = nil;
@@ -269,11 +280,11 @@ BOOL unzipkitIsAtLeast10_13SDK;
     
     while (startIndex < filePaths.count) {
         @autoreleasepool {
-            NSMutableArray<NSString*> *zipArgs = [NSMutableArray arrayWithArray:
-                                                  @[@"-j", archiveURL.path]];
+            NSMutableArray<NSString*> *zipArgs = [NSMutableArray arrayWithArray:zipOpts];
+            [zipArgs addObjectsFromArray:@[@"--junk-paths", archiveURL.path]];
             
             if (password) {
-                [zipArgs addObjectsFromArray:@[@"-P", password]];
+                [zipArgs addObjectsFromArray:@[@"--password", password]];
             }
             
             NSRange currentRange = NSMakeRange(startIndex, MIN(pathsRemaining, maxFilesPerCall));
@@ -288,6 +299,7 @@ BOOL unzipkitIsAtLeast10_13SDK;
             
             UZKLog("Compressing files %lu-%lu of %lu", startIndex + 1, startIndex + pathArrayChunk.count, filePaths.count);
 
+            UZKLogDebug("Zip command: %@ %@", task.launchPath, [task.arguments componentsJoinedByString:@" "]);
             [task launch];
             [task waitUntilExit];
             
@@ -346,7 +358,8 @@ BOOL unzipkitIsAtLeast10_13SDK;
     static NSInteger archiveNumber = 1;
     NSURL *largeArchiveURL = [self archiveWithFiles:emptyFiles
                                            password:nil
-                                               name:[NSString stringWithFormat:@"Large Archive %ld", archiveNumber++]];
+                                               name:[NSString stringWithFormat:@"Large Archive %ld", archiveNumber++]
+                                         zipOptions:@[]];
     return largeArchiveURL;
 }
 
