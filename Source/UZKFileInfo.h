@@ -13,7 +13,7 @@
 /**
  *   Defines the various compression levels that can be applied to a file
  */
-typedef NS_ENUM(NSInteger, UZKCompressionMethod) {
+typedef NS_ENUM(int, UZKCompressionMethod) {
     /**
      *  Default level
      */
