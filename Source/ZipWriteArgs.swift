@@ -27,7 +27,7 @@ import Foundation
      The CRC-32 checksum for the data being written. Only required
      if encrypting the file, otherwise it will be calculated automatically
      */
-    @objc public var crc: UInt64 = 0
+    @objc public var crc: UInt = 0
 
     /**
      If true, and the file exists, delete it before writing. If false, append

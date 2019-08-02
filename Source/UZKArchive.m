@@ -959,7 +959,7 @@ NS_DESIGNATED_INITIALIZER
 
          if (extractedCRC != fileInfo.CRC) {
              UZKLogError("CRC mismatch in '%{public}@': expected %010lu, found %010lu",
-                         fileInfo.filename, (unsigned long)fileInfo.CRC, extractedCRC)
+                         fileInfo.filename, (uLong)fileInfo.CRC, extractedCRC)
              dataIsValid = NO;
          }
          
@@ -1604,7 +1604,7 @@ compressionMethod:(UZKCompressionMethod)method
             
             // Close destination archive
             UZKLogDebug("Closing file in destination archive");
-            err = zipCloseFileInZipRaw64(dest_zip, unzipInfo.uncompressed_size, unzipInfo.crc);
+            err = zipCloseFileInZipRaw64(dest_zip, unzipInfo.uncompressed_size, (uLong)unzipInfo.crc);
             if (err != UNZ_OK) {
                 NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error closing %@ in destination zip while deleting %@ (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                     currentFileName, filePath, err];
