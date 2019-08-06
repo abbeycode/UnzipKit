@@ -7,8 +7,10 @@ Pod::Spec.new do |s|
   s.author           = { "Dov Frankel" => "dov@abbey-code.com" }
   s.social_media_url = "https://twitter.com/dovfrankel"
   s.source           = { :git => "https://github.com/abbeycode/UnzipKit.git", :tag => "#{s.version}" }
-  s.ios.deployment_target = "9.0"
-  s.osx.deployment_target = "10.9"
+  s.ios.deployment_target = "12.0"
+  s.osx.deployment_target = "10.14"
+  s.swift_version         = "5.0"
+  s.library = "z"
   s.requires_arc = 'Source/**/*'
   s.public_header_files  = "Source/UnzipKit.h",
                            "Source/UZKArchive.h",
@@ -29,7 +31,6 @@ Pod::Spec.new do |s|
         :environment_variables => { "OS_ACTIVITY_MODE" => "disable" }
     }
   end
-  s.library = "z"
 
   s.subspec "minizip-lib" do |ss|
     ss.private_header_files = "Lib/MiniZip/*.h"
