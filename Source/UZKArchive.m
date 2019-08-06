@@ -5,11 +5,16 @@
 //
 
 #import "UZKArchive.h"
-#import <UnzipKit/UnzipKit-Swift.h>
+
+#ifdef BUILT_AS_FRAMEWORK
+    #import <UnzipKit/UnzipKit-Swift.h>
+#else
+    // Used when built as a static library
+    #import "UnzipKit-Swift.h"
+#endif
 
 #import "zip.h"
 
-#import "UZKFileInfo.h"
 #import "UZKFileInfo_Private.h"
 #import "UnzipKitMacros.h"
 #import "NSURL+UnzipKitExtensions.h"

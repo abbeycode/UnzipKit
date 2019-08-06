@@ -15,7 +15,7 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundef"
-#if UNIFIED_LOGGING_SUPPORTED
+#if defined(UNIFIED_LOGGING_SUPPORTED) && defined(CODE_IMPORTED_AS_LIB)
 os_log_t unzipkit_log;
 BOOL unzipkitIsAtLeast10_13SDK;
 #endif

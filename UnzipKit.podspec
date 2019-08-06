@@ -16,16 +16,21 @@ Pod::Spec.new do |s|
                            "Source/UZKArchive.h",
                            "Source/UZKFileInfo.h"
   s.private_header_files = "Source/UZKFileInfo_Private.h"
-  s.source_files         = "Source/**/*.{h,m}"
+  s.source_files         = "Source/**/*.{h,m,swift}"
   s.exclude_files        = 'Resources/**/Info.plist'
   s.resource_bundles = {
       'UnzipKitResources' => ['Resources/**/*']
   }
   s.test_spec 'Tests' do |test_spec|
-    test_spec.source_files = 'Tests/*.{h,m}'
-    test_spec.exclude_files = 'Tests/ExtractFilesTests.m'
+    test_spec.source_files = 'Tests/*.{h,m,swift}'
+    test_spec.exclude_files = 'Tests/ExtractFilesTests.m',
+                              'Tests/UnzipKitTests-Bridging-Header.h'
+    test_spec.preserve_paths = 'Tests/UnzipKitTests-Bridging-Header.h'
     test_spec.resources = ['Tests/Test Data']
-    test_spec.pod_target_xcconfig = { "OTHER_CFLAGS" => "$(inherited) -Wno-unguarded-availability" }
+    test_spec.pod_target_xcconfig = {
+        "OTHER_CFLAGS" => "$(inherited) -Wno-unguarded-availability",
+        "SWIFT_OBJC_BRIDGING_HEADER" => "$(PODS_TARGET_SRCROOT)/Tests/UnzipKitTests-Bridging-Header.h"
+    }
     test_spec.scheme = {
         # Disable logging. Comment this line if you need diagnostic info
         :environment_variables => { "OS_ACTIVITY_MODE" => "disable" }

@@ -14,12 +14,11 @@
 		969E2FEC1AD573F100E19F7A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 969E2FEB1AD573F100E19F7A /* Images.xcassets */; };
 		969E2FEF1AD573F100E19F7A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 969E2FED1AD573F100E19F7A /* LaunchScreen.xib */; };
 		969E30091AD57BD000E19F7A /* Test Data in Resources */ = {isa = PBXBuildFile; fileRef = 969E30081AD57BD000E19F7A /* Test Data */; };
-		D058D1B1EDCAA17D37F1EEC5 /* libPods-UnzipKitDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 836C8D3D2EBCC1B567DEBA7E /* libPods-UnzipKitDemo.a */; };
+		E503D0FBEE04B7BC727B57B6 /* libPods-UnzipKitDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D3795F70E736484A471E6F15 /* libPods-UnzipKitDemo.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		2F87D9A1D0DCA68C622CCE05 /* Pods-UnzipKitDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnzipKitDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo.debug.xcconfig"; sourceTree = "<group>"; };
-		836C8D3D2EBCC1B567DEBA7E /* libPods-UnzipKitDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-UnzipKitDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		969381281D209CF5001B2ED8 /* libPods-UnzipKitDemo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-UnzipKitDemo.a"; path = "../../../Library/Developer/Xcode/DerivedData/UnzipKitDemo-hdmwkglyskhqhncppjlrcqmehjld/Build/Products/Debug-iphonesimulator/libPods-UnzipKitDemo.a"; sourceTree = "<group>"; };
 		9693812A1D209CFA001B2ED8 /* libUnzipKit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUnzipKit.a; path = "../../../Library/Developer/Xcode/DerivedData/UnzipKitDemo-hdmwkglyskhqhncppjlrcqmehjld/Build/Products/Debug-iphonesimulator/UnzipKit/libUnzipKit.a"; sourceTree = "<group>"; };
 		969E2FDF1AD573F100E19F7A /* UnzipKitDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UnzipKitDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -32,6 +31,7 @@
 		969E30041AD5798D00E19F7A /* UnzipKitDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UnzipKitDemo-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
 		969E30081AD57BD000E19F7A /* Test Data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Test Data"; path = "../../Tests/Test Data"; sourceTree = "<group>"; };
 		D07031CAE5D79F16E6A159A8 /* Pods-UnzipKitDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnzipKitDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo.release.xcconfig"; sourceTree = "<group>"; };
+		D3795F70E736484A471E6F15 /* libPods-UnzipKitDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-UnzipKitDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,7 +40,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9693812B1D209CFA001B2ED8 /* libUnzipKit.a in Frameworks */,
-				D058D1B1EDCAA17D37F1EEC5 /* libPods-UnzipKitDemo.a in Frameworks */,
+				E503D0FBEE04B7BC727B57B6 /* libPods-UnzipKitDemo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,7 +102,7 @@
 			children = (
 				9693812A1D209CFA001B2ED8 /* libUnzipKit.a */,
 				969381281D209CF5001B2ED8 /* libPods-UnzipKitDemo.a */,
-				836C8D3D2EBCC1B567DEBA7E /* libPods-UnzipKitDemo.a */,
+				D3795F70E736484A471E6F15 /* libPods-UnzipKitDemo.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -118,7 +118,7 @@
 				969E2FDB1AD573F100E19F7A /* Sources */,
 				969E2FDC1AD573F100E19F7A /* Frameworks */,
 				969E2FDD1AD573F100E19F7A /* Resources */,
-				FFBBDB5F70B02F25F7B1C9FA /* [CP] Copy Pods Resources */,
+				E71BD50F86C41C113D4362A9 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -196,13 +196,13 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		FFBBDB5F70B02F25F7B1C9FA /* [CP] Copy Pods Resources */ = {
+		E71BD50F86C41C113D4362A9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/UnzipKit/UnzipKitResources.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
@@ -211,7 +211,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-UnzipKitDemo/Pods-UnzipKitDemo-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -296,7 +296,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -347,7 +347,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
