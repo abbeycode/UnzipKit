@@ -1082,6 +1082,7 @@ compressionMethod:(UZKCompressionMethod)method
     
     __weak UZKArchive *welf = self;
     uLong calculatedCRC = crc32(0, data.bytes, (uInt)data.length);
+    args.crc = calculatedCRC;
     UZKLogDebug("Calculated CRC: %010lu", calculatedCRC);
     
     BOOL success = [self performWriteAction:^int(uLong *crc, NSError * __autoreleasing*innerError) {
@@ -1851,8 +1852,8 @@ compressionMethod:(UZKCompressionMethod)method
     }
     
     if (!password) {
-        UZKLogDebug("No password specified for file. Using archive's password: %{public}@", password != nil ? @"<hidden>" : @"(null)");
         password = self.password;
+        UZKLogDebug("No password specified for file. Using archive's password: %{public}@", password != nil ? @"<hidden>" : @"(null)");
     }
     
     __weak UZKArchive *welf = self;
