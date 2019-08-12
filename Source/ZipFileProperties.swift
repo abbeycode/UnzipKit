@@ -18,7 +18,7 @@ import Foundation
     @objc public var fullFilePath: String
     
     
-    // MARK: - Optional
+    // MARK: - Optional/Defaulted
     
     /// The UZKCompressionMethod to use (Default, None, Fastest, Best)
     @objc public var compressionMethod = UZKCompressionMethod.default
@@ -56,7 +56,7 @@ import Foundation
     @objc public init(_ fullFilePath: String) {
         self.fullFilePath = fullFilePath
     }
- 
+    
     
     // MARK: - Overrides
     

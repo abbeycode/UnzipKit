@@ -1016,9 +1016,9 @@ compressionMethod:(UZKCompressionMethod)method
             error:(NSError * __autoreleasing*)error
 {
     ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
-    [props setTimestamp:fileDate];
-    [props setCompressionMethod:method];
-    [props setPassword:password];
+    props.timestamp = fileDate;
+    props.compressionMethod = method;
+    props.password = password;
     
     return [self writeData:data
                      props:props
@@ -1034,10 +1034,10 @@ compressionMethod:(UZKCompressionMethod)method
             error:(NSError * __autoreleasing*)error
 {
     ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
-    [props setTimestamp:fileDate];
-    [props setCompressionMethod:method];
-    [props setPassword:password];
-    [props setOverwriteIfInArchive:overwrite];
+    props.timestamp = fileDate;
+    props.compressionMethod = method;
+    props.password = password;
+    props.overwriteIfInArchive = overwrite;
     
     return [self writeData:data
                      props:props
@@ -1054,12 +1054,12 @@ compressionMethod:(UZKCompressionMethod)method
             error:(NSError * __autoreleasing*)error
 {
     ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
-    [props setTimestamp:fileDate];
-    [props setPermissions:permissions];
-    [props setCompressionMethod:method];
-    [props setPassword:password];
-    [props setOverwriteIfInArchive:overwrite];
-    
+    props.timestamp = fileDate;
+    props.permissions = permissions;
+    props.compressionMethod = method;
+    props.password = password;
+    props.overwriteIfInArchive = overwrite;
+
     return [self writeData:data
                      props:props
                      error:error];
@@ -1131,8 +1131,8 @@ compressionMethod:(UZKCompressionMethod)method
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
     ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
-    [props setTimestamp:fileDate];
-    
+    props.timestamp = fileDate;
+
     return [self writeIntoBuffer:props error:error block:action];
 }
 
@@ -1143,9 +1143,9 @@ compressionMethod:(UZKCompressionMethod)method
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
     ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
-    [props setTimestamp:fileDate];
-    [props setCompressionMethod:method];
-    
+    props.timestamp = fileDate;
+    props.compressionMethod = method;
+
     return [self writeIntoBuffer:props error:error block:action];
 }
 
@@ -1157,10 +1157,10 @@ compressionMethod:(UZKCompressionMethod)method
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
     ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
-    [props setTimestamp:fileDate];
-    [props setCompressionMethod:method];
-    [props setOverwriteIfInArchive:overwrite];
-    
+    props.timestamp = fileDate;
+    props.compressionMethod = method;
+    props.overwriteIfInArchive = overwrite;
+
     return [self writeIntoBuffer:props error:error block:action];
 }
 
@@ -1173,11 +1173,11 @@ compressionMethod:(UZKCompressionMethod)method
                   block:(BOOL (^)(BOOL (^)(const void *, unsigned int), NSError *__autoreleasing *))action
 {
     ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
-    [props setTimestamp:fileDate];
-    [props setCompressionMethod:method];
-    [props setOverwriteIfInArchive:overwrite];
-    [props setCrc:preCRC];
-    
+    props.timestamp = fileDate;
+    props.compressionMethod = method;
+    props.overwriteIfInArchive = overwrite;
+    props.crc = preCRC;
+
     return [self writeIntoBuffer:props error:error block:action];
 }
 
@@ -1191,11 +1191,11 @@ compressionMethod:(UZKCompressionMethod)method
                   block:(BOOL (^)(BOOL (^)(const void *, unsigned int), NSError *__autoreleasing *))action
 {
     ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
-    [props setTimestamp:fileDate];
-    [props setCompressionMethod:method];
-    [props setOverwriteIfInArchive:overwrite];
-    [props setCrc:preCRC];
-    [props setPassword:password];
+    props.timestamp = fileDate;
+    props.compressionMethod = method;
+    props.overwriteIfInArchive = overwrite;
+    props.crc = preCRC;
+    props.password = password;
 
     return [self writeIntoBuffer:props error:error block:action];
 }
@@ -1211,12 +1211,12 @@ compressionMethod:(UZKCompressionMethod)method
                   block:(BOOL (^)(BOOL (^)(const void *, unsigned int), NSError *__autoreleasing *))action
 {
     ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
-    [props setTimestamp:fileDate];
-    [props setPermissions:permissions];
-    [props setCompressionMethod:method];
-    [props setOverwriteIfInArchive:overwrite];
-    [props setCrc:preCRC];
-    [props setPassword:password];
+    props.timestamp = fileDate;
+    props.permissions = permissions;
+    props.compressionMethod = method;
+    props.overwriteIfInArchive = overwrite;
+    props.crc = preCRC;
+    props.password = password;
 
     return [self writeIntoBuffer:props error:error block:action];
 }
