@@ -12,6 +12,7 @@ Pod::Spec.new do |s|
   s.swift_version         = "5.0"
   s.library = "z"
   s.requires_arc = 'Source/**/*'
+  s.static_framework = true
   s.public_header_files  = "Source/UnzipKit.h",
                            "Source/UZKArchive.h",
                            "Source/UZKFileInfo.h"
