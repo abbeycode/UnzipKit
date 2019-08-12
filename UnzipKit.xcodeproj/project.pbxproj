@@ -21,7 +21,7 @@
 		7A5652241F90E01C006B782E /* CheckDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A5652231F90E01C006B782E /* CheckDataTests.m */; };
 		7A5A97011F89808900BCA061 /* ProgressReportingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A5A97001F89808900BCA061 /* ProgressReportingTests.m */; };
 		7AA77FC822C16CF600121052 /* PermissionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA77FC722C16CF600121052 /* PermissionsTests.swift */; };
-		7AB0E6AA22F3179F00AAE12F /* ZipWriteArgs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB0E6A922F3179F00AAE12F /* ZipWriteArgs.swift */; };
+		7AB0E6AA22F3179F00AAE12F /* ZipFileProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB0E6A922F3179F00AAE12F /* ZipFileProperties.swift */; };
 		961A9BB51B306881007C4C6B /* WriteDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961A9BB41B306881007C4C6B /* WriteDataTests.swift */; };
 		962F9DA61D5D286B00205BEC /* UnzipKit.strings in Resources */ = {isa = PBXBuildFile; fileRef = 962F9DA41D5D286B00205BEC /* UnzipKit.strings */; };
 		962F9DA81D5D288B00205BEC /* UnzipKitResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 962F9D9E1D5D281E00205BEC /* UnzipKitResources.bundle */; };
@@ -83,7 +83,7 @@
 		7A5652231F90E01C006B782E /* CheckDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckDataTests.m; sourceTree = "<group>"; };
 		7A5A97001F89808900BCA061 /* ProgressReportingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProgressReportingTests.m; sourceTree = "<group>"; };
 		7AA77FC722C16CF600121052 /* PermissionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsTests.swift; sourceTree = "<group>"; };
-		7AB0E6A922F3179F00AAE12F /* ZipWriteArgs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipWriteArgs.swift; sourceTree = "<group>"; };
+		7AB0E6A922F3179F00AAE12F /* ZipFileProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipFileProperties.swift; sourceTree = "<group>"; };
 		961A9BB31B306880007C4C6B /* UnzipKitTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "UnzipKitTests-Bridging-Header.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		961A9BB41B306881007C4C6B /* WriteDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WriteDataTests.swift; sourceTree = "<group>"; };
 		961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZKArchiveTestCase.h; sourceTree = "<group>"; };
@@ -227,7 +227,7 @@
 				96EA65FF1A40E31900685B6D /* UZKFileInfo.h */,
 				963603521BFB7F6500BF0C4F /* UZKFileInfo_Private.h */,
 				96EA66001A40E31900685B6D /* UZKFileInfo.m */,
-				7AB0E6A922F3179F00AAE12F /* ZipWriteArgs.swift */,
+				7AB0E6A922F3179F00AAE12F /* ZipFileProperties.swift */,
 				96EA65A11A40AEAE00685B6D /* Supporting Files */,
 			);
 			name = UnzipKit;
@@ -522,7 +522,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7AB0E6AA22F3179F00AAE12F /* ZipWriteArgs.swift in Sources */,
+				7AB0E6AA22F3179F00AAE12F /* ZipFileProperties.swift in Sources */,
 				96EA65BD1A40B2EC00685B6D /* UZKArchive.m in Sources */,
 				96EA66021A40E31900685B6D /* UZKFileInfo.m in Sources */,
 				965CF00C1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m in Sources */,

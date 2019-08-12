@@ -9,7 +9,7 @@
 
 #import "UZKFileInfo.h"
 
-@class ZipWriteArgs;
+@class ZipFileProperties;
 
 /**
  *  Defines the various error codes that the listing and extraction methods return.
@@ -413,13 +413,13 @@ extern NSString *UZKErrorDomain;
  *  in the middle of writing
  *
  *  @param data  Data to write into the archive
- *  @param args  Specifies the properties of the file being archived
+ *  @param props Specifies the properties of the file being archived
  *  @param error Contains an NSError object when there was an error writing to the archive
  *
  *  @return YES if successful, NO on error
  */
 - (BOOL)writeData:(NSData *)data
-             args:(ZipWriteArgs *)args
+            props:(ZipFileProperties *)props
             error:(NSError **)error;
 
 /**
@@ -436,7 +436,7 @@ extern NSString *UZKErrorDomain;
          filePath:(NSString *)filePath
          fileDate:(nullable NSDate *)fileDate
             error:(NSError **)error
-__deprecated_msg("Use -writeData:args:error: instead");
+__deprecated_msg("Use -writeData:props:error: instead");
 
 /**
  *  DEPRECATED: Writes the data to the zip file, overwriting it if a file of that name already exists in the archive
@@ -456,7 +456,7 @@ __deprecated_msg("Use -writeData:args:error: instead");
 compressionMethod:(UZKCompressionMethod)method
          password:(nullable NSString *)password
             error:(NSError **)error
-__deprecated_msg("Use -writeData:args:error: instead");
+__deprecated_msg("Use -writeData:props:error: instead");
 
 /**
  *  DEPRECATED: Writes the data to the zip file, overwriting only if specified with the overwrite flag. Overwriting
@@ -483,7 +483,7 @@ compressionMethod:(UZKCompressionMethod)method
          password:(nullable NSString *)password
         overwrite:(BOOL)overwrite
             error:(NSError **)error
-__deprecated_msg("Use -writeData:args:error: instead");
+__deprecated_msg("Use -writeData:props:error: instead");
 
 /**
  *  DEPRECATED: Writes the data to the zip file, overwriting only if specified with the overwrite flag. Overwriting
@@ -512,7 +512,7 @@ compressionMethod:(UZKCompressionMethod)method
          password:(nullable NSString *)password
         overwrite:(BOOL)overwrite
             error:(NSError **)error
-__deprecated_msg("Use -writeData:args:error: instead");
+__deprecated_msg("Use -writeData:props:error: instead");
 
 /**
  *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
@@ -540,7 +540,7 @@ __deprecated_msg("Use -writeData:args:error: instead");
  *  Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
  *  don't need to reside in memory at once. It overwrites an existing file with the same name.
  *
- *  @param args   Specifies the properties of the file being archived
+ *  @param props  Specifies the properties of the file being archived
  *  @param error  Contains an NSError object when there was an error writing to the archive
  *  @param action Contains your code to loop through the source bytes and write them to the
  *                archive. Each time a chunk of data is ready to be written, call writeData,
@@ -554,7 +554,7 @@ __deprecated_msg("Use -writeData:args:error: instead");
  *
  *  @return YES if successful, NO on error
  */
-- (BOOL)writeIntoBuffer:(ZipWriteArgs *)args
+- (BOOL)writeIntoBuffer:(ZipFileProperties *)props
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action;
 
@@ -581,7 +581,7 @@ __deprecated_msg("Use -writeData:args:error: instead");
                fileDate:(nullable NSDate *)fileDate
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action
-__deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
+__deprecated_msg("Use -writeIntoBuffer:props:error:block: instead");
 
 /**
  *  DEPRECATED: Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
@@ -608,7 +608,7 @@ __deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
       compressionMethod:(UZKCompressionMethod)method
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action
-__deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
+__deprecated_msg("Use -writeIntoBuffer:props:error:block: instead");
 
 /**
  *  DEPRECATED: Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
@@ -643,7 +643,7 @@ __deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
               overwrite:(BOOL)overwrite
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action
-__deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
+__deprecated_msg("Use -writeIntoBuffer:props:error:block: instead");
 
 /**
  *  DEPRECATED: Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
@@ -681,7 +681,7 @@ __deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
                     CRC:(unsigned long)preCRC
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action
-__deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
+__deprecated_msg("Use -writeIntoBuffer:props:error:block: instead");
 
 /**
  *  DEPRECATED: Writes data to the zip file in pieces, allowing you to stream the write, so the entire contents
@@ -721,7 +721,7 @@ __deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
                password:(nullable NSString *)password
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action
-__deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
+__deprecated_msg("Use -writeIntoBuffer:props:error:block: instead");
 
 
 /**
@@ -764,7 +764,7 @@ __deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
                password:(nullable NSString *)password
                   error:(NSError **)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError **actionError))action
-__deprecated_msg("Use -writeIntoBuffer:args:error:block: instead");
+__deprecated_msg("Use -writeIntoBuffer:props:error:block: instead");
 
 /**
  *  Removes the given file from the archive

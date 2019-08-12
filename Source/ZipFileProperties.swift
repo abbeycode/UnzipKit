@@ -9,7 +9,7 @@
 import Foundation
 
 // Not a struct because of Objective-C compatibility
-@objc public class ZipWriteArgs: NSObject {
+@objc public class ZipFileProperties: NSObject {
     
     
     // MARK: - Required

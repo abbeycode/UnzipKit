@@ -990,7 +990,7 @@ NS_DESIGNATED_INITIALIZER
             error:(NSError * __autoreleasing*)error
 {
     return [self writeData:data
-                      args:[[ZipWriteArgs alloc] init:filePath]
+                      props:[[ZipFileProperties alloc] init:filePath]
                      error:error];
 }
 
@@ -1015,13 +1015,13 @@ compressionMethod:(UZKCompressionMethod)method
          password:(NSString *)password
             error:(NSError * __autoreleasing*)error
 {
-    ZipWriteArgs *args = [[ZipWriteArgs alloc] init:filePath];
-    [args setTimestamp:fileDate];
-    [args setCompressionMethod:method];
-    [args setPassword:password];
+    ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
+    [props setTimestamp:fileDate];
+    [props setCompressionMethod:method];
+    [props setPassword:password];
     
     return [self writeData:data
-                      args:args
+                     props:props
                      error:error];
 }
 
@@ -1033,14 +1033,14 @@ compressionMethod:(UZKCompressionMethod)method
         overwrite:(BOOL)overwrite
             error:(NSError * __autoreleasing*)error
 {
-    ZipWriteArgs *args = [[ZipWriteArgs alloc] init:filePath];
-    [args setTimestamp:fileDate];
-    [args setCompressionMethod:method];
-    [args setPassword:password];
-    [args setOverwriteIfInArchive:overwrite];
+    ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
+    [props setTimestamp:fileDate];
+    [props setCompressionMethod:method];
+    [props setPassword:password];
+    [props setOverwriteIfInArchive:overwrite];
     
     return [self writeData:data
-                      args:args
+                     props:props
                      error:error];
 }
 
@@ -1053,26 +1053,26 @@ compressionMethod:(UZKCompressionMethod)method
         overwrite:(BOOL)overwrite
             error:(NSError * __autoreleasing*)error
 {
-    ZipWriteArgs *args = [[ZipWriteArgs alloc] init:filePath];
-    [args setTimestamp:fileDate];
-    [args setPermissions:permissions];
-    [args setCompressionMethod:method];
-    [args setPassword:password];
-    [args setOverwriteIfInArchive:overwrite];
+    ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
+    [props setTimestamp:fileDate];
+    [props setPermissions:permissions];
+    [props setCompressionMethod:method];
+    [props setPassword:password];
+    [props setOverwriteIfInArchive:overwrite];
     
     return [self writeData:data
-                      args:args
+                     props:props
                      error:error];
 }
 
 - (BOOL)writeData:(NSData *)data
-             args:(ZipWriteArgs *)args
+            props:(ZipFileProperties *)props
             error:(NSError * __autoreleasing*)error
 {
     UZKCreateActivity("Writing Data");
     
-    UZKLogInfo("Writing data to archive. Args: %{public}@, error pointer specified: %{public}@",
-               args, error ? @"YES" : @"NO");
+    UZKLogInfo("Writing data to archive. Properties: %{public}@, error pointer specified: %{public}@",
+               props, error ? @"YES" : @"NO");
     
     const NSUInteger bufferSize = 4096; //Arbitrary
     const void *bytes = data.bytes;
@@ -1082,7 +1082,7 @@ compressionMethod:(UZKCompressionMethod)method
     
     __weak UZKArchive *welf = self;
     uLong calculatedCRC = crc32(0, data.bytes, (uInt)data.length);
-    args.crc = calculatedCRC;
+    props.crc = calculatedCRC;
     UZKLogDebug("Calculated CRC: %010lu", calculatedCRC);
     
     BOOL success = [self performWriteAction:^int(uLong *crc, NSError * __autoreleasing*innerError) {
@@ -1110,7 +1110,7 @@ compressionMethod:(UZKCompressionMethod)method
         
         return ZIP_OK;
     }
-                                       args:args
+                                      props:props
                                       error:error];
     
     return success;
@@ -1120,7 +1120,7 @@ compressionMethod:(UZKCompressionMethod)method
                         error:(NSError * __autoreleasing*)error
                         block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
-    return [self writeIntoBuffer:[[ZipWriteArgs alloc] init:filePath]
+    return [self writeIntoBuffer:[[ZipFileProperties alloc] init:filePath]
                            error:error
                            block:action];
 }
@@ -1130,10 +1130,10 @@ compressionMethod:(UZKCompressionMethod)method
                   error:(NSError * __autoreleasing*)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
-    ZipWriteArgs *args = [[ZipWriteArgs alloc] init:filePath];
-    [args setTimestamp:fileDate];
+    ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
+    [props setTimestamp:fileDate];
     
-    return [self writeIntoBuffer:args error:error block:action];
+    return [self writeIntoBuffer:props error:error block:action];
 }
 
 - (BOOL)writeIntoBuffer:(NSString *)filePath
@@ -1142,11 +1142,11 @@ compressionMethod:(UZKCompressionMethod)method
                   error:(NSError * __autoreleasing*)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
-    ZipWriteArgs *args = [[ZipWriteArgs alloc] init:filePath];
-    [args setTimestamp:fileDate];
-    [args setCompressionMethod:method];
+    ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
+    [props setTimestamp:fileDate];
+    [props setCompressionMethod:method];
     
-    return [self writeIntoBuffer:args error:error block:action];
+    return [self writeIntoBuffer:props error:error block:action];
 }
 
 - (BOOL)writeIntoBuffer:(NSString *)filePath
@@ -1156,12 +1156,12 @@ compressionMethod:(UZKCompressionMethod)method
                   error:(NSError * __autoreleasing*)error
                   block:(BOOL(^)(BOOL(^writeData)(const void *bytes, unsigned int length), NSError * __autoreleasing*actionError))action
 {
-    ZipWriteArgs *args = [[ZipWriteArgs alloc] init:filePath];
-    [args setTimestamp:fileDate];
-    [args setCompressionMethod:method];
-    [args setOverwriteIfInArchive:overwrite];
+    ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
+    [props setTimestamp:fileDate];
+    [props setCompressionMethod:method];
+    [props setOverwriteIfInArchive:overwrite];
     
-    return [self writeIntoBuffer:args error:error block:action];
+    return [self writeIntoBuffer:props error:error block:action];
 }
 
 - (BOOL)writeIntoBuffer:(NSString *)filePath
@@ -1172,13 +1172,13 @@ compressionMethod:(UZKCompressionMethod)method
                   error:(NSError *__autoreleasing *)error
                   block:(BOOL (^)(BOOL (^)(const void *, unsigned int), NSError *__autoreleasing *))action
 {
-    ZipWriteArgs *args = [[ZipWriteArgs alloc] init:filePath];
-    [args setTimestamp:fileDate];
-    [args setCompressionMethod:method];
-    [args setOverwriteIfInArchive:overwrite];
-    [args setCrc:preCRC];
+    ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
+    [props setTimestamp:fileDate];
+    [props setCompressionMethod:method];
+    [props setOverwriteIfInArchive:overwrite];
+    [props setCrc:preCRC];
     
-    return [self writeIntoBuffer:args error:error block:action];
+    return [self writeIntoBuffer:props error:error block:action];
 }
 
 - (BOOL)writeIntoBuffer:(NSString *)filePath
@@ -1190,14 +1190,14 @@ compressionMethod:(UZKCompressionMethod)method
                   error:(NSError *__autoreleasing *)error
                   block:(BOOL (^)(BOOL (^)(const void *, unsigned int), NSError *__autoreleasing *))action
 {
-    ZipWriteArgs *args = [[ZipWriteArgs alloc] init:filePath];
-    [args setTimestamp:fileDate];
-    [args setCompressionMethod:method];
-    [args setOverwriteIfInArchive:overwrite];
-    [args setCrc:preCRC];
-    [args setPassword:password];
+    ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
+    [props setTimestamp:fileDate];
+    [props setCompressionMethod:method];
+    [props setOverwriteIfInArchive:overwrite];
+    [props setCrc:preCRC];
+    [props setPassword:password];
 
-    return [self writeIntoBuffer:args error:error block:action];
+    return [self writeIntoBuffer:props error:error block:action];
 }
 
 - (BOOL)writeIntoBuffer:(NSString *)filePath
@@ -1210,29 +1210,29 @@ compressionMethod:(UZKCompressionMethod)method
                   error:(NSError *__autoreleasing *)error
                   block:(BOOL (^)(BOOL (^)(const void *, unsigned int), NSError *__autoreleasing *))action
 {
-    ZipWriteArgs *args = [[ZipWriteArgs alloc] init:filePath];
-    [args setTimestamp:fileDate];
-    [args setPermissions:permissions];
-    [args setCompressionMethod:method];
-    [args setOverwriteIfInArchive:overwrite];
-    [args setCrc:preCRC];
-    [args setPassword:password];
+    ZipFileProperties *props = [[ZipFileProperties alloc] init:filePath];
+    [props setTimestamp:fileDate];
+    [props setPermissions:permissions];
+    [props setCompressionMethod:method];
+    [props setOverwriteIfInArchive:overwrite];
+    [props setCrc:preCRC];
+    [props setPassword:password];
 
-    return [self writeIntoBuffer:args error:error block:action];
+    return [self writeIntoBuffer:props error:error block:action];
 }
 
-- (BOOL)writeIntoBuffer:(ZipWriteArgs *)args
+- (BOOL)writeIntoBuffer:(ZipFileProperties *)props
                   error:(NSError *__autoreleasing *)error
                   block:(BOOL (^)(BOOL (^)(const void *, unsigned int), NSError *__autoreleasing *))action
 {
     UZKCreateActivity("Writing Into Buffer");
     
-    UZKLogInfo("Writing data into buffer. args: %{public}@, error pointer specified: %{public}@",
-               args, error ? @"YES" : @"NO");
+    UZKLogInfo("Writing data into buffer. Properties: %{public}@, error pointer specified: %{public}@",
+               props, error ? @"YES" : @"NO");
     
-    uLong preCRC = args.crc;
+    uLong preCRC = props.crc;
     
-    NSAssert(preCRC != 0 || ([args.password length] == 0 && [self.password length] == 0),
+    NSAssert(preCRC != 0 || ([props.password length] == 0 && [self.password length] == 0),
              @"Cannot provide a password when writing into a buffer, "
              "unless a CRC is provided up front for inclusion in the header", nil);
     
@@ -1277,7 +1277,7 @@ compressionMethod:(UZKCompressionMethod)method
         
         return result;
     }
-                                       args:args
+                                      props:props
                                       error:error];
     
     return success;
@@ -1814,15 +1814,15 @@ compressionMethod:(UZKCompressionMethod)method
 }
 
 - (BOOL)performWriteAction:(int(^)(uLong *crc, NSError * __autoreleasing*innerError))write
-                      args:(ZipWriteArgs *)args
+                      props:(ZipFileProperties *)props
                      error:(NSError * __autoreleasing*)error
 {
     UZKCreateActivity("Performing Write");
     
-    NSString *password = args.password;
+    NSString *password = props.password;
     
-    if (args.overwriteIfInArchive) {
-        UZKLogInfo("Overwriting %{public}@ if it already exists. Will look for existing file to delete", args.fullFilePath);
+    if (props.overwriteIfInArchive) {
+        UZKLogInfo("Overwriting %{public}@ if it already exists. Will look for existing file to delete", props.fullFilePath);
         
         NSError *listFilesError = nil;
         NSArray *existingFiles;
@@ -1833,10 +1833,10 @@ compressionMethod:(UZKCompressionMethod)method
         }
         
         if ([existingFiles count]) {
-            UZKLogDebug("Existing files found. Looking for matches to filePath %{public}@", args.fullFilePath);
+            UZKLogDebug("Existing files found. Looking for matches to filePath %{public}@", props.fullFilePath);
             NSIndexSet *matchingFiles = [existingFiles indexesOfObjectsPassingTest:
                                          ^BOOL(UZKFileInfo *info, NSUInteger idx, BOOL *stop) {
-                                             if ([info.filename isEqualToString:args.fullFilePath]) {
+                                             if ([info.filename isEqualToString:props.fullFilePath]) {
                                                  *stop = YES;
                                                  return YES;
                                              }
@@ -1844,8 +1844,8 @@ compressionMethod:(UZKCompressionMethod)method
                                              return NO;
                                          }];
             
-            if (matchingFiles.count > 0 && ![self deleteFile:args.fullFilePath error:error]) {
-                UZKLogError("Failed to delete %{public}@ before writing new data for it", args.fullFilePath);
+            if (matchingFiles.count > 0 && ![self deleteFile:props.fullFilePath error:error]) {
+                UZKLogError("Failed to delete %{public}@ before writing new data for it", props.fullFilePath);
                 return NO;
             }
         }
@@ -1861,9 +1861,9 @@ compressionMethod:(UZKCompressionMethod)method
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         UZKCreateActivity("Performing Write Action");
         
-        UZKLogDebug("Making zip_fileinfo struct for date %{time_t}ld", lrint(args.timestamp.timeIntervalSince1970));
-        zip_fileinfo zi = [UZKArchive zipFileInfoForDate:args.timestamp
-                                        posixPermissions:args.permissions];
+        UZKLogDebug("Making zip_fileinfo struct for date %{time_t}ld", lrint(props.timestamp.timeIntervalSince1970));
+        zip_fileinfo zi = [UZKArchive zipFileInfoForDate:props.timestamp
+                                        posixPermissions:props.permissions];
         
         const char *passwordStr = NULL;
         
@@ -1874,19 +1874,19 @@ compressionMethod:(UZKCompressionMethod)method
         
         UZKLogDebug("Opening new file...");
         int err = zipOpenNewFileInZip3(welf.zipFile,
-                                       args.fullFilePath.UTF8String,
+                                       props.fullFilePath.UTF8String,
                                        &zi,
                                        NULL, 0, NULL, 0, NULL,
-                                       (args.compressionMethod != UZKCompressionMethodNone) ? Z_DEFLATED : 0,
-                                       args.compressionMethod,
+                                       (props.compressionMethod != UZKCompressionMethodNone) ? Z_DEFLATED : 0,
+                                       props.compressionMethod,
                                        0,
                                        -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
                                        passwordStr,
-                                       args.crc);
+                                       props.crc);
         
         if (err != ZIP_OK) {
             NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening file '%@' for write (%d)", @"UnzipKit", _resources, @"Detailed error string"),
-                                args.fullFilePath, err];
+                                props.fullFilePath, err];
             UZKLogError("UZKErrorCodeFileOpenForWrite: %{public}@", detail);
             [welf assignError:innerError code:UZKErrorCodeFileOpenForWrite
                        detail:detail];
@@ -1898,7 +1898,7 @@ compressionMethod:(UZKCompressionMethod)method
         err = write(&outCRC, innerError);
         if (err < 0) {
             NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error writing to file  '%@' (%d)", @"UnzipKit", _resources, @"Detailed error string"),
-                                args.fullFilePath, err];
+                                props.fullFilePath, err];
             UZKLogError("UZKErrorCodeFileOpenForWrite: %{public}@", detail);
             [welf assignError:innerError code:UZKErrorCodeFileWrite
                        detail:detail];
@@ -1909,7 +1909,7 @@ compressionMethod:(UZKCompressionMethod)method
         err = zipCloseFileInZipRaw(self.zipFile, 0, outCRC);
         if (err != ZIP_OK) {
             NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error closing file '%@' for write (%d)", @"UnzipKit", _resources, @"Detailed error string"),
-                                args.fullFilePath, err];
+                                props.fullFilePath, err];
             UZKLogError("UZKErrorCodeFileOpenForWrite: %{public}@", detail);
             [welf assignError:innerError code:UZKErrorCodeFileWrite
                        detail:detail];
