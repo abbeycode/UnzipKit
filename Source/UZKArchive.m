@@ -1831,7 +1831,7 @@ compressionMethod:(UZKCompressionMethod)method
             existingFiles = [self listFileInfo:&listFilesError];
         }
         
-        if (existingFiles) {
+        if ([existingFiles count]) {
             UZKLogDebug("Existing files found. Looking for matches to filePath %{public}@", args.fullFilePath);
             NSIndexSet *matchingFiles = [existingFiles indexesOfObjectsPassingTest:
                                          ^BOOL(UZKFileInfo *info, NSUInteger idx, BOOL *stop) {
