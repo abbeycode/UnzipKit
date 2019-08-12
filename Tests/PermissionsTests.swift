@@ -120,8 +120,9 @@ class PermissionsTests: UZKArchiveTestCase {
         
         let expectedPermissions: Int16 = 0o742
         
-        try! writeArchive.write(testFileData, filePath: testFilename, fileDate: nil, posixPermissions: expectedPermissions,
-                                compressionMethod: .default, password: nil, overwrite: true)
+        let props = ZipFileProperties(testFilename)
+        props.permissions = expectedPermissions;
+        try! writeArchive.write(testFileData, props: props)
         
         let readArchive = try! UZKArchive(url: testArchiveURL)
         let fileList = try! readArchive.listFileInfo()
@@ -131,7 +132,29 @@ class PermissionsTests: UZKArchiveTestCase {
         
         XCTAssertEqual(actualPermissions, expectedPermissions)
     }
+    
+    func testWriteData_NonDefault_deprecatedOverload() {
+        let testArchiveURL = tempDirectory.appendingPathComponent("PermissionsTestWriteData.zip")
+        let testFilename = nonZipTestFilePaths.first!
+        let testFileURL = testFileURLs[testFilename] as! URL
+        let testFileData = try! Data(contentsOf: testFileURL)
+        
+        let writeArchive = try! UZKArchive(url: testArchiveURL)
+        
+        let expectedPermissions: Int16 = 0o742
+        
+        try! writeArchive.deprecatedWrite(testFileData, filePath: testFilename, fileDate: nil, posixPermissions: expectedPermissions,
+                                          compressionMethod: .default, password: nil, overwrite: true)
 
+        let readArchive = try! UZKArchive(url: testArchiveURL)
+        let fileList = try! readArchive.listFileInfo()
+        
+        let writtenFileInfo = fileList.first { $0.filename == testFilename }
+        let actualPermissions = writtenFileInfo!.posixPermissions
+        
+        XCTAssertEqual(actualPermissions, expectedPermissions)
+    }
+    
     func testWriteIntoBuffer_Default() {
         let testArchiveURL = tempDirectory.appendingPathComponent("PermissionsTestWriteBufferedData.zip")
         let testFilename = nonZipTestFilePaths.first!
@@ -164,8 +187,37 @@ class PermissionsTests: UZKArchiveTestCase {
         let expectedPermissions: Int16 = 0o764
         
         let writeArchive = try! UZKArchive(url: testArchiveURL)
-        try! writeArchive.write(intoBuffer: testFilename, fileDate: nil, posixPermissions: expectedPermissions,
-                                compressionMethod: .default, overwrite: false, crc: 0, password: nil)
+        let props = ZipFileProperties(testFilename)
+        props.permissions = expectedPermissions
+        props.overwriteIfInArchive = false
+        try! writeArchive.write(intoBuffer: props)
+        { (writeDataHandler, error) in
+            let buffer = testFileData.withUnsafeBytes {
+                $0.baseAddress?.assumingMemoryBound(to: UInt32.self)
+            }
+            return writeDataHandler(buffer!, UInt32(testFileData.count))
+        }
+        
+        let readArchive = try! UZKArchive(url: testArchiveURL)
+        let fileList = try! readArchive.listFileInfo()
+        
+        let writtenFileInfo = fileList.first { $0.filename == testFilename }
+        let actualPermissions = writtenFileInfo!.posixPermissions
+        
+        XCTAssertEqual(actualPermissions, expectedPermissions)
+    }
+
+    func testWriteIntoBuffer_NonDefault_deprecatedOverload() {
+        let testArchiveURL = tempDirectory.appendingPathComponent("PermissionsTestWriteBufferedData_CustomPermissions.zip")
+        let testFilename = nonZipTestFilePaths.first!
+        let testFileURL = testFileURLs[testFilename] as! URL
+        let testFileData = try! Data(contentsOf: testFileURL)
+        
+        let expectedPermissions: Int16 = 0o764
+        
+        let writeArchive = try! UZKArchive(url: testArchiveURL)
+        try! writeArchive.deprecatedWrite(intoBuffer: testFilename, fileDate: nil, posixPermissions: expectedPermissions,
+                                          compressionMethod: .default, overwrite: false, crc: 0, password: nil)
         { (writeDataHandler, error) in
             let buffer = testFileData.withUnsafeBytes {
                 $0.baseAddress?.assumingMemoryBound(to: UInt32.self)

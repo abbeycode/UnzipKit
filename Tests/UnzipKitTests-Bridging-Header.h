@@ -6,3 +6,4 @@
 
 #import "zip.h"
 #import "UZKArchiveTestCase.h"
+#import "UZKArchive+Deprecated.h"

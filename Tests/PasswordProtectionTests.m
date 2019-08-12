@@ -49,11 +49,10 @@
             password = @"111111";
         }
         
+        ZipFileProperties *props = [[ZipFileProperties alloc] init:testFile];
+        props.password = password;
         BOOL result = [writeArchive writeData:fileData
-                                     filePath:testFile
-                                     fileDate:nil
-                            compressionMethod:UZKCompressionMethodDefault
-                                     password:password
+                                        props:props
                                         error:&writeError];
         
         XCTAssertTrue(result, @"Error writing archive data");
