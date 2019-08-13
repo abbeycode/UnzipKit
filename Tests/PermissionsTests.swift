@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import UnzipKit
 
 class PermissionsTests: UZKArchiveTestCase {
     
