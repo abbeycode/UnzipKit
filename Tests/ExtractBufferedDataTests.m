@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Abbey Code. All rights reserved.
 //
 
-#import "UnzipKit.h"
+@import UnzipKit;
 
 #import "UZKArchiveTestCase.h"
 #import "UnzipKitMacros.h"
