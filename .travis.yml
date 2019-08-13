@@ -6,8 +6,8 @@ osx_image: xcode10.2
 before_script:
     # Validation fails on CocoaPods versions before  1.8.0
     - gem install cocoapods --pre
-    # Make log level less verbose. Temporarily undo if more info is needed
-    - sudo log config --mode "level:default"
+    # Essentially turn off logging. Temporarily undo if more info is needed
+    - sudo log config --mode "level:default" --subsystem com.abbey-code.UnzipKit
 
 matrix:
   include:
