@@ -21,6 +21,9 @@ Pod::Spec.new do |s|
   s.resource_bundles = {
       'UnzipKitResources' => ['Resources/**/*']
   }
+  s.script_phases = { :name => "Generate UnzipKit Swift Header",
+                      :script => "\"${PODS_TARGET_SRCROOT}\"/Scripts/generate-swift-import-header.sh",
+                      :execution_position => :before_compile }
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'Tests/*.{h,m,swift}'
     test_spec.exclude_files = 'Tests/ExtractFilesTests.m',

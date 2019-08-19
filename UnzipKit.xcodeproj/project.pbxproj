@@ -397,6 +397,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 96EA65B41A40AEAE00685B6D /* Build configuration list for PBXNativeTarget "UnzipKit" */;
 			buildPhases = (
+				7A900754230AD74C004A95E5 /* ShellScript */,
 				96EA65991A40AEAE00685B6D /* Sources */,
 				96EA659A1A40AEAE00685B6D /* Frameworks */,
 				96EA659B1A40AEAE00685B6D /* Headers */,
@@ -505,6 +506,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7A900754230AD74C004A95E5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SOURCE_ROOT}\"/Scripts/generate-swift-import-header.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		7A0029131F93DB5800618503 /* Sources */ = {
@@ -725,7 +746,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"DEBUG=1",
-					"BUILT_AS_FRAMEWORK=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -783,7 +803,6 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "BUILT_AS_FRAMEWORK=1";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;

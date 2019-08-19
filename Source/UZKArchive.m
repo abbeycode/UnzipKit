@@ -6,12 +6,7 @@
 
 #import "UZKArchive.h"
 
-#ifdef BUILT_AS_FRAMEWORK
-    #import <UnzipKit/UnzipKit-Swift.h>
-#else
-    // Used when built as a static library
-    #import "UnzipKit-Swift.h"
-#endif
+#import "GeneratedSwiftImport.h"
 
 #import "zip.h"
 
