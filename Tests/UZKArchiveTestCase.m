@@ -15,6 +15,8 @@ static NSDateFormatter *testFileInfoDateFormatter;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundef"
+// UnzipKit compiles the library files into the test target directly, so these
+// are defined inside UZKArchive.m there. Only necessary in Xcode project
 #if defined(UNIFIED_LOGGING_SUPPORTED) && defined(CODE_IMPORTED_AS_LIB)
 os_log_t unzipkit_log;
 BOOL unzipkitIsAtLeast10_13SDK;
