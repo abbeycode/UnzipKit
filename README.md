@@ -100,9 +100,9 @@ You can also modify Zip archives:
 * Write data as a stream to the archive (from disk or over the network), using a block:
 
     ```Objective-C
-    BOOL success = [archive writeIntoBuffer:@"dir/filename.png"
-                                      error:&error
-                                      block:
+    BOOL success = [archive writeIntoBufferAtPath:@"dir/filename.png"
+                                            error:&error
+                                            block:
         ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
             for (NSUInteger i = 0; i <= someFile.length; i += bufferSize) {
                 const void *bytes = // some data
@@ -139,9 +139,7 @@ The following methods support `NSProgress` and `NSProgressReporting`:
 * `performOnDataInArchive:error:`
 * `extractBufferedDataFromFile:error:action:`
 * `writeData:filePath:error:`*
-* `writeData:filePath:fileDate:error:`*
-* `writeData:filePath:fileDate:compressionMethod:password:error:`*
-* `writeData:filePath:fileDate:compressionMethod:password:overwrite:error:`*
+* `writeData:props:error:`*
 
 _* the `writeData...` methods don't support cancellation like the read-only methods do
 
@@ -203,7 +201,7 @@ If you don't have a hierarchy of `NSProgress` instances, or if you want to obser
 
 Using either method above, you can call `[progress cancel]` to stop the operation in progress. It will cause the operation to fail, returning `nil` or `NO` (depending on the return type, and give an error with error code `UZKErrorCodeUserCancelled`.
 
-Note: Cancellation is only supported on extraction methods, not write methods.
+_Note: Cancellation is only supported on extraction methods, not write methods.__
 
 
 # Documentation

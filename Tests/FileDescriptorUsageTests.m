@@ -7,7 +7,7 @@
 //
 
 #import "UZKArchiveTestCase.h"
-#import "UnzipKit.h"
+@import UnzipKit;
 
 @interface FileDescriptorUsageTests : UZKArchiveTestCase
 @end
@@ -145,11 +145,78 @@
             NSString *fileName = fileList.lastObject;
             BOOL writeResult = [archive writeData:newFileData
                                          filePath:fileName
+                                            error:&writeError];
+            XCTAssertTrue(writeResult, @"Failed to write to archive (attempt %d)", x);
+            XCTAssertNil(writeError, @"Error writing to archive (attempt %d)", x);
+            
+            NSError *extractError = nil;
+            NSData *extractedData = [archive extractDataFromFile:fileName
+                                                           error:&extractError];
+            XCTAssertEqualObjects(extractedData, newFileData, @"Incorrect data written to file (attempt %d)", x);
+            XCTAssertNil(extractError, @"Error extracting from archive (attempt %d)", x);
+        }
+    }
+    
+    NSInteger finalFileCount = [self numberOfOpenFileHandles];
+    
+    XCTAssertEqualWithAccuracy(initialFileCount, finalFileCount, 5, @"File descriptors were left open");
+}
+
+
+- (void)testFileDescriptorUsage_WriteIntoArchive_deprecatedOverload
+{
+    NSInteger initialFileCount = [self numberOfOpenFileHandles];
+    
+    NSURL *testArchiveOriginalURL = [self largeArchive];
+    NSString *testArchiveName = testArchiveOriginalURL.lastPathComponent;
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    for (NSInteger i = 0; i < 100; i++) {
+        // Keep this test from stalling out the build
+        printf("testFileDescriptorUsage_WriteIntoArchive: Iteration %ld/100\n", (long)i);
+        
+        NSString *tempDir = [self randomDirectoryName];
+        NSURL *tempDirURL = [self.tempDirectory URLByAppendingPathComponent:tempDir];
+        NSURL *testArchiveCopyURL = [tempDirURL URLByAppendingPathComponent:testArchiveName];
+        
+        NSError *error = nil;
+        [fm createDirectoryAtURL:tempDirURL
+     withIntermediateDirectories:YES
+                      attributes:nil
+                           error:&error];
+        
+        XCTAssertNil(error, @"Error creating temp directory: %@", tempDirURL);
+        
+        [fm copyItemAtURL:testArchiveOriginalURL toURL:testArchiveCopyURL error:&error];
+        XCTAssertNil(error, @"Error copying test archive \n from: %@ \n\n   to: %@", testArchiveOriginalURL, testArchiveCopyURL);
+        
+        UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveCopyURL error:nil];
+        
+        NSArray *fileList = [archive listFilenames:&error];
+        XCTAssertNotNil(fileList, @"No filenames listed");
+        
+        for (NSString *fileName in fileList) {
+            NSData *fileData = [archive extractDataFromFile:fileName
+                                                      error:&error];
+            XCTAssertNotNil(fileData, @"No data extracted");
+            XCTAssertNil(error, @"Error extracting data");
+        }
+        
+        for (int x = 0; x < 50; x++) {
+            NSError *writeError = nil;
+            NSString *fileContents = [NSString stringWithFormat:@"This is a string %d", x];
+            NSData *newFileData = [fileContents dataUsingEncoding:NSUTF8StringEncoding];
+            NSString *fileName = fileList.lastObject;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            BOOL writeResult = [archive writeData:newFileData
+                                         filePath:fileName
                                          fileDate:[NSDate date]
                                 compressionMethod:UZKCompressionMethodDefault
                                          password:nil
                                         overwrite:YES
                                             error:&writeError];
+#pragma clang diagnostic pop
             XCTAssertTrue(writeResult, @"Failed to write to archive (attempt %d)", x);
             XCTAssertNil(writeError, @"Error writing to archive (attempt %d)", x);
             

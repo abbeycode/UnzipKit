@@ -21,6 +21,9 @@
 		7A5652241F90E01C006B782E /* CheckDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A5652231F90E01C006B782E /* CheckDataTests.m */; };
 		7A5A97011F89808900BCA061 /* ProgressReportingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A5A97001F89808900BCA061 /* ProgressReportingTests.m */; };
 		7AA77FC822C16CF600121052 /* PermissionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA77FC722C16CF600121052 /* PermissionsTests.swift */; };
+		7AA9F194230199990076AD43 /* UZKArchive+Deprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA9F192230199990076AD43 /* UZKArchive+Deprecated.h */; };
+		7AA9F195230199990076AD43 /* UZKArchive+Deprecated.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AA9F193230199990076AD43 /* UZKArchive+Deprecated.m */; };
+		7AB0E6AA22F3179F00AAE12F /* ZipFileProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB0E6A922F3179F00AAE12F /* ZipFileProperties.swift */; };
 		961A9BB51B306881007C4C6B /* WriteDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961A9BB41B306881007C4C6B /* WriteDataTests.swift */; };
 		962F9DA61D5D286B00205BEC /* UnzipKit.strings in Resources */ = {isa = PBXBuildFile; fileRef = 962F9DA41D5D286B00205BEC /* UnzipKit.strings */; };
 		962F9DA81D5D288B00205BEC /* UnzipKitResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 962F9D9E1D5D281E00205BEC /* UnzipKitResources.bundle */; };
@@ -82,6 +85,9 @@
 		7A5652231F90E01C006B782E /* CheckDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckDataTests.m; sourceTree = "<group>"; };
 		7A5A97001F89808900BCA061 /* ProgressReportingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProgressReportingTests.m; sourceTree = "<group>"; };
 		7AA77FC722C16CF600121052 /* PermissionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsTests.swift; sourceTree = "<group>"; };
+		7AA9F192230199990076AD43 /* UZKArchive+Deprecated.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UZKArchive+Deprecated.h"; sourceTree = "<group>"; };
+		7AA9F193230199990076AD43 /* UZKArchive+Deprecated.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UZKArchive+Deprecated.m"; sourceTree = "<group>"; };
+		7AB0E6A922F3179F00AAE12F /* ZipFileProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipFileProperties.swift; sourceTree = "<group>"; };
 		961A9BB31B306880007C4C6B /* UnzipKitTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "UnzipKitTests-Bridging-Header.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		961A9BB41B306881007C4C6B /* WriteDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WriteDataTests.swift; sourceTree = "<group>"; };
 		961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZKArchiveTestCase.h; sourceTree = "<group>"; };
@@ -225,6 +231,7 @@
 				96EA65FF1A40E31900685B6D /* UZKFileInfo.h */,
 				963603521BFB7F6500BF0C4F /* UZKFileInfo_Private.h */,
 				96EA66001A40E31900685B6D /* UZKFileInfo.m */,
+				7AB0E6A922F3179F00AAE12F /* ZipFileProperties.swift */,
 				96EA65A11A40AEAE00685B6D /* Supporting Files */,
 			);
 			name = UnzipKit;
@@ -245,6 +252,8 @@
 				96EA65BF1A40BF1A00685B6D /* Test Data */,
 				961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */,
 				96FCC8401B306CDD00726AC7 /* UZKArchiveTestCase.m */,
+				7AA9F192230199990076AD43 /* UZKArchive+Deprecated.h */,
+				7AA9F193230199990076AD43 /* UZKArchive+Deprecated.m */,
 				963386B71EE89A49006B16BF /* UtilityMethods.swift */,
 				7A5652231F90E01C006B782E /* CheckDataTests.m */,
 				968C40DB1B586401004C128E /* CommentsTests.m */,
@@ -338,6 +347,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				96EA65BC1A40B2EC00685B6D /* UZKArchive.h in Headers */,
+				7AA9F194230199990076AD43 /* UZKArchive+Deprecated.h in Headers */,
 				96EA66011A40E31900685B6D /* UZKFileInfo.h in Headers */,
 				96EA65A41A40AEAE00685B6D /* UnzipKit.h in Headers */,
 				963603531BFB815600BF0C4F /* UZKFileInfo_Private.h in Headers */,
@@ -387,6 +397,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 96EA65B41A40AEAE00685B6D /* Build configuration list for PBXNativeTarget "UnzipKit" */;
 			buildPhases = (
+				7A900754230AD74C004A95E5 /* ShellScript */,
 				96EA65991A40AEAE00685B6D /* Sources */,
 				96EA659A1A40AEAE00685B6D /* Frameworks */,
 				96EA659B1A40AEAE00685B6D /* Headers */,
@@ -440,7 +451,7 @@
 					};
 					96EA659D1A40AEAE00685B6D = {
 						CreatedOnToolsVersion = 6.1.1;
-						LastSwiftMigration = 0830;
+						LastSwiftMigration = 1030;
 					};
 					96EA65A81A40AEAE00685B6D = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -496,6 +507,26 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		7A900754230AD74C004A95E5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SOURCE_ROOT}\"/Scripts/generate-swift-import-header.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		7A0029131F93DB5800618503 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -519,6 +550,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7AB0E6AA22F3179F00AAE12F /* ZipFileProperties.swift in Sources */,
+				7AA9F195230199990076AD43 /* UZKArchive+Deprecated.m in Sources */,
 				96EA65BD1A40B2EC00685B6D /* UZKArchive.m in Sources */,
 				96EA66021A40E31900685B6D /* UZKFileInfo.m in Sources */,
 				965CF00C1D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m in Sources */,
@@ -711,8 +744,8 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
 					"$(inherited)",
+					"DEBUG=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -808,6 +841,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -827,6 +861,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -835,7 +870,10 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"CODE_IMPORTED_AS_LIB=1",
+				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/iphonesimulator";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.$(PRODUCT_NAME:rfc1034identifier)";
@@ -861,6 +899,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "CODE_IMPORTED_AS_LIB=1";
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/iphonesimulator";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abbey-code.$(PRODUCT_NAME:rfc1034identifier)";

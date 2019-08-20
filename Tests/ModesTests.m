@@ -7,7 +7,7 @@
 //
 
 #import "UZKArchiveTestCase.h"
-#import "UnzipKit.h"
+@import UnzipKit;
 
 
 @interface ModesTests : UZKArchiveTestCase
@@ -72,9 +72,9 @@
     UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     NSError *writeError = nil;
     
-    [archive writeIntoBuffer:@"newFile.zip"
-                       error:&writeError
-                       block:
+    [archive writeIntoBufferAtPath:@"newFile.zip"
+                             error:&writeError
+                             block:
      ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
          NSError *readError = nil;
          [archive listFilenames:&readError];
@@ -93,15 +93,15 @@
     UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     NSError *outerWriteError = nil;
     
-    [archive writeIntoBuffer:@"newFile.zip"
-                       error:&outerWriteError
-                       block:
+    [archive writeIntoBufferAtPath:@"newFile.zip"
+                             error:&outerWriteError
+                             block:
      ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
          NSError *innerWriteError = nil;
-         [archive writeIntoBuffer:@"newFile.zip"
-                            error:&innerWriteError
-                            block:^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {return YES;}];
-                  XCTAssertNotNil(innerWriteError, @"Nested write operation succeeded");
+         [archive writeIntoBufferAtPath:@"newFile.zip"
+                                  error:&innerWriteError
+                                  block:^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {return YES;}];
+         XCTAssertNotNil(innerWriteError, @"Nested write operation succeeded");
          XCTAssertEqual(innerWriteError.code, UZKErrorCodeFileWrite, @"Wrong error code returned");
          
          return YES;

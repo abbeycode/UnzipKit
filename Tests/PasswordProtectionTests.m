@@ -7,7 +7,8 @@
 //
 
 #import "UZKArchiveTestCase.h"
-#import "UnzipKit.h"
+@import UnzipKit;
+
 
 @interface PasswordProtectionTests : UZKArchiveTestCase
 @end
@@ -49,6 +50,44 @@
             password = @"111111";
         }
         
+        ZipFileProperties *props = [[ZipFileProperties alloc] init:testFile];
+        props.password = password;
+        BOOL result = [writeArchive writeData:fileData
+                                        props:props
+                                        error:&writeError];
+        
+        XCTAssertTrue(result, @"Error writing archive data");
+        XCTAssertNil(writeError, @"Error writing to file %@: %@", testFile, writeError);
+    }];
+    
+    UZKArchive *readArchive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
+    
+    XCTAssertTrue(readArchive.isPasswordProtected, @"isPasswordProtected = NO for password-protected archive");
+}
+
+- (void)testIsPasswordProtected_PasswordRequired_LastFileOnly_deprecatedOverload
+{
+    NSArray *testFiles = [self.nonZipTestFilePaths.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    NSMutableArray *testFileData = [NSMutableArray arrayWithCapacity:testFiles.count];
+    
+    NSURL *testArchiveURL = [self.tempDirectory URLByAppendingPathComponent:@"testIsPasswordProtected_PasswordRequired_LastFileOnly.zip"];
+    
+    UZKArchive *writeArchive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
+    
+    __block NSError *writeError = nil;
+    
+    [testFiles enumerateObjectsUsingBlock:^(NSString *testFile, NSUInteger idx, BOOL *stop) {
+        NSData *fileData = [NSData dataWithContentsOfURL:self.testFileURLs[testFile]];
+        [testFileData addObject:fileData];
+        
+        NSString *password = nil;
+        
+        if (idx == testFiles.count - 1) {
+            password = @"111111";
+        }
+        
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         BOOL result = [writeArchive writeData:fileData
                                      filePath:testFile
                                      fileDate:nil
@@ -59,7 +98,8 @@
         XCTAssertTrue(result, @"Error writing archive data");
         XCTAssertNil(writeError, @"Error writing to file %@: %@", testFile, writeError);
     }];
-    
+#pragma clang diagnostic pop
+
     UZKArchive *readArchive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     
     XCTAssertTrue(readArchive.isPasswordProtected, @"isPasswordProtected = NO for password-protected archive");

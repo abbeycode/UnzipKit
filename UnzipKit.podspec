@@ -7,29 +7,38 @@ Pod::Spec.new do |s|
   s.author           = { "Dov Frankel" => "dov@abbey-code.com" }
   s.social_media_url = "https://twitter.com/dovfrankel"
   s.source           = { :git => "https://github.com/abbeycode/UnzipKit.git", :tag => "#{s.version}" }
-  s.ios.deployment_target = "9.0"
-  s.osx.deployment_target = "10.9"
+  s.ios.deployment_target = "12.0"
+  s.osx.deployment_target = "10.14"
+  s.swift_version         = "5.0"
+  s.library = "z"
   s.requires_arc = 'Source/**/*'
   s.public_header_files  = "Source/UnzipKit.h",
                            "Source/UZKArchive.h",
                            "Source/UZKFileInfo.h"
   s.private_header_files = "Source/UZKFileInfo_Private.h"
-  s.source_files         = "Source/**/*.{h,m}"
+  s.source_files         = "Source/**/*.{h,m,swift}"
   s.exclude_files        = 'Resources/**/Info.plist'
   s.resource_bundles = {
       'UnzipKitResources' => ['Resources/**/*']
   }
+  s.script_phases = { :name => "Generate UnzipKit Swift Header",
+                      :script => "\"${PODS_TARGET_SRCROOT}\"/Scripts/generate-swift-import-header.sh",
+                      :execution_position => :before_compile }
   s.test_spec 'Tests' do |test_spec|
-    test_spec.source_files = 'Tests/*.{h,m}'
-    test_spec.exclude_files = 'Tests/ExtractFilesTests.m'
+    test_spec.source_files = 'Tests/*.{h,m,swift}'
+    test_spec.exclude_files = 'Tests/ExtractFilesTests.m',
+                              'Tests/UnzipKitTests-Bridging-Header.h'
+    test_spec.preserve_paths = 'Tests/UnzipKitTests-Bridging-Header.h'
     test_spec.resources = ['Tests/Test Data']
-    test_spec.pod_target_xcconfig = { "OTHER_CFLAGS" => "$(inherited) -Wno-unguarded-availability" }
+    test_spec.pod_target_xcconfig = {
+        "OTHER_CFLAGS" => "$(inherited) -Wno-unguarded-availability",
+        "SWIFT_OBJC_BRIDGING_HEADER" => "$(PODS_TARGET_SRCROOT)/Tests/UnzipKitTests-Bridging-Header.h"
+    }
     test_spec.scheme = {
         # Disable logging. Comment this line if you need diagnostic info
         :environment_variables => { "OS_ACTIVITY_MODE" => "disable" }
     }
   end
-  s.library = "z"
 
   s.subspec "minizip-lib" do |ss|
     ss.private_header_files = "Lib/MiniZip/*.h"
