@@ -1809,7 +1809,7 @@ compressionMethod:(UZKCompressionMethod)method
 }
 
 - (BOOL)performWriteAction:(int(^)(uLong *crc, NSError * __autoreleasing*innerError))write
-                      props:(ZipFileProperties *)props
+                     props:(ZipFileProperties *)props
                      error:(NSError * __autoreleasing*)error
 {
     UZKCreateActivity("Performing Write");
