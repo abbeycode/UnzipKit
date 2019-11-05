@@ -311,6 +311,9 @@ NS_DESIGNATED_INITIALIZER
 
         UZKLogDebug("File is not a ZIP. Unknown contents in 3rd and 4th bytes (%02X %02X)", dataBytes[2], dataBytes[3]);
     }
+    @catch (NSException *e) {
+        UZKLogError("Error checking if %{public}@ is a Zip archive: %{public}@", filePath, e);
+    }
     @finally {
         [handle closeFile];
     }
