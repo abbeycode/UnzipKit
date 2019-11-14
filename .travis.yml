@@ -1,7 +1,7 @@
 language:
   - objective-c
 
-osx_image: xcode10.2
+osx_image: xcode11.2
 
 before_script:
     # Validation fails on CocoaPods versions before  1.8.0
