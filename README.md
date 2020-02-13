@@ -97,6 +97,30 @@ You can also modify Zip archives:
                              filePath:@"dir/filename.jpg"
                                 error:&error];
     ```
+* Write an in-memory `NSData` into the archive with custom properties
+
+    **Objective-C**
+
+    ```Objective-C
+    ZipFileProperties *props = [[ZipFileProperties alloc] init:someFile];
+    props.password = @"secret";
+        
+    BOOL success = [archive writeData:someFile
+                             filePath:@"dir/filename.jpg"
+                                error:&error];
+    ```
+
+    **Swift**
+
+    ```Swift
+    do {
+        let props = ZipFileProperties(filePath)
+        props.password = "secret"
+        try archive.write(someFile, props: props)
+    } catch let error as NSError {
+        NSLog("Error writing to file \(filePath): \(error)")
+    }
+    ```
 * Write data as a stream to the archive (from disk or over the network), using a block:
 
     ```Objective-C
