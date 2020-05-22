@@ -18,6 +18,7 @@ Pod::Spec.new do |s|
   s.private_header_files = "Source/UZKFileInfo_Private.h"
   s.source_files         = "Source/**/*.{h,m,swift}"
   s.exclude_files        = 'Resources/**/Info.plist'
+  s.preserve_paths       = 'Scripts/generate-swift-import-header.sh'
   s.resource_bundles = {
       'UnzipKitResources' => ['Resources/**/*']
   }
@@ -26,8 +27,7 @@ Pod::Spec.new do |s|
                       :execution_position => :before_compile }
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'Tests/*.{h,m,swift}'
-    test_spec.exclude_files = 'Tests/ExtractFilesTests.m',
-                              'Tests/UnzipKitTests-Bridging-Header.h'
+    test_spec.exclude_files = 'Tests/ExtractFilesTests.m'
     test_spec.preserve_paths = 'Tests/UnzipKitTests-Bridging-Header.h'
     test_spec.resources = ['Tests/Test Data']
     test_spec.pod_target_xcconfig = {
