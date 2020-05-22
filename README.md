@@ -319,6 +319,28 @@ Before pushing a build, you must:
 
 Once that's done, you can call `git push --follow-tags` [<sup id=a1>1</sup>](#f1), and let [Travis CI](https://travis-ci.org/abbeycode/UnzipKit/builds) take care of the rest.
 
+## Re-registering with CocoaPods
+
+If you see this message in the Release stage of the build, you need to get a new authentication token from CocaPods:
+
+> Authentication token is invalid or unverified. Either verify it with the email that was sent or register a new session
+
+1. Locally, call `pod trunk register _pod owner email address_ --description='_describe machine_'`
+1. Click the verification link in the email that CocoaPods sends
+1. Open ~/.netrc, and look for the section like this:
+    machine trunk.cocoapods.org
+    login user@example.com
+    password 0000000011111111
+1. Update the token in Travis CI:
+    1. Go to the [plan settings](https://travis-ci.org/github/abbeycode/UnzipKit/settings)
+    1. Delete `COCOAPODS_TRUNK_TOKEN`
+    1. Create a new Environment Variable:
+        * Name: *COCOAPODS_TRUNK_TOKEN*
+        * Value: *0000000011111111* (substituting the value from you local machine found above)
+        * Branch: *All Branches*
+        * Display Value in Build Log: *Leave unchecked*
+1. Re-run the Release stage
+
 # License
 
 * UnzipKit: [See LICENSE (BSD)](LICENSE)
