@@ -26,7 +26,10 @@ def add_release(token, repo, tag, archive_path, notes):
 
     is_beta = tag_is_beta(tag)
 
-    url = 'https://api.github.com/repos/{}/releases?access_token={}'.format(repo, token)
+    url = 'https://api.github.com/repos/{}/releases'.format(repo)
+    header = {
+        'Authorization': 'token {}'.format(token)
+    }
     values = {
         'tag_name': tag,
         'name': 'v{}'.format(tag),
@@ -35,7 +38,7 @@ def add_release(token, repo, tag, archive_path, notes):
     }
     
     data = json.dumps(values)
-    request = urllib2.Request(url, data)
+    request = urllib2.Request(url, data, header)
     response = urllib2.urlopen(request)
     the_page = response.read()
     
@@ -80,8 +83,11 @@ def upload_carthage_archive(token, upload_url, archive_path):
     '''
     
     upload_url = upload_url.split('{')[0]
-    url = '{}?access_token={}&name={}'.format(upload_url, token, archive_path)
-    header = {'Content-Type': 'application/zip'}
+    url = '{}?name={}'.format(upload_url, archive_path)
+    header = {
+        'Authorization': 'token {}'.format(token),
+        'Content-Type': 'application/zip'
+    }
 
     with FileWithLen(archive_path, 'r') as f:
         request = urllib2.Request(url, f, header)
