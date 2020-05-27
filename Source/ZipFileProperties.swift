@@ -66,7 +66,7 @@ import Foundation
         let permissionStr = String(permissions, radix: 8).uppercased()
 
         return """
-            { fullFilePath: \(fullFilePath), compressionMethod: \(compressionMethod), crc: \(crcStr),
+            { fullFilePath: \(fullFilePath), compressionMethod: \(compressionMethod.rawValue), crc: \(crcStr),
             overwriteIfInArchive: \(overwriteIfInArchive), password: \(password),
             permissions: \(permissionStr), timestamp: \(timestamp?.description ?? "none") }
             """.replacingOccurrences(of: "\n", with: " ");
