@@ -2023,7 +2023,7 @@ compressionMethod:(UZKCompressionMethod)method
             }
             
             UZKLogDebug("Opening file for read...");
-            self.unzFile = unzOpen(self.filename.UTF8String);
+            self.unzFile = unzOpen64(self.filename.UTF8String);
             if (self.unzFile == NULL) {
                 NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening zip file %@", @"UnzipKit", _resources, @"Detailed error string"),
                                     zipFile];
@@ -2342,8 +2342,9 @@ compressionMethod:(UZKCompressionMethod)method
     
     UZKLogDebug("Checking archive exists");
 
+    NSURL *fileURL = self.fileURL;
     NSError *checkExistsError = nil;
-    if (![self.fileURL checkResourceIsReachableAndReturnError:&checkExistsError]) {
+    if (!fileURL || ![fileURL checkResourceIsReachableAndReturnError:&checkExistsError]) {
         UZKLogDebug("Archive not found");
         return nil;
     }
@@ -2434,15 +2435,15 @@ compressionMethod:(UZKCompressionMethod)method
                                            relativeToURL:nil
                                                    error:&bookmarkError];
 
-    if (bookmarkError) {
+    if (!self.fileBookmark) {
         UZKLogFault("Error creating bookmark for URL %{public}@: %{public}@", fileURL, bookmarkError);
     }
 
     if (error) {
-        *error = bookmarkError ? bookmarkError : nil;
+        *error = bookmarkError;
     }
     
-    return bookmarkError == nil;
+    return self.fileBookmark != nil;
 }
 
 + (NSString *)figureOutCString:(const char *)filenameBytes
