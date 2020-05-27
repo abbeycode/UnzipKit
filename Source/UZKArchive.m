@@ -374,17 +374,23 @@ NS_DESIGNATED_INITIALIZER
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         UZKCreateActivity("Finding File Info Items");
         
+        __strong UZKArchive *sself = welf;
+        if (!sself) {
+            UZKLogInfo("UZKArchive instance has been deallocated. Exiting listFileInfo:error: action");
+            return;
+        }
+
         UZKLogInfo("Getting global info...");
-        unzGoToNextFile(welf.unzFile);
+        unzGoToNextFile(sself.unzFile);
         
         unz_global_info gi;
-        int err = unzGetGlobalInfo(welf.unzFile, &gi);
+        int err = unzGetGlobalInfo(sself.unzFile, &gi);
         if (err != UNZ_OK) {
             NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting global info (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                 err];
             UZKLogError("UZKErrorCodeArchiveNotFound: %{public}@", detail);
-            [welf assignError:innerError code:UZKErrorCodeArchiveNotFound
-                       detail:detail];
+            [sself assignError:innerError code:UZKErrorCodeArchiveNotFound
+                        detail:detail];
             return;
         }
         
@@ -392,20 +398,20 @@ NS_DESIGNATED_INITIALIZER
         UZKLogDebug("fileCount: %lu", (unsigned long)fileCount);
 
         UZKLogInfo("Going to first file...");
-        err = unzGoToFirstFile(welf.unzFile);
+        err = unzGoToFirstFile(sself.unzFile);
         
         if (err != UNZ_OK) {
             NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error going to first file in archive (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                 err];
             UZKLogError("UZKErrorCodeFileNavigationError: %{public}@", detail);
-            [welf assignError:innerError code:UZKErrorCodeFileNavigationError
-                       detail:detail];
+            [sself assignError:innerError code:UZKErrorCodeFileNavigationError
+                        detail:detail];
             return;
         }
         
         for (NSUInteger i = 0; i < fileCount; i++) {
             UZKLogDebug("Iterating through file info (iteration #%lu)", (unsigned long)i+1);
-            UZKFileInfo *info = [welf currentFileInZipInfo:innerError];
+            UZKFileInfo *info = [sself currentFileInZipInfo:innerError];
             
             if (info) {
                 UZKLogDebug("Info found: %{public}@", info.filename);
@@ -416,7 +422,7 @@ NS_DESIGNATED_INITIALIZER
             }
             
             UZKLogDebug("Going to next file...");
-            err = unzGoToNextFile(welf.unzFile);
+            err = unzGoToNextFile(sself.unzFile);
             if (err == UNZ_END_OF_LIST_OF_FILE) {
                 UZKLogInfo("End of file found");
                 return;
@@ -426,8 +432,8 @@ NS_DESIGNATED_INITIALIZER
                 NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error navigating to next file (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                     err];
                 UZKLogError("UZKErrorCodeFileNavigationError: %{public}@", detail);
-                [welf assignError:innerError code:UZKErrorCodeFileNavigationError
-                           detail:detail];
+                [sself assignError:innerError code:UZKErrorCodeFileNavigationError
+                            detail:detail];
                 return;
             }
         }
@@ -480,7 +486,12 @@ NS_DESIGNATED_INITIALIZER
         UZKCreateActivity("Performing Extraction");
         
         NSError *strongError = nil;
-        
+        __strong UZKArchive *sself = welf;
+        if (!sself) {
+            UZKLogInfo("UZKArchive instance has been deallocated. Exiting extractFilesTo:overwrite:error: action");
+            return;
+        }
+
         @try {
             for (UZKFileInfo *info in fileInfo) {
                 UZKLogDebug("Extracting %{public}@ to disk", info.filename);
@@ -489,8 +500,8 @@ NS_DESIGNATED_INITIALIZER
                     NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error locating file '%@' in archive", @"UnzipKit", _resources, @"Detailed error string"),
                                         info.filename];
                     UZKLogError("Halted file extraction due to user cancellation: %{public}@", detail);
-                    [welf assignError:&strongError code:UZKErrorCodeUserCancelled
-                               detail:detail];
+                    [sself assignError:&strongError code:UZKErrorCodeUserCancelled
+                                detail:detail];
                     return;
                 }
                 
@@ -499,8 +510,8 @@ NS_DESIGNATED_INITIALIZER
                         NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error locating file '%@' in archive", @"UnzipKit", _resources, @"Detailed error string"),
                                             info.filename];
                         UZKLogError("UZKErrorCodeFileNotFoundInArchive: %{public}@", detail);
-                        [welf assignError:&strongError code:UZKErrorCodeFileNotFoundInArchive
-                                   detail:detail];
+                        [sself assignError:&strongError code:UZKErrorCodeFileNotFoundInArchive
+                                    detail:detail];
                         return;
                     }
                     
@@ -524,8 +535,8 @@ NS_DESIGNATED_INITIALIZER
                             NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to create destination directory: %@", @"UnzipKit", _resources, @"Detailed error string"),
                                                 extractDir];
                             UZKLogError("UZKErrorCodeOutputError: %{public}@", detail);
-                            [welf assignError:&strongError code:UZKErrorCodeOutputError
-                                       detail:detail];
+                            [sself assignError:&strongError code:UZKErrorCodeOutputError
+                                        detail:detail];
                             return;
                         }
                     }
@@ -552,8 +563,8 @@ NS_DESIGNATED_INITIALIZER
                         NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error creating current file (%d) '%@'", @"UnzipKit", _resources, @"Detailed error string"),
                                             strongError, info.filename];
                         UZKLogError("UZKErrorCodeOutputError: %{public}@", detail);
-                        [welf assignError:&strongError code:UZKErrorCodeOutputError
-                                   detail:detail];
+                        [sself assignError:&strongError code:UZKErrorCodeOutputError
+                                    detail:detail];
                         return;
                     }
                                         
@@ -566,22 +577,22 @@ NS_DESIGNATED_INITIALIZER
                         NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error writing to file: %@", @"UnzipKit", _resources, @"Detailed error string"),
                                             deflatedFileURL];
                         UZKLogError("UZKErrorCodeOutputError: %{public}@", detail);
-                        [welf assignError:&strongError code:UZKErrorCodeOutputError
-                                   detail:detail];
+                        [sself assignError:&strongError code:UZKErrorCodeOutputError
+                                    detail:detail];
                         return;
                     }
                     
                     [progress becomeCurrentWithPendingUnitCount:info.uncompressedSize];
                     
                     UZKLogDebug("Extracting buffered data");
-                    BOOL extractSuccess = [welf extractBufferedDataFromFile:info.filename
-                                                                  error:&strongError
-                                                                 action:
-                                    ^(NSData *dataChunk, CGFloat percentDecompressed) {
-                                        UZKLogDebug("Writing data chunk of size %lu (%lld total so far)", (unsigned long)dataChunk.length, bytesDecompressed);
-                                        bytesDecompressed += dataChunk.length;
-                                        [deflatedFileHandle writeData:dataChunk];
-                                    }];
+                    BOOL extractSuccess = [sself extractBufferedDataFromFile:info.filename
+                                                                       error:&strongError
+                                                                      action:
+                                           ^(NSData *dataChunk, CGFloat percentDecompressed) {
+                                               UZKLogDebug("Writing data chunk of size %lu (%lld total so far)", (unsigned long)dataChunk.length, bytesDecompressed);
+                                               bytesDecompressed += dataChunk.length;
+                                               [deflatedFileHandle writeData:dataChunk];
+                                           }];
                     
                     [progress resignCurrent];
 
@@ -730,20 +741,26 @@ NS_DESIGNATED_INITIALIZER
     return [self performOnFilesInArchive:^(UZKFileInfo *fileInfo, BOOL *stop) {
         UZKLogInfo("Locating file %{public}@", fileInfo.filename);
         
-        if (![welf locateFileInZip:fileInfo.filename error:error]) {
+        __strong UZKArchive *sself = welf;
+        if (!sself) {
+            UZKLogInfo("UZKArchive instance has been deallocated. Exiting performOnDataInArchive:error: action");
+            return;
+        }
+
+        if (![sself locateFileInZip:fileInfo.filename error:error]) {
             NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to locate '%@' in archive during-perform on-data operation", @"UnzipKit", _resources, @"Detailed error string"),
                                 fileInfo.filename];
             UZKLogError("UZKErrorCodeFileNotFoundInArchive: %{public}@", detail);
-            [welf assignError:error code:UZKErrorCodeFileNotFoundInArchive
-                       detail:detail];
+            [sself assignError:error code:UZKErrorCodeFileNotFoundInArchive
+                        detail:detail];
             return;
         }
         
         UZKLogInfo("Reading file from archive");
         
-        NSData *fileData = [welf readFile:fileInfo.filename
-                                   length:fileInfo.uncompressedSize
-                                    error:error];
+        NSData *fileData = [sself readFile:fileInfo.filename
+                                    length:fileInfo.uncompressedSize
+                                     error:error];
         
         if (!fileData) {
             UZKLogError("Error reading file %{public}@ in archive", fileInfo.filename);
@@ -767,17 +784,23 @@ NS_DESIGNATED_INITIALIZER
     NSUInteger bufferSize = 1024 * 256; // 256 kb, arbitrary
     
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
-        if (![welf locateFileInZip:filePath error:innerError]) {
+        __strong UZKArchive *sself = welf;
+        if (!sself) {
+            UZKLogInfo("UZKArchive instance has been deallocated. Exiting extractBufferedDataFromFile:error:action: action");
+            return;
+        }
+
+        if (![sself locateFileInZip:filePath error:innerError]) {
             NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to locate '%@' in archive during buffered read", @"UnzipKit", _resources, @"Detailed error string"),
                                 filePath];
             UZKLogError("UZKErrorCodeFileNotFoundInArchive: %{public}@", detail);
-            [welf assignError:innerError code:UZKErrorCodeFileNotFoundInArchive
-                       detail:detail];
+            [sself assignError:innerError code:UZKErrorCodeFileNotFoundInArchive
+                        detail:detail];
             return;
         }
         
         UZKLogInfo("Getting file info");
-        UZKFileInfo *info = [welf currentFileInZipInfo:innerError];
+        UZKFileInfo *info = [sself currentFileInZipInfo:innerError];
         
         if (!info) {
             UZKLogError("Failed to get info of file %{public}@ in archive", filePath);
@@ -787,7 +810,7 @@ NS_DESIGNATED_INITIALIZER
         progress.totalUnitCount = info.uncompressedSize;
 
         UZKLogInfo("Opening file");
-        if (![welf openFile:innerError]) {
+        if (![sself openFile:innerError]) {
             UZKLogError("Failed to open file %{public}@ in archive", filePath);
             return;
         }
@@ -806,14 +829,14 @@ NS_DESIGNATED_INITIALIZER
             @autoreleasepool {
                 UZKLogDebug("Reading file data");
                 NSMutableData *data = [NSMutableData dataWithLength:bufferSize];
-                int bytesRead = unzReadCurrentFile(welf.unzFile, data.mutableBytes, (unsigned)bufferSize);
+                int bytesRead = unzReadCurrentFile(sself.unzFile, data.mutableBytes, (unsigned)bufferSize);
                 
                 if (bytesRead < 0) {
                     NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to read file %@ in zip", @"UnzipKit", _resources, @"Detailed error string"),
                                         info.filename];
                     UZKLogError("Error reading data (code %d): %{public}@", bytesRead, detail);
-                    [welf assignError:&strongInnerError code:bytesRead
-                               detail:detail];
+                    [sself assignError:&strongInnerError code:bytesRead
+                                detail:detail];
                     break;
                 }
                 else if (bytesRead == 0) {
@@ -841,7 +864,7 @@ NS_DESIGNATED_INITIALIZER
         }
         
         UZKLogInfo("Closing file...");
-        int err = unzCloseCurrentFile(welf.unzFile);
+        int err = unzCloseCurrentFile(sself.unzFile);
         if (err != UNZ_OK) {
             if (err == UZKErrorCodeCRCError) {
                 err = UZKErrorCodeInvalidPassword;
@@ -849,8 +872,8 @@ NS_DESIGNATED_INITIALIZER
             
             NSString *detail = NSLocalizedStringFromTableInBundle(@"Error closing current file during buffered read", @"UnzipKit", _resources, @"Detailed error string");
             UZKLogError("Error closing file (code %d): %{public}@", err, detail);
-            [welf assignError:innerError code:err
-                       detail:detail];
+            [sself assignError:innerError code:err
+                        detail:detail];
             return;
         }
         
@@ -1086,6 +1109,12 @@ compressionMethod:(UZKCompressionMethod)method
     BOOL success = [self performWriteAction:^int(uLong *crc, NSError * __autoreleasing*innerError) {
         UZKCreateActivity("Performing File Write");
         
+        __strong UZKArchive *sself = welf;
+        if (!sself) {
+            UZKLogInfo("UZKArchive instance has been deallocated. Exiting writeData:props:error: action");
+            return ZIP_BADZIPFILE;
+        }
+
         NSAssert(crc, @"No CRC reference passed", nil);
         *crc = calculatedCRC;
         
@@ -1096,7 +1125,7 @@ compressionMethod:(UZKCompressionMethod)method
             
             unsigned int dataRemaining = (unsigned int)(data.length - i);
             unsigned int size = (unsigned int)(dataRemaining < bufferSize ? dataRemaining : bufferSize);
-            int err = zipWriteInFileInZip(welf.zipFile, (const char *)bytes + i, size);
+            int err = zipWriteInFileInZip(sself.zipFile, (const char *)bytes + i, size);
             
             if (err != ZIP_OK) {
                 UZKLogError("Error writing data: %d", err);
@@ -1239,6 +1268,12 @@ compressionMethod:(UZKCompressionMethod)method
     BOOL success = [self performWriteAction:^int(uLong *crc, NSError * __autoreleasing*innerError) {
         UZKCreateActivity("Performing File Write");
         
+        __strong UZKArchive *sself = welf;
+        if (!sself) {
+            UZKLogInfo("UZKArchive instance has been deallocated. Exiting writeIntoBuffer:error:block: action");
+            return ZIP_BADZIPFILE;
+        }
+
         NSAssert(crc, @"No CRC reference passed", nil);
         
         if (!action) {
@@ -1269,8 +1304,8 @@ compressionMethod:(UZKCompressionMethod)method
                                 NSLocalizedStringFromTableInBundle(@"Incorrect CRC provided\n%@ given\n%@ calculated", @"UnzipKit", _resources, @"CRC mismatch error detail"),
                                 preCRCStr, calculatedCRCStr];
             UZKLogError("UZKErrorCodePreCRCMismatch: %{public}@", detail);
-            return [welf assignError:innerError code:UZKErrorCodePreCRCMismatch
-                              detail:detail];
+            return [sself assignError:innerError code:UZKErrorCodePreCRCMismatch
+                               detail:detail];
         }
         
         return result;
@@ -1859,6 +1894,12 @@ compressionMethod:(UZKCompressionMethod)method
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         UZKCreateActivity("Performing Write Action");
         
+        __strong UZKArchive *sself = welf;
+        if (!sself) {
+            UZKLogInfo("UZKArchive instance has been deallocated. Exiting performWriteAction:props:error: action");
+            return;
+        }
+        
         UZKLogDebug("Making zip_fileinfo struct for date %{time_t}ld", lrint(props.timestamp.timeIntervalSince1970));
         zip_fileinfo zi = [UZKArchive zipFileInfoForDate:props.timestamp
                                         posixPermissions:props.permissions];
@@ -1871,7 +1912,7 @@ compressionMethod:(UZKCompressionMethod)method
         }
         
         UZKLogDebug("Opening new file...");
-        int err = zipOpenNewFileInZip3(welf.zipFile,
+        int err = zipOpenNewFileInZip3(sself.zipFile,
                                        props.fullFilePath.UTF8String,
                                        &zi,
                                        NULL, 0, NULL, 0, NULL,
@@ -1886,8 +1927,8 @@ compressionMethod:(UZKCompressionMethod)method
             NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening file '%@' for write (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                 props.fullFilePath, err];
             UZKLogError("UZKErrorCodeFileOpenForWrite: %{public}@", detail);
-            [welf assignError:innerError code:UZKErrorCodeFileOpenForWrite
-                       detail:detail];
+            [sself assignError:innerError code:UZKErrorCodeFileOpenForWrite
+                        detail:detail];
             return;
         }
         
@@ -1898,8 +1939,8 @@ compressionMethod:(UZKCompressionMethod)method
             NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error writing to file  '%@' (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                 props.fullFilePath, err];
             UZKLogError("UZKErrorCodeFileOpenForWrite: %{public}@", detail);
-            [welf assignError:innerError code:UZKErrorCodeFileWrite
-                       detail:detail];
+            [sself assignError:innerError code:UZKErrorCodeFileWrite
+                        detail:detail];
             return;
         }
         
@@ -1909,8 +1950,8 @@ compressionMethod:(UZKCompressionMethod)method
             NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error closing file '%@' for write (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                 props.fullFilePath, err];
             UZKLogError("UZKErrorCodeFileOpenForWrite: %{public}@", detail);
-            [welf assignError:innerError code:UZKErrorCodeFileWrite
-                       detail:detail];
+            [sself assignError:innerError code:UZKErrorCodeFileWrite
+                        detail:detail];
             return;
         }
         
@@ -1925,7 +1966,6 @@ compressionMethod:(UZKCompressionMethod)method
            error:(NSError * __autoreleasing*)error
 {
     UZKCreateActivity("Opening File");
-    
     UZKLogDebug("Opening file in mode %lu", (unsigned long)mode);
     
     if (error) {
@@ -2315,17 +2355,23 @@ compressionMethod:(UZKCompressionMethod)method
     BOOL success = [self performActionWithArchiveOpen:^(NSError * __autoreleasing*innerError) {
         UZKCreateActivity("Perform Action");
         
+        __strong UZKArchive *sself = welf;
+        if (!sself) {
+            UZKLogInfo("UZKArchive instance has been deallocated. Exiting readGlobalComment action");
+            return;
+        }
+
         UZKLogDebug("Getting global info...");
         unz_global_info global_info;
-        int err = unzGetGlobalInfo(welf.unzFile, &global_info);
+        int err = unzGetGlobalInfo(sself.unzFile, &global_info);
         if (err != UNZ_OK) {
             NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting global info of archive during comment read: %d", @"UnzipKit", _resources, @"Detailed error string"),
                                 err];
             UZKLogError("UZKErrorCodeReadComment: %{public}@", detail);
             UZKLogDebug("Closing archive...");
-            unzClose(welf.unzFile);
+            unzClose(sself.unzFile);
             
-            [welf assignError:innerError code:UZKErrorCodeReadComment detail:detail];
+            [sself assignError:innerError code:UZKErrorCodeReadComment detail:detail];
             return;
         }
         
@@ -2339,21 +2385,21 @@ compressionMethod:(UZKCompressionMethod)method
                 NSString *detail = NSLocalizedStringFromTableInBundle(@"Error allocating the global comment during comment read", @"UnzipKit", _resources, @"Detailed error string");
                 UZKLogError("UZKErrorCodeReadComment: %{public}@", detail);
                 UZKLogDebug("Closing archive...");
-                unzClose(welf.unzFile);
+                unzClose(sself.unzFile);
                 
-                [welf assignError:innerError code:UZKErrorCodeReadComment detail:detail];
+                [sself assignError:innerError code:UZKErrorCodeReadComment detail:detail];
                 return;
             }
             
             UZKLogDebug("Reading global comment...");
-            if ((unsigned int)unzGetGlobalComment(welf.unzFile, global_comment, global_info.size_comment + 1) != global_info.size_comment) {
+            if ((unsigned int)unzGetGlobalComment(sself.unzFile, global_comment, global_info.size_comment + 1) != global_info.size_comment) {
                 NSString *detail = NSLocalizedStringFromTableInBundle(@"Error reading the comment (readGlobalComment)", @"UnzipKit", _resources, @"Detailed error string");
                 UZKLogError("UZKErrorCodeReadComment: %{public}@", detail);
                 UZKLogDebug("Closing archive and freeing global_comment...");
-                unzClose(welf.unzFile);
+                unzClose(sself.unzFile);
                 free(global_comment);
                 
-                [welf assignError:innerError code:UZKErrorCodeReadComment detail:@"Error reading global comment (unzGetGlobalComment)"];
+                [sself assignError:innerError code:UZKErrorCodeReadComment detail:@"Error reading global comment (unzGetGlobalComment)"];
                 return;
             }
             
