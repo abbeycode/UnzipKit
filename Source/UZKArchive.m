@@ -124,7 +124,7 @@ NS_DESIGNATED_INITIALIZER
         UZKCreateActivity("Init Archive");
         
         if (!fileURL) {
-            UZKLogError("Nil fileURL passed to UZKArchive initializer")
+            UZKLogError("Nil fileURL passed to UZKArchive initializer");
             return nil;
         }
         
@@ -142,7 +142,7 @@ NS_DESIGNATED_INITIALIZER
                 return nil;
             }
         } else {
-            UZKLogInfo("URL %{public}@ doesn't yet exist", fileURL)
+            UZKLogInfo("URL %{public}@ doesn't yet exist", fileURL);
         }
 
         UZKLogDebug("Initializing private fields");
@@ -531,7 +531,7 @@ NS_DESIGNATED_INITIALIZER
                     }
                     
                     if (info.isDirectory) {
-                        UZKLogDebug("Created empty directory")
+                        UZKLogDebug("Created empty directory");
                         continue;
                     }
                     
@@ -962,7 +962,7 @@ NS_DESIGNATED_INITIALIZER
 
          if (extractedCRC != fileInfo.CRC) {
              UZKLogError("CRC mismatch in '%{public}@': expected %010lu, found %010lu",
-                         fileInfo.filename, (uLong)fileInfo.CRC, extractedCRC)
+                         fileInfo.filename, (uLong)fileInfo.CRC, extractedCRC);
              dataIsValid = NO;
          }
          

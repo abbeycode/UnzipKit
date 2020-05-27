@@ -48,25 +48,25 @@ extern BOOL unzipkitIsAtLeast10_13SDK; // Declared in UZKArchive.m
     minVersion.minorVersion = SDK_10_13_MINOR; \
     minVersion.patchVersion = 0; \
     unzipkitIsAtLeast10_13SDK = [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:minVersion]; \
-    UZKLogDebug("Is >= 10.13 (or iOS 11): %@", unzipkitIsAtLeast10_13SDK ? @"YES" : @"NO");
+    UZKLogDebug("Is >= 10.13 (or iOS 11): %@", unzipkitIsAtLeast10_13SDK ? @"YES" : @"NO")
 
-#define UZKLog(format, ...)      os_log(unzipkit_log, format, ##__VA_ARGS__);
-#define UZKLogInfo(format, ...)  os_log_info(unzipkit_log, format, ##__VA_ARGS__);
-#define UZKLogDebug(format, ...) os_log_debug(unzipkit_log, format, ##__VA_ARGS__);
+#define UZKLog(format, ...)      os_log(unzipkit_log, format, ##__VA_ARGS__)
+#define UZKLogInfo(format, ...)  os_log_info(unzipkit_log, format, ##__VA_ARGS__)
+#define UZKLogDebug(format, ...) os_log_debug(unzipkit_log, format, ##__VA_ARGS__)
 
 
 #define UZKLogError(format, ...) \
     if (unzipkitIsAtLeast10_13SDK) os_log_error(unzipkit_log, format, ##__VA_ARGS__); \
-    else os_log_with_type(unzipkit_log, OS_LOG_TYPE_ERROR, format, ##__VA_ARGS__);
+    else os_log_with_type(unzipkit_log, OS_LOG_TYPE_ERROR, format, ##__VA_ARGS__)
 
 #define UZKLogFault(format, ...) \
     if (unzipkitIsAtLeast10_13SDK) os_log_fault(unzipkit_log, format, ##__VA_ARGS__); \
-    else os_log_with_type(unzipkit_log, OS_LOG_TYPE_FAULT, format, ##__VA_ARGS__);
+    else os_log_with_type(unzipkit_log, OS_LOG_TYPE_FAULT, format, ##__VA_ARGS__)
 
 
 #define UZKCreateActivity(name) \
     os_activity_t activity = os_activity_create(name, OS_ACTIVITY_CURRENT, OS_ACTIVITY_FLAG_DEFAULT); \
-    os_activity_scope(activity);
+    os_activity_scope(activity)
 
 
 #else // Fall back to regular NSLog
