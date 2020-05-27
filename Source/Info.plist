@@ -15,11 +15,11 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0-beta</string>
+	<string>2.0-beta2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2.0-beta</string>
+	<string>2.0-beta2</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>© 2017 Abbey Code. All rights reserved.</string>
 	<key>NSPrincipalClass</key>
