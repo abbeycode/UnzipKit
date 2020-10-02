@@ -9,7 +9,7 @@ _Delete from this line up_
 
 ## Option A
 
-### Steps to reproduce issue (Detailed enough for me to reproduce):
+### Steps to reproduce issue (Detailed enough for me to reproduce - attaching a sample archive can be very helpful):
 
 
 ### What you expect to happen:
