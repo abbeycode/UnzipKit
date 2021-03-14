@@ -8,26 +8,12 @@
 
 @import UnzipKit;
 
+@import os.log;
+@import os.signpost;
+
 #import "UZKArchiveTestCase.h"
 #import "UnzipKitMacros.h"
 
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-#import <sys/kdebug_signpost.h>
-enum SignPostCode: uint {   // Use to reference in Instruments (http://stackoverflow.com/a/39416673/105717)
-    SignPostCodeCreateTextFile = 0,
-    SignPostCodeArchiveData = 1,
-    SignPostCodeExtractData = 2,
-};
-
-enum SignPostColor: uint {  // standard color scheme for signposts in Instruments
-    SignPostColorBlue = 0,
-    SignPostColorGreen = 1,
-    SignPostColorPurple = 2,
-    SignPostColorOrange = 3,
-    SignPostColorRed = 4,
-};
-#endif
 
 @interface ExtractBufferedDataTests : UZKArchiveTestCase
 @end
@@ -66,16 +52,20 @@ enum SignPostColor: uint {  // standard color scheme for signposts in Instrument
 #if !TARGET_OS_IPHONE && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
 - (void)testExtractBufferedData_VeryLarge
 {
-    kdebug_signpost_start(SignPostCodeCreateTextFile, 0, 0, 0, SignPostColorBlue);
+    os_log_t log = os_log_create("UnzipKit-testExtractBufferedData_VeryLarge", OS_LOG_CATEGORY_POINTS_OF_INTEREST);
+    
+    os_signpost_id_t createTextFileID = os_signpost_id_generate(log);
+    os_signpost_interval_begin(log, createTextFileID, "Create Text File", "Start");
     NSURL *largeTextFile = [self emptyTextFileOfLength:100000000]; // Increase for a more dramatic test
     XCTAssertNotNil(largeTextFile, @"No large text file URL returned");
-    kdebug_signpost_end(SignPostCodeCreateTextFile, 0, 0, 0, SignPostColorBlue);
-    
-    kdebug_signpost_start(SignPostCodeArchiveData, 0, 0, 0, SignPostColorGreen);
+    os_signpost_interval_end(log, createTextFileID, "Create Text File", "End");
+
+    os_signpost_id_t archiveDataID = os_signpost_id_generate(log);
+    os_signpost_interval_begin(log, archiveDataID, "Archive Data", "Start");
     NSURL *archiveURL = [self archiveWithFiles:@[largeTextFile]];
     XCTAssertNotNil(archiveURL, @"No archived large text file URL returned");
-    kdebug_signpost_end(SignPostCodeArchiveData, 0, 0, 0, SignPostColorGreen);
-    
+    os_signpost_interval_end(log, archiveDataID, "Archive Data", "End");
+
     NSURL *deflatedFileURL = [self.tempDirectory URLByAppendingPathComponent:@"DeflatedTextFile.txt"];
     BOOL createSuccess = [[NSFileManager defaultManager] createFileAtPath:deflatedFileURL.path
                                                                  contents:nil
@@ -89,8 +79,9 @@ enum SignPostColor: uint {  // standard color scheme for signposts in Instrument
     
     UZKArchive *archive = [[UZKArchive alloc] initWithURL:archiveURL error:nil];
     
-    kdebug_signpost_start(SignPostCodeExtractData, 0, 0, 0, SignPostColorPurple);
-    
+    os_signpost_id_t extractDataID = os_signpost_id_generate(log);
+    os_signpost_interval_begin(log, extractDataID, "Extract Data", "Start");
+
     NSError *error = nil;
     BOOL success = [archive extractBufferedDataFromFile:largeTextFile.lastPathComponent
                                                   error:&error
@@ -100,10 +91,11 @@ enum SignPostColor: uint {  // standard color scheme for signposts in Instrument
                         UZKLogDebug("Decompressed: %f%%", percentDecompressed);
 # endif
                         [deflated writeData:dataChunk];
+                        os_signpost_event_emit(log, extractDataID, "Extracted chunk", "%f", percentDecompressed);
                     }];
     
-    kdebug_signpost_end(SignPostCodeExtractData, 0, 0, 0, SignPostColorPurple);
-    
+    os_signpost_interval_end(log, extractDataID, "Extract Data", "End");
+
     XCTAssertTrue(success, @"Failed to read buffered data");
     XCTAssertNil(error, @"Error reading buffered data");
     
