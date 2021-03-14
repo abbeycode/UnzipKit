@@ -1461,7 +1461,7 @@ compressionMethod:(UZKCompressionMethod)method
             }
             
             UZKLogDebug("Allocating commentary");
-            char *commentary = (char*)malloc(unzipInfo.size_file_comment);
+            char *commentary = unzipInfo.size_file_comment > 0 ? (char*)malloc(unzipInfo.size_file_comment) : NULL;
             if ((commentary == NULL) && (unzipInfo.size_file_comment != 0)) {
                 NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error allocating commentary info of %@ while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                     currentFileName, filePath];
