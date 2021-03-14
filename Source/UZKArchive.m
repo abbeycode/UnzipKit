@@ -560,7 +560,7 @@ NS_DESIGNATED_INITIALIZER
                                                    attributes:nil];
 
                     if (!createSuccess) {
-                        NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error creating current file (%d) '%@'", @"UnzipKit", _resources, @"Detailed error string"),
+                        NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error creating current file (%@) '%@'", @"UnzipKit", _resources, @"Detailed error string"),
                                             strongError, info.filename];
                         UZKLogError("UZKErrorCodeOutputError: %{public}@", detail);
                         [sself assignError:&strongError code:UZKErrorCodeOutputError
@@ -1511,7 +1511,7 @@ compressionMethod:(UZKCompressionMethod)method
             UZKLogDebug("Getting local extra field size");
             int size_local_extra = unzGetLocalExtrafield(source_zip, NULL, 0);
             if (size_local_extra < 0) {
-                NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting size_local_extra for file while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
+                NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting size_local_extra for file while deleting %@ from archive %@", @"UnzipKit", _resources, @"Detailed error string"),
                                     currentFileName, filePath];
                 UZKLogError("UZKErrorCodeDeleteFile: %{public}@", detail);
                 UZKLogDebug("Closing source_zip, dest_zip, freeing global_comment, extra_field, commentary");
