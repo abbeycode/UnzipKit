@@ -1460,9 +1460,9 @@ compressionMethod:(UZKCompressionMethod)method
                                   detail:detail];
             }
             
-            UZKLogDebug("Allocating commentary");
-            char *commentary = unzipInfo.size_file_comment > 0 ? (char*)malloc(unzipInfo.size_file_comment) : NULL;
-            if ((commentary == NULL) && (unzipInfo.size_file_comment != 0)) {
+            UZKLogDebug("Allocating file comment buffer");
+            char *fileCommentBuffer = unzipInfo.size_file_comment > 0 ? (char*)malloc(unzipInfo.size_file_comment) : NULL;
+            if ((fileCommentBuffer == NULL) && (unzipInfo.size_file_comment != 0)) {
                 NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error allocating commentary info of %@ while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
                                     currentFileName, filePath];
                 UZKLogError("UZKErrorCodeDeleteFile: %{public}@", detail);
@@ -1476,14 +1476,14 @@ compressionMethod:(UZKCompressionMethod)method
             }
             
             UZKLogDebug("Getting file info");
-            err = unzGetCurrentFileInfo64(source_zip, &unzipInfo, filename_inzip, FILE_IN_ZIP_MAX_NAME_LENGTH, extra_field, unzipInfo.size_file_extra, commentary, unzipInfo.size_file_comment);
+            err = unzGetCurrentFileInfo64(source_zip, &unzipInfo, filename_inzip, FILE_IN_ZIP_MAX_NAME_LENGTH, extra_field, unzipInfo.size_file_extra, fileCommentBuffer, unzipInfo.size_file_comment);
             if (err != UNZ_OK) {
                 NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error reading extra_field and commentary info of %@ while deleting %@ (%d)", @"UnzipKit", _resources, @"Detailed error string"),
                                     currentFileName, filePath, err];
                 UZKLogError("UZKErrorCodeDeleteFile: %{public}@", detail);
                 UZKLogDebug("Closing source_zip, dest_zip, freeing global_comment, extra_field, commentary");
                 free(extra_field);
-                free(commentary);
+                free(fileCommentBuffer);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
                                   detail:detail];
             }
@@ -1503,7 +1503,7 @@ compressionMethod:(UZKCompressionMethod)method
                 unzClose(source_zip);
                 free(global_comment);
                 free(extra_field);
-                free(commentary);
+                free(fileCommentBuffer);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
                                   detail:detail];
             }
@@ -1519,7 +1519,7 @@ compressionMethod:(UZKCompressionMethod)method
                 unzClose(source_zip);
                 free(global_comment);
                 free(extra_field);
-                free(commentary);
+                free(fileCommentBuffer);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
                                   detail:detail];
             }
@@ -1535,7 +1535,7 @@ compressionMethod:(UZKCompressionMethod)method
                 unzClose(source_zip);
                 free(global_comment);
                 free(extra_field);
-                free(commentary);
+                free(fileCommentBuffer);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
                                   detail:detail];
             }
@@ -1550,7 +1550,7 @@ compressionMethod:(UZKCompressionMethod)method
                 unzClose(source_zip);
                 free(global_comment);
                 free(extra_field);
-                free(commentary);
+                free(fileCommentBuffer);
                 free(local_extra);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
                                   detail:detail];
@@ -1568,7 +1568,7 @@ compressionMethod:(UZKCompressionMethod)method
                 unzClose(source_zip);
                 free(global_comment);
                 free(extra_field);
-                free(commentary);
+                free(fileCommentBuffer);
                 free(local_extra);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
                                   detail:detail];
@@ -1586,7 +1586,7 @@ compressionMethod:(UZKCompressionMethod)method
                 unzClose(source_zip);
                 free(global_comment);
                 free(extra_field);
-                free(commentary);
+                free(fileCommentBuffer);
                 free(local_extra);
                 free(buf);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
@@ -1604,7 +1604,7 @@ compressionMethod:(UZKCompressionMethod)method
             
             UZKLogDebug("Opening file in destination archive");
             err = zipOpenNewFileInZip2(dest_zip, filename_inzip, &zipInfo,
-                                       local_extra, size_local_extra, extra_field, (uInt)unzipInfo.size_file_extra, commentary,
+                                       local_extra, size_local_extra, extra_field, (uInt)unzipInfo.size_file_extra, fileCommentBuffer,
                                        method, level, 1);
             if (err != UNZ_OK) {
                 NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error opening %@ in destination zip while deleting %@ (%d)", @"UnzipKit", _resources, @"Detailed error string"),
@@ -1615,7 +1615,7 @@ compressionMethod:(UZKCompressionMethod)method
                 unzClose(source_zip);
                 free(global_comment);
                 free(extra_field);
-                free(commentary);
+                free(fileCommentBuffer);
                 free(local_extra);
                 free(buf);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
@@ -1634,7 +1634,7 @@ compressionMethod:(UZKCompressionMethod)method
                 unzClose(source_zip);
                 free(global_comment);
                 free(extra_field);
-                free(commentary);
+                free(fileCommentBuffer);
                 free(local_extra);
                 free(buf);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
@@ -1653,7 +1653,7 @@ compressionMethod:(UZKCompressionMethod)method
                 unzClose(source_zip);
                 free(global_comment);
                 free(extra_field);
-                free(commentary);
+                free(fileCommentBuffer);
                 free(local_extra);
                 free(buf);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
@@ -1672,7 +1672,7 @@ compressionMethod:(UZKCompressionMethod)method
                 unzClose(source_zip);
                 free(global_comment);
                 free(extra_field);
-                free(commentary);
+                free(fileCommentBuffer);
                 free(local_extra);
                 free(buf);
                 return [self assignError:error code:UZKErrorCodeDeleteFile
@@ -1681,7 +1681,7 @@ compressionMethod:(UZKCompressionMethod)method
             
             UZKLogDebug("Freeing extra_field, commentary, local_extra, buf");
             free(extra_field);
-            free(commentary);
+            free(fileCommentBuffer);
             free(local_extra);
             free(buf);
             
