@@ -1819,7 +1819,7 @@ compressionMethod:(UZKCompressionMethod)method
                     *error = openError;
                 }
                 
-                shouldCloseFile = NO;
+                shouldCloseFile = openError.code != UZKErrorCodeFileWrite;
                 return NO;
             }
             
