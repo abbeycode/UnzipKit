@@ -99,6 +99,9 @@
 		965CF0081D241A8F00C80A88 /* NSURL+UnzipKitExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+UnzipKitExtensions.h"; sourceTree = "<group>"; };
 		965CF0091D241A8F00C80A88 /* NSURL+UnzipKitExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+UnzipKitExtensions.m"; sourceTree = "<group>"; };
 		9677858D1F1405DB00A8D6B2 /* UnzipKitMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnzipKitMacros.h; sourceTree = "<group>"; };
+		96855F4425FDD42000A4848F /* Complete.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Complete.xctestplan; sourceTree = "<group>"; };
+		96855F4D25FDD4C500A4848F /* Fast.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Fast.xctestplan; sourceTree = "<group>"; };
+		96855F5325FDD61500A4848F /* Rigorous.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Rigorous.xctestplan; sourceTree = "<group>"; };
 		96889EED1E4A09EC0031A322 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UnzipKit.strings; sourceTree = "<group>"; };
 		968C40BF1B585FDE004C128E /* ModesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ModesTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		968C40C11B586132004C128E /* ZipFileDetectionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZipFileDetectionTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -197,6 +200,16 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		96855F4E25FDD4DD00A4848F /* Test Plans */ = {
+			isa = PBXGroup;
+			children = (
+				96855F4D25FDD4C500A4848F /* Fast.xctestplan */,
+				96855F4425FDD42000A4848F /* Complete.xctestplan */,
+				96855F5325FDD61500A4848F /* Rigorous.xctestplan */,
+			);
+			path = "Test Plans";
+			sourceTree = "<group>";
+		};
 		96EA65941A40AEAE00685B6D = {
 			isa = PBXGroup;
 			children = (
@@ -249,6 +262,7 @@
 		96EA65AD1A40AEAE00685B6D /* UnzipKitTests */ = {
 			isa = PBXGroup;
 			children = (
+				96855F4E25FDD4DD00A4848F /* Test Plans */,
 				96EA65BF1A40BF1A00685B6D /* Test Data */,
 				961A9BB61B306902007C4C6B /* UZKArchiveTestCase.h */,
 				96FCC8401B306CDD00726AC7 /* UZKArchiveTestCase.m */,

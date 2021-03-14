@@ -1,7 +1,7 @@
 language:
   - objective-c
 
-osx_image: xcode11.2
+osx_image: xcode12.2
 
 before_script:
     # Essentially turn off logging. Temporarily undo if more info is needed
@@ -10,14 +10,19 @@ before_script:
 matrix:
   include:
    - stage: Test
+     env: Name=Mac-Fail-Fast
+     # The CLANG arguments and find command fail the build on analyzer errors
+     script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -testPlan Fast -sdk macosx -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+
+   - stage: Test
      env: Name=Mac
      # The CLANG arguments and find command fail the build on analyzer errors
-     script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -sdk macosx -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+     script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -testPlan Rigorous -sdk macosx -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
 
    - stage: Test
      env: Name=iOS
      # The CLANG arguments and find command fail the build on analyzer errors
-     script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -destination 'platform=iOS Simulator,name=iPhone 8,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+     script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -testPlan Rigorous -destination 'platform=iOS Simulator,name=iPhone 8,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
 
    - stage: Test
      env: Name=DemoAppBuild

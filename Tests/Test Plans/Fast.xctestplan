@@ -1,0 +1,39 @@
+{
+  "configurations" : [
+    {
+      "id" : "441D8E09-AFA9-48CB-A3B7-386CFF9C42C8",
+      "name" : "Configuration",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:UnzipKit.xcodeproj",
+      "identifier" : "96EA659D1A40AEAE00685B6D",
+      "name" : "UnzipKit"
+    },
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "skippedTests" : [
+        "ExtractFilesTests\/testExtractZip64_LargeFile",
+        "ExtractFilesTests\/testExtractZip64_ManyFiles",
+        "FileDescriptorUsageTests\/testFileDescriptorUsage",
+        "FileDescriptorUsageTests\/testFileDescriptorUsage_ExtractInsidePerformOnFiles",
+        "FileDescriptorUsageTests\/testFileDescriptorUsage_WriteIntoArchive",
+        "FileDescriptorUsageTests\/testFileDescriptorUsage_WriteIntoArchive_deprecatedOverload"
+      ],
+      "target" : {
+        "containerPath" : "container:UnzipKit.xcodeproj",
+        "identifier" : "96EA65A81A40AEAE00685B6D",
+        "name" : "UnzipKitTests"
+      }
+    }
+  ],
+  "version" : 1
+}

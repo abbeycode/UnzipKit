@@ -1,0 +1,30 @@
+{
+  "configurations" : [
+    {
+      "id" : "441D8E09-AFA9-48CB-A3B7-386CFF9C42C8",
+      "name" : "Basic",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:UnzipKit.xcodeproj",
+      "identifier" : "96EA659D1A40AEAE00685B6D",
+      "name" : "UnzipKit"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:UnzipKit.xcodeproj",
+        "identifier" : "96EA65A81A40AEAE00685B6D",
+        "name" : "UnzipKitTests"
+      }
+    }
+  ],
+  "version" : 1
+}
