@@ -93,12 +93,12 @@
     UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL error:nil];
     NSError *outerWriteError = nil;
     
-    [archive writeIntoBufferAtPath:@"newFile.zip"
+    [archive writeIntoBufferAtPath:@"outer file.txt"
                              error:&outerWriteError
                              block:
      ^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {
          NSError *innerWriteError = nil;
-         [archive writeIntoBufferAtPath:@"newFile.zip"
+         [archive writeIntoBufferAtPath:@"inner file.txt"
                                   error:&innerWriteError
                                   block:^BOOL(BOOL(^writeData)(const void *bytes, unsigned int length), NSError**(actionError)) {return YES;}];
          XCTAssertNotNil(innerWriteError, @"Nested write operation succeeded");

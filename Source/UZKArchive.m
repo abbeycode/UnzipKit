@@ -1805,6 +1805,8 @@ compressionMethod:(UZKCompressionMethod)method
         NSError *openError = nil;
         NSError *actionError = nil;
         
+        BOOL shouldCloseFile = YES;
+        
         @try {
             if (![self openFile:self.filename
                          inMode:mode
@@ -1817,6 +1819,7 @@ compressionMethod:(UZKCompressionMethod)method
                     *error = openError;
                 }
                 
+                shouldCloseFile = openError.code != UZKErrorCodeFileWrite;
                 return NO;
             }
             
@@ -1826,15 +1829,17 @@ compressionMethod:(UZKCompressionMethod)method
             }
         }
         @finally {
-            NSError *closeError = nil;
-            if (![self closeFile:&closeError inMode:mode]) {
-                UZKLogDebug("Archive failed to close");
-
-                if (error && !actionError && !openError) {
-                    *error = closeError;
+            if (shouldCloseFile) {
+                NSError *closeError = nil;
+                if (![self closeFile:&closeError inMode:mode]) {
+                    UZKLogDebug("Archive failed to close");
+                    
+                    if (error && !actionError && !openError) {
+                        *error = closeError;
+                    }
+                    
+                    return NO;
                 }
-                
-                return NO;
             }
         }
         
