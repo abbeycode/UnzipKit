@@ -3,6 +3,9 @@ language:
 
 osx_image: xcode12.2
 
+before_install:
+    - gem install xcpretty
+
 before_script:
     # Essentially turn off logging. Temporarily undo if more info is needed
     - sudo log config --mode "level:default" --subsystem com.abbey-code.UnzipKit
@@ -12,22 +15,22 @@ matrix:
    - stage: Test
      env: Name=Mac-Fail-Fast
      # The CLANG arguments and find command fail the build on analyzer errors
-     script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -testPlan Fast -sdk macosx -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+     script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -testPlan Fast -sdk macosx -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output | xcpretty && exit ${PIPESTATUS[0]} && [[ -z `find analyzer-output -name "*.html"` ]]
 
    - stage: Test
      env: Name=Mac
      # The CLANG arguments and find command fail the build on analyzer errors
-     script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -testPlan Rigorous -sdk macosx -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+     script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -testPlan Rigorous -sdk macosx -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output | xcpretty && exit ${PIPESTATUS[0]} && [[ -z `find analyzer-output -name "*.html"` ]]
 
    - stage: Test
      env: Name=iOS
      # The CLANG arguments and find command fail the build on analyzer errors
-     script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -testPlan Rigorous -destination 'platform=iOS Simulator,name=iPhone 8,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+     script: xcodebuild -workspace UnzipKit.xcworkspace -scheme UnzipKit -testPlan Rigorous -destination 'platform=iOS Simulator,name=iPhone 8,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output | xcpretty && exit ${PIPESTATUS[0]} && [[ -z `find analyzer-output -name "*.html"` ]]
 
    - stage: Test
      env: Name=DemoAppBuild
      # The CLANG arguments and find command fail the build on analyzer errors
-     script: ./Scripts/install-demo-libs.sh && xcodebuild -workspace UnzipKitDemo/UnzipKitDemo.xcworkspace -scheme UnzipKitDemo -destination 'platform=iOS Simulator,name=iPhone 8,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+     script: ./Scripts/install-demo-libs.sh && xcodebuild -workspace UnzipKitDemo/UnzipKitDemo.xcworkspace -scheme UnzipKitDemo -destination 'platform=iOS Simulator,name=iPhone 8,OS=latest' -configuration Release analyze test ENABLE_NS_ASSERTIONS=1 CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output | xcpretty && exit ${PIPESTATUS[0]} && [[ -z `find analyzer-output -name "*.html"` ]]
 
    - stage: Validate
      env: Name=CocoaPods-Framework
