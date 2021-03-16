@@ -23,6 +23,12 @@
       "id" : "CD341A45-58D9-4997-A06F-4FD6124BCD58",
       "name" : "Malloc Checks",
       "options" : {
+        "environmentVariableEntries" : [
+          {
+            "key" : "MALLOC_PERMIT_INSANE_REQUESTS",
+            "value" : "1"
+          }
+        ],
         "guardMallocEnabled" : true,
         "mallocGuardEdgesEnabled" : true,
         "mallocScribbleEnabled" : true,
