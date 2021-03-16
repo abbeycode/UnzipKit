@@ -9,6 +9,8 @@
 * Deprecated all overloads of `-writeData:...` and `-writeIntoBuffer:...` that take any file properties other than the path, replacing them each with a single call that takes an instance of the new `ZipFileProperties`. This allows for all the default values to be defined in one place, so you can specify only where you want to deviate from the defaults (Issue #89, PR #97)
 * Fixed buffer overrun vulnerability when deleting a file in an archive where not every file has a file comment (Issue #106)
 * Fixed deallocated pointer use when a file write occurs inside the block of a file write operation, already an error condition (Issue #107)
+* Added a test plan so unit tests can run with various sanitizers and checkers in CI and locally
+* Improved Xcode 12 compatibility
 
 ## 1.9
 
