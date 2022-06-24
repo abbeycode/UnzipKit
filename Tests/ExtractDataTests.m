@@ -59,20 +59,16 @@
     }
 }
 
-- (void)testExtractData_Issue110
+- (void)testExtractData_AES
 {
-    NSURL *testArchiveURL = self.testFileURLs[@"complete_49467_mptest_115761522.zip"];
+    NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password, AES).zip"];
     
-    NSString *password = @"49467";
-    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
-    BOOL passwordIsValid = [archive validatePassword];
-    XCTAssertTrue(passwordIsValid, @"Invalid password given");
-    
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:@"password" error:nil];
     NSError *error = nil;
-    NSData *extractedData = [archive extractDataFromFile:@"complete_49467_mptest_115761522/49467.json" error:&error];
+    NSData *extractedData = [archive extractDataFromFile:@"Test File A.txt" error:&error];
     
-    XCTAssertNotNil(extractedData, @"");
-    XCTAssertNil(error, @"");
+    XCTAssertNil(extractedData, @"No data should be returned for an AES-encrypted archive");
+    XCTAssertEqual(error.code, UZKErrorCodeAES, @"Unexpected error code returned");
 }
 
 - (void)testExtractData_Unicode

@@ -58,6 +58,7 @@ BOOL unzipkitIsAtLeast10_13SDK;
                            @"Test Archive (Directories).zip",
                            @"Test Archive (Password).zip",
                            @"Test Archive (SymLink Directory).zip",
+                           @"Test Archive (Password, AES).zip",
                            @"L'incertain.zip",
                            @"Aces.zip",
                            @"Comments Archive.zip",
@@ -68,7 +69,6 @@ BOOL unzipkitIsAtLeast10_13SDK;
                            @"Test File C.m4a",
                            @"NotAZip-PK-ContentsUnknown",
                            @"Modified CRC Archive.zip",
-                           @"complete_49467_mptest_115761522.zip"
                            ];
     
     NSArray *unicodeFiles = @[

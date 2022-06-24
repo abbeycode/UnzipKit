@@ -2302,6 +2302,13 @@ compressionMethod:(UZKCompressionMethod)method
                           detail:detail];
     }
     
+    if ([self isAES:file_info]) {
+        NSString *detail = NSLocalizedStringFromTableInBundle(@"Cannot open archive, since it was compressed using the AES algorithm (method ID 99)", @"UnzipKit", _resources, @"Error message");
+        UZKLogError("UZKErrorCodeAES: %{public}@", detail);
+        return [self assignError:error code:UZKErrorCodeAES
+                          detail:detail];
+    }
+    
     UZKLogDebug("Opening file...");
     err = unzOpenCurrentFilePassword(self.unzFile, passwordStr);
     if (err != UNZ_OK) {
@@ -2555,6 +2562,10 @@ compressionMethod:(UZKCompressionMethod)method
             errorName = NSLocalizedStringFromTableInBundle(@"The archive was compressed with the Deflate64 method, which isn't supported", @"UnzipKit", _resources, @"UZKErrorCodeDeflate64");
             break;
             
+        case UZKErrorCodeAES:
+            errorName = NSLocalizedStringFromTableInBundle(@"The archive was compressed with the AES method, which isn't supported", @"UnzipKit", _resources, @"UZKErrorCodeAES");
+            break;
+            
         default:
             errorName = [NSString localizedStringWithFormat:
                          NSLocalizedStringFromTableInBundle(@"Unknown error code: %ld", @"UnzipKit", _resources, @"UnknownErrorCode"), errorCode];
@@ -2662,6 +2673,14 @@ compressionMethod:(UZKCompressionMethod)method
     
     UZKLogDebug("Compression method: %lu", file_info.compression_method);
     return file_info.compression_method == 9;
+}
+
+- (BOOL)isAES:(unz_file_info64)file_info
+{
+    UZKCreateActivity("isAES");
+    
+    UZKLogDebug("Compression method: %lu", file_info.compression_method);
+    return file_info.compression_method == 99;
 }
 
 - (NSProgress *)beginProgressOperation:(unsigned long long)totalUnitCount
