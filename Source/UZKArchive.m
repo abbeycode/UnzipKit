@@ -474,7 +474,6 @@ NS_DESIGNATED_INITIALIZER
     NSNumber *totalSize = [fileInfo valueForKeyPath:@"@sum.uncompressedSize"];
     UZKLogDebug("totalSize: %lld", totalSize.longLongValue);
     __block long long bytesDecompressed = 0;
-    __block NSInteger filesExtracted = 0;
 
     NSProgress *progress = [self beginProgressOperation:totalSize.longLongValue];
     progress.kind = NSProgressKindFile;
@@ -495,6 +494,13 @@ NS_DESIGNATED_INITIALIZER
         @try {
             for (UZKFileInfo *info in fileInfo) {
                 UZKLogDebug("Extracting %{public}@ to disk", info.filename);
+
+                NSURL *deflatedDirectoryURL = [NSURL fileURLWithPath:destinationDirectory];
+                NSURL *deflatedFileURL = [deflatedDirectoryURL URLByAppendingPathComponent:info.filename];
+                [progress setUserInfoObject:deflatedFileURL
+                                     forKey:NSProgressFileURLKey];
+                [progress setUserInfoObject:info
+                                     forKey:UZKProgressInfoKeyFileInfoExtracting];
 
                 if (progress.isCancelled) {
                     NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error locating file '%@' in archive", @"UnzipKit", _resources, @"Detailed error string"),
@@ -547,12 +553,6 @@ NS_DESIGNATED_INITIALIZER
                         continue;
                     }
                     
-                    NSURL *deflatedDirectoryURL = [NSURL fileURLWithPath:destinationDirectory];
-                    NSURL *deflatedFileURL = [deflatedDirectoryURL URLByAppendingPathComponent:info.filename];
-                    [progress setUserInfoObject:deflatedFileURL
-                                         forKey:NSProgressFileURLKey];
-                    [progress setUserInfoObject:info
-                                         forKey:UZKProgressInfoKeyFileInfoExtracting];
                     NSString *path = deflatedFileURL.path;
                     
                     UZKLogDebug("Creating empty file at path %{public}@", path);
@@ -614,11 +614,6 @@ NS_DESIGNATED_INITIALIZER
                                       error:nil];
                         return;
                     }
-
-                    [progress setUserInfoObject:@(++filesExtracted)
-                                         forKey:NSProgressFileCompletedCountKey];
-                    [progress setUserInfoObject:@(fileInfo.count)
-                                         forKey:NSProgressFileTotalCountKey];
                 }
             }
         }
