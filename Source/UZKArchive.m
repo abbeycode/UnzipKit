@@ -2186,7 +2186,7 @@ compressionMethod:(UZKCompressionMethod)method
             err = zipClose(self.zipFile, cmt);
             if (err != ZIP_OK) {
                 NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error closing file in archive in write mode %lu (%d)", @"UnzipKit", _resources, @"Detailed error string"),
-                                    self.mode, err];
+                                    (unsigned long)self.mode, err];
                 UZKLogError("UZKErrorCodeZLibError: %{public}@", detail);
                 [self assignError:error code:UZKErrorCodeZLibError
                            detail:detail];
@@ -2573,7 +2573,7 @@ compressionMethod:(UZKCompressionMethod)method
             
         default:
             errorName = [NSString localizedStringWithFormat:
-                         NSLocalizedStringFromTableInBundle(@"Unknown error code: %ld", @"UnzipKit", _resources, @"UnknownErrorCode"), errorCode];
+                         NSLocalizedStringFromTableInBundle(@"Unknown error code: %ld", @"UnzipKit", _resources, @"UnknownErrorCode"), (long)errorCode];
             break;
     }
     
