@@ -398,9 +398,9 @@
 			buildConfigurationList = 96EA65B41A40AEAE00685B6D /* Build configuration list for PBXNativeTarget "UnzipKit" */;
 			buildPhases = (
 				7A900754230AD74C004A95E5 /* ShellScript */,
+				96EA659B1A40AEAE00685B6D /* Headers */,
 				96EA65991A40AEAE00685B6D /* Sources */,
 				96EA659A1A40AEAE00685B6D /* Frameworks */,
-				96EA659B1A40AEAE00685B6D /* Headers */,
 				96EA659C1A40AEAE00685B6D /* Resources */,
 			);
 			buildRules = (
