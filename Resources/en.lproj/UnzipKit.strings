@@ -62,7 +62,7 @@
 "Error creating bookmark to new archive file: %@" = "Error creating bookmark to new archive file: %@";
 
 /* Detailed error string */
-"Error creating current file (%d) '%@'" = "Error creating current file (%1$d) '%2$@'";
+"Error creating current file (%@) '%@'" = "Error creating current file (%1$@) '%2$@'";
 
 /* UZKErrorCodeDeleteFile */
 "Error deleting a file in the archive" = "Error deleting a file in the archive";
@@ -89,7 +89,7 @@
 "Error getting local_extra for file %@ while deleting %@" = "Error getting local_extra for file %1$@ while deleting %2$@";
 
 /* Detailed error string */
-"Error getting size_local_extra for file while deleting %@" = "Error getting size_local_extra for file while deleting %@";
+"Error getting size_local_extra for file while deleting %@ (current file %@)" = "Error getting size_local_extra for file while deleting %1$@ (current file %2$@)";
 
 /* Detailed error string */
 "Error getting the global info of the source file while deleting %@ (%d)" = "Error getting the global info of the source file while deleting %1$@ (%2$d)";
@@ -176,7 +176,7 @@
 "Failed to copy archive to external volume '%@', after deleting '%@' from it (%@)" = "Failed to copy archive to external volume '%1$@', after deleting '%2$@' from it (%3$@)";
 
 /* Detailed error string */
-"Failed to create destination directory: %@" = "Failed to create destination directory: %@";
+"Failed to create destination directory %@: %@" = "Failed to create destination directory %1$@: %2$@";
 
 /* Detailed error string */
 "Failed to create new file for archive: %@" = "Failed to create new file for archive: %@";
