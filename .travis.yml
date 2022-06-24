@@ -1,7 +1,7 @@
 language:
   - objective-c
 
-osx_image: xcode11.2
+osx_image: xcode13.4
 
 before_script:
     # Essentially turn off logging. Temporarily undo if more info is needed
