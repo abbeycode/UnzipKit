@@ -9,6 +9,7 @@
 * Deprecated all overloads of `-writeData:...` and `-writeIntoBuffer:...` that take any file properties other than the path, replacing them each with a single call that takes an instance of the new `ZipFileProperties`. This allows for all the default values to be defined in one place, so you can specify only where you want to deviate from the defaults (Issue #89, PR #97)
 * Fixed buffer overrun vulnerability when deleting a file in an archive where not every file has a file comment (Issue #106)
 * Fixed deallocated pointer use when a file write occurs inside the block of a file write operation, already an error condition (Issue #107)
+* Added error code to report when an archive was compressed using AES, which is not yet supported (Issue #110, PR #113)
 
 ## 1.9
 
