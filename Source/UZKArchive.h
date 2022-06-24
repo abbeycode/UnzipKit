@@ -7,7 +7,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 
-#import "UZKFileInfo.h"
+#import <UZKFileInfo.h>
 
 @class ZipFileProperties;
 
