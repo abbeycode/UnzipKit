@@ -527,13 +527,14 @@ NS_DESIGNATED_INITIALIZER
                                             : extractPath.stringByDeletingLastPathComponent);
                     if (![fm fileExistsAtPath:extractDir]) {
                         UZKLogDebug("Creating directories for path %{public}@", extractDir);
+                        NSError *createDirError = nil;
                         BOOL directoriesCreated = [fm createDirectoryAtPath:extractDir
                                                 withIntermediateDirectories:YES
                                                                  attributes:nil
-                                                                      error:error];
+                                                                      error:&createDirError];
                         if (!directoriesCreated) {
-                            NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to create destination directory: %@", @"UnzipKit", _resources, @"Detailed error string"),
-                                                extractDir];
+                            NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to create destination directory %@: %@", @"UnzipKit", _resources, @"Detailed error string"),
+                                                extractDir, createDirError.localizedDescription];
                             UZKLogError("UZKErrorCodeOutputError: %{public}@", detail);
                             [sself assignError:&strongError code:UZKErrorCodeOutputError
                                         detail:detail];
@@ -858,7 +859,7 @@ NS_DESIGNATED_INITIALIZER
             }
         }
         
-        if (strongInnerError) {
+        if (innerError && strongInnerError) {
             *innerError = strongInnerError;
             return;
         }
@@ -2052,15 +2053,19 @@ compressionMethod:(UZKCompressionMethod)method
             NSMutableDictionary *dic = [NSMutableDictionary dictionary];
             
             UZKLogInfo("Reading file info to cache file positions");
-            
+
+            NSError *infoError = nil;
+            BOOL infoRetrieveFailed = NO;
+
             do {
                 @autoreleasepool {
                     UZKLogDebug("Reading file info for current file in zip");
-                    UZKFileInfo *info = [self currentFileInZipInfo:error];
+                    UZKFileInfo *info = [self currentFileInZipInfo:&infoError];
                     
                     if (!info) {
                         UZKLogDebug("No info returned. Exiting loop");
-                        return NO;
+                        infoRetrieveFailed = YES;
+                        break; // while loop
                     }
 
                     UZKLogDebug("Got info for %{public}@", info.filename);
@@ -2075,6 +2080,11 @@ compressionMethod:(UZKCompressionMethod)method
                 }
             } while (unzGoToNextFile (self.unzFile) != UNZ_END_OF_LIST_OF_FILE);
             
+            if (infoRetrieveFailed) {
+                if (error) *error = infoError;
+                return NO;
+            }
+
             self.archiveContents = [dic copy];
             break;
         }
