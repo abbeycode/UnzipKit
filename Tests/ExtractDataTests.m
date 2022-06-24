@@ -59,6 +59,22 @@
     }
 }
 
+- (void)testExtractData_Issue110
+{
+    NSURL *testArchiveURL = self.testFileURLs[@"complete_49467_mptest_115761522.zip"];
+    
+    NSString *password = @"49467";
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:password error:nil];
+    BOOL passwordIsValid = [archive validatePassword];
+    XCTAssertTrue(passwordIsValid, @"Invalid password given");
+    
+    NSError *error = nil;
+    NSData *extractedData = [archive extractDataFromFile:@"complete_49467_mptest_115761522/49467.json" error:&error];
+    
+    XCTAssertNotNil(extractedData, @"");
+    XCTAssertNil(error, @"");
+}
+
 - (void)testExtractData_Unicode
 {
     NSSet *expectedFileSet = self.nonZipUnicodeFilePaths;

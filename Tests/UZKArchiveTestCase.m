@@ -68,6 +68,7 @@ BOOL unzipkitIsAtLeast10_13SDK;
                            @"Test File C.m4a",
                            @"NotAZip-PK-ContentsUnknown",
                            @"Modified CRC Archive.zip",
+                           @"complete_49467_mptest_115761522.zip"
                            ];
     
     NSArray *unicodeFiles = @[
