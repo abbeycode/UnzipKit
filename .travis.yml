@@ -1,13 +1,12 @@
-language:
-  - objective-c
-
 osx_image: xcode13.4
+language: objective-c
+os: osx
 
 before_script:
     # Essentially turn off logging. Temporarily undo if more info is needed
     - sudo log config --mode "level:default" --subsystem com.abbey-code.UnzipKit
 
-matrix:
+jobs:
   include:
    - stage: Test
      env: Name=Mac
@@ -40,6 +39,3 @@ matrix:
      if: tag IS present
      before_install: brew upgrade python # Needs Python 3
      script: ./Scripts/push-output.sh
-
-# Turn on Docker, container-based infrastructure
-sudo: false
