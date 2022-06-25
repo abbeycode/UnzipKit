@@ -30,18 +30,13 @@ echo "$REPO \"$COMMIT\"" > UnzipKitDemo/Cartfile
 
 pushd UnzipKitDemo > /dev/null
 
-carthage bootstrap --configuration Debug --verbose
+carthage bootstrap --use-xcframeworks --configuration Debug --verbose
 EXIT_CODE=$?
 
 echo "Checking for build products..."
 
-if [ ! -d "Carthage/Build/Mac/UnzipKit.framework" ]; then
-    echo "No Mac library built"
-    EXIT_CODE=1
-fi
-
-if [ ! -d "Carthage/Build/iOS/UnzipKit.framework" ]; then
-    echo "No iOS library built"
+if [ ! -d "Carthage/Build/UnzipKit.xcframework" ]; then
+    echo "No library built"
     EXIT_CODE=1
 fi
 

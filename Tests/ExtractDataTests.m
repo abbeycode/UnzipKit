@@ -59,6 +59,18 @@
     }
 }
 
+- (void)testExtractData_AES
+{
+    NSURL *testArchiveURL = self.testFileURLs[@"Test Archive (Password, AES).zip"];
+    
+    UZKArchive *archive = [[UZKArchive alloc] initWithURL:testArchiveURL password:@"password" error:nil];
+    NSError *error = nil;
+    NSData *extractedData = [archive extractDataFromFile:@"Test File A.txt" error:&error];
+    
+    XCTAssertNil(extractedData, @"No data should be returned for an AES-encrypted archive");
+    XCTAssertEqual(error.code, UZKErrorCodeAES, @"Unexpected error code returned");
+}
+
 - (void)testExtractData_Unicode
 {
     NSSet *expectedFileSet = self.nonZipUnicodeFilePaths;

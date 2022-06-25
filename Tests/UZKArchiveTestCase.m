@@ -58,6 +58,7 @@ BOOL unzipkitIsAtLeast10_13SDK;
                            @"Test Archive (Directories).zip",
                            @"Test Archive (Password).zip",
                            @"Test Archive (SymLink Directory).zip",
+                           @"Test Archive (Password, AES).zip",
                            @"L'incertain.zip",
                            @"Aces.zip",
                            @"Comments Archive.zip",

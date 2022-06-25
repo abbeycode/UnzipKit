@@ -474,7 +474,6 @@ NS_DESIGNATED_INITIALIZER
     NSNumber *totalSize = [fileInfo valueForKeyPath:@"@sum.uncompressedSize"];
     UZKLogDebug("totalSize: %lld", totalSize.longLongValue);
     __block long long bytesDecompressed = 0;
-    __block NSInteger filesExtracted = 0;
 
     NSProgress *progress = [self beginProgressOperation:totalSize.longLongValue];
     progress.kind = NSProgressKindFile;
@@ -495,6 +494,13 @@ NS_DESIGNATED_INITIALIZER
         @try {
             for (UZKFileInfo *info in fileInfo) {
                 UZKLogDebug("Extracting %{public}@ to disk", info.filename);
+
+                NSURL *deflatedDirectoryURL = [NSURL fileURLWithPath:destinationDirectory];
+                NSURL *deflatedFileURL = [deflatedDirectoryURL URLByAppendingPathComponent:info.filename];
+                [progress setUserInfoObject:deflatedFileURL
+                                     forKey:NSProgressFileURLKey];
+                [progress setUserInfoObject:info
+                                     forKey:UZKProgressInfoKeyFileInfoExtracting];
 
                 if (progress.isCancelled) {
                     NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error locating file '%@' in archive", @"UnzipKit", _resources, @"Detailed error string"),
@@ -527,13 +533,14 @@ NS_DESIGNATED_INITIALIZER
                                             : extractPath.stringByDeletingLastPathComponent);
                     if (![fm fileExistsAtPath:extractDir]) {
                         UZKLogDebug("Creating directories for path %{public}@", extractDir);
+                        NSError *createDirError = nil;
                         BOOL directoriesCreated = [fm createDirectoryAtPath:extractDir
                                                 withIntermediateDirectories:YES
                                                                  attributes:nil
-                                                                      error:error];
+                                                                      error:&createDirError];
                         if (!directoriesCreated) {
-                            NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to create destination directory: %@", @"UnzipKit", _resources, @"Detailed error string"),
-                                                extractDir];
+                            NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Failed to create destination directory %@: %@", @"UnzipKit", _resources, @"Detailed error string"),
+                                                extractDir, createDirError.localizedDescription];
                             UZKLogError("UZKErrorCodeOutputError: %{public}@", detail);
                             [sself assignError:&strongError code:UZKErrorCodeOutputError
                                         detail:detail];
@@ -546,12 +553,6 @@ NS_DESIGNATED_INITIALIZER
                         continue;
                     }
                     
-                    NSURL *deflatedDirectoryURL = [NSURL fileURLWithPath:destinationDirectory];
-                    NSURL *deflatedFileURL = [deflatedDirectoryURL URLByAppendingPathComponent:info.filename];
-                    [progress setUserInfoObject:deflatedFileURL
-                                         forKey:NSProgressFileURLKey];
-                    [progress setUserInfoObject:info
-                                         forKey:UZKProgressInfoKeyFileInfoExtracting];
                     NSString *path = deflatedFileURL.path;
                     
                     UZKLogDebug("Creating empty file at path %{public}@", path);
@@ -560,7 +561,7 @@ NS_DESIGNATED_INITIALIZER
                                                    attributes:nil];
 
                     if (!createSuccess) {
-                        NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error creating current file (%d) '%@'", @"UnzipKit", _resources, @"Detailed error string"),
+                        NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error creating current file (%@) '%@'", @"UnzipKit", _resources, @"Detailed error string"),
                                             strongError, info.filename];
                         UZKLogError("UZKErrorCodeOutputError: %{public}@", detail);
                         [sself assignError:&strongError code:UZKErrorCodeOutputError
@@ -613,11 +614,6 @@ NS_DESIGNATED_INITIALIZER
                                       error:nil];
                         return;
                     }
-
-                    [progress setUserInfoObject:@(++filesExtracted)
-                                         forKey:NSProgressFileCompletedCountKey];
-                    [progress setUserInfoObject:@(fileInfo.count)
-                                         forKey:NSProgressFileTotalCountKey];
                 }
             }
         }
@@ -858,7 +854,7 @@ NS_DESIGNATED_INITIALIZER
             }
         }
         
-        if (strongInnerError) {
+        if (innerError && strongInnerError) {
             *innerError = strongInnerError;
             return;
         }
@@ -1511,7 +1507,7 @@ compressionMethod:(UZKCompressionMethod)method
             UZKLogDebug("Getting local extra field size");
             int size_local_extra = unzGetLocalExtrafield(source_zip, NULL, 0);
             if (size_local_extra < 0) {
-                NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting size_local_extra for file while deleting %@", @"UnzipKit", _resources, @"Detailed error string"),
+                NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error getting size_local_extra for file while deleting %@ (current file %@)", @"UnzipKit", _resources, @"Detailed error string"),
                                     currentFileName, filePath];
                 UZKLogError("UZKErrorCodeDeleteFile: %{public}@", detail);
                 UZKLogDebug("Closing source_zip, dest_zip, freeing global_comment, extra_field, commentary");
@@ -2052,15 +2048,19 @@ compressionMethod:(UZKCompressionMethod)method
             NSMutableDictionary *dic = [NSMutableDictionary dictionary];
             
             UZKLogInfo("Reading file info to cache file positions");
-            
+
+            NSError *infoError = nil;
+            BOOL infoRetrieveFailed = NO;
+
             do {
                 @autoreleasepool {
                     UZKLogDebug("Reading file info for current file in zip");
-                    UZKFileInfo *info = [self currentFileInZipInfo:error];
+                    UZKFileInfo *info = [self currentFileInZipInfo:&infoError];
                     
                     if (!info) {
                         UZKLogDebug("No info returned. Exiting loop");
-                        return NO;
+                        infoRetrieveFailed = YES;
+                        break; // while loop
                     }
 
                     UZKLogDebug("Got info for %{public}@", info.filename);
@@ -2075,6 +2075,11 @@ compressionMethod:(UZKCompressionMethod)method
                 }
             } while (unzGoToNextFile (self.unzFile) != UNZ_END_OF_LIST_OF_FILE);
             
+            if (infoRetrieveFailed) {
+                if (error) *error = infoError;
+                return NO;
+            }
+
             self.archiveContents = [dic copy];
             break;
         }
@@ -2181,7 +2186,7 @@ compressionMethod:(UZKCompressionMethod)method
             err = zipClose(self.zipFile, cmt);
             if (err != ZIP_OK) {
                 NSString *detail = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Error closing file in archive in write mode %lu (%d)", @"UnzipKit", _resources, @"Detailed error string"),
-                                    self.mode, err];
+                                    (unsigned long)self.mode, err];
                 UZKLogError("UZKErrorCodeZLibError: %{public}@", detail);
                 [self assignError:error code:UZKErrorCodeZLibError
                            detail:detail];
@@ -2299,6 +2304,13 @@ compressionMethod:(UZKCompressionMethod)method
         NSString *detail = NSLocalizedStringFromTableInBundle(@"Cannot open archive, since it was compressed using the Deflate64 algorithm (method ID 9)", @"UnzipKit", _resources, @"Error message");
         UZKLogError("UZKErrorCodeDeflate64: %{public}@", detail);
         return [self assignError:error code:UZKErrorCodeDeflate64
+                          detail:detail];
+    }
+    
+    if ([self isAES:file_info]) {
+        NSString *detail = NSLocalizedStringFromTableInBundle(@"Cannot open archive, since it was compressed using the AES algorithm (method ID 99)", @"UnzipKit", _resources, @"Error message");
+        UZKLogError("UZKErrorCodeAES: %{public}@", detail);
+        return [self assignError:error code:UZKErrorCodeAES
                           detail:detail];
     }
     
@@ -2555,9 +2567,13 @@ compressionMethod:(UZKCompressionMethod)method
             errorName = NSLocalizedStringFromTableInBundle(@"The archive was compressed with the Deflate64 method, which isn't supported", @"UnzipKit", _resources, @"UZKErrorCodeDeflate64");
             break;
             
+        case UZKErrorCodeAES:
+            errorName = NSLocalizedStringFromTableInBundle(@"The archive was compressed with the AES method, which isn't supported", @"UnzipKit", _resources, @"UZKErrorCodeAES");
+            break;
+            
         default:
             errorName = [NSString localizedStringWithFormat:
-                         NSLocalizedStringFromTableInBundle(@"Unknown error code: %ld", @"UnzipKit", _resources, @"UnknownErrorCode"), errorCode];
+                         NSLocalizedStringFromTableInBundle(@"Unknown error code: %ld", @"UnzipKit", _resources, @"UnknownErrorCode"), (long)errorCode];
             break;
     }
     
@@ -2662,6 +2678,14 @@ compressionMethod:(UZKCompressionMethod)method
     
     UZKLogDebug("Compression method: %lu", file_info.compression_method);
     return file_info.compression_method == 9;
+}
+
+- (BOOL)isAES:(unz_file_info64)file_info
+{
+    UZKCreateActivity("isAES");
+    
+    UZKLogDebug("Compression method: %lu", file_info.compression_method);
+    return file_info.compression_method == 99;
 }
 
 - (NSProgress *)beginProgressOperation:(unsigned long long)totalUnitCount

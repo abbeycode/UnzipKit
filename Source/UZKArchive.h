@@ -7,7 +7,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 
-#import "UZKFileInfo.h"
+#import <UnzipKit/UZKFileInfo.h>
 
 @class ZipFileProperties;
 
@@ -121,6 +121,11 @@ typedef NS_ENUM(NSInteger, UZKErrorCode) {
      *  User cancelled the operation
      */
     UZKErrorCodeUserCancelled = 116,
+    
+    /**
+     *  User cancelled the operation
+     */
+    UZKErrorCodeAES = 117,
 };
 
 

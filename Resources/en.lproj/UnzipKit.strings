@@ -17,10 +17,10 @@
 "Can't open archive" = "Can't open archive";
 
 /* Error message */
-"Cannot open archive, since it was compressed using the Deflate64 algorithm (method ID 9)" = "Cannot open archive, since it was compressed using the Deflate64 algorithm (method ID 9)";
+"Cannot open archive, since it was compressed using the AES algorithm (method ID 99)" = "Cannot open archive, since it was compressed using the AES algorithm (method ID 99)";
 
-/* Detailed error string */
-"Error allocating buffer for file %@ while deleting %@" = "Error allocating buffer for file %1$@ while deleting %2$@";
+/* Error message */
+"Cannot open archive, since it was compressed using the Deflate64 algorithm (method ID 9)" = "Cannot open archive, since it was compressed using the Deflate64 algorithm (method ID 9)";
 
 /* Detailed error string */
 "Error allocating buffer for file %@ while deleting %@. Is it too large?" = "Error allocating buffer for file %1$@ while deleting %2$@. Is it too large?";
@@ -30,9 +30,6 @@
 
 /* Detailed error string */
 "Error allocating extra_field info of %@ while deleting %@" = "Error allocating extra_field info of %1$@ while deleting %2$@";
-
-/* Detailed error string */
-"Error allocating extrafield info of %@ while deleting %@" = "Error allocating extrafield info of %1$@ while deleting %2$@";
 
 /* Detailed error string */
 "Error allocating local_extra for file %@ while deleting %@" = "Error allocating local_extra for file %1$@ while deleting %2$@";
@@ -56,12 +53,6 @@
 "Error closing file '%@' for write (%d)" = "Error closing file '%1$@' for write (%2$d)";
 
 /* Detailed error string */
-"Error closing file in archive after append (%d)" = "Error closing file in archive after append (%d)";
-
-/* Detailed error string */
-"Error closing file in archive after create (%d)" = "Error closing file in archive after create (%d)";
-
-/* Detailed error string */
 "Error closing file in archive after read (%d)" = "Error closing file in archive after read (%d)";
 
 /* Detailed error string */
@@ -71,7 +62,7 @@
 "Error creating bookmark to new archive file: %@" = "Error creating bookmark to new archive file: %@";
 
 /* Detailed error string */
-"Error creating current file (%d) '%@'" = "Error creating current file (%1$d) '%2$@'";
+"Error creating current file (%@) '%@'" = "Error creating current file (%1$@) '%2$@'";
 
 /* UZKErrorCodeDeleteFile */
 "Error deleting a file in the archive" = "Error deleting a file in the archive";
@@ -98,7 +89,7 @@
 "Error getting local_extra for file %@ while deleting %@" = "Error getting local_extra for file %1$@ while deleting %2$@";
 
 /* Detailed error string */
-"Error getting size_local_extra for file while deleting %@" = "Error getting size_local_extra for file while deleting %@";
+"Error getting size_local_extra for file while deleting %@ (current file %@)" = "Error getting size_local_extra for file while deleting %1$@ (current file %2$@)";
 
 /* Detailed error string */
 "Error getting the global info of the source file while deleting %@ (%d)" = "Error getting the global info of the source file while deleting %1$@ (%2$d)";
@@ -155,9 +146,6 @@
 "Error reading extra_field and commentary info of %@ while deleting %@ (%d)" = "Error reading extra_field and commentary info of %1$@ while deleting %2$@ (%3$d)";
 
 /* Detailed error string */
-"Error reading extrafield and commentary info of %@ while deleting %@ (%d)" = "Error reading extrafield and commentary info of %1$@ while deleting %2$@ (%3$d)";
-
-/* Detailed error string */
 "Error reading the comment (readGlobalComment)" = "Error reading the comment (readGlobalComment)";
 
 /* Detailed error string */
@@ -185,16 +173,10 @@
 "Error writing to file: %@" = "Error writing to file: %@";
 
 /* Detailed error string */
-"Extract path exists, but is not a directory: %@" = "Extract path exists, but is not a directory: %@";
-
-/* Detailed error string */
-"Failed to copy archive to external volume '%@', after deleting '%@' from it" = "Failed to copy archive to external volume '%1$@', after deleting '%2$@' from it";
-
-/* Detailed error string */
 "Failed to copy archive to external volume '%@', after deleting '%@' from it (%@)" = "Failed to copy archive to external volume '%1$@', after deleting '%2$@' from it (%3$@)";
 
 /* Detailed error string */
-"Failed to create destination directory: %@" = "Failed to create destination directory: %@";
+"Failed to create destination directory %@: %@" = "Failed to create destination directory %1$@: %2$@";
 
 /* Detailed error string */
 "Failed to create new file for archive: %@" = "Failed to create new file for archive: %@";
@@ -209,13 +191,7 @@
 "Failed to read file %@ in zip" = "Failed to read file %@ in zip";
 
 /* Detailed error string */
-"Failed to remove archive from external volume '%@', after deleting '%@' from a new version to replace it" = "Failed to remove archive from external volume '%1$@', after deleting '%2$@' from a new version to replace it";
-
-/* Detailed error string */
 "Failed to remove original archive from external volume '%@', after deleting '%@' from a new version to replace it (%@)" = "Failed to remove original archive from external volume '%1$@', after deleting '%2$@' from a new version to replace it (%3$@)";
-
-/* Detailed error string */
-"Failed to replace the old archive with the new one, after deleting '%@' from it" = "Failed to replace the old archive with the new one, after deleting '%@' from it";
 
 /* Detailed error string */
 "Failed to replace the old archive with the new one, after deleting '%@' from it (%@)" = "Failed to replace the old archive with the new one, after deleting '%1$@' from it (%2$@)";
@@ -247,6 +223,9 @@
 /* UZKErrorCodeParameterError */
 "Parameter error" = "Parameter error";
 
+/* UZKErrorCodeAES */
+"The archive was compressed with the AES method, which isn't supported" = "The archive was compressed with the AES method, which isn't supported";
+
 /* UZKErrorCodeDeflate64 */
 "The archive was compressed with the Deflate64 method, which isn't supported" = "The archive was compressed with the Deflate64 method, which isn't supported";
 
@@ -264,4 +243,10 @@
 
 /* UnknownErrorCode */
 "Unknown error code: %ld" = "Unknown error code: %ld";
+
+/* Detailed error string */
+"User cancelled data read" = "User cancelled data read";
+
+/* Detailed error string */
+"User cancelled operation" = "User cancelled operation";
 
